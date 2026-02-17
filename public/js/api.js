@@ -1,0 +1,54 @@
+/**
+ * WWSC — API Client
+ */
+const API = {
+  async get(url) {
+    const r = await fetch(url);
+    return r.json();
+  },
+  async post(url, data) {
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    return r.json();
+  },
+  async put(url, data) {
+    const r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    return r.json();
+  },
+  async upload(url, file) {
+    const fd = new FormData();
+    fd.append('file', file);
+    const r = await fetch(url, { method: 'POST', body: fd });
+    return r.json();
+  },
+
+  // Members
+  getMembers: () => API.get('/api/members'),
+  getMember: (id) => API.get(`/api/members/${id}`),
+  createMember: (data) => API.post('/api/members', data),
+  updateMember: (id, data) => API.put(`/api/members/${id}`, data),
+  importCSV: (file) => API.upload('/api/members/import', file),
+
+  // Events
+  getCurrentEvent: () => API.get('/api/events/current'),
+  createEvent: (date) => API.post('/api/events', { date }),
+  resetWeek: () => API.post('/api/events/reset'),
+
+  // Attendance
+  getAttendance: (eventId) => API.get(`/api/events/${eventId}/attendance`),
+  updateAttendance: (eventId, attendees) => API.put(`/api/events/${eventId}/attendance`, { attendees }),
+
+  // Races
+  getRaces: (eventId) => API.get(`/api/events/${eventId}/races`),
+  updateRaces: (eventId, race_types) => API.put(`/api/events/${eventId}/races`, { race_types }),
+
+  // Heats
+  generateHeats: (raceId) => API.get(`/api/races/${raceId}/generate-heats`),
+  confirmHeats: (raceId, heats) => API.post(`/api/races/${raceId}/confirm-heats`, { heats }),
+  getHeats: (raceId) => API.get(`/api/races/${raceId}/heats`),
+
+  // Dashboard
+  getDashboard: () => API.get('/api/dashboard'),
+
+  // Backup
+  createBackup: () => API.post('/api/backup'),
+};
