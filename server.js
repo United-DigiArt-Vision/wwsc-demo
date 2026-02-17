@@ -7,6 +7,9 @@ const multer = require('multer');
 const path = require('path');
 const { db, createBackup } = require('./db');
 
+const { seedIfEmpty } = require('./seed');
+seedIfEmpty();
+
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 const PORT = process.env.PORT || 3000;
