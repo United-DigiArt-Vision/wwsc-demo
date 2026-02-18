@@ -31,6 +31,12 @@ async function renderHeatBuilder() {
     hbConfirmed = false;
   }
 
+  // Auto-load saved heats if already confirmed
+  if (hbSelectedRace.status === 'heats_generated' && !hbPreviewHeats) {
+    hbPreviewHeats = await loadSavedHeats(hbSelectedRace.id);
+    hbConfirmed = true;
+  }
+
   drawHeatBuilder(individualRaces);
 }
 
@@ -58,7 +64,7 @@ function drawHeatBuilder(races) {
         <button class="btn btn-success btn-lg btn-block" onclick="confirmHBHeats()">✓ Confirm Heats</button>
       </div>
     ` : ''}
-    ${hbConfirmed ? '<div class="card" style="background:#e8f5e9;text-align:center"><h2 style="color:var(--success)">✓ Heats Confirmed!</h2></div>' : ''}
+    ${hbConfirmed ? '<div class="card" style="background:#e8f5e9;text-align:center;margin-bottom:12px"><h2 style="color:var(--success)">✓ Heats Confirmed — Ready for Pool!</h2><p>Show this screen at poolside. Tap "Generate Heats" to reshuffle.</p></div>' : ''}
   `;
 }
 
@@ -79,10 +85,15 @@ function renderHeatPreview(heats) {
   `).join('');
 }
 
-function selectHBRace(raceId) {
+async function selectHBRace(raceId) {
   hbSelectedRace = hbRaces.find(r => r.id === parseInt(raceId));
   hbPreviewHeats = null;
   hbConfirmed = false;
+  // If heats already confirmed for this race, load them
+  if (hbSelectedRace.status === 'heats_generated') {
+    hbPreviewHeats = await loadSavedHeats(hbSelectedRace.id);
+    hbConfirmed = true;
+  }
   renderHeatBuilder();
 }
 
@@ -101,4 +112,21 @@ async function confirmHBHeats() {
   await API.confirmHeats(hbSelectedRace.id, hbPreviewHeats);
   hbConfirmed = true;
   renderHeatBuilder();
+}
+
+// Load saved heats from DB for confirmed races
+async function loadSavedHeats(raceId) {
+  const res = await fetch(`/api/races/${raceId}/heats`);
+  const heats = await res.json();
+  if (!heats.length) return null;
+  return heats.map(h => ({
+    heat_number: h.heat_number,
+    lanes: h.lanes.map(l => ({
+      lane_number: l.lane_number,
+      name: l.name,
+      member_id: l.member_id,
+      handicap_time: l.handicap_time,
+      start_delay: l.start_delay
+    }))
+  }));
 }
