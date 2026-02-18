@@ -142,6 +142,19 @@ function isEventLocked(eventId) {
   return ev && ev.status === 'locked';
 }
 
+// List all events with attendance/race counts (for calendar screen)
+app.get('/api/events', (req, res) => {
+  try {
+    const events = db.prepare(`
+      SELECT e.*,
+        (SELECT COUNT(*) FROM attendance a WHERE a.event_id = e.id AND a.present = 1) as present_count,
+        (SELECT COUNT(*) FROM event_race er WHERE er.event_id = e.id) as race_count
+      FROM event e ORDER BY e.date DESC
+    `).all();
+    res.json(events);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.get('/api/events/current', (req, res) => {
   try {
     const ev = db.prepare("SELECT * FROM event WHERE status != 'completed' ORDER BY id DESC LIMIT 1").get();

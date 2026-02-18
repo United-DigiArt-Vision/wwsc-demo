@@ -320,3 +320,16 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
 /* ── Section Groups ──────────────────────────────── */
 .section-group { margin-bottom: 24px; }
 .section-group h3 { color: var(--text-secondary); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+
+/* Calendar Screen */
+.cal-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
+.cal-card { background: var(--card-bg, #1e293b); border-radius: 12px; padding: 1rem 1.25rem; border-left: 4px solid #475569; }
+.cal-card.cal-active { border-left-color: #22c55e; background: #1a2e1a; }
+.cal-date { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+.cal-meta { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; font-size: 0.95rem; opacity: 0.85; }
+.badge { padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+.badge-active { background: #22c55e; color: #000; }
+.badge-done { background: #475569; color: #e2e8f0; }
+.subtitle { opacity: 0.7; margin-top: -0.5rem; }
+.placeholder-card { background: var(--card-bg, #1e293b); border-radius: 12px; padding: 2rem; text-align: center; margin-top: 1rem; }
+.empty-msg { opacity: 0.6; font-style: italic; }

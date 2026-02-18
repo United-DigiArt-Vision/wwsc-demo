@@ -7,6 +7,8 @@ function renderSidebar(activeScreen) {
     { id: 'members', icon: '👥', label: 'Members' },
     { id: 'event-setup', icon: '📅', label: 'Event Setup' },
     { id: 'heat-builder', icon: '🔀', label: 'Heat Builder' },
+    { id: 'results', icon: '🏆', label: 'Results' },
+    { id: 'calendar', icon: '📆', label: 'Season Calendar' },
   ];
 
   document.getElementById('sidebar').innerHTML = `

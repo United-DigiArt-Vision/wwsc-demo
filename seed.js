@@ -53,10 +53,34 @@ function seedIfEmpty() {
   insertAll();
   console.log(`✅ Seeded ${members.length} members.`);
 
-  // Create a demo event
+  // Create a demo event with attendance records so Bryan can immediately use Event Setup
   const today = new Date().toISOString().slice(0, 10);
-  db.prepare("INSERT INTO event (date, status, created_at) VALUES (?, 'setup', ?)").run(today, new Date().toISOString());
-  console.log('✅ Created demo event for today.');
+  const evResult = db.prepare("INSERT INTO event (date, status, created_at) VALUES (?, 'setup', ?)").run(today, new Date().toISOString());
+  const eventId = evResult.lastInsertRowid;
+
+  // Create attendance records for all members (all marked present by default for demo)
+  const allMembers = db.prepare('SELECT id FROM member WHERE is_active = 1').all();
+  const insAtt = db.prepare('INSERT INTO attendance (event_id, member_id, present) VALUES (?, ?, 1)');
+  const seedAttendance = db.transaction(() => {
+    allMembers.forEach(m => insAtt.run(eventId, m.id));
+  });
+  seedAttendance();
+  console.log(`✅ Created demo event for today with ${allMembers.length} members marked present.`);
+
+  // Also seed a couple of past events for calendar history
+  const pastEvents = [
+    { date: '2025-04-24', status: 'completed' },
+    { date: '2025-05-01', status: 'completed' },
+    { date: '2025-05-08', status: 'completed' },
+  ];
+  pastEvents.forEach(pe => {
+    const r = db.prepare("INSERT INTO event (date, status, created_at) VALUES (?, ?, ?)").run(pe.date, pe.status, pe.date + 'T09:00:00.000Z');
+    const eid = r.lastInsertRowid;
+    // Random subset of members attended
+    const subset = allMembers.slice(0, 10 + Math.floor(Math.random() * 10));
+    subset.forEach(m => insAtt.run(eid, m.id));
+  });
+  console.log('✅ Seeded 3 past events for calendar history.');
 }
 
 module.exports = { seedIfEmpty };

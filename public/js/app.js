@@ -8,6 +8,8 @@ const screens = {
   'members': renderMembers,
   'event-setup': renderEventSetup,
   'heat-builder': renderHeatBuilder,
+  'results': renderResults,
+  'calendar': renderCalendar,
 };
 
 function navigate(screen) {
