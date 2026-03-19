@@ -19,5 +19,6 @@ function renderSidebar(activeScreen) {
         <span>${it.label}</span>
       </button>
     `).join('')}
+    <div style="margin-top:auto;padding:12px 16px;font-size:12px;color:rgba(255,255,255,0.4)">v1.0.0</div>
   `;
 }

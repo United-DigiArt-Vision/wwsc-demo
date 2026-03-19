@@ -312,6 +312,8 @@ function shuffle(arr) {
 }
 
 // Build heats from swimmers array (each has {id, name, handicap_time})
+const BASE_OFFSET = 2; // Bryan's Excel: slowest swimmer starts at +2s, not 0s
+
 function buildHeats(swimmers) {
   const MAX_PER_HEAT = 4;
   const MIN_PER_HEAT = 3;
@@ -343,7 +345,7 @@ function buildHeats(swimmers) {
         member_id: s.id,
         name: s.name,
         handicap_time: s.handicap_time,
-        start_delay: maxTime - s.handicap_time
+        start_delay: (maxTime - s.handicap_time) + BASE_OFFSET
       }))
     };
   });
@@ -623,6 +625,106 @@ app.get('/api/events/:eventId/time-history', (req, res) => {
     `).all(req.params.eventId);
     res.json(entries);
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════
+//  TOGGLE ACTIVE (soft deactivation)
+// ════════════════════════════════════════════════════════
+
+app.patch('/api/members/:id/toggle-active', (req, res) => {
+  try {
+    const m = db.prepare('SELECT * FROM member WHERE id = ?').get(req.params.id);
+    if (!m) return res.status(404).json({ error: 'Member not found' });
+    const newStatus = m.is_active ? 0 : 1;
+    db.prepare('UPDATE member SET is_active = ? WHERE id = ?').run(newStatus, req.params.id);
+    res.json({ ok: true, is_active: newStatus });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════
+//  NEW WEEK (complete all + create fresh event)
+// ════════════════════════════════════════════════════════
+
+app.post('/api/events/new-week', (req, res) => {
+  try {
+    const backupPath = createBackup();
+    // Complete all open events
+    db.prepare("UPDATE event SET status = 'completed' WHERE status NOT IN ('completed')").run();
+    // Create new event with today's date
+    const today = new Date().toISOString().slice(0, 10);
+    const result = db.prepare("INSERT INTO event (date, status, created_at) VALUES (?, 'setup', ?)").run(today, new Date().toISOString());
+    const eventId = result.lastInsertRowid;
+    // Initialize attendance for all active members
+    const members = db.prepare('SELECT id FROM member WHERE is_active = 1').all();
+    const ins = db.prepare('INSERT INTO attendance (event_id, member_id, present) VALUES (?, ?, 0)');
+    const batch = db.transaction(() => { members.forEach(m => ins.run(eventId, m.id)); });
+    batch();
+    res.json({ ok: true, backup: backupPath, newEventId: Number(eventId) });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════
+//  MOVE SWIMMER BETWEEN HEATS
+// ════════════════════════════════════════════════════════
+
+app.put('/api/races/:raceId/heats/move-swimmer', (req, res) => {
+  try {
+    const { member_id, from_heat, to_heat } = req.body;
+    if (!member_id || from_heat == null || to_heat == null) {
+      return res.status(400).json({ error: 'member_id, from_heat, to_heat required' });
+    }
+    const raceId = req.params.raceId;
+
+    // Get heats for this race
+    const heats = db.prepare('SELECT * FROM heat WHERE event_race_id = ? ORDER BY heat_number').all(raceId);
+    const fromHeat = heats.find(h => h.heat_number === from_heat);
+    const toHeat = heats.find(h => h.heat_number === to_heat);
+    if (!fromHeat || !toHeat) return res.status(404).json({ error: 'Heat not found' });
+
+    // Validate to_heat doesn't exceed 4 swimmers
+    const toLanes = db.prepare('SELECT * FROM heat_lane WHERE heat_id = ?').all(toHeat.id);
+    if (toLanes.length >= 4) return res.status(400).json({ error: 'Target heat already has 4 swimmers' });
+
+    // Find the lane to move
+    const lane = db.prepare('SELECT * FROM heat_lane WHERE heat_id = ? AND member_id = ?').get(fromHeat.id, member_id);
+    if (!lane) return res.status(404).json({ error: 'Swimmer not found in source heat' });
+
+    // Move swimmer
+    const newLaneNumber = toLanes.length + 1;
+    db.prepare('UPDATE heat_lane SET heat_id = ?, lane_number = ? WHERE id = ?').run(toHeat.id, newLaneNumber, lane.id);
+
+    // Re-number lanes in source heat
+    const remainingLanes = db.prepare('SELECT id FROM heat_lane WHERE heat_id = ? ORDER BY lane_number').all(fromHeat.id);
+    const updateLane = db.prepare('UPDATE heat_lane SET lane_number = ? WHERE id = ?');
+    const batch = db.transaction(() => {
+      remainingLanes.forEach((l, i) => updateLane.run(i + 1, l.id));
+    });
+    batch();
+
+    // Recalculate start_delays for both heats
+    const recalcHeat = (heatId) => {
+      const lanes = db.prepare('SELECT * FROM heat_lane WHERE heat_id = ?').all(heatId);
+      if (lanes.length === 0) return;
+      const maxTime = Math.max(...lanes.map(l => l.handicap_time));
+      const upd = db.prepare('UPDATE heat_lane SET start_delay = ? WHERE id = ?');
+      const t = db.transaction(() => {
+        lanes.forEach(l => upd.run((maxTime - l.handicap_time) + BASE_OFFSET, l.id));
+      });
+      t();
+    };
+    recalcHeat(fromHeat.id);
+    recalcHeat(toHeat.id);
+
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════
+//  VERSION API
+// ════════════════════════════════════════════════════════
+
+app.get('/api/version', (req, res) => {
+  res.json({ version: '1.0.0', name: 'WWSC Swimming App' });
 });
 
 // ════════════════════════════════════════════════════════

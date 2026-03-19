@@ -98,8 +98,9 @@ function showAddMemberModal() {
     { label: 'Cancel', cls: 'btn-outline' },
     { label: 'Save', cls: 'btn-primary', action: async () => {
       const data = getMemberFormData(false);
-      if (!data.name?.trim()) return alert('Name is required');
+      if (!data.name?.trim()) return showToast('Name is required', 'warning');
       await API.createMember(data);
+      showToast(`${data.name} added successfully`);
       renderMembers();
     }}
   ]);
@@ -109,12 +110,27 @@ async function showEditMemberModal(id) {
   const m = await API.getMember(id);
   showModal('Edit Member', memberFormHtml(m), [
     { label: 'Cancel', cls: 'btn-outline' },
+    { label: 'Deactivate', cls: 'btn-danger', action: async () => {
+      confirmDialog('Deactivate Member', `Are you sure you want to deactivate ${m.name}?`, async () => {
+        await API.toggleActive(m.id);
+        showToast(`${m.name} deactivated`);
+        renderMembers();
+      });
+    }},
     { label: 'Save', cls: 'btn-primary', action: async () => {
       const data = getMemberFormData(true);
-      if (!data.name?.trim()) return alert('Name is required');
+      if (!data.name?.trim()) return showToast('Name is required', 'warning');
       await API.updateMember(id, data);
+      showToast(`${data.name} updated`);
       renderMembers();
     }}
+  ]);
+}
+
+function confirmDialog(title, message, onConfirm) {
+  showModal(title, `<p style="font-size:16px;margin-bottom:8px">${message}</p>`, [
+    { label: 'Cancel', cls: 'btn-outline' },
+    { label: 'Confirm', cls: 'btn-danger', action: onConfirm }
   ]);
 }
 
@@ -141,13 +157,13 @@ function handleCSVSelect(input) {
 }
 
 async function handleCSVImport() {
-  if (!selectedCSVFile) return alert('Please select a CSV file');
+  if (!selectedCSVFile) return showToast('Please select a CSV file', 'warning');
   const result = await API.importCSV(selectedCSVFile);
   selectedCSVFile = null;
   if (result.error) {
-    alert('Import error: ' + result.error);
+    showToast('Import error: ' + result.error, 'error');
   } else {
-    alert(`Imported ${result.imported} members${result.errors.length ? '\nWarnings: ' + result.errors.join(', ') : ''}`);
+    showToast(`Imported ${result.imported} members`, 'success');
     renderMembers();
   }
 }

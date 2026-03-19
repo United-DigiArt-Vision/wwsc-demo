@@ -55,9 +55,42 @@ async function renderEventSetup() {
   drawEventSetup();
 }
 
+let esCurrentIdx = 0; // keyboard navigation index
+
 function drawEventSetup() {
   const el = document.getElementById('content');
   const presentCount = attendanceData.filter(a => a.present).length;
+
+  // Keyboard shortcuts for attendance
+  document.onkeydown = function(e) {
+    // Don't intercept when typing in inputs
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+
+    const key = e.key.toLowerCase();
+    if (key === 'y' && attendanceData.length > 0) {
+      e.preventDefault();
+      if (esCurrentIdx < attendanceData.length) {
+        attendanceData[esCurrentIdx].present = 1;
+        esCurrentIdx = Math.min(esCurrentIdx + 1, attendanceData.length - 1);
+        drawEventSetup();
+      }
+    } else if (key === 'n' && attendanceData.length > 0) {
+      e.preventDefault();
+      if (esCurrentIdx < attendanceData.length) {
+        attendanceData[esCurrentIdx].present = 0;
+        esCurrentIdx = Math.min(esCurrentIdx + 1, attendanceData.length - 1);
+        drawEventSetup();
+      }
+    } else if (key === 'tab' && attendanceData.length > 0) {
+      e.preventDefault();
+      esCurrentIdx = (esCurrentIdx + 1) % attendanceData.length;
+      drawEventSetup();
+    } else if (key === 'enter') {
+      e.preventDefault();
+      const pc = attendanceData.filter(a => a.present).length;
+      if (pc >= 3) saveEventSetup();
+    }
+  };
 
   el.innerHTML = `
     <h1>Event Setup — ${currentEvent.date}</h1>
@@ -71,9 +104,9 @@ function drawEventSetup() {
         <button class="btn btn-outline" onclick="toggleAllAttendance(false)">✗ Deselect All</button>
       </div>
       <div class="att-grid">
-        ${attendanceData.map(a => `
-          <div class="att-row ${a.present ? 'present' : ''}" onclick="toggleAttendance(${a.member_id})">
-            <span class="att-name">${a.name}</span>
+        ${attendanceData.map((a, idx) => `
+          <div class="att-row ${a.present ? 'present' : ''}" style="${idx === esCurrentIdx ? 'outline:3px solid var(--accent);outline-offset:-3px' : ''}" onclick="toggleAttendance(${a.member_id})">
+            <span class="att-name">${idx === esCurrentIdx ? '► ' : ''}${a.name}</span>
             <span class="att-status">${a.present ? '✓' : '✗'}</span>
           </div>
         `).join('')}
@@ -118,7 +151,7 @@ function raceCheckbox(r) {
 
 async function createNewEvent() {
   const date = document.getElementById('event-date').value;
-  if (!date) return alert('Please select a date');
+  if (!date) return showToast('Please select a date', 'warning');
   await API.createEvent(date);
   renderEventSetup();
 }
@@ -141,9 +174,9 @@ function toggleRace(raceId) {
 }
 
 async function saveEventSetup() {
-  if (selectedRaces.size === 0) return alert('Please select at least one event');
+  if (selectedRaces.size === 0) return showToast('Please select at least one event', 'warning');
   const presentCount = attendanceData.filter(a => a.present).length;
-  if (presentCount < 3) return alert('Need at least 3 swimmers present');
+  if (presentCount < 3) return showToast('Need at least 3 swimmers present', 'warning');
 
   await API.updateAttendance(currentEvent.id, attendanceData.map(a => ({
     member_id: a.member_id, present: a.present

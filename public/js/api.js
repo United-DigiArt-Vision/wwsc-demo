@@ -14,6 +14,14 @@ const API = {
     const r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     return r.json();
   },
+  async patch(url, data) {
+    const r = await fetch(url, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    return r.json();
+  },
+  async del(url) {
+    const r = await fetch(url, { method: 'DELETE' });
+    return r.json();
+  },
   async upload(url, file) {
     const fd = new FormData();
     fd.append('file', file);
@@ -27,11 +35,13 @@ const API = {
   createMember: (data) => API.post('/api/members', data),
   updateMember: (id, data) => API.put(`/api/members/${id}`, data),
   importCSV: (file) => API.upload('/api/members/import', file),
+  toggleActive: (id) => API.patch(`/api/members/${id}/toggle-active`),
 
   // Events
   getCurrentEvent: () => API.get('/api/events/current'),
   createEvent: (date) => API.post('/api/events', { date }),
   resetWeek: () => API.post('/api/events/reset'),
+  newWeek: () => API.post('/api/events/new-week'),
 
   // Attendance
   getAttendance: (eventId) => API.get(`/api/events/${eventId}/attendance`),
@@ -45,6 +55,7 @@ const API = {
   generateHeats: (raceId) => API.get(`/api/races/${raceId}/generate-heats`),
   confirmHeats: (raceId, heats) => API.post(`/api/races/${raceId}/confirm-heats`, { heats }),
   getHeats: (raceId) => API.get(`/api/races/${raceId}/heats`),
+  moveSwimmer: (raceId, member_id, from_heat, to_heat) => API.put(`/api/races/${raceId}/heats/move-swimmer`, { member_id, from_heat, to_heat }),
 
   // Dashboard
   getDashboard: () => API.get('/api/dashboard'),
@@ -60,4 +71,7 @@ const API = {
   getBreakers: (eventId) => API.get(`/api/events/${eventId}/breakers`),
   completeEvent: (eventId) => API.post(`/api/events/${eventId}/complete`),
   getTimeHistory: (eventId) => API.get(`/api/events/${eventId}/time-history`),
+
+  // Version
+  getVersion: () => API.get('/api/version'),
 };
