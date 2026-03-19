@@ -64,7 +64,7 @@ function drawHeatBuilder(races) {
         <button class="btn btn-success btn-lg btn-block" onclick="confirmHBHeats()">✓ Confirm Heats</button>
       </div>
     ` : ''}
-    ${hbConfirmed ? '<div class="card" style="background:#e8f5e9;text-align:center;margin-bottom:12px"><h2 style="color:var(--success)">✓ Heats Confirmed — Ready for Pool!</h2><p>Show this screen at poolside. Tap "Generate Heats" to reshuffle.</p></div>' : ''}
+    ${hbConfirmed ? '<div class="card" style="background:#e8f5e9;text-align:center;margin-bottom:12px"><h2 style="color:var(--success)">✓ Heats Confirmed — Ready for Pool!</h2><p>Show this screen at poolside. Tap "Generate Heats" to reshuffle.</p><p style="margin-top:12px"><a href="#" onclick="navigate(\'results\')" style="color:var(--primary);font-weight:600;font-size:16px">→ Go to Results to enter times</a></p></div>' : ''}
   `;
 }
 

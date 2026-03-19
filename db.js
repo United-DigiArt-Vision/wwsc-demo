@@ -143,4 +143,21 @@ function createBackup() {
 
 initSchema();
 
+// ── Migrations ──────────────────────────────────────────
+function runMigrations() {
+  // Add season_start columns to member (safe: checks if column exists first)
+  const cols = db.prepare("PRAGMA table_info(member)").all().map(c => c.name);
+  const seasonCols = [
+    'season_start_25m', 'season_start_50m', 'season_start_75m',
+    'season_start_backstroke', 'season_start_breaststroke', 'season_start_butterfly'
+  ];
+  seasonCols.forEach(col => {
+    if (!cols.includes(col)) {
+      db.exec(`ALTER TABLE member ADD COLUMN ${col} INTEGER`);
+    }
+  });
+}
+
+runMigrations();
+
 module.exports = { db, createBackup, DB_PATH };

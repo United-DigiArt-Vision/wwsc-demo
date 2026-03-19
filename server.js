@@ -448,6 +448,184 @@ app.get('/api/dashboard', (req, res) => {
 });
 
 // ════════════════════════════════════════════════════════
+//  RESULTS API
+// ════════════════════════════════════════════════════════
+
+// GET /api/events/:eventId/results — all races with heats and lanes
+app.get('/api/events/:eventId/results', (req, res) => {
+  try {
+    const races = db.prepare('SELECT * FROM event_race WHERE event_id = ? ORDER BY id').all(req.params.eventId);
+    const getHeats = db.prepare('SELECT * FROM heat WHERE event_race_id = ? ORDER BY heat_number');
+    const getLanes = db.prepare(`
+      SELECT hl.*, m.name,
+        m.time_25m, m.time_50m, m.time_75m,
+        m.time_backstroke, m.time_breaststroke, m.time_butterfly
+      FROM heat_lane hl
+      JOIN member m ON hl.member_id = m.id
+      WHERE hl.heat_id = ? ORDER BY hl.lane_number
+    `);
+
+    const result = races.map(race => {
+      const heats = getHeats.all(race.id);
+      return {
+        ...race,
+        heats: heats.map(h => ({
+          ...h,
+          lanes: getLanes.all(h.id)
+        }))
+      };
+    });
+    res.json(result);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// PUT /api/heats/:heatId/lanes/:laneId/time — enter finish time
+app.put('/api/heats/:heatId/lanes/:laneId/time', (req, res) => {
+  try {
+    const { finish_time } = req.body;
+    if (finish_time == null || finish_time < 0) return res.status(400).json({ error: 'finish_time required (non-negative integer)' });
+
+    const lane = db.prepare('SELECT * FROM heat_lane WHERE id = ? AND heat_id = ?').get(req.params.laneId, req.params.heatId);
+    if (!lane) return res.status(404).json({ error: 'Lane not found' });
+
+    const net_time = finish_time - lane.start_delay;
+    const variance = net_time - lane.handicap_time;
+    const is_break = (net_time < lane.handicap_time) ? 1 : 0;
+
+    db.prepare(`
+      UPDATE heat_lane SET finish_time = ?, net_time = ?, variance = ?, is_break = ?
+      WHERE id = ?
+    `).run(finish_time, net_time, variance, is_break, lane.id);
+
+    res.json({ ok: true, finish_time, net_time, variance, is_break });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/races/:raceId/rank — rank swimmers by finish_time
+app.post('/api/races/:raceId/rank', (req, res) => {
+  try {
+    const heats = db.prepare('SELECT id FROM heat WHERE event_race_id = ?').all(req.params.raceId);
+    const getLanes = db.prepare('SELECT id, finish_time FROM heat_lane WHERE heat_id = ? ORDER BY CASE WHEN finish_time IS NULL THEN 1 ELSE 0 END, finish_time ASC');
+    const setPlace = db.prepare('UPDATE heat_lane SET place = ? WHERE id = ?');
+
+    const batch = db.transaction(() => {
+      heats.forEach(h => {
+        const lanes = getLanes.all(h.id);
+        lanes.forEach((l, i) => setPlace.run(i + 1, l.id));
+      });
+    });
+    batch();
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/events/:eventId/finalize — finalize event, update PBs, write history
+app.post('/api/events/:eventId/finalize', (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    const ev = db.prepare('SELECT * FROM event WHERE id = ?').get(eventId);
+    if (!ev) return res.status(404).json({ error: 'Event not found' });
+
+    const races = db.prepare('SELECT * FROM event_race WHERE event_id = ?').all(eventId);
+    let breakersCount = 0;
+
+    const finalize = db.transaction(() => {
+      races.forEach(race => {
+        const col = timeColumn(race.race_type);
+        if (!col) return; // skip relay types etc.
+        const stroke = race.race_type;
+        const seasonCol = `season_start_${stroke}`;
+
+        const heats = db.prepare('SELECT id FROM heat WHERE event_race_id = ?').all(race.id);
+        heats.forEach(h => {
+          const lanes = db.prepare(`
+            SELECT hl.*, m.${col} as current_pb, m.${seasonCol} as season_start
+            FROM heat_lane hl
+            JOIN member m ON hl.member_id = m.id
+            WHERE hl.heat_id = ?
+          `).all(h.id);
+
+          lanes.forEach(lane => {
+            if (lane.finish_time == null) return; // no time entered
+
+            const previousBest = lane.current_pb;
+
+            // Write time_history for ALL swimmers
+            db.prepare(`
+              INSERT INTO time_history (member_id, event_id, stroke, time, is_break, previous_best)
+              VALUES (?, ?, ?, ?, ?, ?)
+            `).run(lane.member_id, eventId, stroke, lane.net_time, lane.is_break, previousBest);
+
+            // Update PB if breaker
+            if (lane.is_break && lane.net_time < (previousBest || Infinity)) {
+              db.prepare(`UPDATE member SET ${col} = ? WHERE id = ?`).run(lane.net_time, lane.member_id);
+              breakersCount++;
+            }
+
+            // Set season_start if not already set
+            if (lane.season_start == null && previousBest != null) {
+              db.prepare(`UPDATE member SET ${seasonCol} = ? WHERE id = ?`).run(previousBest, lane.member_id);
+            }
+          });
+        });
+      });
+
+      // Set event status to finalized
+      db.prepare("UPDATE event SET status = 'finalized' WHERE id = ?").run(eventId);
+    });
+
+    finalize();
+    res.json({ ok: true, breakers_count: breakersCount });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/events/:eventId/breakers — list breakers for event
+app.get('/api/events/:eventId/breakers', (req, res) => {
+  try {
+    const breakers = db.prepare(`
+      SELECT th.*, m.name as member_name
+      FROM time_history th
+      JOIN member m ON th.member_id = m.id
+      WHERE th.event_id = ? AND th.is_break = 1
+      ORDER BY th.stroke, m.name
+    `).all(req.params.eventId);
+
+    const result = breakers.map(b => ({
+      member_name: b.member_name,
+      stroke: b.stroke,
+      old_pb: b.previous_best,
+      new_pb: b.time,
+      improvement: (b.previous_best || 0) - b.time
+    }));
+    res.json(result);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/events/:eventId/complete — mark event as completed
+app.post('/api/events/:eventId/complete', (req, res) => {
+  try {
+    const ev = db.prepare('SELECT * FROM event WHERE id = ?').get(req.params.eventId);
+    if (!ev) return res.status(404).json({ error: 'Event not found' });
+    db.prepare("UPDATE event SET status = 'completed' WHERE id = ?").run(req.params.eventId);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/events/:eventId/time-history — time history entries for event
+app.get('/api/events/:eventId/time-history', (req, res) => {
+  try {
+    const entries = db.prepare(`
+      SELECT th.*, m.name as member_name
+      FROM time_history th
+      JOIN member m ON th.member_id = m.id
+      WHERE th.event_id = ?
+      ORDER BY th.stroke, m.name
+    `).all(req.params.eventId);
+    res.json(entries);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════
 //  BACKUP API
 // ════════════════════════════════════════════════════════
 

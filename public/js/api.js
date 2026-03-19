@@ -51,4 +51,13 @@ const API = {
 
   // Backup
   createBackup: () => API.post('/api/backup'),
+
+  // Results
+  getResults: (eventId) => API.get(`/api/events/${eventId}/results`),
+  saveTime: (heatId, laneId, finish_time) => API.put(`/api/heats/${heatId}/lanes/${laneId}/time`, { finish_time }),
+  rankRace: (raceId) => API.post(`/api/races/${raceId}/rank`),
+  finalizeEvent: (eventId) => API.post(`/api/events/${eventId}/finalize`),
+  getBreakers: (eventId) => API.get(`/api/events/${eventId}/breakers`),
+  completeEvent: (eventId) => API.post(`/api/events/${eventId}/complete`),
+  getTimeHistory: (eventId) => API.get(`/api/events/${eventId}/time-history`),
 };
