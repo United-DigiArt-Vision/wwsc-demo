@@ -8,6 +8,7 @@ let resSelectedRace = null;
 let resEvent = null;
 let resFinalized = false;
 let resCompleted = false;
+let resHasRelays = false;
 
 async function renderResults() {
   resEvent = await API.getCurrentEvent();
@@ -24,9 +25,11 @@ async function renderResults() {
   const allRaces = await API.getResults(resEvent.id);
   // Filter to individual races (not relays for now)
   resRaces = allRaces.filter(r => ['25m','50m','75m','backstroke','breaststroke','butterfly'].includes(r.race_type));
+  resHasRelays = allRaces.some(r => ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'].includes(r.race_type));
 
   if (resRaces.length === 0) {
-    el.innerHTML = `<h1>Results</h1><div class="card"><p>No races with heats yet. <a href="#" onclick="navigate('heat-builder')">Build heats first.</a></p></div>`;
+    el.innerHTML = `<h1>Results</h1><div class="card"><p>No races with heats yet. <a href="#" onclick="navigate('heat-builder')">Build heats first.</a></p></div>
+    ${resHasRelays ? '<div class="card" style="text-align:center"><button class="btn btn-accent" onclick="navigate(\'relays\')">🏊 View Relays →</button></div>' : ''}`;
     return;
   }
 
@@ -57,6 +60,7 @@ function drawResults() {
       <h1 style="margin:0">Results — ${raceLabel}</h1>
       <div class="toolbar-spacer"></div>
       <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+      ${resHasRelays ? '<button class="btn btn-accent" onclick="navigate(\'relays\')">🏊 Relays →</button>' : ''}
     </div>
 
     <div class="toolbar">

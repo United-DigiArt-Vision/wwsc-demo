@@ -9,6 +9,7 @@ const screens = {
   'event-setup': renderEventSetup,
   'heat-builder': renderHeatBuilder,
   'results': renderResults,
+  'relays': renderRelays,
   'calendar': renderCalendar,
 };
 

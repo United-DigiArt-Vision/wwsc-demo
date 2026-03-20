@@ -26,8 +26,11 @@ async function renderHeatBuilder() {
   hbRaces = await API.getRaces(event.id);
   const individualRaces = hbRaces.filter(r => ['25m','50m','75m','backstroke','breaststroke','butterfly'].includes(r.race_type));
 
+  const hasRelayRaces = hbRaces.some(r => ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'].includes(r.race_type));
+
   if (individualRaces.length === 0) {
-    el.innerHTML = `<h1>Heat Builder</h1><div class="card"><p>No individual events selected. <a href="#" onclick="navigate('event-setup')">Go to Event Setup.</a></p></div>`;
+    el.innerHTML = `<h1>Heat Builder</h1><div class="card"><p>No individual events selected. <a href="#" onclick="navigate('event-setup')">Go to Event Setup.</a></p></div>
+    ${hasRelayRaces ? '<div class="card" style="text-align:center"><button class="btn btn-accent" onclick="navigate(\'relays\')">🏊 Relay Setup →</button></div>' : ''}`;
     return;
   }
 
@@ -47,6 +50,7 @@ async function renderHeatBuilder() {
 
 function drawHeatBuilder(races) {
   const el = document.getElementById('content');
+  const hasRelays = hbRaces.some(r => ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'].includes(r.race_type));
 
   el.innerHTML = `
     <h1>Heat Builder</h1>
@@ -58,6 +62,7 @@ function drawHeatBuilder(races) {
       <button class="btn btn-primary" onclick="generateHBHeats()">🔀 Generate Heats</button>
       ${hbPreviewHeats ? `<button class="btn btn-accent" onclick="generateHBHeats()">🔄 Shuffle</button>` : ''}
       ${hbPreviewHeats && hbPreviewHeats.length > 0 && !hbConfirmed ? `<button class="btn btn-success" onclick="confirmHBHeats()">✓ Confirm Heats</button>` : ''}
+      ${hasRelays ? '<button class="btn btn-accent" onclick="navigate(\'relays\')">🏊 Relay Setup →</button>' : ''}
     </div>
 
     ${hbConfirmed ? `<div class="card" style="background:#e8f5e9;text-align:center;padding:12px">

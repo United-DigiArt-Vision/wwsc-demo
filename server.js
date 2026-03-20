@@ -765,6 +765,316 @@ app.post('/api/backup', (req, res) => {
 });
 
 // ════════════════════════════════════════════════════════
+//  RELAY API
+// ════════════════════════════════════════════════════════
+
+const RELAY_TYPES = ['25m_relay', '25m_brace', '50m_brace', 'medley_relay', 'pogo'];
+
+const TEAM_NAMES = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo', 'Foxtrot', 'Golf', 'Hotel', 'India', 'Juliet'];
+
+// Helper: get PB total for a member based on relay type
+function getRelayPB(member, raceType) {
+  switch (raceType) {
+    case '25m_relay': return member.time_25m || 9999;
+    case '25m_brace': return member.time_25m || 9999;
+    case '50m_brace': return member.time_50m || 9999;
+    case 'pogo': return member.time_25m || 9999;
+    case 'medley_relay': {
+      // Sum of all stroke PBs as sorting metric
+      const times = [member.time_backstroke, member.time_breaststroke, member.time_25m].filter(t => t != null);
+      return times.length > 0 ? times.reduce((a, b) => a + b, 0) : 9999;
+    }
+    default: return 9999;
+  }
+}
+
+// Helper: distribute swimmers round-robin into N teams for balanced teams
+function distributeRoundRobin(swimmers, numTeams) {
+  // Sort by PB (fastest first)
+  swimmers.sort((a, b) => a.pb - b.pb);
+  const teams = Array.from({ length: numTeams }, () => []);
+  // Snake distribution for balance: 0,1,2,2,1,0,0,1,2...
+  swimmers.forEach((s, i) => {
+    const round = Math.floor(i / numTeams);
+    const pos = i % numTeams;
+    const idx = round % 2 === 0 ? pos : (numTeams - 1 - pos);
+    teams[idx].push(s);
+  });
+  return teams;
+}
+
+// POST /api/races/:raceId/generate-relay-teams
+app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
+  try {
+    const race = db.prepare('SELECT * FROM event_race WHERE id = ?').get(req.params.raceId);
+    if (!race) return res.status(404).json({ error: 'Race not found' });
+    if (!RELAY_TYPES.includes(race.race_type)) return res.status(400).json({ error: 'Not a relay race type' });
+
+    // Get attending members
+    const members = db.prepare(`
+      SELECT m.*, a.special_event_entry
+      FROM member m
+      JOIN attendance a ON a.member_id = m.id
+      WHERE a.event_id = ? AND a.present = 1 AND m.is_active = 1
+    `).all(race.event_id);
+
+    if (members.length < 2) {
+      return res.json({ teams: [], warning: 'Need at least 2 swimmers' });
+    }
+
+    let teams = [];
+
+    if (race.race_type === '25m_relay' || race.race_type === 'pogo') {
+      // R10.1, R10.5: Teams of 4
+      // R10.8: 3 lanes/teams default, 4 if >30 swimmers
+      const teamSize = 4;
+      const numTeams = members.length > 30 ? 4 : 3;
+      const swimmersWithPB = members.map(m => ({ ...m, pb: getRelayPB(m, race.race_type) }));
+      const distributed = distributeRoundRobin(swimmersWithPB, numTeams);
+
+      teams = distributed.map((teamMembers, ti) => {
+        const targetTime = teamMembers.reduce((sum, m) => sum + (m.pb !== 9999 ? m.pb : 0), 0);
+        return {
+          team_number: ti + 1,
+          team_name: TEAM_NAMES[ti] || `Team ${ti + 1}`,
+          members: teamMembers.map((m, mi) => ({
+            member_id: m.id,
+            name: m.name,
+            leg_order: mi + 1,
+            stroke: 'Free',
+            pb: m.pb !== 9999 ? m.pb : null
+          })),
+          target_time: targetTime > 0 ? targetTime : null,
+          needs_manual_entry: teamMembers.length < teamSize && teamMembers.length !== members.length
+        };
+      });
+
+    } else if (race.race_type === '25m_brace' || race.race_type === '50m_brace') {
+      // R10.2, R10.3: Pairs (teams of 2)
+      const pbCol = race.race_type === '25m_brace' ? 'time_25m' : 'time_50m';
+      const swimmersWithPB = members.map(m => ({ ...m, pb: m[pbCol] || 9999 }));
+      swimmersWithPB.sort((a, b) => a.pb - b.pb);
+
+      // Pair fastest with slowest for balance
+      const pairs = [];
+      const pool = [...swimmersWithPB];
+      while (pool.length >= 2) {
+        const fast = pool.shift();
+        const slow = pool.pop();
+        pairs.push([fast, slow]);
+      }
+      // Odd swimmer out — solo team
+      if (pool.length === 1) {
+        pairs.push([pool[0]]);
+      }
+
+      teams = pairs.map((pair, ti) => {
+        const targetTime = pair.reduce((sum, m) => sum + (m.pb !== 9999 ? m.pb : 0), 0);
+        return {
+          team_number: ti + 1,
+          team_name: TEAM_NAMES[ti] || `Team ${ti + 1}`,
+          members: pair.map((m, mi) => ({
+            member_id: m.id,
+            name: m.name,
+            leg_order: mi + 1,
+            stroke: 'Free',
+            pb: m.pb !== 9999 ? m.pb : null
+          })),
+          target_time: targetTime > 0 ? targetTime : null,
+          needs_manual_entry: pair.length < 2
+        };
+      });
+
+    } else if (race.race_type === 'medley_relay') {
+      // R10.4: Teams of 3, different strokes
+      // Get stroke assignments from attendance.special_event_entry
+      const backstrokers = [];
+      const breaststrokers = [];
+      const freestylers = [];
+      const wildcards = []; // 'Y' = auto-assign
+
+      members.forEach(m => {
+        const entry = (m.special_event_entry || '').trim();
+        const pb = getRelayPB(m, 'medley_relay');
+        const swimmer = { ...m, pb };
+        if (entry === 'Back') backstrokers.push(swimmer);
+        else if (entry === 'Breast') breaststrokers.push(swimmer);
+        else if (entry === 'Free') freestylers.push(swimmer);
+        else wildcards.push(swimmer); // 'Y' or empty
+      });
+
+      // Auto-assign wildcards to balance stroke groups
+      wildcards.sort((a, b) => a.pb - b.pb);
+      for (const wc of wildcards) {
+        const counts = [backstrokers.length, breaststrokers.length, freestylers.length];
+        const minCount = Math.min(...counts);
+        if (backstrokers.length === minCount) backstrokers.push(wc);
+        else if (breaststrokers.length === minCount) breaststrokers.push(wc);
+        else freestylers.push(wc);
+      }
+
+      // Build teams of 3 (one per stroke)
+      const numTeams = Math.min(backstrokers.length, breaststrokers.length, freestylers.length);
+      if (numTeams === 0) {
+        return res.json({ teams: [], warning: 'Need at least 1 swimmer per stroke for medley relay' });
+      }
+
+      // Sort each group by PB for balanced distribution
+      backstrokers.sort((a, b) => a.pb - b.pb);
+      breaststrokers.sort((a, b) => a.pb - b.pb);
+      freestylers.sort((a, b) => a.pb - b.pb);
+
+      teams = [];
+      for (let i = 0; i < numTeams; i++) {
+        const back = backstrokers[i];
+        const breast = breaststrokers[i];
+        const free = freestylers[i];
+        const teamMembers = [
+          { member_id: back.id, name: back.name, leg_order: 1, stroke: 'Back', pb: back.time_backstroke || null },
+          { member_id: breast.id, name: breast.name, leg_order: 2, stroke: 'Breast', pb: breast.time_breaststroke || null },
+          { member_id: free.id, name: free.name, leg_order: 3, stroke: 'Free', pb: free.time_25m || null }
+        ];
+        const targetTime = teamMembers.reduce((sum, m) => sum + (m.pb || 0), 0);
+        teams.push({
+          team_number: i + 1,
+          team_name: TEAM_NAMES[i] || `Team ${i + 1}`,
+          members: teamMembers,
+          target_time: targetTime > 0 ? targetTime : null
+        });
+      }
+
+      // Sort team names alphabetically (Bryan's wishlist)
+      teams.sort((a, b) => a.team_name.localeCompare(b.team_name));
+      teams.forEach((t, i) => t.team_number = i + 1);
+    }
+
+    res.json({ teams });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/races/:raceId/save-relay-teams
+app.post('/api/races/:raceId/save-relay-teams', (req, res) => {
+  try {
+    const { teams } = req.body;
+    if (!Array.isArray(teams)) return res.status(400).json({ error: 'teams array required' });
+    const raceId = req.params.raceId;
+
+    // Clear existing
+    const existing = db.prepare('SELECT id FROM relay_team WHERE event_race_id = ?').all(raceId);
+    const delMembers = db.prepare('DELETE FROM relay_team_member WHERE relay_team_id = ?');
+    const delTeams = db.prepare('DELETE FROM relay_team WHERE event_race_id = ?');
+
+    const insTeam = db.prepare('INSERT INTO relay_team (event_race_id, team_number, team_name, target_time) VALUES (?, ?, ?, ?)');
+    const insMember = db.prepare('INSERT INTO relay_team_member (relay_team_id, member_id, leg_order, stroke) VALUES (?, ?, ?, ?)');
+
+    const batch = db.transaction(() => {
+      existing.forEach(t => delMembers.run(t.id));
+      delTeams.run(raceId);
+
+      teams.forEach(team => {
+        const r = insTeam.run(raceId, team.team_number, team.team_name, team.target_time || null);
+        const teamId = r.lastInsertRowid;
+        (team.members || []).forEach(m => {
+          insMember.run(teamId, m.member_id, m.leg_order, m.stroke || null);
+        });
+      });
+    });
+
+    batch();
+    db.prepare("UPDATE event_race SET status = 'heats_generated' WHERE id = ?").run(raceId);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/races/:raceId/relay-teams
+app.get('/api/races/:raceId/relay-teams', (req, res) => {
+  try {
+    const race = db.prepare('SELECT * FROM event_race WHERE id = ?').get(req.params.raceId);
+    if (!race) return res.status(404).json({ error: 'Race not found' });
+
+    const teams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? ORDER BY team_number').all(req.params.raceId);
+    const getMembers = db.prepare(`
+      SELECT rtm.*, m.name, m.time_25m, m.time_50m, m.time_75m,
+             m.time_backstroke, m.time_breaststroke, m.time_butterfly
+      FROM relay_team_member rtm
+      JOIN member m ON rtm.member_id = m.id
+      WHERE rtm.relay_team_id = ?
+      ORDER BY rtm.leg_order
+    `);
+
+    const result = teams.map(t => ({
+      ...t,
+      race_type: race.race_type,
+      members: getMembers.all(t.id)
+    }));
+    res.json(result);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// PUT /api/relay-teams/:teamId/time
+app.put('/api/relay-teams/:teamId/time', (req, res) => {
+  try {
+    const { total_time } = req.body;
+    if (total_time == null || total_time < 0) return res.status(400).json({ error: 'total_time required' });
+
+    const team = db.prepare('SELECT rt.*, er.race_type FROM relay_team rt JOIN event_race er ON rt.event_race_id = er.id WHERE rt.id = ?').get(req.params.teamId);
+    if (!team) return res.status(404).json({ error: 'Team not found' });
+
+    let variance = null;
+    if (['25m_brace', '50m_brace', 'medley_relay'].includes(team.race_type) && team.target_time) {
+      variance = total_time - team.target_time;
+    }
+
+    db.prepare('UPDATE relay_team SET total_time = ?, variance = ? WHERE id = ?').run(total_time, variance, req.params.teamId);
+    res.json({ ok: true, total_time, variance });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// PUT /api/relay-teams/:teamId/member/:memberId/split
+app.put('/api/relay-teams/:teamId/member/:memberId/split', (req, res) => {
+  try {
+    const { split_time } = req.body;
+    if (split_time == null || split_time < 0) return res.status(400).json({ error: 'split_time required' });
+
+    const member = db.prepare('SELECT * FROM relay_team_member WHERE relay_team_id = ? AND member_id = ?').get(req.params.teamId, req.params.memberId);
+    if (!member) return res.status(404).json({ error: 'Team member not found' });
+
+    db.prepare('UPDATE relay_team_member SET split_time = ? WHERE relay_team_id = ? AND member_id = ?').run(split_time, req.params.teamId, req.params.memberId);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/races/:raceId/rank-relay
+app.post('/api/races/:raceId/rank-relay', (req, res) => {
+  try {
+    const race = db.prepare('SELECT * FROM event_race WHERE id = ?').get(req.params.raceId);
+    if (!race) return res.status(404).json({ error: 'Race not found' });
+
+    const teams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(req.params.raceId);
+
+    let ranked;
+    if (['25m_brace', '50m_brace'].includes(race.race_type)) {
+      // R10.7: Nearest to target time wins (use ?? not || because variance=0 is valid!)
+      ranked = teams.sort((a, b) => Math.abs(a.variance ?? 9999) - Math.abs(b.variance ?? 9999));
+    } else if (race.race_type === 'medley_relay') {
+      // R10.10: Variance-based, smallest variance = 1st
+      ranked = teams.sort((a, b) => Math.abs(a.variance ?? 9999) - Math.abs(b.variance ?? 9999));
+    } else {
+      // 25m_relay, pogo: fastest total time wins
+      ranked = teams.sort((a, b) => a.total_time - b.total_time);
+    }
+
+    const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
+    const batch = db.transaction(() => {
+      ranked.forEach((t, i) => setPlace.run(i + 1, t.id));
+    });
+    batch();
+
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════
 //  START SERVER
 // ════════════════════════════════════════════════════════
 

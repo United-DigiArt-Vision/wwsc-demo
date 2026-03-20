@@ -63,4 +63,12 @@ const API = {
 
   // Backup
   createBackup: () => API.post('/api/backup'),
+
+  // Relays
+  generateRelayTeams: (raceId) => API.post(`/api/races/${raceId}/generate-relay-teams`),
+  saveRelayTeams: (raceId, teams) => API.post(`/api/races/${raceId}/save-relay-teams`, { teams }),
+  getRelayTeams: (raceId) => API.get(`/api/races/${raceId}/relay-teams`),
+  enterRelayTeamTime: (teamId, totalTime) => API.put(`/api/relay-teams/${teamId}/time`, { total_time: totalTime }),
+  enterRelaySplit: (teamId, memberId, splitTime) => API.put(`/api/relay-teams/${teamId}/member/${memberId}/split`, { split_time: splitTime }),
+  rankRelay: (raceId) => API.post(`/api/races/${raceId}/rank-relay`),
 };
