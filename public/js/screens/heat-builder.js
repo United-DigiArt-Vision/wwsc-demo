@@ -60,7 +60,11 @@ function drawHeatBuilder(races) {
       ${hbPreviewHeats && hbPreviewHeats.length > 0 && !hbConfirmed ? `<button class="btn btn-success" onclick="confirmHBHeats()">✓ Confirm Heats</button>` : ''}
     </div>
 
-    ${hbConfirmed ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Heats Confirmed — Ready for Pool!</strong></div>' : ''}
+    ${hbConfirmed ? `<div class="card" style="background:#e8f5e9;text-align:center;padding:12px">
+      <strong style="color:var(--success)">✓ Heats Confirmed — Ready for Pool!</strong>
+      <div style="margin-top:8px"><button class="btn btn-primary" onclick="goToResults()">→ Go to Results</button>
+      <button class="btn btn-outline" onclick="window.print()" style="margin-left:8px">🖨️ Print Heat Sheets</button></div>
+    </div>` : ''}
 
     <div id="hb-heats">
       ${hbPreviewHeats ? renderHeatTable(hbPreviewHeats) : '<div class="card"><p>Select an event and tap "Generate Heats" to create randomised heat assignments.</p></div>'}
@@ -140,6 +144,11 @@ async function confirmHBHeats() {
   await API.confirmHeats(hbSelectedRace.id, hbPreviewHeats);
   hbConfirmed = true;
   renderHeatBuilder();
+}
+
+// R7.12: Navigate to results after all heats confirmed
+function goToResults() {
+  navigate('results');
 }
 
 async function loadSavedHeats(raceId) {

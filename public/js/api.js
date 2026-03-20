@@ -52,6 +52,15 @@ const API = {
   // Dashboard
   getDashboard: () => API.get('/api/dashboard'),
 
+  // Results
+  getResults: (eventId) => API.get(`/api/events/${eventId}/results`),
+  enterTime: (heatId, laneId, finishTime) => API.put(`/api/heats/${heatId}/lanes/${laneId}/time`, { finish_time: finishTime }),
+  rankRace: (raceId) => API.post(`/api/races/${raceId}/rank`),
+  finalizeEvent: (eventId) => API.post(`/api/events/${eventId}/finalize`),
+  getBreakers: (eventId) => API.get(`/api/events/${eventId}/breakers`),
+  completeEvent: (eventId) => API.post(`/api/events/${eventId}/complete`),
+  getTimeHistory: (eventId) => API.get(`/api/events/${eventId}/time-history`),
+
   // Backup
   createBackup: () => API.post('/api/backup'),
 };

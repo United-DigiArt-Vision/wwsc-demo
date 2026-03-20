@@ -395,3 +395,35 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
 .dropdown-row .dropdown-group { flex: 1; min-width: 200px; }
 .dropdown-row label { display: block; font-size: 13px; font-weight: 600; color: #008080; margin-bottom: 4px; text-transform: uppercase; }
 .dropdown-row select { width: 100%; min-height: 44px; padding: 8px; font-size: 15px; border: 2px solid #008080; border-radius: 4px; }
+
+/* ── Results Screen Styles ───────────────────────── */
+.time-input {
+  cursor: pointer;
+  background: #fff9c4 !important;
+  font-weight: 700;
+  min-width: 70px;
+}
+.time-input:hover { background: #fff176 !important; }
+
+.break-cell { background: #c8e6c9 !important; color: #2e7d32; }
+.break-row { background: #f1f8e9; }
+
+.place-select {
+  padding: 2px 4px; font-size: 13px; font-weight: 600;
+  border: 1px solid #999; border-radius: 3px;
+  min-height: 28px; text-align: center; cursor: pointer;
+  background: white;
+}
+
+/* ── Print Styles ────────────────────────────────── */
+@media print {
+  #sidebar { display: none !important; }
+  #app { display: block !important; }
+  #content { padding: 8px !important; }
+  .btn, .toolbar select, .quick-actions, .modal-overlay { display: none !important; }
+  .spreadsheet-table { font-size: 12px; }
+  .spreadsheet-table th { background: #333 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .break-cell, .break-row { background: #e8f5e9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  h1 { font-size: 20px; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
