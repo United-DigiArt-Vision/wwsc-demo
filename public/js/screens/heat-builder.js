@@ -1,11 +1,18 @@
 /**
- * WWSC — Heat Builder Screen
- * Generate, Preview, Reshuffle, Confirm heats
+ * WWSC — Heat Builder Screen (Excel-Style Table Layout)
+ * All heats visible on one page, spreadsheet format.
  */
 let hbRaces = [];
 let hbSelectedRace = null;
 let hbPreviewHeats = null;
 let hbConfirmed = false;
+
+const RACE_LABELS = {
+  '25m': '25m Freestyle', '50m': '50m Freestyle', '75m': '75m Freestyle',
+  'backstroke': 'Backstroke', 'breaststroke': 'Breaststroke', 'butterfly': 'Butterfly',
+  '25m_relay': '25m Team Relay', '25m_brace': '25m Brace Relay',
+  '50m_brace': '50m Brace Relay', 'medley_relay': 'Medley Relay', 'pogo': 'Pogo'
+};
 
 async function renderHeatBuilder() {
   const event = await API.getCurrentEvent();
@@ -17,7 +24,6 @@ async function renderHeatBuilder() {
   }
 
   hbRaces = await API.getRaces(event.id);
-  // Filter to individual races only (not relays)
   const individualRaces = hbRaces.filter(r => ['25m','50m','75m','backstroke','breaststroke','butterfly'].includes(r.race_type));
 
   if (individualRaces.length === 0) {
@@ -31,7 +37,6 @@ async function renderHeatBuilder() {
     hbConfirmed = false;
   }
 
-  // Auto-load saved heats if already confirmed
   if (hbSelectedRace.status === 'heats_generated' && !hbPreviewHeats) {
     hbPreviewHeats = await loadSavedHeats(hbSelectedRace.id);
     hbConfirmed = true;
@@ -42,63 +47,79 @@ async function renderHeatBuilder() {
 
 function drawHeatBuilder(races) {
   const el = document.getElementById('content');
-  const raceLabels = { '25m': '25m Freestyle', '50m': '50m Freestyle', '75m': '75m Freestyle', 'backstroke': 'Backstroke', 'breaststroke': 'Breaststroke', 'butterfly': 'Butterfly' };
 
   el.innerHTML = `
     <h1>Heat Builder</h1>
 
     <div class="toolbar">
       <select class="form-control" style="max-width:300px" onchange="selectHBRace(this.value)">
-        ${races.map(r => `<option value="${r.id}" ${r.id === hbSelectedRace.id ? 'selected' : ''}>${raceLabels[r.race_type] || r.race_type} ${r.status === 'heats_generated' ? '✓' : ''}</option>`).join('')}
+        ${races.map(r => `<option value="${r.id}" ${r.id === hbSelectedRace.id ? 'selected' : ''}>${RACE_LABELS[r.race_type] || r.race_type} ${r.status === 'heats_generated' ? '✓' : ''}</option>`).join('')}
       </select>
-      <button class="btn btn-primary btn-lg" onclick="generateHBHeats()">🔀 Generate Heats</button>
-      ${hbPreviewHeats ? `<button class="btn btn-accent btn-lg" onclick="generateHBHeats()">🔄 Shuffle Again</button>` : ''}
+      <button class="btn btn-primary" onclick="generateHBHeats()">🔀 Generate Heats</button>
+      ${hbPreviewHeats ? `<button class="btn btn-accent" onclick="generateHBHeats()">🔄 Shuffle</button>` : ''}
+      ${hbPreviewHeats && hbPreviewHeats.length > 0 && !hbConfirmed ? `<button class="btn btn-success" onclick="confirmHBHeats()">✓ Confirm Heats</button>` : ''}
     </div>
+
+    ${hbConfirmed ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Heats Confirmed — Ready for Pool!</strong></div>' : ''}
 
     <div id="hb-heats">
-      ${hbPreviewHeats ? renderHeatPreview(hbPreviewHeats) : '<div class="card"><p>Select an event and tap "Generate Heats" to create randomised heat assignments.</p></div>'}
+      ${hbPreviewHeats ? renderHeatTable(hbPreviewHeats) : '<div class="card"><p>Select an event and tap "Generate Heats" to create randomised heat assignments.</p></div>'}
     </div>
-
-    ${hbPreviewHeats && hbPreviewHeats.length > 0 && !hbConfirmed ? `
-      <div class="quick-actions" style="margin-top:16px">
-        <button class="btn btn-success btn-lg btn-block" onclick="confirmHBHeats()">✓ Confirm Heats</button>
-      </div>
-    ` : ''}
-    ${hbConfirmed ? '<div class="card" style="background:#e8f5e9;text-align:center;margin-bottom:12px"><h2 style="color:var(--success)">✓ Heats Confirmed — Ready for Pool!</h2><p>Show this screen at poolside. Tap "Generate Heats" to reshuffle.</p><p style="margin-top:12px"><a href="#" onclick="navigate(\'results\')" style="color:var(--primary);font-weight:600;font-size:16px">→ Go to Results to enter times</a></p><button class="btn btn-outline" onclick="window.print()" style="margin-top:12px">🖨️ Print Heat Sheets</button></div>' : ''}
   `;
 }
 
-function renderHeatPreview(heats) {
-  if (!heats || heats.length === 0) return '<div class="card"><p>No eligible swimmers for this event (no PB times or nobody present).</p></div>';
+function renderHeatTable(heats) {
+  if (!heats || heats.length === 0) return '<div class="card"><p>No eligible swimmers (no PB times or nobody present).</p></div>';
 
-  const totalHeats = heats.length;
-  return heats.map(h => {
-    const maxTime = Math.max(...h.lanes.map(l => l.handicap_time));
-    return `
-    <div class="heat-card">
-      <div class="heat-card-header">Heat ${h.heat_number} — ${h.lanes.length} swimmer${h.lanes.length !== 1 ? 's' : ''} — Max: ${maxTime}s</div>
-      ${h.lanes.map(l => `
-        <div class="heat-lane">
-          <div class="lane-num">${l.lane_number}</div>
-          <div class="lane-name">${l.name}</div>
-          <div class="lane-delay">+${l.start_delay}s</div>
-          ${!hbConfirmed && totalHeats > 1 ? `
-            <div style="display:flex;gap:4px">
-              ${h.heat_number > 1 ? `<button class="btn btn-outline" style="min-height:36px;min-width:36px;padding:4px 8px;font-size:14px" onclick="moveSwimmerBetweenHeats(${l.member_id},'${l.name}',${h.heat_number},${h.heat_number - 1})">◀</button>` : ''}
-              ${h.heat_number < totalHeats ? `<button class="btn btn-outline" style="min-height:36px;min-width:36px;padding:4px 8px;font-size:14px" onclick="moveSwimmerBetweenHeats(${l.member_id},'${l.name}',${h.heat_number},${h.heat_number + 1})">▶</button>` : ''}
-            </div>
-          ` : ''}
-        </div>
-      `).join('')}
-    </div>
-  `}).join('');
+  let rows = '';
+  for (const heat of heats) {
+    const maxTime = Math.max(...heat.lanes.map(l => l.handicap_time));
+    for (let li = 0; li < 4; li++) {
+      const lane = heat.lanes[li];
+      const heatCell = li === 0
+        ? `<td rowspan="4" style="font-weight:700;font-size:16px;vertical-align:middle;background:#e0f2f1">Heat ${heat.heat_number}</td>`
+        : '';
+      if (lane) {
+        rows += `<tr>
+          ${heatCell}
+          <td>${lane.lane_number}</td>
+          <td class="name-cell">${lane.name}</td>
+          <td>${lane.handicap_time}s</td>
+          <td>${maxTime}s</td>
+          <td style="font-weight:700;color:var(--accent)">+${lane.start_delay}s</td>
+        </tr>`;
+      } else {
+        rows += `<tr>
+          ${heatCell}
+          <td>${li + 1}</td>
+          <td class="name-cell" style="color:#999;font-style:italic">— empty —</td>
+          <td></td><td></td><td></td>
+        </tr>`;
+      }
+    }
+  }
+
+  return `
+    <table class="spreadsheet-table">
+      <thead>
+        <tr>
+          <th>Heat</th>
+          <th style="width:50px">Lane</th>
+          <th style="text-align:left;min-width:150px">Swimmer</th>
+          <th>PB Time</th>
+          <th>Max Time</th>
+          <th>Start Delay</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
 }
 
 async function selectHBRace(raceId) {
   hbSelectedRace = hbRaces.find(r => r.id === parseInt(raceId));
   hbPreviewHeats = null;
   hbConfirmed = false;
-  // If heats already confirmed for this race, load them
   if (hbSelectedRace.status === 'heats_generated') {
     hbPreviewHeats = await loadSavedHeats(hbSelectedRace.id);
     hbConfirmed = true;
@@ -106,43 +127,9 @@ async function selectHBRace(raceId) {
   renderHeatBuilder();
 }
 
-async function moveSwimmerBetweenHeats(memberId, name, fromHeat, toHeat) {
-  // Check target heat has < 4 swimmers
-  const targetHeat = hbPreviewHeats.find(h => h.heat_number === toHeat);
-  if (targetHeat && targetHeat.lanes.length >= 4) {
-    showToast('Target heat already has 4 swimmers', 'warning');
-    return;
-  }
-
-  // Move in local preview data
-  const srcHeat = hbPreviewHeats.find(h => h.heat_number === fromHeat);
-  const laneIdx = srcHeat.lanes.findIndex(l => l.member_id === memberId);
-  if (laneIdx < 0) return;
-  const [lane] = srcHeat.lanes.splice(laneIdx, 1);
-  targetHeat.lanes.push(lane);
-
-  // Re-number lanes
-  srcHeat.lanes.forEach((l, i) => l.lane_number = i + 1);
-  targetHeat.lanes.forEach((l, i) => l.lane_number = i + 1);
-
-  // Recalculate start_delays (with +2s BASE_OFFSET matching server)
-  const recalc = (heat) => {
-    if (heat.lanes.length === 0) return;
-    const maxTime = Math.max(...heat.lanes.map(l => l.handicap_time));
-    heat.lanes.forEach(l => l.start_delay = (maxTime - l.handicap_time) + 2);
-  };
-  recalc(srcHeat);
-  recalc(targetHeat);
-
-  showToast(`${name} moved to Heat ${toHeat}`, 'info');
-  renderHeatBuilder();
-}
-
 async function generateHBHeats() {
   const result = await API.generateHeats(hbSelectedRace.id);
-  if (result.warning) {
-    showToast(result.warning, 'warning');
-  }
+  if (result.warning) alert(result.warning);
   hbPreviewHeats = result.heats;
   hbConfirmed = false;
   renderHeatBuilder();
@@ -155,7 +142,6 @@ async function confirmHBHeats() {
   renderHeatBuilder();
 }
 
-// Load saved heats from DB for confirmed races
 async function loadSavedHeats(raceId) {
   const res = await fetch(`/api/races/${raceId}/heats`);
   const heats = await res.json();

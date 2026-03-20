@@ -222,13 +222,37 @@ app.post('/api/events/reset', (req, res) => {
 });
 
 // ════════════════════════════════════════════════════════
+//  EVENT CONFIG API
+// ════════════════════════════════════════════════════════
+
+app.get('/api/events/:eventId/config', (req, res) => {
+  try {
+    const ev = db.prepare('SELECT standard_event, special_event FROM event WHERE id = ?').get(req.params.eventId);
+    if (!ev) return res.status(404).json({ error: 'Event not found' });
+    res.json({ standard_event: ev.standard_event || 'ordinary_swim', special_event: ev.special_event || null });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.put('/api/events/:eventId/config', (req, res) => {
+  try {
+    const { standard_event, special_event } = req.body;
+    db.prepare('UPDATE event SET standard_event = ?, special_event = ? WHERE id = ?')
+      .run(standard_event || 'ordinary_swim', special_event || null, req.params.eventId);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════
 //  ATTENDANCE API
 // ════════════════════════════════════════════════════════
 
 app.get('/api/events/:eventId/attendance', (req, res) => {
   try {
     const rows = db.prepare(`
-      SELECT a.*, m.name, m.is_active FROM attendance a
+      SELECT a.*, m.name, m.is_active,
+        m.time_25m, m.time_50m, m.time_75m,
+        m.time_backstroke, m.time_breaststroke, m.time_butterfly
+      FROM attendance a
       JOIN member m ON a.member_id = m.id
       WHERE a.event_id = ? AND m.is_active = 1
       ORDER BY m.name
@@ -245,9 +269,9 @@ app.put('/api/events/:eventId/attendance', (req, res) => {
     // Fix #5: validate minimum attendees
     const presentCount = attendees.filter(a => a.present).length;
     if (presentCount < 3) return res.status(400).json({ error: 'Need at least 3 swimmers' });
-    const stmt = db.prepare('UPDATE attendance SET present = ? WHERE event_id = ? AND member_id = ?');
+    const stmt = db.prepare('UPDATE attendance SET present = ?, special_event_entry = ? WHERE event_id = ? AND member_id = ?');
     const batch = db.transaction(() => {
-      attendees.forEach(a => stmt.run(a.present ? 1 : 0, req.params.eventId, a.member_id));
+      attendees.forEach(a => stmt.run(a.present ? 1 : 0, a.special_event_entry || null, req.params.eventId, a.member_id));
     });
     batch();
     res.json({ ok: true });

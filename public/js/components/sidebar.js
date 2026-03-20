@@ -1,24 +1,50 @@
 /**
- * WWSC — Sidebar Navigation
+ * WWSC — Sidebar Navigation (Dynamic based on active races)
  */
+window.activeRaces = [];
+
 function renderSidebar(activeScreen) {
-  const items = [
+  const baseItems = [
     { id: 'dashboard', icon: '🏠', label: 'Dashboard' },
     { id: 'members', icon: '👥', label: 'Members' },
-    { id: 'event-setup', icon: '📅', label: 'Event Setup' },
+    { id: 'event-setup', icon: '📋', label: 'Times Sheet' },
     { id: 'heat-builder', icon: '🔀', label: 'Heat Builder' },
+  ];
+
+  // Dynamic race items based on what was selected in Event Setup
+  const raceIcons = {
+    '25m': '🏊', '50m': '🏊', '75m': '🏊',
+    'backstroke': '🔙', 'breaststroke': '🐸', 'butterfly': '🦋',
+    '25m_relay': '👥', '25m_brace': '🤝', '50m_brace': '🤝',
+    'medley_relay': '🔄', 'pogo': '🦘'
+  };
+  const raceLabels = {
+    '25m': '25m', '50m': '50m', '75m': '75m',
+    'backstroke': 'Backstroke', 'breaststroke': 'Breaststroke', 'butterfly': 'Butterfly',
+    '25m_relay': '25m Relay', '25m_brace': '25m Brace', '50m_brace': '50m Brace',
+    'medley_relay': 'Medley', 'pogo': 'Pogo'
+  };
+
+  const raceItems = (window.activeRaces || []).map(rt => ({
+    id: `race-${rt}`,
+    icon: raceIcons[rt] || '🏊',
+    label: raceLabels[rt] || rt,
+  }));
+
+  const endItems = [
     { id: 'results', icon: '🏆', label: 'Results' },
     { id: 'calendar', icon: '📆', label: 'Season Calendar' },
   ];
 
+  const allItems = [...baseItems, ...raceItems, ...endItems];
+
   document.getElementById('sidebar').innerHTML = `
     <div class="sidebar-title">🏊 WWSC</div>
-    ${items.map(it => `
+    ${allItems.map(it => `
       <button class="nav-item ${activeScreen === it.id ? 'active' : ''}" onclick="navigate('${it.id}')">
         <span class="icon">${it.icon}</span>
         <span>${it.label}</span>
       </button>
     `).join('')}
-    <div style="margin-top:auto;padding:12px 16px;font-size:12px;color:rgba(255,255,255,0.4)">v1.0.0</div>
   `;
 }

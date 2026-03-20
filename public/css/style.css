@@ -334,13 +334,64 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
 .placeholder-card { background: var(--card-bg, #1e293b); border-radius: 12px; padding: 2rem; text-align: center; margin-top: 1rem; }
 .empty-msg { opacity: 0.6; font-style: italic; }
 
-/* ── Toast Animation ─────────────────────────────── */
-@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-/* ── Print Styles ────────────────────────────────── */
-@media print {
-  #sidebar, .btn, .toolbar, .quick-actions { display: none !important; }
-  #content { padding: 0; }
-  .heat-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
-  .heat-card-header { background: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+/* ── Spreadsheet Table (Excel-style) ─────────────── */
+.spreadsheet-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.spreadsheet-table th {
+  background: #008080; color: white; padding: 6px 8px;
+  border: 1px solid #006666; font-weight: 600; text-align: center; white-space: nowrap;
 }
+.spreadsheet-table td {
+  padding: 6px 8px; border: 1px solid #ccc; text-align: center;
+}
+.spreadsheet-table tr:hover { background: #e0f7fa; }
+.spreadsheet-table .attend-yes {
+  background: #c8e6c9; cursor: pointer; font-weight: 700; color: #2e7d32;
+}
+.spreadsheet-table .attend-no {
+  background: #ffcdd2; cursor: pointer; color: #c62828;
+}
+.spreadsheet-table .summary-row { background: #e0e0e0; font-weight: 700; }
+.spreadsheet-table td.name-cell { text-align: left; font-weight: 500; }
+.spreadsheet-table td.time-cell { color: #555; }
+
+/* ── Dropdown Row (side-by-side) ─────────────────── */
+.dropdown-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.dropdown-row .dropdown-group { flex: 1; min-width: 200px; }
+.dropdown-row label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: #008080; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.dropdown-row select {
+  width: 100%; min-height: 44px; padding: 8px 12px;
+  font-size: 15px; border: 2px solid #008080; border-radius: 4px;
+  background: white;
+}
+
+/* ── Entry Select (inline in table — like Excel dropdown) ── */
+.entry-cell { padding: 2px !important; }
+.entry-select {
+  padding: 4px 6px; font-size: 14px; font-weight: 600;
+  border: 1px solid #999; border-radius: 3px;
+  width: 100%; min-height: 32px; text-align: center;
+  cursor: pointer;
+}
+.entry-select.entry-yes { background: #c8e6c9; color: #2e7d32; }
+.entry-select.entry-no { background: #ffcdd2; color: #c62828; }
+.entry-select.entry-empty { background: #fff; color: #999; }
+
+/* ── Spreadsheet Table ───────────────────────────── */
+.spreadsheet-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.spreadsheet-table th { background: #008080; color: white; padding: 6px 8px; border: 1px solid #006666; font-weight: 600; text-align: center; white-space: nowrap; }
+.spreadsheet-table td { padding: 6px 8px; border: 1px solid #ccc; text-align: center; }
+.spreadsheet-table tr:hover { background: #e0f7fa; }
+.spreadsheet-table .attend-yes { background: #c8e6c9; cursor: pointer; font-weight: 700; color: #2e7d32; }
+.spreadsheet-table .attend-no { background: #ffcdd2; cursor: pointer; color: #c62828; }
+.spreadsheet-table .summary-row { background: #e0e0e0; font-weight: 700; }
+.spreadsheet-table td.name-cell { text-align: left; font-weight: 500; }
+.spreadsheet-table td.time-cell { color: #555; }
+
+/* ── Dropdown Row ────────────────────────────────── */
+.dropdown-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.dropdown-row .dropdown-group { flex: 1; min-width: 200px; }
+.dropdown-row label { display: block; font-size: 13px; font-weight: 600; color: #008080; margin-bottom: 4px; text-transform: uppercase; }
+.dropdown-row select { width: 100%; min-height: 44px; padding: 8px; font-size: 15px; border: 2px solid #008080; border-radius: 4px; }

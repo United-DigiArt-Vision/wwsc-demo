@@ -1,37 +1,33 @@
 /**
- * WWSC — Event Setup Screen
- * Date, Attendance, Event Selection
+ * WWSC — Event Setup Screen (Excel-Style Spreadsheet)
+ * Matches Bryan's Handicap Sheet workflow EXACTLY.
+ * Single combined Attendance & Entry column — just like Excel.
  */
 let currentEvent = null;
 let attendanceData = [];
-let selectedRaces = new Set();
+let eventConfig = { standard_event: 'ordinary_swim', special_event: null };
 
-const RACE_TYPES = {
-  standard: [
-    { id: '25m', label: '25m Freestyle' },
-    { id: '50m', label: '50m Freestyle' },
-  ],
-  special: [
-    { id: '75m', label: '75m Freestyle' },
-    { id: 'backstroke', label: 'Backstroke' },
-    { id: 'breaststroke', label: 'Breaststroke' },
-    { id: 'butterfly', label: 'Butterfly' },
-  ],
-  relays: [
-    { id: '25m_relay', label: '25m Team Relay' },
-    { id: '25m_brace', label: '25m Brace Relay' },
-    { id: '50m_brace', label: '50m Brace Relay' },
-    { id: 'medley_relay', label: 'Medley Relay' },
-    { id: 'pogo', label: 'Pogo' },
-  ]
-};
+const STANDARD_EVENTS = [
+  { id: 'ordinary_swim', label: 'Ordinary Swim' },
+  { id: '25m_brace', label: '25m Brace' },
+  { id: '50m_brace', label: '50m Brace' },
+  { id: 'pogo', label: 'Pogo' },
+];
+
+const SPECIAL_EVENTS = [
+  { id: '', label: '— None —' },
+  { id: '75m', label: '75m' },
+  { id: 'backstroke', label: 'Backstroke' },
+  { id: 'breaststroke', label: 'Breaststroke' },
+  { id: 'butterfly', label: 'Butterfly' },
+  { id: 'medley_relay', label: 'Medley Relay' },
+];
 
 async function renderEventSetup() {
   currentEvent = await API.getCurrentEvent();
   const el = document.getElementById('content');
 
   if (!currentEvent) {
-    // No event — show create form
     const today = new Date().toISOString().slice(0, 10);
     el.innerHTML = `
       <h1>Event Setup</h1>
@@ -47,111 +43,179 @@ async function renderEventSetup() {
     return;
   }
 
-  // Load attendance and races
   attendanceData = await API.getAttendance(currentEvent.id);
-  const races = await API.getRaces(currentEvent.id);
-  selectedRaces = new Set(races.map(r => r.race_type));
+  try {
+    eventConfig = await API.getEventConfig(currentEvent.id);
+    if (!eventConfig.standard_event) eventConfig.standard_event = 'ordinary_swim';
+  } catch (e) {
+    eventConfig = { standard_event: 'ordinary_swim', special_event: null };
+  }
 
   drawEventSetup();
 }
 
-let esCurrentIdx = 0; // keyboard navigation index
-
 function drawEventSetup() {
   const el = document.getElementById('content');
-  const presentCount = attendanceData.filter(a => a.present).length;
+  const attendingCount = attendanceData.filter(a => a.present).length;
+  const specialCount = attendanceData.filter(a => 
+    a.special_event_entry === 'Y' || ['Back','Breast','Free'].includes(a.special_event_entry)
+  ).length;
+  const hasSpecial = !!eventConfig.special_event;
+  const isMedley = eventConfig.special_event === 'medley_relay';
 
-  // Keyboard shortcuts for attendance
-  document.onkeydown = function(e) {
-    // Don't intercept when typing in inputs
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+  // Column header for the combined attendance & entry column
+  const entryHeader = hasSpecial ? 'Attendance &amp; entries' : 'Attendance';
 
-    const key = e.key.toLowerCase();
-    if (key === 'y' && attendanceData.length > 0) {
-      e.preventDefault();
-      if (esCurrentIdx < attendanceData.length) {
-        attendanceData[esCurrentIdx].present = 1;
-        esCurrentIdx = Math.min(esCurrentIdx + 1, attendanceData.length - 1);
-        drawEventSetup();
-      }
-    } else if (key === 'n' && attendanceData.length > 0) {
-      e.preventDefault();
-      if (esCurrentIdx < attendanceData.length) {
-        attendanceData[esCurrentIdx].present = 0;
-        esCurrentIdx = Math.min(esCurrentIdx + 1, attendanceData.length - 1);
-        drawEventSetup();
-      }
-    } else if (key === 'tab' && attendanceData.length > 0) {
-      e.preventDefault();
-      esCurrentIdx = (esCurrentIdx + 1) % attendanceData.length;
-      drawEventSetup();
-    } else if (key === 'enter') {
-      e.preventDefault();
-      const pc = attendanceData.filter(a => a.present).length;
-      if (pc >= 3) saveEventSetup();
-    }
-  };
+  // Right-side columns for special event participation (like Excel shows per-discipline Y/N columns)
+  const specialShort = getSpecialShort();
 
   el.innerHTML = `
-    <h1>Event Setup — ${currentEvent.date}</h1>
+    <div class="toolbar" style="align-items:flex-start">
+      <h1 style="margin:0">Times Sheet — ${currentEvent.date}</h1>
+      <div class="toolbar-spacer"></div>
+      <button class="btn btn-accent" onclick="doNewWeek()">🔄 New Week</button>
+    </div>
 
-    <!-- Attendance Section -->
-    <div class="card">
-      <div class="toolbar">
-        <h2>Attendance (${presentCount} present)</h2>
-        <div class="toolbar-spacer"></div>
-        <button class="btn btn-outline" onclick="toggleAllAttendance(true)">✓ All Present</button>
-        <button class="btn btn-outline" onclick="toggleAllAttendance(false)">✗ Deselect All</button>
+    <!-- Event Type Dropdowns -->
+    <div class="dropdown-row">
+      <div class="dropdown-group">
+        <label>Standard Distances</label>
+        <select id="sel-standard" onchange="onConfigChange()">
+          ${STANDARD_EVENTS.map(e => `<option value="${e.id}" ${eventConfig.standard_event === e.id ? 'selected' : ''}>${e.label}</option>`).join('')}
+        </select>
       </div>
-      <div class="att-grid">
-        ${attendanceData.map((a, idx) => `
-          <div class="att-row ${a.present ? 'present' : ''}" style="${idx === esCurrentIdx ? 'outline:3px solid var(--accent);outline-offset:-3px' : ''}" onclick="toggleAttendance(${a.member_id})">
-            <span class="att-name">${idx === esCurrentIdx ? '► ' : ''}${a.name}</span>
-            <span class="att-status">${a.present ? '✓' : '✗'}</span>
-          </div>
-        `).join('')}
+      <div class="dropdown-group">
+        <label>Special Event</label>
+        <select id="sel-special" onchange="onConfigChange()">
+          ${SPECIAL_EVENTS.map(e => `<option value="${e.id}" ${eventConfig.special_event === e.id ? 'selected' : ''}>${e.label}</option>`).join('')}
+        </select>
       </div>
     </div>
 
-    <!-- Event Selection -->
-    <div class="card">
-      <h2>Select Events</h2>
-      <div class="section-group">
-        <h3>Standard Events</h3>
-        ${RACE_TYPES.standard.map(r => raceCheckbox(r)).join('')}
-      </div>
-      <div class="section-group">
-        <h3>Special Events (choose one or more)</h3>
-        ${RACE_TYPES.special.map(r => raceCheckbox(r)).join('')}
-      </div>
-      <div class="section-group">
-        <h3>Relays</h3>
-        ${RACE_TYPES.relays.map(r => raceCheckbox(r)).join('')}
-      </div>
+    <!-- Attendance Info -->
+    <div style="display:flex;gap:16px;margin-bottom:8px;align-items:center;flex-wrap:wrap">
+      <span><strong>Attendance:</strong> ${attendingCount}</span>
+      ${hasSpecial ? `<span><strong>${specialShort}:</strong> ${specialCount}</span>` : ''}
+      <div class="toolbar-spacer"></div>
+      <button class="btn btn-outline" style="min-height:36px;padding:6px 16px;font-size:14px" onclick="toggleAllAttendance(true)">✓ Select All</button>
+      <button class="btn btn-outline" style="min-height:36px;padding:6px 16px;font-size:14px" onclick="toggleAllAttendance(false)">✗ Deselect All</button>
     </div>
 
-    <!-- Actions -->
+    <!-- Spreadsheet Table -->
+    <div style="overflow-x:auto;margin-bottom:16px">
+      <table class="spreadsheet-table">
+        <thead>
+          <tr>
+            <th style="width:35px">No.</th>
+            <th style="text-align:left;min-width:150px">Name</th>
+            <th>25m</th>
+            <th>50m</th>
+            <th>75m</th>
+            <th>Backstroke</th>
+            <th>BreastStroke</th>
+            <th>Butterfly</th>
+            <th style="min-width:90px">${entryHeader}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${attendanceData.map((a, i) => renderAttRow(a, i)).join('')}
+        </tbody>
+        <tfoot>
+          <tr class="summary-row">
+            <td></td>
+            <td style="text-align:left"><strong>Attendance</strong></td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+            <td><strong>${attendingCount}</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Action Buttons -->
     <div class="quick-actions">
-      <button class="btn btn-success btn-lg" onclick="saveEventSetup()" ${presentCount < 3 ? 'disabled' : ''}>
-        ✓ Save & Proceed to Heats →
+      <button class="btn btn-success btn-lg" onclick="doBuildHeats()" ${attendingCount < 3 ? 'disabled' : ''}>
+        🏊 Build Heats
       </button>
     </div>
-    ${presentCount < 3 ? '<p style="color:var(--danger);margin-top:8px">Need at least 3 swimmers present</p>' : ''}
+    ${attendingCount < 3 ? '<p style="color:var(--danger);margin-top:8px;font-size:14px">Need at least 3 swimmers present</p>' : ''}
   `;
 }
 
-function raceCheckbox(r) {
+function renderAttRow(a, idx) {
+  const hasSpecial = !!eventConfig.special_event;
+  const isMedley = eventConfig.special_event === 'medley_relay';
+
+  // Combined attendance & entry cell — exactly like Bryan's Excel
+  let entryCell;
+  if (hasSpecial) {
+    if (isMedley) {
+      const cls = getEntryCls(a);
+      entryCell = `<td class="entry-cell">
+        <select class="entry-select ${cls}" 
+                onchange="setEntry(${a.member_id}, this.value)" onclick="event.stopPropagation()">
+          <option value="" ${!a.present ? 'selected' : ''}>—</option>
+          <option value="Y" ${a.present && a.special_event_entry === 'Y' ? 'selected' : ''}>Y</option>
+          <option value="N" ${a.present && (!a.special_event_entry || a.special_event_entry === 'N') ? 'selected' : ''}>N</option>
+          <option value="Back" ${a.present && a.special_event_entry === 'Back' ? 'selected' : ''}>Back</option>
+          <option value="Breast" ${a.present && a.special_event_entry === 'Breast' ? 'selected' : ''}>Breast</option>
+          <option value="Free" ${a.present && a.special_event_entry === 'Free' ? 'selected' : ''}>Free</option>
+        </select>
+      </td>`;
+    } else {
+      const cls = getEntryCls(a);
+      entryCell = `<td class="entry-cell">
+        <select class="entry-select ${cls}"
+                onchange="setEntry(${a.member_id}, this.value)" onclick="event.stopPropagation()">
+          <option value="" ${!a.present ? 'selected' : ''}>—</option>
+          <option value="Y" ${a.present && a.special_event_entry === 'Y' ? 'selected' : ''}>Y</option>
+          <option value="N" ${a.present && (!a.special_event_entry || a.special_event_entry === 'N') ? 'selected' : ''}>N</option>
+        </select>
+      </td>`;
+    }
+  } else {
+    // No special event — simple attendance toggle (click to toggle)
+    const cls = a.present ? 'attend-yes' : 'attend-no';
+    const txt = a.present ? '✓' : '';
+    entryCell = `<td class="${cls}" onclick="toggleAttendance(${a.member_id})" style="cursor:pointer;font-weight:700">${txt}</td>`;
+  }
+
   return `
-    <div class="event-check" onclick="toggleRace('${r.id}')">
-      <input type="checkbox" ${selectedRaces.has(r.id) ? 'checked' : ''} onclick="event.stopPropagation();toggleRace('${r.id}')">
-      <label>${r.label}</label>
-    </div>
+    <tr>
+      <td>${idx + 1}</td>
+      <td class="name-cell">${a.name}</td>
+      <td class="time-cell">${a.time_25m ?? '—'}</td>
+      <td class="time-cell">${a.time_50m ?? '—'}</td>
+      <td class="time-cell">${a.time_75m ?? '—'}</td>
+      <td class="time-cell">${a.time_backstroke ?? '—'}</td>
+      <td class="time-cell">${a.time_breaststroke ?? '—'}</td>
+      <td class="time-cell">${a.time_butterfly ?? '—'}</td>
+      ${entryCell}
+    </tr>
   `;
 }
+
+function getEntryCls(a) {
+  if (!a.present) return 'entry-empty';
+  const val = a.special_event_entry || 'N';
+  if (val === 'N') return 'entry-no';
+  return 'entry-yes'; // Y, Back, Breast, Free = all positive
+}
+
+function getSpecialLabel() {
+  const found = SPECIAL_EVENTS.find(e => e.id === eventConfig.special_event);
+  return found ? found.label : '';
+}
+
+function getSpecialShort() {
+  const map = { '75m': '75m', 'backstroke': 'Back', 'breaststroke': 'Breast', 'butterfly': 'Fly', 'medley_relay': 'Medley' };
+  return map[eventConfig.special_event] || 'Special';
+}
+
+// ── Actions ─────────────────────────────────────────
 
 async function createNewEvent() {
   const date = document.getElementById('event-date').value;
-  if (!date) return showToast('Please select a date', 'warning');
+  if (!date) return alert('Please select a date');
   await API.createEvent(date);
   renderEventSetup();
 }
@@ -163,25 +227,84 @@ function toggleAttendance(memberId) {
 }
 
 function toggleAllAttendance(present) {
-  attendanceData.forEach(a => a.present = present ? 1 : 0);
+  attendanceData.forEach(a => {
+    a.present = present ? 1 : 0;
+    if (!present) a.special_event_entry = null;
+  });
   drawEventSetup();
 }
 
-function toggleRace(raceId) {
-  if (selectedRaces.has(raceId)) selectedRaces.delete(raceId);
-  else selectedRaces.add(raceId);
+function setEntry(memberId, value) {
+  const a = attendanceData.find(x => x.member_id === memberId);
+  if (!a) return;
+  if (value === '' || value === '—') {
+    // Empty = not attending
+    a.present = 0;
+    a.special_event_entry = null;
+  } else {
+    // Any value (Y, N, Back, Breast, Free) = attending
+    a.present = 1;
+    a.special_event_entry = value;
+  }
   drawEventSetup();
 }
 
-async function saveEventSetup() {
-  if (selectedRaces.size === 0) return showToast('Please select at least one event', 'warning');
-  const presentCount = attendanceData.filter(a => a.present).length;
-  if (presentCount < 3) return showToast('Need at least 3 swimmers present', 'warning');
+async function onConfigChange() {
+  eventConfig.standard_event = document.getElementById('sel-standard').value;
+  eventConfig.special_event = document.getElementById('sel-special').value || null;
+  await API.updateEventConfig(currentEvent.id, eventConfig);
+  drawEventSetup();
+}
 
+async function doNewWeek() {
+  if (!confirm('Start a new week? This will archive the current event and create a new one.')) return;
+  await API.resetWeek();
+  renderEventSetup();
+}
+
+async function doBuildHeats() {
+  const attendingCount = attendanceData.filter(a => a.present).length;
+  if (attendingCount < 3) return alert('Need at least 3 swimmers present');
+
+  // Save attendance
   await API.updateAttendance(currentEvent.id, attendanceData.map(a => ({
-    member_id: a.member_id, present: a.present
+    member_id: a.member_id,
+    present: a.present,
+    special_event_entry: a.special_event_entry || null
   })));
-  await API.updateRaces(currentEvent.id, [...selectedRaces]);
 
+  // Save config
+  await API.updateEventConfig(currentEvent.id, eventConfig);
+
+  // Determine race types from config
+  const raceTypes = buildRaceTypes();
+  await API.updateRaces(currentEvent.id, raceTypes);
+
+  // Update sidebar with active races
+  window.activeRaces = raceTypes;
+  renderSidebar('heat-builder');
+
+  // Navigate to heat builder
   navigate('heat-builder');
+}
+
+function buildRaceTypes() {
+  const types = [];
+  // Standard always includes 25m + 50m individual
+  types.push('25m', '50m');
+  
+  // Add standard event relay
+  const std = eventConfig.standard_event;
+  if (std === '25m_brace') types.push('25m_brace');
+  else if (std === '50m_brace') types.push('50m_brace');
+  else if (std === 'pogo') types.push('pogo');
+  types.push('25m_relay'); // always have team relay
+
+  // Add special event
+  const special = eventConfig.special_event;
+  if (special && special !== '') {
+    types.push(special);
+  }
+
+  return [...new Set(types)];
 }

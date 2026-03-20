@@ -35,10 +35,12 @@ function initSchema() {
     );
 
     CREATE TABLE IF NOT EXISTS event (
-      id          INTEGER PRIMARY KEY AUTOINCREMENT,
-      date        TEXT NOT NULL,
-      status      TEXT NOT NULL DEFAULT 'setup',
-      created_at  TEXT NOT NULL
+      id              INTEGER PRIMARY KEY AUTOINCREMENT,
+      date            TEXT NOT NULL,
+      status          TEXT NOT NULL DEFAULT 'setup',
+      created_at      TEXT NOT NULL,
+      standard_event  TEXT DEFAULT 'ordinary_swim',
+      special_event   TEXT
     );
 
     CREATE TABLE IF NOT EXISTS event_race (
@@ -49,10 +51,11 @@ function initSchema() {
     );
 
     CREATE TABLE IF NOT EXISTS attendance (
-      id        INTEGER PRIMARY KEY AUTOINCREMENT,
-      event_id  INTEGER NOT NULL REFERENCES event(id),
-      member_id INTEGER NOT NULL REFERENCES member(id),
-      present   INTEGER NOT NULL DEFAULT 0,
+      id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_id            INTEGER NOT NULL REFERENCES event(id),
+      member_id           INTEGER NOT NULL REFERENCES member(id),
+      present             INTEGER NOT NULL DEFAULT 0,
+      special_event_entry TEXT,
       UNIQUE(event_id, member_id)
     );
 
@@ -156,6 +159,21 @@ function runMigrations() {
       db.exec(`ALTER TABLE member ADD COLUMN ${col} INTEGER`);
     }
   });
+
+  // Add event config columns
+  const eventCols = db.prepare("PRAGMA table_info(event)").all().map(c => c.name);
+  if (!eventCols.includes('standard_event')) {
+    db.exec("ALTER TABLE event ADD COLUMN standard_event TEXT DEFAULT 'ordinary_swim'");
+  }
+  if (!eventCols.includes('special_event')) {
+    db.exec("ALTER TABLE event ADD COLUMN special_event TEXT");
+  }
+
+  // Add special_event_entry to attendance
+  const attCols = db.prepare("PRAGMA table_info(attendance)").all().map(c => c.name);
+  if (!attCols.includes('special_event_entry')) {
+    db.exec("ALTER TABLE attendance ADD COLUMN special_event_entry TEXT");
+  }
 }
 
 runMigrations();
