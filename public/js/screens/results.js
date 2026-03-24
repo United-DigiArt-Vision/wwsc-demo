@@ -33,10 +33,16 @@ async function renderResults() {
     return;
   }
 
+  // F2: If navigated from sidebar race link, pre-select that race
+  if (window._pendingRaceType) {
+    const pending = resRaces.find(r => r.race_type === window._pendingRaceType);
+    if (pending) resSelectedRace = pending;
+    window._pendingRaceType = null;
+  }
+
   if (!resSelectedRace || !resRaces.find(r => r.id === resSelectedRace.id)) {
     resSelectedRace = resRaces[0];
   } else {
-    // Refresh data for selected race
     resSelectedRace = resRaces.find(r => r.id === resSelectedRace.id);
   }
 
@@ -69,13 +75,14 @@ function drawResults() {
       </select>
       ${!resFinalized ? `
         <button class="btn btn-primary" onclick="calculateResults()" ${!anyTimesEntered ? 'disabled' : ''}>📊 Calculate Results</button>
-        <button class="btn btn-success" onclick="doFinalizeEvent()" ${!allTimesEntered ? 'disabled' : ''}>✅ Finalize Event</button>
+        <button class="btn btn-success" onclick="doFinalizeEvent(${allTimesEntered ? 'true' : 'false'})">✅ Finalize Event</button>
       ` : ''}
       ${resFinalized && !resCompleted ? `
         <button class="btn btn-accent" onclick="doCompleteEvent()">📦 Complete & Archive</button>
       ` : ''}
     </div>
 
+    ${resHasRelays && !resFinalized ? '<div class="card" style="background:#e3f2fd;text-align:center;padding:10px"><span style="color:var(--primary)">📋 Relay results are on a separate screen →</span> <button class="btn btn-accent" onclick="navigate(\'relays\')" style="margin-left:8px;min-height:32px;padding:4px 12px">🏊 View Relays</button></div>' : ''}
     ${resFinalized ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — PBs updated, breakers recorded</strong></div>' : ''}
     ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>📦 Event Archived</strong></div>' : ''}
 
@@ -216,19 +223,31 @@ async function calculateResults() {
   });
 }
 
-async function doFinalizeEvent() {
-  confirmDialog('Finalize Event?',
-    'This will update PBs for any record breakers and lock the results. This cannot be undone.',
-    async () => {
-      const result = await API.finalizeEvent(resEvent.id);
-      if (result.error) {
-        alert('Error: ' + result.error);
-        return;
+async function doFinalizeEvent(allComplete) {
+  // F1: Count swimmers without times across ALL individual races
+  let missingCount = 0;
+  for (const race of resRaces) {
+    if (!race.heats) continue;
+    for (const heat of race.heats) {
+      for (const lane of heat.lanes) {
+        if (lane.finish_time == null) missingCount++;
       }
-      alert(`Event finalized! ${result.breakers_count} record breaker${result.breakers_count !== 1 ? 's' : ''} found.`);
-      renderResults();
     }
-  );
+  }
+
+  const warningText = missingCount > 0
+    ? `⚠️ ${missingCount} swimmer${missingCount !== 1 ? 's have' : ' has'} no finish time and will be skipped.\n\nThis will update PBs for any record breakers and lock the results. This cannot be undone.`
+    : 'This will update PBs for any record breakers and lock the results. This cannot be undone.';
+
+  confirmDialog('Finalize Event?', warningText, async () => {
+    const result = await API.finalizeEvent(resEvent.id);
+    if (result.error) {
+      alert('Error: ' + result.error);
+      return;
+    }
+    alert(`Event finalized! ${result.breakers_count} record breaker${result.breakers_count !== 1 ? 's' : ''} found.${missingCount > 0 ? ' (' + missingCount + ' swimmers without times were skipped)' : ''}`);
+    renderResults();
+  });
 }
 
 async function doCompleteEvent() {

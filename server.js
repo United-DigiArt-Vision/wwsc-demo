@@ -346,7 +346,7 @@ function shuffle(arr) {
 }
 
 // Build heats from swimmers array (each has {id, name, handicap_time})
-const BASE_OFFSET = 2; // Bryan's Excel: slowest swimmer starts at +2s, not 0s
+const BASE_OFFSET = 0; // F3 fix: Delay = MaxTime - PB, no offset
 
 function buildHeats(swimmers) {
   const MAX_PER_HEAT = 4;

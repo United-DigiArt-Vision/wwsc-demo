@@ -25,10 +25,12 @@ function renderSidebar(activeScreen) {
     'medley_relay': 'Medley', 'pogo': 'Pogo'
   };
 
+  const relayTypes = ['25m_relay', '25m_brace', '50m_brace', 'medley_relay', 'pogo'];
   const raceItems = (window.activeRaces || []).map(rt => ({
-    id: `race-${rt}`,
+    id: relayTypes.includes(rt) ? `relay-${rt}` : `race-${rt}`,
     icon: raceIcons[rt] || '🏊',
     label: raceLabels[rt] || rt,
+    raceType: rt,
   }));
 
   const endItems = [

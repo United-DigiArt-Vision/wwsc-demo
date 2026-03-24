@@ -29,6 +29,18 @@ async function renderRelays() {
     return;
   }
 
+  // F2: If navigated from sidebar relay link, pre-select that race
+  if (window._pendingRelayType) {
+    const pending = relayRaces.find(r => r.race_type === window._pendingRelayType);
+    if (pending) {
+      relaySelectedRace = pending;
+      relayTeams = null;
+      relayConfirmed = false;
+      relayRanked = false;
+    }
+    window._pendingRelayType = null;
+  }
+
   if (!relaySelectedRace || !relayRaces.find(r => r.id === relaySelectedRace.id)) {
     relaySelectedRace = relayRaces[0];
     relayTeams = null;
@@ -75,14 +87,19 @@ function drawRelays() {
         <button class="btn btn-primary" onclick="generateRelayTeams()">🔀 Generate Teams</button>
         ${relayTeams && relayTeams.length > 0 ? '<button class="btn btn-accent" onclick="generateRelayTeams()">🔄 Shuffle</button>' : ''}
         ${relayTeams && relayTeams.length > 0 ? '<button class="btn btn-success" onclick="confirmRelayTeams()">✓ Confirm Teams</button>' : ''}
-      ` : ''}
-      ${relayConfirmed && !relayRanked ? `
-        <button class="btn btn-primary" onclick="calculateRelayResults()" ${!anyTimesEntered ? 'disabled' : ''}>📊 Calculate Results</button>
-      ` : ''}
+      ` : `
+        <button class="btn btn-accent" onclick="reshuffleRelayTeams()">🔄 Re-Shuffle Teams</button>
+        ${!relayRanked ? `<button class="btn btn-primary" onclick="calculateRelayResults()" ${!anyTimesEntered ? 'disabled' : ''}>📊 Calculate Results</button>` : ''}
+      `}
     </div>
 
     ${relayConfirmed ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Teams Confirmed</strong></div>' : ''}
-    ${relayRanked ? '<div class="card" style="background:#e0f2f1;text-align:center;padding:12px"><strong style="color:var(--primary)">🏆 Results Calculated</strong></div>' : ''}
+    ${relayRanked ? (() => {
+      const teamsWithTime = relayTeams ? relayTeams.filter(t => t.total_time != null).length : 0;
+      const totalTeams = relayTeams ? relayTeams.length : 0;
+      const missingNote = teamsWithTime < totalTeams ? ' (' + (totalTeams - teamsWithTime) + ' teams without times — not ranked)' : '';
+      return '<div class="card" style="background:#e0f2f1;text-align:center;padding:12px"><strong style="color:var(--primary)">🏆 Results Calculated — ' + teamsWithTime + '/' + totalTeams + ' teams ranked' + missingNote + '</strong></div>';
+    })() : ''}
 
     <div style="overflow-x:auto;margin-bottom:16px">
       ${relayTeams && relayTeams.length > 0 ? renderRelayTable(relayTeams, race) : '<div class="card"><p>Tap "Generate Teams" to create balanced relay teams.</p></div>'}
@@ -155,16 +172,16 @@ function renderRelayTable(teams, race) {
       <div class="card" style="margin-bottom:12px;padding:0;overflow:hidden">
         <div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center">
           <span>${teamHeader}${needsManual ? ' ⚠️ Manual Entry' : ''}</span>
-          <span style="font-weight:400;font-size:13px;color:#666">${targetDisplay}</span>
+          <span style="font-weight:400;font-size:13px;color:#666">${targetDisplay ? targetDisplay + ' ' : ''}${tooltip('Target = sum of all team members PBs. Team Total = actual relay time. Tap Team Total to enter the stopwatch time.')}</span>
         </div>
         <table class="spreadsheet-table" style="margin:0">
           <thead>
             <tr>
-              <th style="width:50px">Leg</th>
+              <th style="width:50px">Leg ${tooltip('Order in which swimmers race in the relay (1st, 2nd, 3rd, 4th).')}</th>
               <th style="text-align:left;min-width:140px">Swimmer</th>
-              <th>Stroke</th>
-              ${showSplits ? '<th style="min-width:80px">Split</th>' : ''}
-              <th>PB</th>
+              <th>Stroke ${tooltip('Swimming style for this leg. For standard relays all swim freestyle. For Medley each swimmer has a different stroke.')}</th>
+              ${showSplits ? '<th style="min-width:80px">Split ' + tooltip('Individual split time — how long THIS swimmer took for their leg. Tap to enter.') + '</th>' : ''}
+              <th>PB ${tooltip('Personal Best time for the relevant distance.')}</th>
             </tr>
           </thead>
           <tbody>
@@ -222,6 +239,15 @@ async function selectRelayRace(raceId) {
     }
   }
   drawRelays();
+}
+
+async function reshuffleRelayTeams() {
+  confirmDialog('Re-Shuffle Teams?', 'This will discard current teams and any entered times. Are you sure?', async () => {
+    relayConfirmed = false;
+    relayRanked = false;
+    relayTeams = null;
+    await generateRelayTeams();
+  });
 }
 
 async function generateRelayTeams() {
