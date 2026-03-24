@@ -99,7 +99,7 @@ function drawEventSetup() {
 
     <!-- Attendance Info -->
     <div style="display:flex;gap:16px;margin-bottom:8px;align-items:center;flex-wrap:wrap">
-      <span><strong>Attendance ${tooltip('Tap a swimmer\\'s checkbox to mark them present. Use Select All / Deselect All for quick changes.')}:</strong> ${attendingCount}</span>
+      <span><strong>Attendance ${tooltip('Tap a checkbox to mark swimmers as present. Use Select All / Deselect All for quick changes.')}:</strong> ${attendingCount}</span>
       ${hasSpecial ? `<span><strong>${specialShort}:</strong> ${specialCount}</span>` : ''}
       <div class="toolbar-spacer"></div>
       <button class="btn btn-outline" style="min-height:36px;padding:6px 16px;font-size:14px" onclick="toggleAllAttendance(true)">✓ Select All</button>
