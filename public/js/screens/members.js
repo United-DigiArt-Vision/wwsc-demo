@@ -109,7 +109,11 @@ function showAddMemberModal() {
 
 async function showEditMemberModal(id) {
   const m = await API.getMember(id);
-  showModal('Edit Member', memberFormHtml(m), [
+  showModal('Edit Member', memberFormHtml(m) + `
+    <div style="border-top:1px solid #eee;margin-top:16px;padding-top:16px">
+      <button class="btn" style="background:#dc3545;color:white;width:100%" onclick="deleteMember(${id})">🗑️ Delete Member</button>
+    </div>
+  `, [
     { label: 'Cancel', cls: 'btn-outline' },
     { label: 'Save', cls: 'btn-primary', action: async () => {
       const data = getMemberFormData(true);
@@ -119,6 +123,17 @@ async function showEditMemberModal(id) {
       renderMembers();
     }}
   ]);
+}
+
+async function deleteMember(id) {
+  const m = membersCache.find(x => x.id === id);
+  const name = m ? m.name : 'this member';
+  if (!confirm('Delete ' + name + '? This cannot be undone. All history for this member will be lost.')) return;
+  const resp = await fetch('/api/members/' + id, { method: 'DELETE' });
+  const result = await resp.json();
+  if (result.error) { alert('Error: ' + result.error); return; }
+  hideModal();
+  renderMembers();
 }
 
 function showImportModal() {

@@ -9,11 +9,13 @@ let relayEvent = null;
 let relayTeams = null;
 let relayConfirmed = false;
 let relayRanked = false;
+let relayEventFinalized = false;
 
 const RELAY_RACE_TYPES = ['25m_relay', '25m_brace', '50m_brace', 'medley_relay', 'pogo'];
 
 async function renderRelays() {
   relayEvent = await API.getCurrentEvent();
+  relayEventFinalized = relayEvent && (relayEvent.status === 'finalized' || relayEvent.status === 'completed');
   const el = document.getElementById('content');
 
   if (!relayEvent) {
@@ -132,7 +134,7 @@ function renderRelayTable(teams, race) {
 
       // Split time cell
       let splitCell;
-      if (relayConfirmed && showSplits) {
+      if (relayConfirmed && showSplits && !relayEventFinalized) {
         splitCell = `<td class="time-input" onclick="enterRelaySplit(${team.id}, ${m.member_id}, ${m.split_time || 0})" style="cursor:pointer;font-weight:700">${m.split_time != null ? m.split_time + 's' : '⏱️ Tap'}</td>`;
       } else if (showSplits) {
         splitCell = `<td class="time-cell">—</td>`;
@@ -151,7 +153,7 @@ function renderRelayTable(teams, race) {
 
     // Team total row
     let totalTimeCell;
-    if (relayConfirmed) {
+    if (relayConfirmed && !relayEventFinalized) {
       totalTimeCell = `<td class="time-input" onclick="enterRelayTeamTime(${team.id}, ${team.total_time || 0})" style="cursor:pointer;font-weight:700;font-size:16px">${team.total_time != null ? team.total_time + 's' : '⏱️ Tap'}</td>`;
     } else {
       totalTimeCell = `<td class="time-cell">—</td>`;

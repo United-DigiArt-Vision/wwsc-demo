@@ -64,12 +64,17 @@ app.put('/api/members/:id', (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Fix #3: DELETE member (soft-delete)
+// F12: DELETE member (permanent delete)
 app.delete('/api/members/:id', (req, res) => {
   try {
     const m = db.prepare('SELECT * FROM member WHERE id = ?').get(req.params.id);
     if (!m) return res.status(404).json({ error: 'Member not found' });
-    db.prepare('UPDATE member SET is_active = 0 WHERE id = ?').run(req.params.id);
+    // Delete related data first
+    db.prepare('DELETE FROM attendance WHERE member_id = ?').run(req.params.id);
+    db.prepare('DELETE FROM time_history WHERE member_id = ?').run(req.params.id);
+    db.prepare('DELETE FROM heat_lane WHERE member_id = ?').run(req.params.id);
+    db.prepare('DELETE FROM relay_team_member WHERE member_id = ?').run(req.params.id);
+    db.prepare('DELETE FROM member WHERE id = ?').run(req.params.id);
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });

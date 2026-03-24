@@ -14,22 +14,13 @@ const screens = {
 };
 
 function navigate(screen) {
-  // F2: Handle race-{type} sidebar links → go to results with that race pre-selected
-  if (screen.startsWith('race-')) {
-    const raceType = screen.replace('race-', '');
-    window._pendingRaceType = raceType;
-    currentScreen = 'results';
+  // F17: All race links go to Heat Builder with that race pre-selected
+  if (screen.startsWith('race-') || screen.startsWith('relay-')) {
+    const raceType = screen.replace('race-', '').replace('relay-', '');
+    window._pendingHBRaceType = raceType;
+    currentScreen = 'heat-builder';
     renderSidebar(screen);
-    renderResults();
-    return;
-  }
-  // F2: Handle relay-{type} sidebar links → go to relays with that race pre-selected
-  if (screen.startsWith('relay-')) {
-    const raceType = screen.replace('relay-', '');
-    window._pendingRelayType = raceType;
-    currentScreen = 'relays';
-    renderSidebar(screen);
-    renderRelays();
+    renderHeatBuilder();
     return;
   }
   currentScreen = screen;

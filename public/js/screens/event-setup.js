@@ -73,9 +73,10 @@ function drawEventSetup() {
     <div class="toolbar" style="align-items:flex-start">
       <h1 style="margin:0">Times Sheet</h1>
       <div class="date-picker-inline">
-        <span class="date-label">📅</span>
-        <input type="date" id="event-date-edit" value="${currentEvent.date}" onchange="updateEventDate(this.value)" class="date-input-visible">
-        <span class="date-hint">tap to change</span>
+        <button class="btn btn-outline date-picker-btn" onclick="document.getElementById('event-date-edit').showPicker()" style="font-size:16px;padding:8px 16px;min-height:44px">
+          📅 ${formatDateNice(currentEvent.date)}
+        </button>
+        <input type="date" id="event-date-edit" value="${currentEvent.date}" onchange="updateEventDate(this.value);drawEventSetup()" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
       </div>
       <div class="toolbar-spacer"></div>
       <button class="btn btn-outline" onclick="doNewWeek()" style="color:#999;border-color:#ccc;font-size:13px">🔄 Discard & Start New Event</button>
@@ -214,6 +215,14 @@ function getSpecialLabel() {
 function getSpecialShort() {
   const map = { '75m': '75m', 'backstroke': 'Back', 'breaststroke': 'Breast', 'butterfly': 'Fly', 'medley_relay': 'Medley' };
   return map[eventConfig.special_event] || 'Special';
+}
+
+function formatDateNice(dateStr) {
+  if (!dateStr) return 'Select Date';
+  const d = new Date(dateStr + 'T12:00:00');
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
 }
 
 // ── Actions ─────────────────────────────────────────

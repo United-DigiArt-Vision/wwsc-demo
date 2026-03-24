@@ -1,7 +1,10 @@
 /**
  * WWSC — Sidebar Navigation (Dynamic based on active races)
+ * F13+F19: Individual races first, then separator, then Relays
  */
 window.activeRaces = [];
+
+const RELAY_TYPES = ['25m_relay', '25m_brace', '50m_brace', 'medley_relay', 'pogo'];
 
 function renderSidebar(activeScreen) {
   const baseItems = [
@@ -11,7 +14,6 @@ function renderSidebar(activeScreen) {
     { id: 'heat-builder', icon: '🔀', label: 'Heat Builder' },
   ];
 
-  // Dynamic race items based on what was selected in Event Setup
   const raceIcons = {
     '25m': '🏊', '50m': '🏊', '75m': '🏊',
     'backstroke': '🔙', 'breaststroke': '🐸', 'butterfly': '🦋',
@@ -25,12 +27,16 @@ function renderSidebar(activeScreen) {
     'medley_relay': 'Medley', 'pogo': 'Pogo'
   };
 
-  const relayTypes = ['25m_relay', '25m_brace', '50m_brace', 'medley_relay', 'pogo'];
-  const raceItems = (window.activeRaces || []).map(rt => ({
-    id: relayTypes.includes(rt) ? `relay-${rt}` : `race-${rt}`,
-    icon: raceIcons[rt] || '🏊',
-    label: raceLabels[rt] || rt,
-    raceType: rt,
+  const allRaces = window.activeRaces || [];
+  const individualRaces = allRaces.filter(rt => !RELAY_TYPES.includes(rt));
+  const relayRaces = allRaces.filter(rt => RELAY_TYPES.includes(rt));
+
+  const individualItems = individualRaces.map(rt => ({
+    id: `race-${rt}`, icon: raceIcons[rt] || '🏊', label: raceLabels[rt] || rt, raceType: rt,
+  }));
+
+  const relayItems = relayRaces.map(rt => ({
+    id: `relay-${rt}`, icon: raceIcons[rt] || '🏊', label: raceLabels[rt] || rt, raceType: rt,
   }));
 
   const endItems = [
@@ -38,16 +44,40 @@ function renderSidebar(activeScreen) {
     { id: 'calendar', icon: '📆', label: 'Season Calendar' },
   ];
 
-  const allItems = [...baseItems, ...raceItems, ...endItems];
+  let html = `<div class="sidebar-title">🏊 WWSC</div>`;
 
-  document.getElementById('sidebar').innerHTML = `
-    <div class="sidebar-title">🏊 WWSC</div>
-    ${allItems.map(it => `
-      <button class="nav-item ${activeScreen === it.id ? 'active' : ''}" onclick="navigate('${it.id}')">
-        <span class="icon">${it.icon}</span>
-        <span>${it.label}</span>
-      </button>
-    `).join('')}
-    <div class="sidebar-version">v2.1.1-m1</div>
-  `;
+  // Base nav items
+  for (const it of baseItems) {
+    html += sidebarButton(it, activeScreen);
+  }
+
+  // Individual races
+  if (individualItems.length > 0) {
+    html += `<div class="sidebar-separator">── Individual ──</div>`;
+    for (const it of individualItems) {
+      html += sidebarButton(it, activeScreen);
+    }
+  }
+
+  // Relay races
+  if (relayItems.length > 0) {
+    html += `<div class="sidebar-separator">── Relays ──</div>`;
+    for (const it of relayItems) {
+      html += sidebarButton(it, activeScreen);
+    }
+  }
+
+  // End items
+  for (const it of endItems) {
+    html += sidebarButton(it, activeScreen);
+  }
+
+  html += `<div class="sidebar-version">v2.1.2-m1</div>`;
+  document.getElementById('sidebar').innerHTML = html;
+}
+
+function sidebarButton(item, activeScreen) {
+  return `<button class="nav-item ${activeScreen === item.id ? 'active' : ''}" onclick="navigate('${item.id}')">
+    <span class="icon">${item.icon}</span><span>${item.label}</span>
+  </button>`;
 }

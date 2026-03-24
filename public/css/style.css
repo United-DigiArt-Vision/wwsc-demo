@@ -459,6 +459,34 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
   background: white;
 }
 
+/* ── Progress Tracker (F18) ──────────────────────── */
+.progress-tracker {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+  padding: 12px; background: #f5f5f5; border-radius: 8px;
+}
+.progress-section {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+}
+.progress-label {
+  font-size: 12px; font-weight: 700; color: #666;
+  text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px;
+}
+.progress-item {
+  padding: 6px 12px; border-radius: 6px; border: 2px solid #ddd;
+  background: white; font-size: 13px; cursor: pointer;
+  min-height: 36px; font-weight: 500;
+}
+.progress-item.done { border-color: var(--success); background: #e8f5e9; }
+.progress-item.active { border-color: var(--primary); background: #e3f2fd; font-weight: 700; }
+.progress-item:hover { background: #e3f2fd; }
+
+/* ── Sidebar Separator ───────────────────────────── */
+.sidebar-separator {
+  padding: 6px 16px; font-size: 11px; color: #888;
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.1);
+}
+
 /* ── Info Tooltips (ⓘ) ─────────────────────────── */
 .info-tip {
   display: inline-flex; align-items: center; justify-content: center;
