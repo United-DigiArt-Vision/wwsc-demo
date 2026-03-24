@@ -78,7 +78,7 @@ function drawEventSetup() {
         <span class="date-hint">tap to change</span>
       </div>
       <div class="toolbar-spacer"></div>
-      <button class="btn btn-accent" onclick="doNewWeek()">🔄 New Week</button>
+      <button class="btn btn-outline" onclick="doNewWeek()" style="color:#999;border-color:#ccc;font-size:13px">🔄 Discard & Start New Event</button>
     </div>
 
     <!-- Event Type Dropdowns -->
@@ -272,7 +272,7 @@ async function onConfigChange() {
 }
 
 async function doNewWeek() {
-  if (!confirm('Start a new week? This will archive the current event and create a new one.')) return;
+  if (!confirm('Start a new event? The current event will be archived. All results and PBs are saved.')) return;
   await API.resetWeek();
   renderEventSetup();
 }
