@@ -11,7 +11,7 @@ let relayConfirmed = false;
 let relayRanked = false;
 let relayEventFinalized = false;
 
-const RELAY_RACE_TYPES = ['25m_relay', '25m_brace', '50m_brace', 'medley_relay', 'pogo'];
+// RELAY_RACE_TYPES defined in heat-builder.js (loaded before this file)
 
 async function renderRelays() {
   relayEvent = await API.getCurrentEvent();
