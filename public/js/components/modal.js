@@ -16,7 +16,7 @@ function showModal(title, bodyHtml, actions) {
     const btn = document.createElement('button');
     btn.className = `btn ${a.cls || 'btn-outline'}`;
     btn.textContent = a.label;
-    btn.onclick = () => { hideModal(); if (a.action) a.action(); };
+    btn.onclick = async () => { if (a.action) { await a.action(); } else { hideModal(); } };
     actionsEl.appendChild(btn);
   });
 }
@@ -29,6 +29,6 @@ function hideModal() {
 function confirmDialog(title, message, onConfirm) {
   showModal(title, `<p>${message}</p>`, [
     { label: 'Cancel', cls: 'btn-outline' },
-    { label: 'Confirm', cls: 'btn-primary', action: onConfirm }
+    { label: 'Confirm', cls: 'btn-primary', action: async () => { hideModal(); await onConfirm(); } }
   ]);
 }

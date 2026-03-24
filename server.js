@@ -183,6 +183,16 @@ app.post('/api/events', (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// Update event date
+app.put('/api/events/:eventId/date', (req, res) => {
+  try {
+    const { date } = req.body;
+    if (!date) return res.status(400).json({ error: 'Date required' });
+    db.prepare('UPDATE event SET date = ? WHERE id = ?').run(date, req.params.eventId);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // Fix #1: Lock/Unlock event
 app.put('/api/events/:id/lock', (req, res) => {
   try {
@@ -674,16 +684,8 @@ app.post('/api/events/new-week', (req, res) => {
     const backupPath = createBackup();
     // Complete all open events
     db.prepare("UPDATE event SET status = 'completed' WHERE status NOT IN ('completed')").run();
-    // Create new event with today's date
-    const today = new Date().toISOString().slice(0, 10);
-    const result = db.prepare("INSERT INTO event (date, status, created_at) VALUES (?, 'setup', ?)").run(today, new Date().toISOString());
-    const eventId = result.lastInsertRowid;
-    // Initialize attendance for all active members
-    const members = db.prepare('SELECT id FROM member WHERE is_active = 1').all();
-    const ins = db.prepare('INSERT INTO attendance (event_id, member_id, present) VALUES (?, ?, 0)');
-    const batch = db.transaction(() => { members.forEach(m => ins.run(eventId, m.id)); });
-    batch();
-    res.json({ ok: true, backup: backupPath, newEventId: Number(eventId) });
+    // Don't create a new event — let user pick the date in Event Setup
+    res.json({ ok: true, backup: backupPath });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -1078,6 +1080,6 @@ app.post('/api/races/:raceId/rank-relay', (req, res) => {
 //  START SERVER
 // ════════════════════════════════════════════════════════
 
-app.listen(PORT, () => {
-  console.log(`🏊 WWSC Swimming App running at http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🏊 WWSC Swimming App running at http://0.0.0.0:${PORT}`);
 });

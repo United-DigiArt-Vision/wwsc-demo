@@ -50,6 +50,6 @@ async function renderDashboard() {
 async function handleWeeklyReset() {
   confirmDialog('Start New Week?', 'Current event data will be archived. A backup will be created automatically.', async () => {
     await API.resetWeek();
-    navigate('dashboard');
+    navigate('event-setup');
   });
 }

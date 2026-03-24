@@ -61,20 +61,21 @@ function memberFormHtml(m) {
     { key: 'time_breaststroke', label: 'Breaststroke PB (seconds)', type: 'number' },
     { key: 'time_butterfly', label: 'Butterfly PB (seconds)', type: 'number' },
   ];
+  const isActive = m?.is_active ?? 1;
   return fields.map(f => `
     <div class="form-group">
       <label>${f.label}</label>
       <input class="form-control" id="mf-${f.key}" type="${f.type}" value="${m?.[f.key] ?? ''}" ${f.type === 'number' ? 'min="0"' : ''}>
     </div>
-  `).join('') + (m?.id ? `
+  `).join('') + `
     <div class="form-group">
       <label>Status</label>
       <select class="form-control" id="mf-is_active">
-        <option value="1" ${m.is_active ? 'selected' : ''}>Active</option>
-        <option value="0" ${!m.is_active ? 'selected' : ''}>Inactive</option>
+        <option value="1" ${isActive ? 'selected' : ''}>Active</option>
+        <option value="0" ${!isActive ? 'selected' : ''}>Inactive</option>
       </select>
     </div>
-  ` : '');
+  `;
 }
 
 function getMemberFormData(isEdit) {
@@ -89,7 +90,7 @@ function getMemberFormData(isEdit) {
     time_breaststroke: intOrNull('mf-time_breaststroke'),
     time_butterfly: intOrNull('mf-time_butterfly'),
   };
-  if (isEdit) data.is_active = parseInt(val('mf-is_active'));
+  data.is_active = parseInt(val('mf-is_active') ?? '1');
   return data;
 }
 
@@ -100,6 +101,7 @@ function showAddMemberModal() {
       const data = getMemberFormData(false);
       if (!data.name?.trim()) return alert('Name is required');
       await API.createMember(data);
+      hideModal();
       renderMembers();
     }}
   ]);
@@ -113,6 +115,7 @@ async function showEditMemberModal(id) {
       const data = getMemberFormData(true);
       if (!data.name?.trim()) return alert('Name is required');
       await API.updateMember(id, data);
+      hideModal();
       renderMembers();
     }}
   ]);
@@ -128,7 +131,7 @@ function showImportModal() {
     <div id="csv-preview" style="margin-top:12px"></div>
   `, [
     { label: 'Cancel', cls: 'btn-outline' },
-    { label: 'Import', cls: 'btn-success', action: handleCSVImport }
+    { label: 'Import', cls: 'btn-success', action: async () => { await handleCSVImport(); hideModal(); } }
   ]);
 }
 

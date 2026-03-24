@@ -46,5 +46,6 @@ function renderSidebar(activeScreen) {
         <span>${it.label}</span>
       </button>
     `).join('')}
+    <div class="sidebar-version">v2.1.0-m1</div>
   `;
 }

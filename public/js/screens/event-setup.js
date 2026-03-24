@@ -71,7 +71,12 @@ function drawEventSetup() {
 
   el.innerHTML = `
     <div class="toolbar" style="align-items:flex-start">
-      <h1 style="margin:0">Times Sheet — ${currentEvent.date}</h1>
+      <h1 style="margin:0">Times Sheet</h1>
+      <div class="date-picker-inline">
+        <span class="date-label">📅</span>
+        <input type="date" id="event-date-edit" value="${currentEvent.date}" onchange="updateEventDate(this.value)" class="date-input-visible">
+        <span class="date-hint">tap to change</span>
+      </div>
       <div class="toolbar-spacer"></div>
       <button class="btn btn-accent" onclick="doNewWeek()">🔄 New Week</button>
     </div>
@@ -79,13 +84,13 @@ function drawEventSetup() {
     <!-- Event Type Dropdowns -->
     <div class="dropdown-row">
       <div class="dropdown-group">
-        <label>Standard Distances</label>
+        <label>Standard Distances ${tooltip('Controls the relay type for this week. 25m + 50m individual races are ALWAYS included.<br><br><b>Ordinary Swim</b> = 3 races (25m, 50m, 25m Team Relay)<br><b>25m/50m Brace</b> = 4 races (+Brace Relay)<br><b>Pogo</b> = 4 races (+Pogo Relay)')}</label>
         <select id="sel-standard" onchange="onConfigChange()">
           ${STANDARD_EVENTS.map(e => `<option value="${e.id}" ${eventConfig.standard_event === e.id ? 'selected' : ''}>${e.label}</option>`).join('')}
         </select>
       </div>
       <div class="dropdown-group">
-        <label>Special Event</label>
+        <label>Special Event ${tooltip('Optional extra race for this week. Only swimmers marked Y (or a stroke for Medley) will participate. Set to "None" to skip.')}</label>
         <select id="sel-special" onchange="onConfigChange()">
           ${SPECIAL_EVENTS.map(e => `<option value="${e.id}" ${eventConfig.special_event === e.id ? 'selected' : ''}>${e.label}</option>`).join('')}
         </select>
@@ -94,7 +99,7 @@ function drawEventSetup() {
 
     <!-- Attendance Info -->
     <div style="display:flex;gap:16px;margin-bottom:8px;align-items:center;flex-wrap:wrap">
-      <span><strong>Attendance:</strong> ${attendingCount}</span>
+      <span><strong>Attendance ${tooltip('Tap a swimmer\\'s checkbox to mark them present. Use Select All / Deselect All for quick changes.')}:</strong> ${attendingCount}</span>
       ${hasSpecial ? `<span><strong>${specialShort}:</strong> ${specialCount}</span>` : ''}
       <div class="toolbar-spacer"></div>
       <button class="btn btn-outline" style="min-height:36px;padding:6px 16px;font-size:14px" onclick="toggleAllAttendance(true)">✓ Select All</button>
@@ -134,7 +139,7 @@ function drawEventSetup() {
     <!-- Action Buttons -->
     <div class="quick-actions">
       <button class="btn btn-success btn-lg" onclick="doBuildHeats()" ${attendingCount < 3 ? 'disabled' : ''}>
-        🏊 Build Heats
+        🏊 Build Heats ${tooltip('Generates randomised heat assignments (4 lanes per heat) based on PB times. Swimmers without a PB for this distance will be skipped.')}
       </button>
     </div>
     ${attendingCount < 3 ? '<p style="color:var(--danger);margin-top:8px;font-size:14px">Need at least 3 swimmers present</p>' : ''}
@@ -212,6 +217,16 @@ function getSpecialShort() {
 }
 
 // ── Actions ─────────────────────────────────────────
+
+async function updateEventDate(newDate) {
+  if (!newDate || !currentEvent) return;
+  await fetch(`/api/events/${currentEvent.id}/date`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date: newDate })
+  });
+  currentEvent.date = newDate;
+}
 
 async function createNewEvent() {
   const date = document.getElementById('event-date').value;

@@ -115,9 +115,9 @@ function renderHeatTable(heats) {
           <th>Heat</th>
           <th style="width:50px">Lane</th>
           <th style="text-align:left;min-width:150px">Swimmer</th>
-          <th>PB Time</th>
-          <th>Max Time</th>
-          <th>Start Delay</th>
+          <th>PB Time ${tooltip('Personal Best — the swimmer\\'s fastest recorded time for this distance.')}</th>
+          <th>Max Time ${tooltip('The slowest PB in this heat. Used to calculate start delays so all swimmers finish together.')}</th>
+          <th>Start Delay ${tooltip('Seconds the swimmer waits before starting. Faster swimmers get a longer delay so everyone finishes at roughly the same time.')}</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
