@@ -73,10 +73,9 @@ function drawEventSetup() {
     <div class="toolbar" style="align-items:flex-start">
       <h1 style="margin:0">Times Sheet</h1>
       <div class="date-picker-inline">
-        <button class="btn btn-outline date-picker-btn" onclick="document.getElementById('event-date-edit').showPicker()" style="font-size:16px;padding:8px 16px;min-height:44px">
+        <button class="btn btn-outline date-picker-btn" onclick="openEventDatePicker()" style="font-size:16px;padding:8px 16px;min-height:48px">
           📅 ${formatDateNice(currentEvent.date)}
         </button>
-        <input type="date" id="event-date-edit" value="${currentEvent.date}" onchange="updateEventDate(this.value);drawEventSetup()" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
       </div>
       <div class="toolbar-spacer"></div>
       <button class="btn btn-outline" onclick="doNewWeek()" style="color:#999;border-color:#ccc;font-size:13px">🔄 Discard & Start New Event</button>
@@ -226,6 +225,13 @@ function formatDateNice(dateStr) {
 }
 
 // ── Actions ─────────────────────────────────────────
+
+function openEventDatePicker() {
+  showDatePicker(currentEvent.date, async function(newDate) {
+    await updateEventDate(newDate);
+    drawEventSetup();
+  });
+}
 
 async function updateEventDate(newDate) {
   if (!newDate || !currentEvent) return;
