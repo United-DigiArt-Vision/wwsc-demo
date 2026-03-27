@@ -78,7 +78,16 @@ function drawEventSetup() {
         </button>
       </div>
       <div class="toolbar-spacer"></div>
-      <button class="btn btn-outline" onclick="doNewWeek()" style="color:#999;border-color:#ccc;font-size:13px">🔄 Discard & Start New Event</button>
+    </div>
+
+    <!-- Primary action: Build Heats -->
+    <div style="margin:12px 0 8px 0;text-align:center">
+      <button class="btn btn-primary" onclick="navigate('heat-builder')" style="background:#16a34a;font-size:16px;padding:12px 32px;min-height:48px;border-radius:8px">
+        🏊 Build Heats ${tooltip('Go to Heat Builder to generate randomised heat assignments based on attendance and PB times.')}
+      </button>
+    </div>
+    <div style="text-align:center;margin-bottom:16px">
+      <button class="btn btn-outline" onclick="doNewWeek()" style="color:#999;border-color:#ccc;font-size:12px;padding:6px 16px">🔄 Discard & Start New Event</button>
     </div>
 
     <!-- Event Type Dropdowns -->
