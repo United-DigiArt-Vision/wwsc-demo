@@ -19,7 +19,7 @@ async function renderRelays() {
   const el = document.getElementById('content');
 
   if (!relayEvent) {
-    el.innerHTML = `<h1>Relays</h1><div class="card"><p>No active event. <a href="#" onclick="navigate('event-setup')">Set up an event first.</a></p></div>`;
+    el.innerHTML = `<h1>Relays</h1><div class="card"><p>No active event. <a href="#" onclick="navigate('event-setup')">Go to Times Sheet first.</a></p></div>`;
     return;
   }
 
@@ -27,7 +27,7 @@ async function renderRelays() {
   relayRaces = allRaces.filter(r => RELAY_RACE_TYPES.includes(r.race_type));
 
   if (relayRaces.length === 0) {
-    el.innerHTML = `<h1>Relays</h1><div class="card"><p>No relay races configured. <a href="#" onclick="navigate('event-setup')">Go to Event Setup.</a></p></div>`;
+    el.innerHTML = `<h1>Relays</h1><div class="card"><p>No relay races configured. <a href="#" onclick="navigate('event-setup')">Go to Times Sheet.</a></p></div>`;
     return;
   }
 

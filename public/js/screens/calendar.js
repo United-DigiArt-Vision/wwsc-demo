@@ -14,7 +14,7 @@ async function renderCalendar() {
       content.innerHTML = `
         <div class="screen">
           <h2>📆 Season Calendar</h2>
-          <p class="empty-msg">No events yet. Create one in Event Setup!</p>
+          <p class="empty-msg">No events yet. Create one in Times Sheet!</p>
         </div>`;
       return;
     }

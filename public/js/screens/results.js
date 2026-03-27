@@ -15,7 +15,7 @@ async function renderResults() {
   const el = document.getElementById('content');
 
   if (!resEvent) {
-    el.innerHTML = `<h1>Results</h1><div class="card"><p>No active event. <a href="#" onclick="navigate('event-setup')">Set up an event first.</a></p></div>`;
+    el.innerHTML = `<h1>Results</h1><div class="card"><p>No active event. <a href="#" onclick="navigate('event-setup')">Go to Times Sheet first.</a></p></div>`;
     return;
   }
 

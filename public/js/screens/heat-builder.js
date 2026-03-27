@@ -30,14 +30,14 @@ async function renderHeatBuilder() {
   const el = document.getElementById('content');
 
   if (!event) {
-    el.innerHTML = '<h1>Heat Builder</h1><div class="card"><p>No active event. <a href="#" onclick="navigate(\'event-setup\')">Set up an event first.</a></p></div>';
+    el.innerHTML = '<h1>Heat Builder</h1><div class="card"><p>No active event. <a href="#" onclick="navigate(\'event-setup\')">Go to Times Sheet first.</a></p></div>';
     return;
   }
 
   hbRaces = await API.getRaces(event.id);
 
   if (hbRaces.length === 0) {
-    el.innerHTML = '<h1>Heat Builder</h1><div class="card"><p>No events selected. <a href="#" onclick="navigate(\'event-setup\')">Go to Event Setup.</a></p></div>';
+    el.innerHTML = '<h1>Heat Builder</h1><div class="card"><p>No events selected. <a href="#" onclick="navigate(\'event-setup\')">Go to Times Sheet.</a></p></div>';
     return;
   }
 

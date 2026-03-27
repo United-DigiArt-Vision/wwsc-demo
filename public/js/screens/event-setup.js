@@ -1,7 +1,7 @@
 /**
- * WWSC — Event Setup Screen (Excel-Style Spreadsheet)
- * Matches Bryan's Handicap Sheet workflow EXACTLY.
- * Single combined Attendance & Entry column — just like Excel.
+ * WWSC — Times Sheet Screen (Excel-Style Spreadsheet)
+ * Matches Bryan's "Times Sheet" + "Event Entry" workflow.
+ * Combines: PB times display, attendance marking, event config (Standard/Special).
  */
 let currentEvent = null;
 let attendanceData = [];
@@ -30,7 +30,7 @@ async function renderEventSetup() {
   if (!currentEvent) {
     const today = new Date().toISOString().slice(0, 10);
     el.innerHTML = `
-      <h1>Event Setup</h1>
+      <h1>Times Sheet</h1>
       <div class="card">
         <h2>Start New Weekly Event</h2>
         <div class="form-group">
@@ -79,7 +79,7 @@ function drawEventSetup() {
       </div>
       <div class="toolbar-spacer"></div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-        <button class="btn btn-primary" onclick="navigate('heat-builder')" style="background:#16a34a;font-size:18px;padding:14px 32px;min-height:52px;border-radius:8px;font-weight:700;letter-spacing:0.5px">
+        <button class="btn btn-primary" onclick="doBuildHeats()" style="background:#16a34a;font-size:18px;padding:14px 32px;min-height:52px;border-radius:8px;font-weight:700;letter-spacing:0.5px">
           🏊 Build Heats ${tooltip('Go to Heat Builder to generate randomised heat assignments based on attendance and PB times.')}
         </button>
         <button class="btn btn-outline" onclick="doNewWeek()" style="color:#aaa;border-color:#ddd;font-size:11px;padding:3px 10px;font-weight:400">🔄 Discard & Start New Event</button>
