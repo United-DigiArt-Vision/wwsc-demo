@@ -449,6 +449,19 @@ function enterHBRelaySplit(teamId, memberId, currentValue) {
 
 async function calculateHBRelayResults() {
   confirmDialog('Calculate Relay Results?', 'This will rank teams based on their times.', async function() {
+    // F29: For split-based relays, auto-calculate total_time from splits before ranking
+    const isSplitBased = ['25m_relay', 'pogo'].includes(hbSelectedRace.race_type);
+    if (isSplitBased && hbRelayTeams) {
+      for (const team of hbRelayTeams) {
+        const members = team.members || [];
+        const allSplitsEntered = members.every(m => m.split_time != null);
+        if (allSplitsEntered) {
+          const sumOfSplits = members.reduce((sum, m) => sum + (m.split_time || 0), 0);
+          await API.enterRelayTeamTime(team.id, sumOfSplits);
+        }
+      }
+    }
+    
     await API.rankRelay(hbSelectedRace.id);
     const saved = await API.getRelayTeams(hbSelectedRace.id);
     hbRelayTeams = saved;

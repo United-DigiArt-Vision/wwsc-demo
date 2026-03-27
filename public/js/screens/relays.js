@@ -151,12 +151,18 @@ function renderRelayTable(teams, race) {
       </tr>`;
     }
 
-    // Team total row
+    // Team total row — F29: For split-based relays (25m_relay, pogo), total is auto-calculated from splits, not manually entered
     let totalTimeCell;
     if (relayConfirmed && !relayEventFinalized) {
-      totalTimeCell = `<td class="time-input" onclick="enterRelayTeamTime(${team.id}, ${team.total_time || 0})" style="cursor:pointer;font-weight:700;font-size:16px">${team.total_time != null ? team.total_time + 's' : '⏱️ Tap'}</td>`;
+      if (showSplits) {
+        // Split-based relay: total is sum of splits, show "—" until calculated
+        totalTimeCell = `<td class="time-cell" style="font-weight:700;font-size:16px">${team.total_time != null ? team.total_time + 's' : '—'}</td>`;
+      } else {
+        // Non-split relays (Brace, Medley): manual total time entry
+        totalTimeCell = `<td class="time-input" onclick="enterRelayTeamTime(${team.id}, ${team.total_time || 0})" style="cursor:pointer;font-weight:700;font-size:16px">${team.total_time != null ? team.total_time + 's' : '⏱️ Tap'}</td>`;
+      }
     } else {
-      totalTimeCell = `<td class="time-cell">—</td>`;
+      totalTimeCell = `<td class="time-cell" style="font-weight:700;font-size:16px">${team.total_time != null ? team.total_time + 's' : '—'}</td>`;
     }
 
     let varianceDisplay = '';
@@ -314,6 +320,20 @@ function enterRelaySplit(teamId, memberId, currentValue) {
 
 async function calculateRelayResults() {
   confirmDialog('Calculate Relay Results?', 'This will rank teams based on their times.', async () => {
+    // F29: For split-based relays, auto-calculate total_time from splits before ranking
+    const isSplitBased = ['25m_relay', 'pogo'].includes(relaySelectedRace.race_type);
+    if (isSplitBased && relayTeams) {
+      for (const team of relayTeams) {
+        const members = team.members || [];
+        const allSplitsEntered = members.every(m => m.split_time != null);
+        if (allSplitsEntered) {
+          const sumOfSplits = members.reduce((sum, m) => sum + (m.split_time || 0), 0);
+          // Save the calculated total
+          await API.enterRelayTeamTime(team.id, sumOfSplits);
+        }
+      }
+    }
+    
     const result = await API.rankRelay(relaySelectedRace.id);
     if (result.error) {
       alert('Error: ' + result.error);
