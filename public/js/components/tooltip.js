@@ -17,6 +17,9 @@ function toggleTip(el) {
   document.querySelectorAll('.info-tip-box.show').forEach(b => b.classList.remove('show'));
   
   if (!wasOpen) {
+    // Reset positioning before measuring
+    box.style.left = '';
+    box.style.right = '';
     box.classList.add('show');
     // Auto-position: check if box overflows right edge
     const rect = box.getBoundingClientRect();

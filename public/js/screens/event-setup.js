@@ -78,11 +78,11 @@ function drawEventSetup() {
         </button>
       </div>
       <div class="toolbar-spacer"></div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        <button class="btn btn-primary" onclick="navigate('heat-builder')" style="background:#16a34a;font-size:15px;padding:10px 24px;min-height:44px;border-radius:8px">
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <button class="btn btn-primary" onclick="navigate('heat-builder')" style="background:#16a34a;font-size:18px;padding:14px 32px;min-height:52px;border-radius:8px;font-weight:700;letter-spacing:0.5px">
           🏊 Build Heats ${tooltip('Go to Heat Builder to generate randomised heat assignments based on attendance and PB times.')}
         </button>
-        <button class="btn btn-outline" onclick="doNewWeek()" style="color:#999;border-color:#ccc;font-size:11px;padding:4px 12px">🔄 Discard & Start New Event</button>
+        <button class="btn btn-outline" onclick="doNewWeek()" style="color:#aaa;border-color:#ddd;font-size:11px;padding:3px 10px;font-weight:400">🔄 Discard & Start New Event</button>
       </div>
     </div>
 
