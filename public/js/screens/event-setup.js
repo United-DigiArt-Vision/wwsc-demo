@@ -288,6 +288,11 @@ async function onConfigChange() {
   eventConfig.standard_event = document.getElementById('sel-standard').value;
   eventConfig.special_event = document.getElementById('sel-special').value || null;
   await API.updateEventConfig(currentEvent.id, eventConfig);
+  
+  // F32: Also update races when config changes (so Heat Builder shows correct races)
+  const raceTypes = buildRaceTypes();
+  await API.updateRaces(currentEvent.id, raceTypes);
+  
   drawEventSetup();
 }
 
