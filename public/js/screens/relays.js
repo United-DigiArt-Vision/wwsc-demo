@@ -124,7 +124,8 @@ function renderRelayTable(teams, race) {
   for (const team of teams) {
     const members = team.members || [];
     const placeDisplay = team.place ? ordinalRelay(team.place) : '';
-    const teamHeader = `Team ${team.team_number}: "${team.team_name}"${placeDisplay ? ' — ' + placeDisplay : ''}`;
+    // F31: Simple header — just "Team 1", "Team 2", etc. (per Bryan's Excel)
+    const teamHeader = `${team.team_name}${placeDisplay ? ' — ' + placeDisplay : ''}`;
     const needsManual = team.needs_manual_entry;
 
     let rows = '';

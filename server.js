@@ -777,7 +777,8 @@ app.post('/api/backup', (req, res) => {
 
 const RELAY_TYPES = ['25m_relay', '25m_brace', '50m_brace', 'medley_relay', 'pogo'];
 
-const TEAM_NAMES = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo', 'Foxtrot', 'Golf', 'Hotel', 'India', 'Juliet'];
+// F31: Simple team names per Bryan's Excel (no fancy names, just Team 1, Team 2, etc.)
+const TEAM_NAMES = ['Team 1', 'Team 2', 'Team 3', 'Team 4', 'Team 5', 'Team 6', 'Team 7', 'Team 8', 'Team 9', 'Team 10'];
 
 // Helper: get PB total for a member based on relay type
 function getRelayPB(member, raceType) {
