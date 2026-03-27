@@ -87,8 +87,9 @@ async function renderHeatBuilder() {
 }
 
 // F24: Special event types (stroke-based races chosen by user)
-// Per Bryan's Excel: Standard = 25m + 50m + relay. Special = 75m, Backstroke, Breaststroke, Butterfly
-const SPECIAL_EVENT_TYPES = ['75m', 'backstroke', 'breaststroke', 'butterfly'];
+// Per Bryan's Excel: Standard = 25m + 50m + 25m Team Relay. Special = 75m, Backstroke, Breaststroke, Butterfly, Medley Relay
+// Note: Medley Relay is BOTH a relay (team event) AND a special event (user-selected via I11 dropdown)
+const SPECIAL_EVENT_TYPES = ['75m', 'backstroke', 'breaststroke', 'butterfly', 'medley_relay'];
 
 function isSpecialEvent(raceType) {
   return SPECIAL_EVENT_TYPES.includes(raceType);
@@ -108,10 +109,10 @@ function drawHeatBuilder() {
   // F24: Progress tracker with logical grouping: STANDARD | SPECIAL EVENT
   let progressHtml = '<div class="progress-tracker">';
   
-  // Standard section: Individual distances + Relays together
+  // Standard section: Individual distances + Relays together (per Bryan's Excel: 25m, 50m, 25m Team Relay + optional Brace/Pogo)
   const standardRaces = [...standardIndividual, ...relayRaces];
   if (standardRaces.length > 0) {
-    progressHtml += '<div class="progress-section"><span class="progress-label">Standard:</span>';
+    progressHtml += '<div class="progress-section"><span class="progress-label">Standard ' + tooltip('Per Bryan\'s Excel: 25m + 50m (always) + 25m Team Relay + optional relay type (Brace/Pogo).') + ':</span>';
     for (const r of standardRaces) {
       const done = r.status === 'heats_generated';
       const active = r.id === hbSelectedRace.id;
@@ -120,9 +121,9 @@ function drawHeatBuilder() {
     progressHtml += '</div>';
   }
   
-  // Special Event section (if any)
+  // Special Event section (if any) — per Bryan's Excel Cell I11
   if (specialEvents.length > 0) {
-    progressHtml += '<div class="progress-section"><span class="progress-label">Special:</span>';
+    progressHtml += '<div class="progress-section"><span class="progress-label">Special ' + tooltip('Per Bryan\'s Excel (I11): Optional race chosen each week — 75m, Backstroke, Breaststroke, Butterfly, or Medley Relay.') + ':</span>';
     for (const r of specialEvents) {
       const done = r.status === 'heats_generated';
       const active = r.id === hbSelectedRace.id;

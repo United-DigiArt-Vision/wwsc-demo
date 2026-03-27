@@ -89,13 +89,13 @@ function drawEventSetup() {
     <!-- Event Type Dropdowns -->
     <div class="dropdown-row">
       <div class="dropdown-group">
-        <label>Standard Distances ${tooltip('Controls the relay type for this week. 25m + 50m individual races are ALWAYS included.<br><br><b>Ordinary Swim</b> = 3 races (25m, 50m, 25m Team Relay)<br><b>25m/50m Brace</b> = 4 races (+Brace Relay)<br><b>Pogo</b> = 4 races (+Pogo Relay)')}</label>
+        <label>Standard Distances ${tooltip('<b>Per Bryan\'s Excel (Cell I10):</b><br><br><b>Standard races (always included):</b><br>• 25m Freestyle<br>• 50m Freestyle<br>• 25m Team Relay<br><br><b>Relay Type Options:</b><br>• <b>Ordinary Swim</b> = Standard only (3 races)<br>• <b>25m Brace</b> = +Pairs relay, scored by closest to combined PB<br>• <b>50m Brace</b> = +Pairs relay (50m), scored same way<br>• <b>Pogo</b> = +Alternating laps relay, scored by closest to target')}</label>
         <select id="sel-standard" onchange="onConfigChange()">
           ${STANDARD_EVENTS.map(e => `<option value="${e.id}" ${eventConfig.standard_event === e.id ? 'selected' : ''}>${e.label}</option>`).join('')}
         </select>
       </div>
       <div class="dropdown-group">
-        <label>Special Event ${tooltip('Optional extra race for this week. Only swimmers marked Y (or a stroke for Medley) will participate. Set to "None" to skip.')}</label>
+        <label>Special Event ${tooltip('<b>Per Bryan\'s Excel (Cell I11):</b><br><br>Optional extra race chosen each week:<br>• <b>75m</b> = Individual 75m freestyle<br>• <b>Backstroke</b> = Individual backstroke<br>• <b>Breaststroke</b> = Individual breaststroke<br>• <b>Butterfly</b> = Individual butterfly<br>• <b>Medley Relay</b> = 3-person team (Back + Breast + Free)<br><br>Only swimmers marked Y (or stroke for Medley) will participate.')}</label>
         <select id="sel-special" onchange="onConfigChange()">
           ${SPECIAL_EVENTS.map(e => `<option value="${e.id}" ${eventConfig.special_event === e.id ? 'selected' : ''}>${e.label}</option>`).join('')}
         </select>
