@@ -86,28 +86,43 @@ async function renderHeatBuilder() {
   drawHeatBuilder();
 }
 
+// F24: Special event types (stroke-based races chosen by user)
+const SPECIAL_EVENT_TYPES = ['backstroke', 'breaststroke', 'butterfly'];
+
+function isSpecialEvent(raceType) {
+  return SPECIAL_EVENT_TYPES.includes(raceType);
+}
+
 function drawHeatBuilder() {
   const el = document.getElementById('content');
-  const individualRaces = hbRaces.filter(r => !isRelayRace(r.race_type));
+  
+  // F24: Group races logically: Standard (25m, 50m, 75m, relays) vs Special Event (backstroke etc.)
+  const standardIndividual = hbRaces.filter(r => !isRelayRace(r.race_type) && !isSpecialEvent(r.race_type));
   const relayRaces = hbRaces.filter(r => isRelayRace(r.race_type));
+  const specialEvents = hbRaces.filter(r => isSpecialEvent(r.race_type));
+  
   const allConfirmed = hbRaces.every(r => r.status === 'heats_generated');
   const confirmedCount = hbRaces.filter(r => r.status === 'heats_generated').length;
 
-  // F18: Progress tracker
+  // F24: Progress tracker with logical grouping: STANDARD | SPECIAL EVENT
   let progressHtml = '<div class="progress-tracker">';
   
-  if (individualRaces.length > 0) {
-    progressHtml += '<div class="progress-section"><span class="progress-label">Individual:</span>';
-    for (const r of individualRaces) {
+  // Standard section: Individual distances + Relays together
+  const standardRaces = [...standardIndividual, ...relayRaces];
+  if (standardRaces.length > 0) {
+    progressHtml += '<div class="progress-section"><span class="progress-label">Standard:</span>';
+    for (const r of standardRaces) {
       const done = r.status === 'heats_generated';
       const active = r.id === hbSelectedRace.id;
       progressHtml += '<button class="progress-item ' + (done ? 'done' : '') + (active ? ' active' : '') + '" onclick="selectHBRace(' + r.id + ')">' + (done ? '✅ ' : '⬜ ') + (RACE_LABELS[r.race_type] || r.race_type) + '</button>';
     }
     progressHtml += '</div>';
   }
-  if (relayRaces.length > 0) {
-    progressHtml += '<div class="progress-section"><span class="progress-label">Relays:</span>';
-    for (const r of relayRaces) {
+  
+  // Special Event section (if any)
+  if (specialEvents.length > 0) {
+    progressHtml += '<div class="progress-section"><span class="progress-label">Special:</span>';
+    for (const r of specialEvents) {
       const done = r.status === 'heats_generated';
       const active = r.id === hbSelectedRace.id;
       progressHtml += '<button class="progress-item ' + (done ? 'done' : '') + (active ? ' active' : '') + '" onclick="selectHBRace(' + r.id + ')">' + (done ? '✅ ' : '⬜ ') + (RACE_LABELS[r.race_type] || r.race_type) + '</button>';
