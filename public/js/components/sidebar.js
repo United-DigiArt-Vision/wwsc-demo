@@ -46,8 +46,13 @@ function renderSidebar(activeScreen) {
 
   let html = `<div class="sidebar-title">🏊 WWSC</div>`;
 
-  // Base nav items
+  // Base nav items (Dashboard, Members, Times Sheet, Heat Builder)
   for (const it of baseItems) {
+    html += sidebarButton(it, activeScreen);
+  }
+
+  // Results & Season Calendar — app-level, before race sections
+  for (const it of endItems) {
     html += sidebarButton(it, activeScreen);
   }
 
@@ -65,11 +70,6 @@ function renderSidebar(activeScreen) {
     for (const it of relayItems) {
       html += sidebarButton(it, activeScreen);
     }
-  }
-
-  // End items
-  for (const it of endItems) {
-    html += sidebarButton(it, activeScreen);
   }
 
   html += `<div class="sidebar-version">v2.1.2-m1</div>`;
