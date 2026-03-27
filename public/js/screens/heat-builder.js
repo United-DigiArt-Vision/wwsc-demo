@@ -87,7 +87,8 @@ async function renderHeatBuilder() {
 }
 
 // F24: Special event types (stroke-based races chosen by user)
-const SPECIAL_EVENT_TYPES = ['backstroke', 'breaststroke', 'butterfly'];
+// Per Bryan's Excel: Standard = 25m + 50m + relay. Special = 75m, Backstroke, Breaststroke, Butterfly
+const SPECIAL_EVENT_TYPES = ['75m', 'backstroke', 'breaststroke', 'butterfly'];
 
 function isSpecialEvent(raceType) {
   return SPECIAL_EVENT_TYPES.includes(raceType);
