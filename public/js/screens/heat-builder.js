@@ -149,8 +149,8 @@ function drawHeatBuilder() {
     raceContent = renderIndividualContent();
   }
 
-  // F30: Results button always visible in top-right corner
-  const headerWithResults = '<div class="toolbar" style="margin-bottom:16px"><h1 style="margin:0">Heat Builder</h1><div class="toolbar-spacer"></div><button class="btn btn-primary" onclick="navigate(\'results\')" style="font-size:16px;padding:10px 24px">🏆 Results →</button></div>';
+  // F30: Results button always visible in top-right corner (same size as other buttons)
+  const headerWithResults = '<div class="toolbar" style="margin-bottom:16px"><h1 style="margin:0">Heat Builder</h1><div class="toolbar-spacer"></div><button class="btn btn-primary" onclick="navigate(\'results\')">' + tooltip('Go to Results screen to enter finish times and calculate winners.') + ' 🏆 Results →</button></div>';
   
   el.innerHTML = headerWithResults + progressHtml + raceContent + goToResultsBtn;
 }
