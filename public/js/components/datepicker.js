@@ -23,9 +23,11 @@ function showDatePicker(currentDate, onConfirm) {
     if (startDay < 0) startDay = 6;
 
     let cells = '';
+    let dayCellCount = 0;
     // Empty cells before first day
     for (let i = 0; i < startDay; i++) {
       cells += '<div class="dp-cell dp-empty"></div>';
+      dayCellCount++;
     }
     // Day cells
     for (let day = 1; day <= daysInMonth; day++) {
@@ -35,6 +37,12 @@ function showDatePicker(currentDate, onConfirm) {
       if (isSelected) cls += ' dp-selected';
       if (isToday) cls += ' dp-today';
       cells += '<div class="' + cls + '" onclick="dpSelectDay(' + day + ')">' + day + '</div>';
+      dayCellCount++;
+    }
+    // Fill trailing empty cells so calendar always renders 6 full weeks (42 cells)
+    while (dayCellCount < 42) {
+      cells += '<div class="dp-cell dp-empty"></div>';
+      dayCellCount++;
     }
 
     overlay.innerHTML = '<div class="modal" style="max-width:380px;padding:16px">' +
