@@ -1,5 +1,6 @@
 /**
  * WWSC — App Router + State
+ * F27: Simplified — no more race-* / relay-* links in sidebar
  */
 let currentScreen = 'dashboard';
 
@@ -14,15 +15,6 @@ const screens = {
 };
 
 function navigate(screen) {
-  // F17: All race links go to Heat Builder with that race pre-selected
-  if (screen.startsWith('race-') || screen.startsWith('relay-')) {
-    const raceType = screen.replace('race-', '').replace('relay-', '');
-    window._pendingHBRaceType = raceType;
-    currentScreen = 'heat-builder';
-    renderSidebar(screen);
-    renderHeatBuilder();
-    return;
-  }
   currentScreen = screen;
   renderSidebar(screen);
   const renderFn = screens[screen];
