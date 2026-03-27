@@ -56,7 +56,9 @@ async function renderHeatBuilder() {
   }
 
   if (!hbSelectedRace || !hbRaces.find(r => r.id === hbSelectedRace.id)) {
-    hbSelectedRace = hbRaces[0];
+    // F21: Default to first INDIVIDUAL race, not relay (more intuitive when coming from Times Sheet)
+    const individualRaces = hbRaces.filter(r => !isRelayRace(r.race_type));
+    hbSelectedRace = individualRaces.length > 0 ? individualRaces[0] : hbRaces[0];
     hbPreviewHeats = null;
     hbConfirmed = false;
     hbRelayTeams = null;
@@ -260,9 +262,19 @@ function renderRelayTeamsInHB(teams, race) {
       rows += '<tr><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td><td>' + (m.stroke || '—') + '</td>' + splitCell + '<td class="time-cell">' + pbDisplay + '</td></tr>';
     }
 
+    // F22: Team Total shows "—" not "Tap" (user doesn't tap the total row, they tap individual splits or use Calculate Results)
     let totalTimeCell;
     if (hbRelayConfirmed && !isFinalized) {
-      totalTimeCell = '<td class="time-input" onclick="enterHBRelayTeamTime(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700;font-size:16px">' + (team.total_time != null ? team.total_time + 's' : 'Tap') + '</td>';
+      // For relay types that need splits (25m_relay, pogo), total is calculated from splits, not tapped directly
+      // For other relays, we may allow direct total entry if needed
+      const needsSplits = ['25m_relay', 'pogo'].includes(race.race_type);
+      if (needsSplits) {
+        // Total is auto-calculated from splits, show "—" until calculated
+        totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:16px">' + (team.total_time != null ? team.total_time + 's' : '—') + '</td>';
+      } else {
+        // Allow tapping to enter total directly
+        totalTimeCell = '<td class="time-input" onclick="enterHBRelayTeamTime(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700;font-size:16px">' + (team.total_time != null ? team.total_time + 's' : 'Tap') + '</td>';
+      }
     } else {
       totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:16px">' + (team.total_time != null ? team.total_time + 's' : '—') + '</td>';
     }
@@ -270,7 +282,8 @@ function renderRelayTeamsInHB(teams, race) {
     const colCount = showSplits ? 5 : 4;
     const targetDisplay = team.target_time ? 'Target: ' + team.target_time + 's' : '';
 
-    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden"><div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center"><span>' + teamHeader + '</span><span style="font-weight:400;font-size:13px;color:#666">' + targetDisplay + ' ' + tooltip('Target = sum of all team members PBs. Team Total = actual relay time.') + '</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg ' + tooltip('Order in which swimmers race in the relay.') + '</th><th style="text-align:left;min-width:140px">Swimmer</th><th>Stroke ' + tooltip('Swimming style for this leg.') + '</th>' + (showSplits ? '<th style="min-width:80px">Split ' + tooltip('Individual split time for this leg. Tap to enter.') + '</th>' : '') + '<th>PB ' + tooltip('Personal Best time for the relevant distance.') + '</th></tr></thead><tbody>' + rows + '<tr style="background:#f5f5f5;font-weight:700"><td></td><td colspan="' + (colCount - 2) + '">Team Total</td>' + totalTimeCell + '</tr></tbody></table></div>';
+    // F23: Fixed target display with proper overflow handling (no cutoff)
+    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden"><div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:nowrap;gap:12px"><span style="flex-shrink:0">' + teamHeader + '</span><span style="font-weight:400;font-size:13px;color:#666;white-space:nowrap;flex-shrink:0">' + targetDisplay + ' ' + tooltip('Target = sum of all team members PBs. Team Total = actual relay time.') + '</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg ' + tooltip('Order in which swimmers race in the relay.') + '</th><th style="text-align:left;min-width:140px">Swimmer</th><th>Stroke ' + tooltip('Swimming style for this leg.') + '</th>' + (showSplits ? '<th style="min-width:80px">Split ' + tooltip('Individual split time for this leg. Tap to enter.') + '</th>' : '') + '<th>PB ' + tooltip('Personal Best time for the relevant distance.') + '</th></tr></thead><tbody>' + rows + '<tr style="background:#f5f5f5;font-weight:700"><td></td><td colspan="' + (colCount - 2) + '">Team Total</td>' + totalTimeCell + '</tr></tbody></table></div>';
   }
 
   return html;
