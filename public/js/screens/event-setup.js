@@ -102,6 +102,14 @@ function drawEventSetup() {
       </div>
     </div>
 
+    <div class="card" style="padding:16px;margin-bottom:16px;background:#fff8e1;border-left:8px solid #f59e0b">
+      <div style="font-weight:700;margin-bottom:4px">💡 Special Event Entry Rules:</div>
+      <div style="font-size:15px">
+        <strong>"Y"</strong> = Swimmer is entered into <strong>ALL</strong> events including the Special Event.<br>
+        <strong>"N"</strong> = Swimmer is entered into <strong>Standard Events only</strong> (25m/50m/Relays) and NOT the Special Event.
+      </div>
+    </div>
+
     <!-- Attendance Info -->
     <div style="display:flex;gap:16px;margin-bottom:8px;align-items:center;flex-wrap:wrap">
       <span><strong>Attendance ${tooltip('Tap a checkbox to mark swimmers as present. Use Select All / Deselect All for quick changes.')}:</strong> ${attendingCount}</span>
@@ -306,6 +314,13 @@ async function doBuildHeats() {
   const attendingCount = attendanceData.filter(a => a.present).length;
   if (attendingCount < 3) return alert('Need at least 3 swimmers present');
 
+  // F32: Explicitly read current values from DOM to avoid stale state
+  const standardVal = document.getElementById('sel-standard')?.value || eventConfig.standard_event;
+  const specialVal = document.getElementById('sel-special')?.value || eventConfig.special_event;
+  
+  eventConfig.standard_event = standardVal;
+  eventConfig.special_event = specialVal === '' ? null : specialVal;
+
   // Save attendance
   await API.updateAttendance(currentEvent.id, attendanceData.map(a => ({
     member_id: a.member_id,
@@ -318,14 +333,18 @@ async function doBuildHeats() {
 
   // Determine race types from config
   const raceTypes = buildRaceTypes();
-  await API.updateRaces(currentEvent.id, raceTypes);
+  const res = await API.updateRaces(currentEvent.id, raceTypes);
+  
+  if (res.error) {
+    alert('Error updating races: ' + res.error);
+    return;
+  }
 
   // Update sidebar with active races
   window.activeRaces = raceTypes;
-  renderSidebar('heat-builder');
-
-  // Navigate to heat builder
-  navigate('heat-builder');
+  
+  // F32 fix: Clear old state and navigate with reset param to ensure fresh start
+  navigate('heat-builder/reset');
 }
 
 function buildRaceTypes() {

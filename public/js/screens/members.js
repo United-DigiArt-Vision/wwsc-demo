@@ -3,6 +3,7 @@
  */
 let membersCache = [];
 let memberSearch = '';
+let membersShowInactive = true; // Default to true so people don't "vanish" unexpectedly
 
 async function renderMembers() {
   membersCache = await API.getMembers();
@@ -10,12 +11,17 @@ async function renderMembers() {
 }
 
 function drawMembersList() {
-  const filtered = membersCache.filter(m =>
-    m.name.toLowerCase().includes(memberSearch.toLowerCase())
-  );
+  const filtered = membersCache.filter(m => {
+    const matchesSearch = m.name.toLowerCase().includes(memberSearch.toLowerCase());
+    const matchesStatus = membersShowInactive ? true : !!m.is_active;
+    return matchesSearch && matchesStatus;
+  });
   const el = document.getElementById('content');
   const strokes = ['25m', '50m', '75m', 'Backstroke', 'Breaststroke', 'Butterfly'];
   const strokeKeys = ['time_25m', 'time_50m', 'time_75m', 'time_backstroke', 'time_breaststroke', 'time_butterfly'];
+
+  const previousFocus = document.activeElement && document.activeElement.id === 'members-search';
+  const previousCursor = previousFocus ? document.activeElement.selectionStart : null;
 
   el.innerHTML = `
     <h1>Members</h1>
@@ -23,7 +29,11 @@ function drawMembersList() {
       <button class="btn btn-primary" onclick="showAddMemberModal()">+ Add Member</button>
       <button class="btn btn-outline" onclick="showImportModal()">📁 Import CSV</button>
       <div class="toolbar-spacer"></div>
-      <input class="form-control" style="max-width:300px" placeholder="Search members..." value="${memberSearch}" oninput="memberSearch=this.value;drawMembersList()">
+      <label style="display:flex;align-items:center;gap:8px;font-size:14px">
+        <input type="checkbox" ${membersShowInactive ? 'checked' : ''} onchange="membersShowInactive=this.checked;drawMembersList()">
+        Show inactive
+      </label>
+      <input id="members-search" class="form-control" style="max-width:300px" placeholder="Search members..." value="${memberSearch}" oninput="memberSearch=this.value;drawMembersList()">
     </div>
     <div style="overflow-x:auto">
     <table class="data-table">
@@ -49,6 +59,13 @@ function drawMembersList() {
     </div>
     <p style="margin-top:12px;color:var(--text-secondary)">${filtered.length} member${filtered.length !== 1 ? 's' : ''}</p>
   `;
+
+  const searchInput = document.getElementById('members-search');
+  if (searchInput && previousFocus) {
+    searchInput.focus();
+    const cursor = previousCursor != null ? previousCursor : memberSearch.length;
+    searchInput.setSelectionRange(cursor, cursor);
+  }
 }
 
 function memberFormHtml(m) {
@@ -109,18 +126,18 @@ function showAddMemberModal() {
 
 async function showEditMemberModal(id) {
   const m = await API.getMember(id);
-  showModal('Edit Member', memberFormHtml(m) + `
-    <div style="border-top:1px solid #eee;margin-top:16px;padding-top:16px">
-      <button class="btn" style="background:#dc3545;color:white;width:100%" onclick="deleteMember(${id})">🗑️ Delete Member</button>
-    </div>
-  `, [
+  showModal('Edit Member', memberFormHtml(m), [
     { label: 'Cancel', cls: 'btn-outline' },
-    { label: 'Save', cls: 'btn-primary', action: async () => {
+    { label: 'Save Changes', cls: 'btn-primary', action: async () => {
       const data = getMemberFormData(true);
       if (!data.name?.trim()) return alert('Name is required');
       await API.updateMember(id, data);
       hideModal();
       renderMembers();
+    }},
+    { label: '🗑️ Delete Member', cls: 'btn-link', style: 'color:#dc3545;font-size:12px;margin-top:20px;width:100%;text-align:center;border:none;background:none;text-decoration:underline', action: async () => {
+      await deleteMember(id);
+      return false; // deleteMember handles its own closing
     }}
   ]);
 }

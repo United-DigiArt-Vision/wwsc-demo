@@ -74,50 +74,65 @@ function drawResults() {
         ${resRaces.map(r => `<option value="${r.id}" ${r.id === race.id ? 'selected' : ''}>${RACE_LABELS[r.race_type] || r.race_type} ${r.heats.some(h => h.lanes.some(l => l.finish_time != null)) ? '✓' : ''}</option>`).join('')}
       </select>
       ${!resFinalized ? `
-        <button class="btn btn-primary" onclick="calculateResults()" ${!anyTimesEntered ? 'disabled' : ''}>📊 Calculate Results</button>
+        <button class="btn btn-primary" onclick="calculateResults()" ${!anyTimesEntered ? 'disabled' : ''}>💾 Save Rankings</button>
         <button class="btn btn-success" onclick="doFinalizeEvent(${allTimesEntered ? 'true' : 'false'})">✅ Finalize Event</button>
-      ` : ''}
+      ` : `
+        <button class="btn btn-outline" onclick="doUnlockEvent()" style="color:var(--danger);border-color:var(--danger)">🔓 Unlock for Edits</button>
+      `}
       ${resFinalized && !resCompleted ? `
         <button class="btn btn-accent" onclick="doCompleteEvent()">📦 Complete & Archive</button>
       ` : ''}
     </div>
 
     ${resHasRelays && !resFinalized ? '<div class="card" style="background:#e3f2fd;text-align:center;padding:10px"><span style="color:var(--primary)">📋 Relay results are on a separate screen →</span> <button class="btn btn-accent" onclick="navigate(\'relays\')" style="margin-left:8px;min-height:32px;padding:4px 12px">🏊 View Relays</button></div>' : ''}
-    ${resFinalized ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — PBs updated, breakers recorded</strong></div>' : ''}
+    ${resFinalized ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — breakers recorded (PBs not auto-updated)</strong></div>' : ''}
     ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>📦 Event Archived</strong></div>' : ''}
+
+    ${resFinalized ? `
+      <div class="card" style="background:#fff8e1;border-left:6px solid #ffb300;margin-bottom:16px">
+        <strong>Breakers Report</strong><br>
+        Compact report only. Heat tables below are race details, not the breakers report.
+      </div>
+    ` : ''}
 
     <!-- Results Table -->
     <div style="overflow-x:auto;margin-bottom:16px">
       ${renderResultsTable(race)}
     </div>
 
-    <!-- Breakers Section -->
-    <div id="breakers-section"></div>
   `;
-
-  // Load breakers if finalized
-  if (resFinalized) {
-    loadBreakers();
-  }
 }
 
 function renderResultsTable(race) {
-  let rows = '';
+  let html = '';
 
   for (const heat of race.heats) {
-    const maxTime = heat.lanes.length > 0 ? Math.max(...heat.lanes.map(l => l.handicap_time)) : 0;
+    // Bryan logic: places are ranked WITHIN EACH HEAT by raw finish time ascending.
+    const rankedLanes = heat.lanes
+      .filter(l => l.finish_time != null)
+      .slice()
+      .sort((a, b) => a.finish_time - b.finish_time);
+    const livePlaces = {};
+    rankedLanes.forEach((lane, idx) => {
+      livePlaces[lane.id] = idx + 1;
+    });
 
+    let rows = '';
     for (let li = 0; li < heat.lanes.length; li++) {
       const lane = heat.lanes[li];
-      const heatCell = li === 0
-        ? `<td rowspan="${heat.lanes.length}" style="font-weight:700;font-size:16px;vertical-align:middle;background:#e0f2f1">Heat ${heat.heat_number}</td>`
-        : '';
-
       const hasTime = lane.finish_time != null;
-      const isBreak = lane.is_break === 1;
+      const isBreak = lane.is_break === 1 || (lane.variance != null && lane.variance < 0);
+      // Bryan logic: show a breaker marker only for the BEST breaker in this heat.
+      let bestBreakerId = null;
+      const breakersInHeat = heat.lanes.filter(x => x.finish_time != null && (x.is_break === 1 || (x.variance != null && x.variance < 0)));
+      if (breakersInHeat.length > 0) {
+        breakersInHeat.sort((a, b) => a.variance - b.variance || a.finish_time - b.finish_time);
+        bestBreakerId = breakersInHeat[0].id;
+      }
+      const isTrophy = lane.id === bestBreakerId;
       const breakCls = isBreak ? ' break-cell' : '';
+      const displayPlace = livePlaces[lane.id] || lane.place || null;
 
-      // Finish time cell — clickable if not finalized
       let finishCell;
       if (resFinalized) {
         finishCell = `<td class="time-cell${breakCls}" style="font-weight:700">${hasTime ? lane.finish_time + 's' : '—'}</td>`;
@@ -125,56 +140,62 @@ function renderResultsTable(race) {
         finishCell = `<td class="time-input${breakCls}" onclick="enterFinishTime(${heat.id}, ${lane.id}, ${lane.finish_time || 0})" style="cursor:pointer;font-weight:700">${hasTime ? lane.finish_time + 's' : '⏱️ Tap'}</td>`;
       }
 
-      // Place display with manual override
       let placeCell;
       if (resFinalized || !hasTime) {
-        placeCell = `<td style="font-weight:700;color:var(--primary)">${lane.place ? ordinal(lane.place) : '—'}</td>`;
+        placeCell = `<td style="font-weight:700;color:var(--primary)">${displayPlace ? ordinal(displayPlace) : '—'}</td>`;
       } else {
         placeCell = `<td>
           <select class="place-select" onchange="overridePlace(${heat.id}, ${lane.id}, this.value)" onclick="event.stopPropagation()">
-            <option value="" ${!lane.place ? 'selected' : ''}>—</option>
-            <option value="1" ${lane.place === 1 ? 'selected' : ''}>1st</option>
-            <option value="2" ${lane.place === 2 ? 'selected' : ''}>2nd</option>
-            <option value="3" ${lane.place === 3 ? 'selected' : ''}>3rd</option>
-            <option value="4" ${lane.place === 4 ? 'selected' : ''}>4th</option>
+            <option value="" ${!displayPlace ? 'selected' : ''}>—</option>
+            <option value="1" ${displayPlace === 1 ? 'selected' : ''}>1st</option>
+            <option value="2" ${displayPlace === 2 ? 'selected' : ''}>2nd</option>
+            <option value="3" ${displayPlace === 3 ? 'selected' : ''}>3rd</option>
+            <option value="4" ${displayPlace === 4 ? 'selected' : ''}>4th</option>
           </select>
         </td>`;
       }
 
       rows += `<tr class="${isBreak ? 'break-row' : ''}">
-        ${heatCell}
         <td>${lane.lane_number}</td>
         <td class="name-cell">${lane.name}</td>
-        <td class="time-cell">${lane.handicap_time}s</td>
-        <td class="time-cell">${lane.start_delay}s</td>
+        <td class="time-cell">${lane.handicap_time}s ${tooltip('PB: ' + lane.handicap_time + 's')}</td>
+        <td class="time-cell">${lane.start_delay}s ${tooltip('Starts at ' + lane.start_delay + 's')}</td>
         ${finishCell}
         <td class="time-cell">${hasTime ? lane.net_time + 's' : '—'}</td>
         <td class="time-cell" style="${hasTime && lane.variance < 0 ? 'color:var(--success);font-weight:700' : ''}">${hasTime ? (lane.variance >= 0 ? '+' : '') + lane.variance + 's' : '—'}</td>
         ${placeCell}
-        <td style="text-align:center">${isBreak ? '🏆' : ''}</td>
+        <td style="text-align:center;font-size:20px">${isTrophy ? '🏆' : ''}</td>
       </tr>`;
     }
+
+    html += `
+      <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91">
+        <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91">
+          Heat ${heat.heat_number}
+        </div>
+        <div style="overflow-x:auto">
+          <table class="spreadsheet-table">
+            <thead>
+              <tr>
+                <th style="width:50px">Lane</th>
+                <th style="text-align:left;min-width:140px">Swimmer</th>
+                <th>PB</th>
+                <th>Delay</th>
+                <th style="min-width:80px">Finish</th>
+                <th>Net</th>
+                <th>Variance</th>
+                <th>Place</th>
+                <th style="width:40px">🏆</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    `;
   }
 
-  return `
-    <table class="spreadsheet-table">
-      <thead>
-        <tr>
-          <th>Heat</th>
-          <th style="width:50px">Lane</th>
-          <th style="text-align:left;min-width:140px">Swimmer</th>
-          <th>PB</th>
-          <th>Delay</th>
-          <th style="min-width:80px">Finish</th>
-          <th>Net</th>
-          <th>Variance</th>
-          <th>Place</th>
-          <th style="width:40px">🏆</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `;
+  return html;
 }
 
 function ordinal(n) {
@@ -213,7 +234,7 @@ async function overridePlace(heatId, laneId, place) {
 }
 
 async function calculateResults() {
-  confirmDialog('Calculate Results?', 'This will rank swimmers by finish time for all heats in this race.', async () => {
+  confirmDialog('Save Rankings?', 'This will persist the current ranking (places 1st–4th) to the database. Rankings are already computed live.', async () => {
     const result = await API.rankRace(resSelectedRace.id);
     if (result.error) {
       alert('Error: ' + result.error);
@@ -236,8 +257,8 @@ async function doFinalizeEvent(allComplete) {
   }
 
   const warningText = missingCount > 0
-    ? `⚠️ ${missingCount} swimmer${missingCount !== 1 ? 's have' : ' has'} no finish time and will be skipped.\n\nThis will update PBs for any record breakers and lock the results. This cannot be undone.`
-    : 'This will update PBs for any record breakers and lock the results. This cannot be undone.';
+    ? `⚠️ ${missingCount} swimmer${missingCount !== 1 ? 's have' : ' has'} no finish time and will be skipped.\n\nThis will record breakers and lock the results. PBs will NOT be auto-updated. This cannot be undone.`
+    : 'This will record breakers and lock the results. PBs will NOT be auto-updated. This cannot be undone.';
 
   confirmDialog('Finalize Event?', warningText, async () => {
     const result = await API.finalizeEvent(resEvent.id);
@@ -245,9 +266,15 @@ async function doFinalizeEvent(allComplete) {
       alert('Error: ' + result.error);
       return;
     }
-    alert(`Event finalized! ${result.breakers_count} record breaker${result.breakers_count !== 1 ? 's' : ''} found.${missingCount > 0 ? ' (' + missingCount + ' swimmers without times were skipped)' : ''}`);
+    alert(`Event finalized! ${result.breakers_count} record breaker${result.breakers_count !== 1 ? 's' : ''} recorded.${missingCount > 0 ? ' (' + missingCount + ' swimmers without times were skipped)' : ''} PBs were not auto-updated.`);
     renderResults();
   });
+}
+
+async function doUnlockEvent() {
+  if (!confirm('Unlock event? This allows you to change races and enter times again. Any finalized results remain for now but can be edited.')) return;
+  await fetch(`/api/events/${resEvent.id}/unlock`, { method: 'PUT' });
+  renderResults();
 }
 
 async function doCompleteEvent() {
@@ -279,7 +306,7 @@ async function loadBreakers() {
       <td class="name-cell">${b.member_name}</td>
       <td>${b.stroke}</td>
       <td class="time-cell">${b.old_pb}s</td>
-      <td class="time-cell" style="font-weight:700;color:var(--success)">${b.new_pb}s</td>
+      <td class="time-cell" style="font-weight:700;color:var(--success)">${b.new_time}s</td>
       <td style="font-weight:700;color:var(--success)">-${b.improvement}s</td>
     </tr>
   `).join('');

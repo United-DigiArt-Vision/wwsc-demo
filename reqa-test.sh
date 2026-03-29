@@ -8,7 +8,7 @@ ok() { PASS=$((PASS+1)); RESULTS="$RESULTS\n✅ $1"; echo "✅ $1"; }
 fail() { FAIL=$((FAIL+1)); RESULTS="$RESULTS\n❌ $1 | $2"; echo "❌ $1 — $2"; }
 
 # Reset DB: delete all members, reset events
-curl -s -X POST $B/api/events/reset > /dev/null 2>&1
+curl -s -X POST $B/api/events/new-week > /dev/null 2>&1
 
 echo "=== 1. MEMBERS CRUD ==="
 
@@ -304,7 +304,7 @@ echo "$R" | grep -q 'totalMembers' && ok "T24d: Server stable after FK operation
 echo ""
 echo "=== 5. WEEKLY RESET (FIX #6) ==="
 
-R=$(curl -s -X POST $B/api/events/reset)
+R=$(curl -s -X POST $B/api/events/new-week)
 echo "$R" | grep -q '"ok":true' && ok "T25a: Reset returns ok" || fail "T25a: Reset" "$R"
 echo "$R" | grep -q '"backup":' && ok "T25b: Reset returns backup path" || fail "T25b: Backup path" "$R"
 echo "$R" | grep -q '"newEventId":' && ok "T25c: Reset creates new event (FIX#6)" || fail "T25c: New event (FIX#6)" "$R"

@@ -10,18 +10,18 @@ function renderSidebar(activeScreen) {
     { id: 'event-setup', icon: '📋', label: 'Times Sheet' },
     { id: 'heat-builder', icon: '🔧', label: 'Heat Builder' },
     { id: 'results', icon: '🏆', label: 'Results' },
-    { id: 'calendar', icon: '📅', label: 'Season Calendar' },
+    // Calendar disabled per Dino 2026-03-29 — will be delivered later
   ];
 
   let html = `<div class="sidebar-title">🏊 WWSC</div>`;
 
   for (const it of items) {
-    const active = activeScreen === it.id ? 'active' : '';
+    const active = activeScreen.startsWith(it.id) ? 'active' : '';
     html += `<button class="nav-item ${active}" onclick="navigate('${it.id}')">
       <span class="icon">${it.icon}</span><span>${it.label}</span>
     </button>`;
   }
 
-  html += `<div class="sidebar-version">v2.1.3-m1</div>`;
+  html += `<div class="sidebar-version">v2.2.0-m2</div>`;
   document.getElementById('sidebar').innerHTML = html;
 }

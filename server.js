@@ -150,12 +150,16 @@ function isEventLocked(eventId) {
 // List all events with attendance/race counts (for calendar screen)
 app.get('/api/events', (req, res) => {
   try {
+    const today = new Date().toISOString().slice(0, 10);
     const events = db.prepare(`
       SELECT e.*,
         (SELECT COUNT(*) FROM attendance a WHERE a.event_id = e.id AND a.present = 1) as present_count,
         (SELECT COUNT(*) FROM event_race er WHERE er.event_id = e.id) as race_count
-      FROM event e ORDER BY e.date DESC
-    `).all();
+      FROM event e
+      WHERE e.date <= ?
+      GROUP BY e.date
+      ORDER BY e.date DESC
+    `).all(today);
     res.json(events);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -309,23 +313,48 @@ app.put('/api/events/:eventId/races', (req, res) => {
     if (isEventLocked(req.params.eventId)) return res.status(403).json({ error: 'Event is locked' });
     const { race_types } = req.body;
     if (!Array.isArray(race_types)) return res.status(400).json({ error: 'race_types array required' });
-    // Fix #5: validate at least one race
     if (race_types.length === 0) return res.status(400).json({ error: 'Select at least one race type' });
+    
     const eventId = req.params.eventId;
-    // Fix #3: delete heats before races to avoid FK constraint
-    const races = db.prepare('SELECT id FROM event_race WHERE event_id = ?').all(eventId);
-    const delLanes = db.prepare('DELETE FROM heat_lane WHERE heat_id IN (SELECT id FROM heat WHERE event_race_id = ?)');
-    const delHeats = db.prepare('DELETE FROM heat WHERE event_race_id = ?');
-    const del = db.prepare('DELETE FROM event_race WHERE event_id = ?');
-    const ins = db.prepare('INSERT INTO event_race (event_id, race_type) VALUES (?, ?)');
-    const batch = db.transaction(() => {
-      races.forEach(r => { delLanes.run(r.id); delHeats.run(r.id); });
-      del.run(eventId);
-      race_types.forEach(rt => ins.run(eventId, rt));
-    });
-    batch();
+
+    // F32: We use a more aggressive cleanup here.
+    // To avoid complex FK issues with deep nesting (relay_members -> relay_teams -> races),
+    // we temporarily disable FK checks for this specific reset transaction.
+    db.exec('PRAGMA foreign_keys = OFF');
+    
+    try {
+      const batch = db.transaction(() => {
+        // 1. Delete all results/heats/teams related to this event's races
+        const raceIds = db.prepare('SELECT id FROM event_race WHERE event_id = ?').all(eventId).map(r => r.id);
+        
+        if (raceIds.length > 0) {
+          const placeholders = raceIds.map(() => '?').join(',');
+          
+          // Delete in reverse order of dependency
+          db.prepare(`DELETE FROM relay_team_member WHERE relay_team_id IN (SELECT id FROM relay_team WHERE event_race_id IN (${placeholders}))`).run(...raceIds);
+          db.prepare(`DELETE FROM relay_team WHERE event_race_id IN (${placeholders})`).run(...raceIds);
+          db.prepare(`DELETE FROM pointscore_entry WHERE event_race_id IN (${placeholders})`).run(...raceIds);
+          db.prepare(`DELETE FROM heat_lane WHERE heat_id IN (SELECT id FROM heat WHERE event_race_id IN (${placeholders}))`).run(...raceIds);
+          db.prepare(`DELETE FROM heat WHERE event_race_id IN (${placeholders})`).run(...raceIds);
+        }
+        
+        // 2. Delete the races themselves
+        db.prepare('DELETE FROM event_race WHERE event_id = ?').run(eventId);
+        
+        // 3. Insert new race types
+        const insRace = db.prepare('INSERT INTO event_race (event_id, race_type) VALUES (?, ?)');
+        race_types.forEach(rt => insRace.run(eventId, rt));
+      });
+      batch();
+    } finally {
+      db.exec('PRAGMA foreign_keys = ON');
+    }
+    
     res.json({ ok: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) {
+    console.error('Update races error:', e);
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // ════════════════════════════════════════════════════════
@@ -351,25 +380,47 @@ function shuffle(arr) {
 }
 
 // Build heats from swimmers array (each has {id, name, handicap_time})
-const BASE_OFFSET = 0; // F3 fix: Delay = MaxTime - PB, no offset
+const BASE_OFFSET = 2; // BRY-06: Slowest starts at 2s
 
 function buildHeats(swimmers) {
   const MAX_PER_HEAT = 4;
   const MIN_PER_HEAT = 3;
   const MAX_HEATS = 10;
 
-  if (swimmers.length < MIN_PER_HEAT) return [];
+  if (swimmers.length < MIN_PER_HEAT) return { heats: [], warning: `Need at least ${MIN_PER_HEAT} swimmers with PB times` };
 
   shuffle(swimmers);
 
-  // Fix #2: correct algorithm — ceil(count/4) heats, distribute evenly
-  const numHeats = Math.min(Math.ceil(swimmers.length / MAX_PER_HEAT), MAX_HEATS);
+  // T19j fix: Optimal heat distribution (maximize full 4-lane heats)
+  // Example: 23 swimmers => 6 heats => 4,4,4,4,4,3
+  let numHeats = Math.min(Math.ceil(swimmers.length / MAX_PER_HEAT), MAX_HEATS);
+  
+  while (numHeats <= MAX_HEATS) {
+    const remainder = swimmers.length % numHeats;
+    if (remainder === 0 || remainder >= MIN_PER_HEAT) break;
+    numHeats += 1;
+    if (numHeats > Math.ceil(swimmers.length / MIN_PER_HEAT)) {
+      numHeats = Math.ceil(swimmers.length / MAX_PER_HEAT);
+      break;
+    }
+  }
+
   const heats = Array.from({ length: numHeats }, () => []);
+  const baseSize = Math.floor(swimmers.length / numHeats);
+  const remainder = swimmers.length % numHeats;
 
-  // Distribute swimmers round-robin for even distribution
-  swimmers.forEach((s, i) => heats[i % numHeats].push(s));
+  let currentSwimmer = 0;
+  for (let i = 0; i < numHeats; i++) {
+    const heatSize = baseSize + (i < remainder ? 1 : 0);
+    for (let j = 0; j < heatSize; j++) {
+      if (currentSwimmer < swimmers.length) {
+        heats[i].push(swimmers[currentSwimmer]);
+        currentSwimmer++;
+      }
+    }
+  }
 
-  // Warning if any heat has < MIN_PER_HEAT (unavoidable for some counts like 5)
+  // Warning if any heat has < MIN_PER_HEAT
   const warning = heats.some(h => h.length < MIN_PER_HEAT)
     ? `Some heats have fewer than ${MIN_PER_HEAT} swimmers (unavoidable with ${swimmers.length} swimmers)`
     : null;
@@ -379,12 +430,14 @@ function buildHeats(swimmers) {
     const maxTime = Math.max(...heat.map(s => s.handicap_time));
     return {
       heat_number: i + 1,
+      max_time: maxTime,
       lanes: heat.map((s, li) => ({
         lane_number: li + 1,
         member_id: s.id,
         name: s.name,
         handicap_time: s.handicap_time,
-        start_delay: (maxTime - s.handicap_time) + BASE_OFFSET
+        start_delay: (maxTime - s.handicap_time) + BASE_OFFSET,
+        max_time: maxTime
       }))
     };
   });
@@ -400,12 +453,16 @@ app.get('/api/races/:raceId/generate-heats', (req, res) => {
   const col = timeColumn(race.race_type);
   if (!col) return res.status(400).json({ error: 'Invalid race type for heats' });
 
-  // Get attending members with a PB for this stroke
+  // Get eligible swimmers — for special events, only those who opted in (Y or stroke name)
+  const isSpecialEvent = ['backstroke','breaststroke','butterfly','75m','medley_relay'].includes(race.race_type);
+  const specialFilter = isSpecialEvent
+    ? `AND a.special_event_entry IS NOT NULL AND a.special_event_entry != 'N'`
+    : '';
   const swimmers = db.prepare(`
     SELECT m.id, m.name, m.${col} as handicap_time
     FROM member m
     JOIN attendance a ON a.member_id = m.id
-    WHERE a.event_id = ? AND a.present = 1 AND m.${col} IS NOT NULL AND m.is_active = 1
+    WHERE a.event_id = ? AND a.present = 1 AND m.${col} IS NOT NULL AND m.is_active = 1 ${specialFilter}
   `).all(race.event_id);
 
   if (swimmers.length < 3) {
@@ -595,11 +652,9 @@ app.post('/api/events/:eventId/finalize', (req, res) => {
             db.prepare(`
               INSERT INTO time_history (member_id, event_id, stroke, time, is_break, previous_best)
               VALUES (?, ?, ?, ?, ?, ?)
-            `).run(lane.member_id, eventId, stroke, lane.net_time, lane.is_break, previousBest);
+            `).run(lane.member_id, eventId, stroke, lane.finish_time, lane.is_break, previousBest);
 
-            // Update PB if breaker
-            if (lane.is_break && lane.net_time < (previousBest || Infinity)) {
-              db.prepare(`UPDATE member SET ${col} = ? WHERE id = ?`).run(lane.net_time, lane.member_id);
+            if (lane.is_break) {
               breakersCount++;
             }
 
@@ -635,8 +690,8 @@ app.get('/api/events/:eventId/breakers', (req, res) => {
       member_name: b.member_name,
       stroke: b.stroke,
       old_pb: b.previous_best,
-      new_pb: b.time,
-      improvement: (b.previous_best || 0) - b.time
+      new_time: b.finish_time || b.time,
+      improvement: (b.previous_best || 0) - (b.finish_time || b.time)
     }));
     res.json(result);
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -687,11 +742,19 @@ app.patch('/api/members/:id/toggle-active', (req, res) => {
 app.post('/api/events/new-week', (req, res) => {
   try {
     const backupPath = createBackup();
-    // Complete all open events
-    db.prepare("UPDATE event SET status = 'completed' WHERE status NOT IN ('completed')").run();
-    // Don't create a new event — let user pick the date in Event Setup
-    res.json({ ok: true, backup: backupPath });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+    db.prepare("UPDATE event SET status = 'completed' WHERE status != 'completed'").run();
+    // Auto-create new event with today's date
+    const today = new Date().toISOString().slice(0, 10);
+    const result = db.prepare("INSERT INTO event (date, status, created_at) VALUES (?, 'setup', ?)").run(today, new Date().toISOString());
+    // Initialize attendance for all active members
+    const members = db.prepare('SELECT id FROM member WHERE is_active = 1').all();
+    const ins = db.prepare('INSERT INTO attendance (event_id, member_id, present) VALUES (?, ?, 0)');
+    const batch = db.transaction(() => { members.forEach(m => ins.run(result.lastInsertRowid, m.id)); });
+    batch();
+    res.json({ ok: true, backup: backupPath, newEventId: Number(result.lastInsertRowid) });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // ════════════════════════════════════════════════════════

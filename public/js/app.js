@@ -14,14 +14,23 @@ const screens = {
   'calendar': renderCalendar,
 };
 
-function navigate(screen) {
+function navigate(path) {
+  const parts = path.split('/');
+  const screen = parts[0];
+  const param = parts[1];
   currentScreen = screen;
-  renderSidebar(screen);
+  renderSidebar(path);
   const renderFn = screens[screen];
-  if (renderFn) renderFn();
+  if (renderFn) renderFn(param);
 }
 
 // Initial load
 document.addEventListener('DOMContentLoaded', () => {
-  navigate('dashboard');
+  const hash = window.location.hash.slice(2);
+  navigate(hash || 'dashboard');
+});
+
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash.slice(2);
+  navigate(hash || 'dashboard');
 });

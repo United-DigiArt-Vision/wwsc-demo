@@ -71,7 +71,6 @@ async function renderDashboard() {
             ▶ Start New Event
           </button>
           <button class="btn btn-outline" onclick="navigate('results')">📊 View Results</button>
-          <button class="btn btn-outline" onclick="navigate('calendar')">📆 Season Calendar</button>
         </div>
       </div>
     `;
