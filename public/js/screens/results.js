@@ -128,7 +128,7 @@ function drawResults() {
     ${resFinalized ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — breakers recorded (PBs not auto-updated)</strong></div>' : ''}
     ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>📦 Event Archived</strong></div>' : ''}
 
-    ${resFinalized ? renderBreakersReport(race) : ''}
+    ${''}<!-- Breakers Report temporarily hidden until Bryan confirms finish-time input method -->
 
     <!-- Results Table -->
     <div style="overflow-x:auto;margin-bottom:16px">
