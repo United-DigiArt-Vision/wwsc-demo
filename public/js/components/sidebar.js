@@ -10,7 +10,7 @@ function renderSidebar(activeScreen) {
     { id: 'event-setup', icon: '📋', label: 'Times Sheet' },
     { id: 'heat-builder', icon: '🔧', label: 'Heat Builder' },
     { id: 'results', icon: '🏆', label: 'Results' },
-    // Calendar disabled per Dino 2026-03-29 — will be delivered later
+    { id: 'calendar', icon: '📅', label: 'Season Calendar' },
   ];
 
   let html = `<div class="sidebar-title">🏊 WWSC</div>`;

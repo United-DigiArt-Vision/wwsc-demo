@@ -88,12 +88,7 @@ function drawResults() {
     ${resFinalized ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — breakers recorded (PBs not auto-updated)</strong></div>' : ''}
     ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>📦 Event Archived</strong></div>' : ''}
 
-    ${resFinalized ? `
-      <div class="card" style="background:#fff8e1;border-left:6px solid #ffb300;margin-bottom:16px">
-        <strong>Breakers Report</strong><br>
-        Compact report only. Heat tables below are race details, not the breakers report.
-      </div>
-    ` : ''}
+    ${resFinalized ? renderBreakersReport(race) : ''}
 
     <!-- Results Table -->
     <div style="overflow-x:auto;margin-bottom:16px">
@@ -101,6 +96,62 @@ function drawResults() {
     </div>
 
   `;
+}
+
+function renderBreakersReport(race) {
+  // Collect all breakers across all heats
+  const breakers = [];
+  for (const heat of race.heats) {
+    for (const lane of heat.lanes) {
+      if (lane.finish_time != null && (lane.is_break === 1 || (lane.variance != null && lane.variance < 0))) {
+        breakers.push({
+          name: lane.swimmer_name || lane.name || 'Unknown',
+          heat: heat.heat_number,
+          pb: lane.pb,
+          finish: lane.finish_time,
+          variance: lane.variance,
+          net: lane.net_time != null ? lane.net_time : (lane.finish_time - (lane.delay || 0))
+        });
+      }
+    }
+  }
+
+  if (breakers.length === 0) {
+    return `<div class="card" style="background:#fff8e1;border-left:6px solid #ffb300;margin-bottom:16px">
+      <strong>Breakers Report</strong><br>
+      No PB breakers in this race.
+    </div>`;
+  }
+
+  // Sort by variance (most improved first)
+  breakers.sort((a, b) => a.variance - b.variance);
+
+  let rows = breakers.map((b, i) => {
+    const medal = i === 0 ? '🏆 ' : '';
+    return `<tr style="background:${i % 2 === 0 ? '#e8f5e9' : '#f1f8e9'}">
+      <td style="padding:8px 12px;font-weight:${i === 0 ? '700' : '400'}">${medal}${b.name}</td>
+      <td style="padding:8px 12px;text-align:center">Heat ${b.heat}</td>
+      <td style="padding:8px 12px;text-align:center">${b.pb}s</td>
+      <td style="padding:8px 12px;text-align:center;font-weight:700">${b.finish}s</td>
+      <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">${b.variance}s</td>
+    </tr>`;
+  }).join('');
+
+  return `<div class="card" style="background:#fff8e1;border-left:6px solid #ffb300;margin-bottom:16px">
+    <strong style="font-size:1.1em">🏅 Breakers Report — ${breakers.length} PB${breakers.length !== 1 ? 's' : ''} Broken!</strong>
+    <table style="width:100%;border-collapse:collapse;margin-top:10px">
+      <thead>
+        <tr style="background:#2e7d32;color:#fff">
+          <th style="padding:8px 12px;text-align:left">Swimmer</th>
+          <th style="padding:8px 12px;text-align:center">Heat</th>
+          <th style="padding:8px 12px;text-align:center">Old PB</th>
+          <th style="padding:8px 12px;text-align:center">New Time</th>
+          <th style="padding:8px 12px;text-align:center">Improved By</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
 }
 
 function renderResultsTable(race) {

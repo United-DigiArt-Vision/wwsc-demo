@@ -67,20 +67,7 @@ function seedIfEmpty() {
   seedAttendance();
   console.log(`✅ Created demo event for today with ${allMembers.length} members marked present.`);
 
-  // Also seed a couple of past events for calendar history
-  const pastEvents = [
-    { date: '2025-04-24', status: 'completed' },
-    { date: '2025-05-01', status: 'completed' },
-    { date: '2025-05-08', status: 'completed' },
-  ];
-  pastEvents.forEach(pe => {
-    const r = db.prepare("INSERT INTO event (date, status, created_at) VALUES (?, ?, ?)").run(pe.date, pe.status, pe.date + 'T09:00:00.000Z');
-    const eid = r.lastInsertRowid;
-    // Random subset of members attended
-    const subset = allMembers.slice(0, 10 + Math.floor(Math.random() * 10));
-    subset.forEach(m => insAtt.run(eid, m.id));
-  });
-  console.log('✅ Seeded 3 past events for calendar history.');
+  // No fake past events — Season Calendar should only show real events that actually happened
 }
 
 module.exports = { seedIfEmpty };
