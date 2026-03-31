@@ -17,6 +17,10 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Version endpoint (SSOT: package.json)
+const pkg = require('./package.json');
+app.get('/api/version', (req, res) => res.json({ version: pkg.version }));
+
 // ════════════════════════════════════════════════════════
 //  MEMBERS API
 // ════════════════════════════════════════════════════════

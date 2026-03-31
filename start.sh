@@ -25,7 +25,7 @@ echo "📁 Repo: $REPO_DIR"
 # 2. Branch + Commit + Version anzeigen
 BRANCH=$(git branch --show-current)
 COMMIT=$(git log --oneline -1)
-VERSION=$(grep -o "v[0-9]\.[0-9]\.[0-9][a-zA-Z0-9\-]*" public/js/components/sidebar.js 2>/dev/null || echo "UNBEKANNT")
+VERSION=$(node -p "require('./package.json').version" 2>/dev/null || echo "UNBEKANNT")
 echo "🌿 Branch: $BRANCH"
 echo "📌 Commit: $COMMIT"
 echo "🏷️  Version: $VERSION"

@@ -22,6 +22,12 @@ function renderSidebar(activeScreen) {
     </button>`;
   }
 
-  html += `<div class="sidebar-version">v2.3.0</div>`;
+  html += `<div class="sidebar-version" id="app-version">v…</div>`;
   document.getElementById('sidebar').innerHTML = html;
+
+  // Load version from SSOT (package.json via /api/version)
+  fetch('/api/version').then(r => r.json()).then(d => {
+    const el = document.getElementById('app-version');
+    if (el) el.textContent = 'v' + d.version;
+  }).catch(() => {});
 }
