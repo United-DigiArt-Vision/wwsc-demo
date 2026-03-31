@@ -22,6 +22,6 @@ function renderSidebar(activeScreen) {
     </button>`;
   }
 
-  html += `<div class="sidebar-version">v2.2.0-m2</div>`;
+  html += `<div class="sidebar-version">v2.3.0</div>`;
   document.getElementById('sidebar').innerHTML = html;
 }
