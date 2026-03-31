@@ -676,15 +676,18 @@ app.post('/api/events/:eventId/finalize', (req, res) => {
 });
 
 // GET /api/events/:eventId/breakers — list breakers for event
+// BRY-20: Only include STANDARD races (25m, 50m), NOT special events (75m, backstroke, etc.)
 app.get('/api/events/:eventId/breakers', (req, res) => {
   try {
+    const STANDARD_RACES = ['25m', '50m'];
     const breakers = db.prepare(`
       SELECT th.*, m.name as member_name
       FROM time_history th
       JOIN member m ON th.member_id = m.id
       WHERE th.event_id = ? AND th.is_break = 1
       ORDER BY th.stroke, m.name
-    `).all(req.params.eventId);
+    `).all(req.params.eventId)
+      .filter(b => STANDARD_RACES.includes(b.stroke));
 
     const result = breakers.map(b => ({
       member_name: b.member_name,
