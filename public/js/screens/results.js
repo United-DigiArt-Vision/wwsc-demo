@@ -62,14 +62,25 @@ async function renderResults() {
 function drawResults() {
   const el = document.getElementById('content');
   const race = resSelectedRace;
-  if (!race || !race.heats || race.heats.length === 0) {
+  // Relay races have teams, not heats — check accordingly
+  if (isResRaceRelay(race)) {
+    if (!race || !race.relay_teams || race.relay_teams.length === 0) {
+      el.innerHTML = `<h1>Results</h1><div class="card"><p>No relay teams generated for this race. <a href="#" onclick="navigate('heat-builder')">Generate teams first.</a></p></div>`;
+      return;
+    }
+  } else if (!race || !race.heats || race.heats.length === 0) {
     el.innerHTML = `<h1>Results</h1><div class="card"><p>No heats generated for this race. <a href="#" onclick="navigate('heat-builder')">Generate heats first.</a></p></div>`;
     return;
   }
 
   const raceLabel = RACE_LABELS[race.race_type] || race.race_type;
-  const allTimesEntered = race.heats.every(h => h.lanes.every(l => l.finish_time != null));
-  const anyTimesEntered = race.heats.some(h => h.lanes.some(l => l.finish_time != null));
+  const isRelay = isResRaceRelay(race);
+  const allTimesEntered = isRelay
+    ? (race.relay_teams || []).every(t => t.total_time != null)
+    : (race.heats || []).every(h => h.lanes.every(l => l.finish_time != null));
+  const anyTimesEntered = isRelay
+    ? (race.relay_teams || []).some(t => t.total_time != null)
+    : (race.heats || []).some(h => h.lanes.some(l => l.finish_time != null));
 
   el.innerHTML = `
     <div class="toolbar" style="align-items:flex-start">
