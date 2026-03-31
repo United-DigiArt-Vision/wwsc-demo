@@ -179,7 +179,7 @@ async function renderCalendar() {
       html += `
         <div style="margin-top:32px;text-align:center">
           <button class="btn" onclick="calShowArchive=!calShowArchive;renderCalendar()" style="background:transparent;color:#475569;font-size:13px;padding:8px 16px;border:1px solid #334155">
-            📦 Archive (${archivedEvents.length}) ${calShowArchive ? '▲' : '▼'}
+            🗑️ Deleted Events (${archivedEvents.length}) ${calShowArchive ? '▲' : '▼'}
           </button>
         </div>`;
       
@@ -193,7 +193,7 @@ async function renderCalendar() {
                 <div style="display:flex;gap:12px;align-items:center">
                   <span style="color:#475569;font-size:13px">👥 ${ev.present_count || 0}</span>
                   <span style="color:#475569;font-size:13px">🏁 ${ev.race_count || 0}</span>
-                  <span style="background:#1e293b;color:#475569;padding:3px 10px;border-radius:4px;font-size:12px;border:1px solid #334155">Archived</span>
+                  <span style="background:#1e293b;color:#475569;padding:3px 10px;border-radius:4px;font-size:12px;border:1px solid #334155">Deleted</span>
                   <button class="btn" onclick="restoreEvent(${ev.id})" style="background:#1e40af;color:#fff;padding:4px 10px;font-size:12px;border-radius:4px;min-width:auto">↩️ Restore</button>
                 </div>
               </div>

@@ -128,16 +128,16 @@ function drawResults() {
         <button class="btn btn-outline" onclick="doUnlockEvent()" style="color:var(--danger);border-color:var(--danger)">🔓 Unlock for Edits</button>
       `}
       ${resFinalized && !resCompleted ? `
-        <button class="btn btn-accent" id="btn-complete-archive" onclick="doCompleteEvent()">📦 Complete & Archive</button>
+        <button class="btn btn-accent" id="btn-complete-archive" onclick="doCompleteEvent()">✅ Complete Event</button>
       ` : ''}
       ${resCompleted ? `
-        <button class="btn btn-accent" disabled style="opacity:0.5;cursor:not-allowed">📦 Archived ✓</button>
+        <button class="btn btn-accent" disabled style="opacity:0.5;cursor:not-allowed">✅ Completed ✓</button>
       ` : ''}
     </div>
 
     ${''}<!-- F2: Relays now integrated in dropdown -->
     ${resFinalized ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — breakers recorded. PBs not auto-updated — update manually via Members → select swimmer → edit time.</strong></div>' : ''}
-    ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>📦 Event Archived</strong></div>' : ''}
+    ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>✅ Event Completed</strong></div>' : ''}
 
     ${''}<!-- Breakers Report temporarily hidden until Bryan confirms finish-time input method -->
 
@@ -445,8 +445,8 @@ async function doUnlockEvent() {
 }
 
 async function doCompleteEvent() {
-  confirmDialog('Complete & Archive?',
-    'This will archive the event. You can still view results in the Season Calendar.',
+  confirmDialog('Complete Event?',
+    'This will mark the event as completed. You can still view results in the Season Calendar.',
     async () => {
       const result = await API.completeEvent(resEvent.id);
       if (result.error) {

@@ -316,7 +316,7 @@ async function onConfigChange() {
 }
 
 async function doNewWeek() {
-  if (!confirm('Start a new event? The current event will be archived. All results and PBs are saved.')) return;
+  if (!confirm('Start a new event? The current event will be saved to the Season Calendar. All results are preserved.')) return;
   await API.resetWeek();
   renderEventSetup();
 }

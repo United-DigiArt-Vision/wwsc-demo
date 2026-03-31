@@ -64,7 +64,7 @@ async function renderDashboard() {
       <div class="card" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);padding:24px;text-align:center;border:2px solid var(--success)">
         <h2 style="margin:0 0 8px 0;color:var(--success)">✅ Event Complete</h2>
         <p style="margin:0 0 16px 0;color:#555;font-size:15px">
-          Results are locked and PBs updated. Start a new event when ready for next week.
+          Results are locked. Start a new event when ready for next week.
         </p>
         <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
           <button class="btn btn-accent btn-lg" onclick="handleWeeklyReset()" style="font-size:18px;padding:14px 32px">
@@ -109,7 +109,7 @@ async function renderDashboard() {
 }
 
 async function handleWeeklyReset() {
-  confirmDialog('Start New Event?', 'The current event will be archived. All results and PBs are saved. You can view past events in the Season Calendar.', async () => {
+  confirmDialog('Start New Event?', 'The current event will be saved to the Season Calendar. All results are preserved. You can view past events in the Season Calendar.', async () => {
     await API.resetWeek();
     navigate('event-setup');
   });
