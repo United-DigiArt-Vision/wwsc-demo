@@ -151,13 +151,13 @@ function isEventLocked(eventId) {
 app.get('/api/events', (req, res) => {
   try {
     const today = new Date().toISOString().slice(0, 10);
+    const includeArchived = req.query.archived === '1';
     const events = db.prepare(`
       SELECT e.*,
         (SELECT COUNT(*) FROM attendance a WHERE a.event_id = e.id AND a.present = 1) as present_count,
         (SELECT COUNT(*) FROM event_race er WHERE er.event_id = e.id) as race_count
       FROM event e
-      WHERE e.date <= ?
-      GROUP BY e.date
+      WHERE e.date <= ? AND (e.archived = 0 OR e.archived IS NULL ${includeArchived ? 'OR e.archived = 1' : ''})
       ORDER BY e.date DESC
     `).all(today);
     res.json(events);
@@ -719,6 +719,26 @@ app.post('/api/events/:eventId/complete', (req, res) => {
     const ev = db.prepare('SELECT * FROM event WHERE id = ?').get(req.params.eventId);
     if (!ev) return res.status(404).json({ error: 'Event not found' });
     db.prepare("UPDATE event SET status = 'completed' WHERE id = ?").run(req.params.eventId);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// PUT /api/events/:eventId/archive — soft-delete (move to archive)
+app.put('/api/events/:eventId/archive', (req, res) => {
+  try {
+    const ev = db.prepare('SELECT * FROM event WHERE id = ?').get(req.params.eventId);
+    if (!ev) return res.status(404).json({ error: 'Event not found' });
+    db.prepare("UPDATE event SET archived = 1 WHERE id = ?").run(req.params.eventId);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// PUT /api/events/:eventId/restore — restore from archive
+app.put('/api/events/:eventId/restore', (req, res) => {
+  try {
+    const ev = db.prepare('SELECT * FROM event WHERE id = ?').get(req.params.eventId);
+    if (!ev) return res.status(404).json({ error: 'Event not found' });
+    db.prepare("UPDATE event SET archived = 0 WHERE id = ?").run(req.params.eventId);
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });

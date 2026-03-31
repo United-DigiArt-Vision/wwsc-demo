@@ -160,6 +160,12 @@ function runMigrations() {
     }
   });
 
+  // Add archived column for soft-delete
+  const eventColsPre = db.prepare("PRAGMA table_info(event)").all().map(c => c.name);
+  if (!eventColsPre.includes('archived')) {
+    db.exec("ALTER TABLE event ADD COLUMN archived INTEGER DEFAULT 0");
+  }
+
   // Add event config columns
   const eventCols = db.prepare("PRAGMA table_info(event)").all().map(c => c.name);
   if (!eventCols.includes('standard_event')) {

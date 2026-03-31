@@ -2,7 +2,10 @@
  * WWSC — Season Calendar Screen
  * F28: Clear layout, sorted newest first, current event on top, clickable
  * BRY-24: Click on completed event cards to view details (races + breakers)
+ * F13: Delete → Archive with restore capability
  */
+
+let calShowArchive = false;
 
 // BRY-24: View event details — show summary modal with races and breakers
 async function viewEventDetails(eventId) {
@@ -24,7 +27,6 @@ async function viewEventDetails(eventId) {
     const races = await racesRes.json();
     const breakers = await breakersRes.json();
 
-    // Only show races that actually had heats with results entered
     const racesWithResults = races.filter(r => r.heat_count > 0);
     const raceList = racesWithResults.length > 0
       ? racesWithResults.map(r => `<li style="padding:4px 0">${r.race_type}</li>`).join('')
@@ -57,15 +59,36 @@ async function viewEventDetails(eventId) {
   }
 }
 
+async function archiveEvent(eventId, eventDate) {
+  confirmDialog('Archive Event?',
+    'This will move the event from ' + eventDate + ' to the archive. You can restore it later from the Archive section.',
+    async () => {
+      await fetch('/api/events/' + eventId + '/archive', { method: 'PUT' });
+      renderCalendar();
+    }
+  );
+}
+
+async function restoreEvent(eventId) {
+  await fetch('/api/events/' + eventId + '/restore', { method: 'PUT' });
+  renderCalendar();
+}
+
 async function renderCalendar() {
   const content = document.getElementById('content');
   content.innerHTML = '<h1>📅 Season Calendar</h1><p>Loading events...</p>';
 
   try {
-    const res = await fetch('/api/events');
-    const events = await res.json();
+    // Load both active and archived events
+    const [activeRes, archiveRes] = await Promise.all([
+      fetch('/api/events'),
+      fetch('/api/events?archived=1')
+    ]);
+    const activeEvents = await activeRes.json();
+    const allEvents = await archiveRes.json();
+    const archivedEvents = allEvents.filter(ev => ev.archived === 1);
 
-    if (!events.length) {
+    if (activeEvents.length === 0 && archivedEvents.length === 0) {
       content.innerHTML = `
         <h1>📅 Season Calendar</h1>
         <div class="card" style="text-align:center;padding:40px">
@@ -78,15 +101,15 @@ async function renderCalendar() {
     }
 
     // Separate current/active event from completed ones
-    const currentEvent = events.find(ev => ev.status !== 'completed');
-    const completedEvents = events.filter(ev => ev.status === 'completed');
+    const currentEvent = activeEvents.find(ev => ev.status !== 'completed');
+    const completedEvents = activeEvents.filter(ev => ev.status === 'completed');
     
     // Sort completed by date descending (most recent first)
     completedEvents.sort((a, b) => b.date.localeCompare(a.date));
 
     let html = '<h1>📅 Season Calendar</h1>';
 
-    // Current Event section (always on top if exists)
+    // Current Event section
     if (currentEvent) {
       html += `
         <div class="card" style="background:#1a365d;border-left:4px solid #16a34a;margin-bottom:24px;cursor:pointer" onclick="navigate('event-setup')">
@@ -117,32 +140,28 @@ async function renderCalendar() {
       
       for (const ev of completedEvents) {
         html += `
-          <div class="card" style="background:#1e293b;margin-bottom:8px;padding:12px 16px;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s"
-               onclick="viewEventDetails(${ev.id})"
-               onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)'"
-               onmouseout="this.style.transform='';this.style.boxShadow=''">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <div class="card" style="background:#1e293b;margin-bottom:8px;padding:12px 16px;position:relative">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer" onclick="viewEventDetails(${ev.id})">
               <div style="font-size:16px;font-weight:600;color:#e2e8f0">${formatDate(ev.date)}</div>
               <div style="display:flex;gap:16px;align-items:center">
                 <span style="color:#64748b;font-size:14px">👥 ${ev.present_count || 0}</span>
                 <span style="color:#64748b;font-size:14px">🏁 ${ev.race_count || 0}</span>
-                <span style="background:#334155;color:#94a3b8;padding:3px 10px;border-radius:4px;font-size:12px">
-                  ✓ Done
-                </span>
+                <span style="background:#334155;color:#94a3b8;padding:3px 10px;border-radius:4px;font-size:12px">✓ Done</span>
+                <button class="btn" onclick="event.stopPropagation();archiveEvent(${ev.id},'${formatDate(ev.date)}')" style="background:#991b1b;color:#fff;padding:4px 10px;font-size:12px;border-radius:4px;min-width:auto">🗑️</button>
               </div>
             </div>
-            <div style="margin-top:6px;font-size:12px;color:#60a5fa">👁️ Tap to view details</div>
+            <div style="margin-top:6px;font-size:12px;color:#60a5fa;cursor:pointer" onclick="viewEventDetails(${ev.id})">👁️ Tap to view details</div>
           </div>`;
       }
     }
 
     // Summary
-    const totalSwimmers = events.reduce((sum, ev) => sum + (ev.present_count || 0), 0);
-    const totalRaces = events.reduce((sum, ev) => sum + (ev.race_count || 0), 0);
+    const totalSwimmers = activeEvents.reduce((sum, ev) => sum + (ev.present_count || 0), 0);
+    const totalRaces = activeEvents.reduce((sum, ev) => sum + (ev.race_count || 0), 0);
     html += `
       <div style="margin-top:24px;padding:16px;background:#0f172a;border-radius:8px;display:flex;justify-content:space-around;text-align:center">
         <div>
-          <div style="font-size:24px;font-weight:700;color:#fff">${events.length}</div>
+          <div style="font-size:24px;font-weight:700;color:#fff">${activeEvents.length}</div>
           <div style="font-size:12px;color:#64748b">Events</div>
         </div>
         <div>
@@ -154,6 +173,35 @@ async function renderCalendar() {
           <div style="font-size:12px;color:#64748b">Total Races</div>
         </div>
       </div>`;
+
+    // Archive section (subtle, at the bottom)
+    if (archivedEvents.length > 0) {
+      html += `
+        <div style="margin-top:32px;text-align:center">
+          <button class="btn" onclick="calShowArchive=!calShowArchive;renderCalendar()" style="background:transparent;color:#475569;font-size:13px;padding:8px 16px;border:1px solid #334155">
+            📦 Archive (${archivedEvents.length}) ${calShowArchive ? '▲' : '▼'}
+          </button>
+        </div>`;
+      
+      if (calShowArchive) {
+        html += `<div style="margin-top:12px">`;
+        for (const ev of archivedEvents) {
+          html += `
+            <div class="card" style="background:#1e293b;margin-bottom:8px;padding:12px 16px;opacity:0.6">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+                <div style="font-size:15px;color:#94a3b8">${formatDate(ev.date)}</div>
+                <div style="display:flex;gap:12px;align-items:center">
+                  <span style="color:#475569;font-size:13px">👥 ${ev.present_count || 0}</span>
+                  <span style="color:#475569;font-size:13px">🏁 ${ev.race_count || 0}</span>
+                  <span style="background:#1e293b;color:#475569;padding:3px 10px;border-radius:4px;font-size:12px;border:1px solid #334155">Archived</span>
+                  <button class="btn" onclick="restoreEvent(${ev.id})" style="background:#1e40af;color:#fff;padding:4px 10px;font-size:12px;border-radius:4px;min-width:auto">↩️ Restore</button>
+                </div>
+              </div>
+            </div>`;
+        }
+        html += `</div>`;
+      }
+    }
 
     content.innerHTML = html;
   } catch (e) {
