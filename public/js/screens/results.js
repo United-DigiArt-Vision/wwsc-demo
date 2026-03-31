@@ -136,7 +136,7 @@ function drawResults() {
     </div>
 
     ${''}<!-- F2: Relays now integrated in dropdown -->
-    ${resFinalized ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — breakers recorded (PBs not auto-updated)</strong></div>' : ''}
+    ${resFinalized ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — breakers recorded. PBs not auto-updated — update manually via Members → select swimmer → edit time.</strong></div>' : ''}
     ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>📦 Event Archived</strong></div>' : ''}
 
     ${''}<!-- Breakers Report temporarily hidden until Bryan confirms finish-time input method -->
@@ -394,8 +394,8 @@ async function doFinalizeEvent(allComplete) {
 
   const reportText = reportLines.join('\n');
   const warningText = totalMissing > 0
-    ? '⚠️ Missing results:\n\n' + reportText + '\n\nMissing entries will be skipped. PBs will NOT be auto-updated.'
-    : 'All results entered:\n\n' + reportText + '\n\nPBs will NOT be auto-updated.';
+    ? '⚠️ Missing results:\n\n' + reportText + '\n\nMissing entries will be skipped.\n\n💡 PBs are NOT auto-updated. To update a PB: go to Members → select swimmer → edit their time.'
+    : 'All results entered:\n\n' + reportText + '\n\n💡 PBs are NOT auto-updated. To update a PB: go to Members → select swimmer → edit their time.';
 
   confirmDialog('Finalize Event?', warningText, async () => {
     const result = await API.finalizeEvent(resEvent.id);
@@ -432,7 +432,7 @@ async function doFinalizeEvent(allComplete) {
         finalReport += '\n';
       }
     }
-    finalReport += '\nPBs were not auto-updated.';
+    finalReport += '\n💡 PBs were not auto-updated. To update a PB: go to Members → select swimmer → edit their time.';
     alert(finalReport);
     renderResults();
   });
