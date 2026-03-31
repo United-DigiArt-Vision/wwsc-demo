@@ -118,18 +118,18 @@ function drawResults() {
 }
 
 function renderBreakersReport(race) {
-  // F3/F5-fix: SSOT — breakers are swimmers whose finish_time < PB (handicap_time).
-  // Read from heat_lane data but use consistent logic: is_break=1 AND finish_time < handicap_time.
+  // SSOT: breaker = variance < -1 (Bryan's Excel formula).
+  // net_time = actual swim time, variance = net_time - PB.
   const breakers = [];
   for (const heat of race.heats) {
     for (const lane of heat.lanes) {
-      if (lane.finish_time != null && lane.handicap_time != null && lane.finish_time < lane.handicap_time) {
+      if (lane.finish_time != null && lane.variance != null && lane.variance < -1) {
         breakers.push({
           name: lane.name || 'Unknown',
           heat: heat.heat_number,
           pb: lane.handicap_time,
-          newTime: lane.finish_time,
-          improvement: lane.handicap_time - lane.finish_time
+          newTime: lane.net_time,
+          improvement: lane.handicap_time - lane.net_time
         });
       }
     }
@@ -191,13 +191,13 @@ function renderResultsTable(race) {
     for (let li = 0; li < heat.lanes.length; li++) {
       const lane = heat.lanes[li];
       const hasTime = lane.finish_time != null;
-      // F3/F5-fix: SSOT — breaker = finish_time < handicap_time (PB)
-      const isBreak = lane.finish_time != null && lane.handicap_time != null && lane.finish_time < lane.handicap_time;
+      // SSOT: breaker = variance < -1 (Bryan's Excel: IF(variance < -1, "break", ""))
+      const isBreak = lane.finish_time != null && lane.variance != null && lane.variance < -1;
       // Bryan logic: show a breaker marker only for the BEST breaker in this heat.
       let bestBreakerId = null;
-      const breakersInHeat = heat.lanes.filter(x => x.finish_time != null && x.handicap_time != null && x.finish_time < x.handicap_time);
+      const breakersInHeat = heat.lanes.filter(x => x.finish_time != null && x.variance != null && x.variance < -1);
       if (breakersInHeat.length > 0) {
-        breakersInHeat.sort((a, b) => (a.finish_time - a.handicap_time) - (b.finish_time - b.handicap_time) || a.finish_time - b.finish_time);
+        breakersInHeat.sort((a, b) => a.variance - b.variance || a.finish_time - b.finish_time);
         bestBreakerId = breakersInHeat[0].id;
       }
       const isTrophy = lane.id === bestBreakerId;

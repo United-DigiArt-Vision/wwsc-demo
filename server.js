@@ -384,7 +384,7 @@ function shuffle(arr) {
 }
 
 // Build heats from swimmers array (each has {id, name, handicap_time})
-const BASE_OFFSET = 0; // R3.5: NO base offset — pure MaxPB−PB (Bryan confirmed in F3 acceptance test)
+const BASE_OFFSET = 2; // Bryan's Excel: MaxPB + 2, then delay = MaxTime - PB. Slowest gets +2s.
 
 function buildHeats(swimmers) {
   const MAX_PER_HEAT = 4;
@@ -431,7 +431,9 @@ function buildHeats(swimmers) {
 
   // Calculate start delays per heat
   const result = heats.map((heat, i) => {
-    const maxTime = Math.max(...heat.map(s => s.handicap_time));
+    // Bryan's Excel: MaxTime = ROUND(MAX(PBs), 0) + 2. Delay = MaxTime - PB.
+    const rawMax = Math.max(...heat.map(s => s.handicap_time));
+    const maxTime = rawMax + BASE_OFFSET; // +2s buffer per Bryan's VBA formula
     return {
       heat_number: i + 1,
       max_time: maxTime,
@@ -440,7 +442,7 @@ function buildHeats(swimmers) {
         member_id: s.id,
         name: s.name,
         handicap_time: s.handicap_time,
-        start_delay: (maxTime - s.handicap_time) + BASE_OFFSET,
+        start_delay: maxTime - s.handicap_time, // No extra offset — already in maxTime
         max_time: maxTime
       }))
     };
@@ -590,12 +592,13 @@ app.put('/api/heats/:heatId/lanes/:laneId/time', (req, res) => {
     const lane = db.prepare('SELECT * FROM heat_lane WHERE id = ? AND heat_id = ?').get(req.params.laneId, req.params.heatId);
     if (!lane) return res.status(404).json({ error: 'Lane not found' });
 
-    // F3-fix: finish_time IS the actual swim time (not stopwatch reading).
-    // net_time = finish_time (no start_delay subtraction needed).
-    // variance = finish_time - PB (negative = broke PB).
-    const net_time = finish_time;
+    // Bryan's Excel formula: finish_time = stopwatch reading (shared clock).
+    // net_time = finish_time - start_delay (remove handicap delay to get actual swim time).
+    // variance = net_time - PB (negative = faster than PB).
+    // break = variance < -1 (Bryan's Excel: IF(variance < -1, "break", "")).
+    const net_time = finish_time - lane.start_delay;
     const variance = net_time - lane.handicap_time;
-    const is_break = (net_time < lane.handicap_time) ? 1 : 0;
+    const is_break = (variance < -1) ? 1 : 0;
 
     db.prepare(`
       UPDATE heat_lane SET finish_time = ?, net_time = ?, variance = ?, is_break = ?
@@ -654,17 +657,17 @@ app.post('/api/events/:eventId/finalize', (req, res) => {
             if (lane.finish_time == null) return; // no time entered
 
             const previousBest = lane.current_pb;
-            // F3/F5-fix: SSOT — is_break is TRUE only when swimmer actually beat their PB.
-            // A break requires: (1) a previous PB exists, AND (2) finish_time < PB.
-            const actualBreak = (previousBest != null && lane.finish_time < previousBest) ? 1 : 0;
+            // SSOT: Use is_break from heat_lane (already computed correctly when time was entered).
+            // Store net_time as the swimmer's actual time (finish_time - start_delay).
+            const swimTime = lane.net_time != null ? lane.net_time : lane.finish_time;
 
             // Write time_history for ALL swimmers
             db.prepare(`
               INSERT INTO time_history (member_id, event_id, stroke, time, is_break, previous_best)
               VALUES (?, ?, ?, ?, ?, ?)
-            `).run(lane.member_id, eventId, stroke, lane.finish_time, actualBreak, previousBest);
+            `).run(lane.member_id, eventId, stroke, swimTime, lane.is_break, previousBest);
 
-            if (actualBreak) {
+            if (lane.is_break) {
               breakersCount++;
             }
 
@@ -812,10 +815,11 @@ app.put('/api/races/:raceId/heats/move-swimmer', (req, res) => {
     const recalcHeat = (heatId) => {
       const lanes = db.prepare('SELECT * FROM heat_lane WHERE heat_id = ?').all(heatId);
       if (lanes.length === 0) return;
-      const maxTime = Math.max(...lanes.map(l => l.handicap_time));
+      const rawMax = Math.max(...lanes.map(l => l.handicap_time));
+      const maxTime = rawMax + BASE_OFFSET; // +2s buffer per Bryan's VBA formula
       const upd = db.prepare('UPDATE heat_lane SET start_delay = ? WHERE id = ?');
       const t = db.transaction(() => {
-        lanes.forEach(l => upd.run((maxTime - l.handicap_time) + BASE_OFFSET, l.id));
+        lanes.forEach(l => upd.run(maxTime - l.handicap_time, l.id));
       });
       t();
     };
