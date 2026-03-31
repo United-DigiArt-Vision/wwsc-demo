@@ -76,8 +76,7 @@ function drawRelays() {
     <div class="toolbar" style="align-items:flex-start">
       <h1 style="margin:0">Relays — ${raceLabel}</h1>
       <div class="toolbar-spacer"></div>
-      <button class="btn btn-outline" onclick="navigate('heat-builder')">← Heats</button>
-      <button class="btn btn-outline" onclick="navigate('results')">← Results</button>
+      <button class="btn btn-outline" onclick="navigate('results')">← Back to Results</button>
       <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
     </div>
 
@@ -285,7 +284,8 @@ async function confirmRelayTeams() {
 }
 
 function enterRelayTeamTime(teamId, currentValue) {
-  showNumpad(currentValue || '', async (value) => {
+  // F8: Always start numpad fresh (empty) — same behavior as individual race time entry
+  showNumpad('', async (value) => {
     if (value == null) return;
     const result = await API.enterRelayTeamTime(teamId, parseInt(value));
     if (result.error) {

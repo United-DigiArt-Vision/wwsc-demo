@@ -28,6 +28,15 @@ async function renderResults() {
   const RELAY_TYPES = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
   resRaces = allRaces.filter(r => INDIVIDUAL_TYPES.includes(r.race_type) || RELAY_TYPES.includes(r.race_type));
   resHasRelays = allRaces.some(r => RELAY_TYPES.includes(r.race_type));
+  
+  // F5/F7: Pre-load relay teams for relay races so they render inline
+  for (const r of resRaces) {
+    if (RELAY_TYPES.includes(r.race_type) && r.status === 'heats_generated') {
+      try {
+        r.relay_teams = await API.getRelayTeams(r.id);
+      } catch(e) { r.relay_teams = []; }
+    }
+  }
 
   if (resRaces.length === 0) {
     el.innerHTML = `<h1>Results</h1><div class="card"><p>No races with heats yet. <a href="#" onclick="navigate('heat-builder')">Build heats first.</a></p></div>`;
@@ -72,18 +81,30 @@ function drawResults() {
     <div class="toolbar">
       <select class="form-control" style="max-width:300px" onchange="selectResRace(this.value)">
         ${(() => {
+          // F4: Group as Standard (25m, 50m, non-special relays) vs Special (medley, backstroke, etc.)
           const RELAY_TYPES = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
-          const indiv = resRaces.filter(r => !RELAY_TYPES.includes(r.race_type));
-          const relays = resRaces.filter(r => RELAY_TYPES.includes(r.race_type));
+          const SPECIAL_TYPES = ['75m','backstroke','breaststroke','butterfly','medley_relay'];
+          const standard = resRaces.filter(r => !SPECIAL_TYPES.includes(r.race_type));
+          const special = resRaces.filter(r => SPECIAL_TYPES.includes(r.race_type));
+          
+          // F6: Check if race actually has results entered (not just heats_generated status)
+          function hasActualResults(r) {
+            const isRelay = RELAY_TYPES.includes(r.race_type);
+            if (isRelay) {
+              return r.relay_teams && r.relay_teams.some(t => t.total_time != null);
+            }
+            return r.heats && r.heats.some(h => h.lanes && h.lanes.some(l => l.finish_time != null));
+          }
+          
           let opts = '';
-          if (indiv.length > 0) {
-            opts += '<optgroup label="── Individual ──">';
-            opts += indiv.map(r => `<option value="${r.id}" ${r.id === race.id ? 'selected' : ''}>${RACE_LABELS[r.race_type] || r.race_type} ${r.heats && r.heats.some(h => h.lanes && h.lanes.some(l => l.finish_time != null)) ? '✓' : ''}</option>`).join('');
+          if (standard.length > 0) {
+            opts += '<optgroup label="── Standard ──">';
+            opts += standard.map(r => `<option value="${r.id}" ${r.id === race.id ? 'selected' : ''}>${RACE_LABELS[r.race_type] || r.race_type} ${hasActualResults(r) ? '✓' : ''}</option>`).join('');
             opts += '</optgroup>';
           }
-          if (relays.length > 0) {
-            opts += '<optgroup label="── Relay ──">';
-            opts += relays.map(r => `<option value="${r.id}" ${r.id === race.id ? 'selected' : ''}>${RACE_LABELS[r.race_type] || r.race_type}</option>`).join('');
+          if (special.length > 0) {
+            opts += '<optgroup label="── Special ──">';
+            opts += special.map(r => `<option value="${r.id}" ${r.id === race.id ? 'selected' : ''}>${RACE_LABELS[r.race_type] || r.race_type} ${hasActualResults(r) ? '✓' : ''}</option>`).join('');
             opts += '</optgroup>';
           }
           return opts;
@@ -111,7 +132,7 @@ function drawResults() {
 
     <!-- Results Table -->
     <div style="overflow-x:auto;margin-bottom:16px">
-      ${renderResultsTable(race)}
+      ${isResRaceRelay(race) ? renderRelayResultsInline(race) : renderResultsTable(race)}
     </div>
 
   `;
@@ -123,7 +144,8 @@ function renderBreakersReport(race) {
   const breakers = [];
   for (const heat of race.heats) {
     for (const lane of heat.lanes) {
-      if (lane.finish_time != null && lane.variance != null && lane.variance < -1) {
+      // F9: Validate breaker data — net_time must be positive and realistic
+      if (lane.finish_time != null && lane.variance != null && lane.variance < -1 && lane.net_time > 0) {
         breakers.push({
           name: lane.name || 'Unknown',
           heat: heat.heat_number,
@@ -278,15 +300,8 @@ function ordinal(n) {
 // ── Actions ─────────────────────────────────────────
 
 function selectResRace(raceId) {
-  const RELAY_TYPES = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
-  const selected = resRaces.find(r => r.id === parseInt(raceId));
-  if (selected && RELAY_TYPES.includes(selected.race_type)) {
-    // F2: Navigate to relay screen with this race pre-selected
-    window._pendingRelayType = selected.race_type;
-    navigate('relays');
-    return;
-  }
-  resSelectedRace = selected;
+  // F5/F7: Stay on Results screen for ALL races (individual AND relay) — no navigation away
+  resSelectedRace = resRaces.find(r => r.id === parseInt(raceId));
   drawResults();
 }
 
@@ -405,6 +420,102 @@ async function loadBreakers() {
       <tbody>${rows}</tbody>
     </table>
   `;
+}
+
+// ── Inline Relay Results (F5/F7) ─────────────────────
+
+const RES_RELAY_TYPES = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
+
+function isResRaceRelay(race) {
+  return RES_RELAY_TYPES.includes(race.race_type);
+}
+
+function renderRelayResultsInline(race) {
+  const teams = race.relay_teams || [];
+  if (teams.length === 0) {
+    return '<div class="card"><p>No relay teams generated yet. <a href="#" onclick="navigate(\'heat-builder\')">Build teams in Heat Builder first.</a></p></div>';
+  }
+
+  const anyTimes = teams.some(t => t.total_time != null);
+  const ranked = teams.some(t => t.place != null);
+
+  let actionsHtml = '';
+  if (!resFinalized) {
+    actionsHtml = '<div class="toolbar" style="margin-bottom:12px">';
+    if (!ranked) {
+      actionsHtml += '<button class="btn btn-primary" onclick="calculateRelayResultsInline()" ' + (anyTimes ? '' : 'disabled') + '>📊 Calculate Results</button>';
+    } else {
+      actionsHtml += '<span style="color:var(--success);font-weight:700">🏆 Results Calculated</span>';
+    }
+    actionsHtml += '</div>';
+  }
+
+  let html = actionsHtml;
+  for (const team of teams) {
+    const members = team.members || [];
+    const placeDisplay = team.place ? ordinal(team.place) : '';
+    const teamHeader = team.team_name + (placeDisplay ? ' — ' + placeDisplay : '');
+
+    let rows = '';
+    for (const m of members) {
+      const pbCol = getRelayPBForResults(m, race.race_type);
+      const pbDisplay = pbCol != null ? pbCol + 's' : '—';
+      rows += '<tr><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td><td>' + (m.stroke || '—') + '</td><td class="time-cell">' + pbDisplay + '</td></tr>';
+    }
+
+    let totalTimeCell;
+    if (!resFinalized) {
+      totalTimeCell = '<td class="time-input" onclick="enterRelayTimeInline(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700;font-size:16px">' + (team.total_time != null ? team.total_time + 's' : '⏱️ Tap') + '</td>';
+    } else {
+      totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:16px">' + (team.total_time != null ? team.total_time + 's' : '—') + '</td>';
+    }
+
+    let varianceDisplay = '';
+    if (team.variance != null) {
+      const varStyle = Math.abs(team.variance) < 3 ? 'color:var(--success);font-weight:700' : '';
+      varianceDisplay = '<span style="' + varStyle + '"> | Variance: ' + (team.variance >= 0 ? '+' : '') + team.variance + 's</span>';
+    }
+
+    const targetDisplay = team.target_time ? 'Target: ' + team.target_time + 's' : '';
+
+    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + '</span><span style="font-weight:400;font-size:13px;color:#666">Start: 2s' + (targetDisplay ? ' • ' + targetDisplay : '') + '</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th><th>Stroke</th><th>PB</th></tr></thead><tbody>' + rows + '<tr style="background:#f5f5f5;font-weight:700"><td></td><td colspan="2">Team Total' + varianceDisplay + '</td>' + totalTimeCell + '</tr></tbody></table></div>';
+  }
+
+  return html;
+}
+
+function getRelayPBForResults(member, raceType) {
+  switch (raceType) {
+    case '25m_relay': return member.time_25m;
+    case '25m_brace': return member.time_25m;
+    case '50m_brace': return member.time_50m;
+    case 'pogo': return member.time_25m;
+    case 'medley_relay': {
+      const stroke = (member.stroke || '').toLowerCase();
+      if (stroke === 'back') return member.time_backstroke;
+      if (stroke === 'breast') return member.time_breaststroke;
+      if (stroke === 'free') return member.time_25m;
+      return member.time_25m;
+    }
+    default: return null;
+  }
+}
+
+function enterRelayTimeInline(teamId, currentValue) {
+  showNumpad('', async (value) => {
+    if (value == null) return;
+    const result = await API.enterRelayTeamTime(teamId, parseInt(value));
+    if (result.error) { alert('Error: ' + result.error); return; }
+    renderResults();
+  });
+}
+
+async function calculateRelayResultsInline() {
+  confirmDialog('Calculate Relay Results?', 'This will rank teams based on Team Total times.', async () => {
+    const result = await API.rankRelay(resSelectedRace.id);
+    if (result.error) { alert('Error: ' + result.error); return; }
+    renderResults();
+  });
 }
 
 // Race labels: uses RACE_LABELS from heat-builder.js (loaded before this file)

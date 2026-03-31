@@ -130,7 +130,10 @@ function drawHeatBuilder() {
 
   let progressHtml = '<div class="progress-tracker">';
   
-  const standardRaces = [...standardIndividual, ...relayRaces];
+  // F1-fix: Combine standard individual + relay into STANDARD, special events stay separate
+  // Medley Relay is ONLY in SPECIAL (not duplicated in STANDARD)
+  const standardRaces = [...standardIndividual, ...relayRaces.filter(r => !isSpecialEvent(r.race_type))];
+  const specialRaces = [...specialEvents.filter(r => !isRelayRace(r.race_type)), ...relayRaces.filter(r => isSpecialEvent(r.race_type))];
   if (standardRaces.length > 0) {
     progressHtml += '<div class="progress-section"><span class="progress-label">Standard ' + tooltip('25m + 50m + Relays') + ':</span>';
     for (const r of standardRaces) {
@@ -141,9 +144,9 @@ function drawHeatBuilder() {
     progressHtml += '</div>';
   }
   
-  if (specialEvents.length > 0) {
+  if (specialRaces.length > 0) {
     progressHtml += '<div class="progress-section"><span class="progress-label">Special ' + tooltip('Selected extra event') + ':</span>';
-    for (const r of specialEvents) {
+    for (const r of specialRaces) {
       const done = r.status === 'heats_generated';
       const active = hbSelectedRace && r.id === hbSelectedRace.id;
       progressHtml += '<button class="progress-item ' + (done ? 'done' : '') + (active ? ' active' : '') + '" onclick="selectHBRace(' + r.id + ')">' + (done ? '✅ ' : '⬜ ') + (RACE_LABELS[r.race_type] || r.race_type) + '</button>';
@@ -262,14 +265,11 @@ function renderRelayContent() {
     buttons += '<button class="btn btn-primary" onclick="generateHBRelayTeams()">' + tooltip('Creates balanced relay teams from present swimmers.') + ' Generate Teams</button>';
     if (hbRelayTeams && hbRelayTeams.length > 0) {
       buttons += ' <button class="btn btn-accent" onclick="generateHBRelayTeams()">' + tooltip('Re-randomize the team assignments.') + ' Shuffle</button>';
-      buttons += ' <button class="btn btn-success" onclick="confirmHBRelayTeams()">' + tooltip('Lock these teams. You can then enter times.') + ' Confirm Teams</button>';
+      buttons += ' <button class="btn btn-success" onclick="confirmHBRelayTeams()">' + tooltip('Lock these teams.') + ' Confirm Teams</button>';
     }
   } else {
     buttons += '<button class="btn btn-accent" onclick="reshuffleHBRelayTeams()">' + tooltip('Discard current teams and re-randomize. Entered times will be lost.') + ' Re-Shuffle</button>';
-    if (!hbRelayRanked) {
-      const anyTimes = hbRelayTeams && hbRelayTeams.some(t => t.total_time != null);
-      buttons += ' <button class="btn btn-primary" onclick="calculateHBRelayResults()" ' + (anyTimes ? '' : 'disabled') + '>' + tooltip('Rank teams based on their total times.') + ' Calculate Results</button>';
-    }
+    // F3a: No Calculate Results in Heat Builder — belongs on Results screen
   }
   buttons += '</div>';
 
@@ -421,15 +421,14 @@ async function generateHBRelayTeams() {
 
 async function confirmHBRelayTeams() {
   if (!hbRelayTeams || hbRelayTeams.length === 0) return;
-  confirmDialog('Confirm Teams?', 'This will save the relay teams. You can then enter times.', async function() {
-    const result = await API.saveRelayTeams(hbSelectedRace.id, hbRelayTeams);
-    if (result.error) { alert('Error: ' + result.error); return; }
-    const saved = await API.getRelayTeams(hbSelectedRace.id);
-    hbRelayTeams = saved;
-    hbRelayConfirmed = true;
-    hbSelectedRace.status = 'heats_generated';
-    drawHeatBuilder();
-  });
+  // F2: No confirmation dialog — just save directly like individual heats
+  const result = await API.saveRelayTeams(hbSelectedRace.id, hbRelayTeams);
+  if (result.error) { alert('Error: ' + result.error); return; }
+  const saved = await API.getRelayTeams(hbSelectedRace.id);
+  hbRelayTeams = saved;
+  hbRelayConfirmed = true;
+  hbSelectedRace.status = 'heats_generated';
+  drawHeatBuilder();
 }
 
 async function reshuffleHBRelayTeams() {
@@ -442,7 +441,8 @@ async function reshuffleHBRelayTeams() {
 }
 
 function enterHBRelayTeamTime(teamId, currentValue) {
-  showNumpad(currentValue || '', async function(value) {
+  // F8: Always start numpad fresh (empty)
+  showNumpad('', async function(value) {
     if (value == null) return;
     await API.enterRelayTeamTime(teamId, parseInt(value));
     const saved = await API.getRelayTeams(hbSelectedRace.id);
@@ -461,12 +461,4 @@ function enterHBRelaySplit(teamId, memberId, currentValue) {
   });
 }
 
-async function calculateHBRelayResults() {
-  confirmDialog('Calculate Relay Results?', 'This will rank teams based on Team Total times.', async function() {
-    await API.rankRelay(hbSelectedRace.id);
-    const saved = await API.getRelayTeams(hbSelectedRace.id);
-    hbRelayTeams = saved;
-    hbRelayRanked = true;
-    drawHeatBuilder();
-  });
-}
+// F3a: calculateHBRelayResults removed — Calculate Results belongs on the Results screen, not Heat Builder
