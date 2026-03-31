@@ -53,21 +53,8 @@ function seedIfEmpty() {
   insertAll();
   console.log(`✅ Seeded ${members.length} members.`);
 
-  // Create a demo event with attendance records so Bryan can immediately use Event Setup
-  const today = new Date().toISOString().slice(0, 10);
-  const evResult = db.prepare("INSERT INTO event (date, status, created_at) VALUES (?, 'setup', ?)").run(today, new Date().toISOString());
-  const eventId = evResult.lastInsertRowid;
-
-  // Create attendance records for all members (all marked present by default for demo)
-  const allMembers = db.prepare('SELECT id FROM member WHERE is_active = 1').all();
-  const insAtt = db.prepare('INSERT INTO attendance (event_id, member_id, present) VALUES (?, ?, 1)');
-  const seedAttendance = db.transaction(() => {
-    allMembers.forEach(m => insAtt.run(eventId, m.id));
-  });
-  seedAttendance();
-  console.log(`✅ Created demo event for today with ${allMembers.length} members marked present.`);
-
-  // No fake past events — Season Calendar should only show real events that actually happened
+  // F4-fix: No demo event — Bryan should create events himself.
+  // Season Calendar should only show real events that actually happened.
 }
 
 module.exports = { seedIfEmpty };

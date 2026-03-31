@@ -384,7 +384,7 @@ function shuffle(arr) {
 }
 
 // Build heats from swimmers array (each has {id, name, handicap_time})
-const BASE_OFFSET = 2; // BRY-06: Slowest starts at 2s
+const BASE_OFFSET = 0; // R3.5: NO base offset — pure MaxPB−PB (Bryan confirmed in F3 acceptance test)
 
 function buildHeats(swimmers) {
   const MAX_PER_HEAT = 4;
@@ -590,7 +590,10 @@ app.put('/api/heats/:heatId/lanes/:laneId/time', (req, res) => {
     const lane = db.prepare('SELECT * FROM heat_lane WHERE id = ? AND heat_id = ?').get(req.params.laneId, req.params.heatId);
     if (!lane) return res.status(404).json({ error: 'Lane not found' });
 
-    const net_time = finish_time - lane.start_delay;
+    // F3-fix: finish_time IS the actual swim time (not stopwatch reading).
+    // net_time = finish_time (no start_delay subtraction needed).
+    // variance = finish_time - PB (negative = broke PB).
+    const net_time = finish_time;
     const variance = net_time - lane.handicap_time;
     const is_break = (net_time < lane.handicap_time) ? 1 : 0;
 
@@ -651,14 +654,17 @@ app.post('/api/events/:eventId/finalize', (req, res) => {
             if (lane.finish_time == null) return; // no time entered
 
             const previousBest = lane.current_pb;
+            // F3/F5-fix: SSOT — is_break is TRUE only when swimmer actually beat their PB.
+            // A break requires: (1) a previous PB exists, AND (2) finish_time < PB.
+            const actualBreak = (previousBest != null && lane.finish_time < previousBest) ? 1 : 0;
 
             // Write time_history for ALL swimmers
             db.prepare(`
               INSERT INTO time_history (member_id, event_id, stroke, time, is_break, previous_best)
               VALUES (?, ?, ?, ?, ?, ?)
-            `).run(lane.member_id, eventId, stroke, lane.finish_time, lane.is_break, previousBest);
+            `).run(lane.member_id, eventId, stroke, lane.finish_time, actualBreak, previousBest);
 
-            if (lane.is_break) {
+            if (actualBreak) {
               breakersCount++;
             }
 
@@ -683,16 +689,15 @@ app.post('/api/events/:eventId/finalize', (req, res) => {
 // BRY-20: Only include STANDARD races (25m, 50m), NOT special events (75m, backstroke, etc.)
 app.get('/api/events/:eventId/breakers', (req, res) => {
   try {
-    const STANDARD_RACES = ['25m', '50m'];
+    // F5-fix: SSOT — is_break in time_history is the single source of truth.
+    // No extra filtering needed; finalize already validates correctly.
     const breakers = db.prepare(`
       SELECT th.*, m.name as member_name
       FROM time_history th
       JOIN member m ON th.member_id = m.id
       WHERE th.event_id = ? AND th.is_break = 1
-        AND th.previous_best IS NOT NULL AND th.time < th.previous_best
       ORDER BY th.stroke, m.name
-    `).all(req.params.eventId)
-      .filter(b => STANDARD_RACES.includes(b.stroke));
+    `).all(req.params.eventId);
 
     const result = breakers.map(b => ({
       member_name: b.member_name,

@@ -23,13 +23,14 @@ async function renderResults() {
   resCompleted = (resEvent.status === 'completed');
 
   const allRaces = await API.getResults(resEvent.id);
-  // Filter to individual races (not relays for now)
-  resRaces = allRaces.filter(r => ['25m','50m','75m','backstroke','breaststroke','butterfly'].includes(r.race_type));
-  resHasRelays = allRaces.some(r => ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'].includes(r.race_type));
+  // F2-fix: Include ALL races (individual + relay) in one dropdown
+  const INDIVIDUAL_TYPES = ['25m','50m','75m','backstroke','breaststroke','butterfly'];
+  const RELAY_TYPES = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
+  resRaces = allRaces.filter(r => INDIVIDUAL_TYPES.includes(r.race_type) || RELAY_TYPES.includes(r.race_type));
+  resHasRelays = allRaces.some(r => RELAY_TYPES.includes(r.race_type));
 
   if (resRaces.length === 0) {
-    el.innerHTML = `<h1>Results</h1><div class="card"><p>No races with heats yet. <a href="#" onclick="navigate('heat-builder')">Build heats first.</a></p></div>
-    ${resHasRelays ? '<div class="card" style="text-align:center"><button class="btn btn-accent" onclick="navigate(\'relays\')">🏊 View Relays →</button></div>' : ''}`;
+    el.innerHTML = `<h1>Results</h1><div class="card"><p>No races with heats yet. <a href="#" onclick="navigate('heat-builder')">Build heats first.</a></p></div>`;
     return;
   }
 
@@ -66,12 +67,27 @@ function drawResults() {
       <h1 style="margin:0">Results — ${raceLabel}</h1>
       <div class="toolbar-spacer"></div>
       <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
-      ${resHasRelays ? '<button class="btn btn-accent" onclick="navigate(\'relays\')">🏊 Relays →</button>' : ''}
     </div>
 
     <div class="toolbar">
       <select class="form-control" style="max-width:300px" onchange="selectResRace(this.value)">
-        ${resRaces.map(r => `<option value="${r.id}" ${r.id === race.id ? 'selected' : ''}>${RACE_LABELS[r.race_type] || r.race_type} ${r.heats.some(h => h.lanes.some(l => l.finish_time != null)) ? '✓' : ''}</option>`).join('')}
+        ${(() => {
+          const RELAY_TYPES = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
+          const indiv = resRaces.filter(r => !RELAY_TYPES.includes(r.race_type));
+          const relays = resRaces.filter(r => RELAY_TYPES.includes(r.race_type));
+          let opts = '';
+          if (indiv.length > 0) {
+            opts += '<optgroup label="── Individual ──">';
+            opts += indiv.map(r => `<option value="${r.id}" ${r.id === race.id ? 'selected' : ''}>${RACE_LABELS[r.race_type] || r.race_type} ${r.heats && r.heats.some(h => h.lanes && h.lanes.some(l => l.finish_time != null)) ? '✓' : ''}</option>`).join('');
+            opts += '</optgroup>';
+          }
+          if (relays.length > 0) {
+            opts += '<optgroup label="── Relay ──">';
+            opts += relays.map(r => `<option value="${r.id}" ${r.id === race.id ? 'selected' : ''}>${RACE_LABELS[r.race_type] || r.race_type}</option>`).join('');
+            opts += '</optgroup>';
+          }
+          return opts;
+        })()}
       </select>
       ${!resFinalized ? `
         <button class="btn btn-primary" onclick="calculateResults()" ${!anyTimesEntered ? 'disabled' : ''}>💾 Save Rankings</button>
@@ -87,7 +103,7 @@ function drawResults() {
       ` : ''}
     </div>
 
-    ${resHasRelays && !resFinalized ? '<div class="card" style="background:#e3f2fd;text-align:center;padding:10px"><span style="color:var(--primary)">📋 Relay results are on a separate screen →</span> <button class="btn btn-accent" onclick="navigate(\'relays\')" style="margin-left:8px;min-height:32px;padding:4px 12px">🏊 View Relays</button></div>' : ''}
+    ${''}<!-- F2: Relays now integrated in dropdown -->
     ${resFinalized ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — breakers recorded (PBs not auto-updated)</strong></div>' : ''}
     ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>📦 Event Archived</strong></div>' : ''}
 
@@ -102,18 +118,18 @@ function drawResults() {
 }
 
 function renderBreakersReport(race) {
-  // Collect all REAL breakers across all heats
-  // A breaker has is_break=1 AND negative variance (net_time < handicap_time/PB)
+  // F3/F5-fix: SSOT — breakers are swimmers whose finish_time < PB (handicap_time).
+  // Read from heat_lane data but use consistent logic: is_break=1 AND finish_time < handicap_time.
   const breakers = [];
   for (const heat of race.heats) {
     for (const lane of heat.lanes) {
-      if (lane.finish_time != null && lane.is_break === 1 && lane.variance != null && lane.variance < 0) {
+      if (lane.finish_time != null && lane.handicap_time != null && lane.finish_time < lane.handicap_time) {
         breakers.push({
           name: lane.name || 'Unknown',
           heat: heat.heat_number,
           pb: lane.handicap_time,
-          net: lane.net_time,
-          variance: lane.variance
+          newTime: lane.finish_time,
+          improvement: lane.handicap_time - lane.finish_time
         });
       }
     }
@@ -126,8 +142,8 @@ function renderBreakersReport(race) {
     </div>`;
   }
 
-  // Sort by variance (most improved first = most negative)
-  breakers.sort((a, b) => a.variance - b.variance);
+  // Sort by improvement (most improved first)
+  breakers.sort((a, b) => b.improvement - a.improvement);
 
   let rows = breakers.map((b, i) => {
     const medal = i === 0 ? '🏆 ' : '';
@@ -135,8 +151,8 @@ function renderBreakersReport(race) {
       <td style="padding:8px 12px;font-weight:${i === 0 ? '700' : '400'}">${medal}${b.name}</td>
       <td style="padding:8px 12px;text-align:center">Heat ${b.heat}</td>
       <td style="padding:8px 12px;text-align:center">${b.pb}s</td>
-      <td style="padding:8px 12px;text-align:center;font-weight:700">${b.net}s</td>
-      <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">${b.variance}s</td>
+      <td style="padding:8px 12px;text-align:center;font-weight:700">${b.newTime}s</td>
+      <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">-${b.improvement}s</td>
     </tr>`;
   }).join('');
 
@@ -175,12 +191,13 @@ function renderResultsTable(race) {
     for (let li = 0; li < heat.lanes.length; li++) {
       const lane = heat.lanes[li];
       const hasTime = lane.finish_time != null;
-      const isBreak = lane.is_break === 1 || (lane.variance != null && lane.variance < 0);
+      // F3/F5-fix: SSOT — breaker = finish_time < handicap_time (PB)
+      const isBreak = lane.finish_time != null && lane.handicap_time != null && lane.finish_time < lane.handicap_time;
       // Bryan logic: show a breaker marker only for the BEST breaker in this heat.
       let bestBreakerId = null;
-      const breakersInHeat = heat.lanes.filter(x => x.finish_time != null && (x.is_break === 1 || (x.variance != null && x.variance < 0)));
+      const breakersInHeat = heat.lanes.filter(x => x.finish_time != null && x.handicap_time != null && x.finish_time < x.handicap_time);
       if (breakersInHeat.length > 0) {
-        breakersInHeat.sort((a, b) => a.variance - b.variance || a.finish_time - b.finish_time);
+        breakersInHeat.sort((a, b) => (a.finish_time - a.handicap_time) - (b.finish_time - b.handicap_time) || a.finish_time - b.finish_time);
         bestBreakerId = breakersInHeat[0].id;
       }
       const isTrophy = lane.id === bestBreakerId;
@@ -261,7 +278,15 @@ function ordinal(n) {
 // ── Actions ─────────────────────────────────────────
 
 function selectResRace(raceId) {
-  resSelectedRace = resRaces.find(r => r.id === parseInt(raceId));
+  const RELAY_TYPES = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
+  const selected = resRaces.find(r => r.id === parseInt(raceId));
+  if (selected && RELAY_TYPES.includes(selected.race_type)) {
+    // F2: Navigate to relay screen with this race pre-selected
+    window._pendingRelayType = selected.race_type;
+    navigate('relays');
+    return;
+  }
+  resSelectedRace = selected;
   drawResults();
 }
 

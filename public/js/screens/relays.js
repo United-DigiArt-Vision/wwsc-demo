@@ -269,7 +269,7 @@ async function generateRelayTeams() {
 
 async function confirmRelayTeams() {
   if (!relayTeams || relayTeams.length === 0) return;
-  confirmDialog('Confirm Teams?', 'This will save the relay teams. You can then enter times.', async () => {
+  confirmDialog('Save & Build Heats?', 'This will lock the relay teams and build heats. You can then enter times.', async () => {
     const result = await API.saveRelayTeams(relaySelectedRace.id, relayTeams);
     if (result.error) {
       alert('Error: ' + result.error);
