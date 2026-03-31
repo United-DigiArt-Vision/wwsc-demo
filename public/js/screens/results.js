@@ -339,20 +339,52 @@ async function calculateResults() {
 }
 
 async function doFinalizeEvent(allComplete) {
-  // F1: Count swimmers without times across ALL individual races
-  let missingCount = 0;
+  // F11: Build detailed report of what's missing per race
+  const RELAY_TYPES_F = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
+  let totalMissing = 0;
+  let reportLines = [];
+
   for (const race of resRaces) {
-    if (!race.heats) continue;
-    for (const heat of race.heats) {
-      for (const lane of heat.lanes) {
-        if (lane.finish_time == null) missingCount++;
+    const label = RACE_LABELS[race.race_type] || race.race_type;
+    const isRelay = RELAY_TYPES_F.includes(race.race_type);
+
+    if (isRelay) {
+      const teams = race.relay_teams || [];
+      const totalTeams = teams.length;
+      const teamsWithTime = teams.filter(t => t.total_time != null).length;
+      const missing = totalTeams - teamsWithTime;
+      if (totalTeams === 0) {
+        reportLines.push('• ' + label + ': no teams generated');
+        totalMissing++;
+      } else if (missing > 0) {
+        reportLines.push('• ' + label + ': ' + missing + '/' + totalTeams + ' teams missing times');
+        totalMissing += missing;
+      } else {
+        reportLines.push('• ' + label + ': ' + totalTeams + '/' + totalTeams + ' teams ✓');
+      }
+    } else {
+      if (!race.heats) { reportLines.push('• ' + label + ': no heats'); totalMissing++; continue; }
+      let total = 0, entered = 0;
+      for (const heat of race.heats) {
+        for (const lane of heat.lanes) {
+          total++;
+          if (lane.finish_time != null) entered++;
+        }
+      }
+      const missing = total - entered;
+      if (missing > 0) {
+        reportLines.push('• ' + label + ': ' + missing + '/' + total + ' swimmers missing');
+        totalMissing += missing;
+      } else {
+        reportLines.push('• ' + label + ': ' + total + '/' + total + ' results ✓');
       }
     }
   }
 
-  const warningText = missingCount > 0
-    ? `⚠️ ${missingCount} swimmer${missingCount !== 1 ? 's have' : ' has'} no finish time and will be skipped.\n\nThis will record breakers and lock the results. PBs will NOT be auto-updated. This cannot be undone.`
-    : 'This will record breakers and lock the results. PBs will NOT be auto-updated. This cannot be undone.';
+  const reportText = reportLines.join('\n');
+  const warningText = totalMissing > 0
+    ? '⚠️ Missing results:\n\n' + reportText + '\n\nMissing entries will be skipped. PBs will NOT be auto-updated.'
+    : 'All results entered:\n\n' + reportText + '\n\nPBs will NOT be auto-updated.';
 
   confirmDialog('Finalize Event?', warningText, async () => {
     const result = await API.finalizeEvent(resEvent.id);
@@ -360,7 +392,37 @@ async function doFinalizeEvent(allComplete) {
       alert('Error: ' + result.error);
       return;
     }
-    alert(`Event finalized! ${result.breakers_count} record breaker${result.breakers_count !== 1 ? 's' : ''} recorded.${missingCount > 0 ? ' (' + missingCount + ' swimmers without times were skipped)' : ''} PBs were not auto-updated.`);
+    // F12: Detailed finalization report
+    let finalReport = 'Event finalized!\n\n';
+    for (const race of resRaces) {
+      const label = RACE_LABELS[race.race_type] || race.race_type;
+      const isRelay = RELAY_TYPES_F.includes(race.race_type);
+      if (isRelay) {
+        const teams = race.relay_teams || [];
+        const teamsWithTime = teams.filter(t => t.total_time != null).length;
+        finalReport += '• ' + label + ': ' + teamsWithTime + '/' + teams.length + ' teams';
+        if (teamsWithTime === 0) finalReport += ' ❌ (skipped)';
+        else finalReport += ' ✓';
+        finalReport += '\n';
+      } else {
+        if (!race.heats) { finalReport += '• ' + label + ': no heats ❌\n'; continue; }
+        let total = 0, entered = 0, breakers = 0;
+        for (const heat of race.heats) {
+          for (const lane of heat.lanes) {
+            total++;
+            if (lane.finish_time != null) entered++;
+            if (lane.variance != null && lane.variance < -1 && lane.net_time > 0) breakers++;
+          }
+        }
+        finalReport += '• ' + label + ': ' + entered + '/' + total + ' results';
+        if (entered === 0) finalReport += ' ❌ (skipped)';
+        else finalReport += ' ✓';
+        if (breakers > 0) finalReport += ', ' + breakers + ' breaker' + (breakers !== 1 ? 's' : '');
+        finalReport += '\n';
+      }
+    }
+    finalReport += '\nPBs were not auto-updated.';
+    alert(finalReport);
     renderResults();
   });
 }
