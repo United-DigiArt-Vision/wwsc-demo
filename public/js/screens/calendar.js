@@ -24,9 +24,11 @@ async function viewEventDetails(eventId) {
     const races = await racesRes.json();
     const breakers = await breakersRes.json();
 
-    const raceList = races.length > 0
-      ? races.map(r => `<li style="padding:4px 0">${r.race_type}</li>`).join('')
-      : '<li style="color:#64748b">No races recorded</li>';
+    // Only show races that actually had heats with results entered
+    const racesWithResults = races.filter(r => r.heat_count > 0);
+    const raceList = racesWithResults.length > 0
+      ? racesWithResults.map(r => `<li style="padding:4px 0">${r.race_type}</li>`).join('')
+      : '<li style="color:#64748b">No races with results</li>';
 
     const breakerList = breakers.length > 0
       ? breakers.map(b => `

@@ -35,7 +35,10 @@ async function renderEventSetup() {
         <h2>Start New Weekly Event</h2>
         <div class="form-group">
           <label>Event Date</label>
-          <input class="form-control" type="date" id="event-date" value="${today}">
+          <input type="hidden" id="event-date" value="${today}">
+          <button class="btn btn-outline" id="event-date-btn" onclick="pickEventDate()" style="font-size:18px;padding:12px 20px;min-height:56px;width:100%;text-align:left">
+            📅 ${formatDateNice(today)}
+          </button>
         </div>
         <button class="btn btn-primary btn-lg btn-block" onclick="createNewEvent()">🏊 Create Event</button>
       </div>
@@ -254,6 +257,14 @@ async function updateEventDate(newDate) {
     body: JSON.stringify({ date: newDate })
   });
   currentEvent.date = newDate;
+}
+
+function pickEventDate() {
+  const current = document.getElementById('event-date').value;
+  showDatePicker(current, function(newDate) {
+    document.getElementById('event-date').value = newDate;
+    document.getElementById('event-date-btn').innerHTML = '📅 ' + formatDateNice(newDate);
+  });
 }
 
 async function createNewEvent() {

@@ -80,7 +80,10 @@ function drawResults() {
         <button class="btn btn-outline" onclick="doUnlockEvent()" style="color:var(--danger);border-color:var(--danger)">🔓 Unlock for Edits</button>
       `}
       ${resFinalized && !resCompleted ? `
-        <button class="btn btn-accent" onclick="doCompleteEvent()">📦 Complete & Archive</button>
+        <button class="btn btn-accent" id="btn-complete-archive" onclick="doCompleteEvent()">📦 Complete & Archive</button>
+      ` : ''}
+      ${resCompleted ? `
+        <button class="btn btn-accent" disabled style="opacity:0.5;cursor:not-allowed">📦 Archived ✓</button>
       ` : ''}
     </div>
 
@@ -99,18 +102,18 @@ function drawResults() {
 }
 
 function renderBreakersReport(race) {
-  // Collect all breakers across all heats
+  // Collect all REAL breakers across all heats
+  // A breaker has is_break=1 AND negative variance (net_time < handicap_time/PB)
   const breakers = [];
   for (const heat of race.heats) {
     for (const lane of heat.lanes) {
-      if (lane.finish_time != null && (lane.is_break === 1 || (lane.variance != null && lane.variance < 0))) {
+      if (lane.finish_time != null && lane.is_break === 1 && lane.variance != null && lane.variance < 0) {
         breakers.push({
-          name: lane.swimmer_name || lane.name || 'Unknown',
+          name: lane.name || 'Unknown',
           heat: heat.heat_number,
-          pb: lane.pb,
-          finish: lane.finish_time,
-          variance: lane.variance,
-          net: lane.net_time != null ? lane.net_time : (lane.finish_time - (lane.delay || 0))
+          pb: lane.handicap_time,
+          net: lane.net_time,
+          variance: lane.variance
         });
       }
     }
@@ -118,12 +121,12 @@ function renderBreakersReport(race) {
 
   if (breakers.length === 0) {
     return `<div class="card" style="background:#fff8e1;border-left:6px solid #ffb300;margin-bottom:16px">
-      <strong>Breakers Report</strong><br>
+      <strong>🏅 Breakers Report</strong><br>
       No PB breakers in this race.
     </div>`;
   }
 
-  // Sort by variance (most improved first)
+  // Sort by variance (most improved first = most negative)
   breakers.sort((a, b) => a.variance - b.variance);
 
   let rows = breakers.map((b, i) => {
@@ -132,7 +135,7 @@ function renderBreakersReport(race) {
       <td style="padding:8px 12px;font-weight:${i === 0 ? '700' : '400'}">${medal}${b.name}</td>
       <td style="padding:8px 12px;text-align:center">Heat ${b.heat}</td>
       <td style="padding:8px 12px;text-align:center">${b.pb}s</td>
-      <td style="padding:8px 12px;text-align:center;font-weight:700">${b.finish}s</td>
+      <td style="padding:8px 12px;text-align:center;font-weight:700">${b.net}s</td>
       <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">${b.variance}s</td>
     </tr>`;
   }).join('');
@@ -263,7 +266,7 @@ function selectResRace(raceId) {
 }
 
 function enterFinishTime(heatId, laneId, currentValue) {
-  showNumpad(currentValue || '', async (value) => {
+  showNumpad('', async (value) => {
     if (value == null) return;
     const result = await API.enterTime(heatId, laneId, parseInt(value));
     if (result.error) {

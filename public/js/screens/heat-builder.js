@@ -308,13 +308,8 @@ function renderRelayTeamsInHB(teams, race) {
       rows += '<tr><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td><td>' + (m.stroke || '—') + '</td><td class="time-cell">' + pbDisplay + '</td></tr>';
     }
 
-    // Bryan wants team total entry directly; splits are not required.
-    let totalTimeCell;
-    if (hbRelayConfirmed && !isFinalized) {
-      totalTimeCell = '<td class="time-input" onclick="enterHBRelayTeamTime(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700;font-size:18px">' + (team.total_time != null ? team.total_time + 's' : 'Tap to enter') + '</td>';
-    } else {
-      totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:18px">' + (team.total_time != null ? team.total_time + 's' : '—') + '</td>';
-    }
+    // Heat Builder only shows team composition — time entry happens on Results/Relays screen
+    let totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:18px">' + (team.total_time != null ? team.total_time + 's' : '—') + '</td>';
 
     const targetDisplay = team.target_time ? 'Target: ' + team.target_time + 's' : '';
     const startDisplay = 'Start: 2s';

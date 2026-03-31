@@ -303,7 +303,11 @@ app.put('/api/events/:eventId/attendance', (req, res) => {
 
 app.get('/api/events/:eventId/races', (req, res) => {
   try {
-    const races = db.prepare('SELECT * FROM event_race WHERE event_id = ?').all(req.params.eventId);
+    const races = db.prepare(`
+      SELECT er.*, 
+        (SELECT COUNT(*) FROM heat h WHERE h.event_race_id = er.id) as heat_count
+      FROM event_race er WHERE er.event_id = ?
+    `).all(req.params.eventId);
     res.json(races);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -685,6 +689,7 @@ app.get('/api/events/:eventId/breakers', (req, res) => {
       FROM time_history th
       JOIN member m ON th.member_id = m.id
       WHERE th.event_id = ? AND th.is_break = 1
+        AND th.previous_best IS NOT NULL AND th.time < th.previous_best
       ORDER BY th.stroke, m.name
     `).all(req.params.eventId)
       .filter(b => STANDARD_RACES.includes(b.stroke));
@@ -693,8 +698,8 @@ app.get('/api/events/:eventId/breakers', (req, res) => {
       member_name: b.member_name,
       stroke: b.stroke,
       old_pb: b.previous_best,
-      new_time: b.finish_time || b.time,
-      improvement: (b.previous_best || 0) - (b.finish_time || b.time)
+      new_time: b.time,
+      improvement: b.previous_best - b.time
     }));
     res.json(result);
   } catch (e) { res.status(500).json({ error: e.message }); }
