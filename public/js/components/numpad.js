@@ -1,5 +1,6 @@
 /**
- * WWSC — Numpad Overlay
+ * WWSC — Numpad Overlay (Centiseconds)
+ * On confirm, sends parseTime(value) — centiseconds integer.
  */
 function showNumpad(currentValue, onConfirm) {
   let value = currentValue || '';
@@ -39,9 +40,16 @@ function showNumpad(currentValue, onConfirm) {
 
   window.numpadKey = (key) => {
     if (key === '⌫') { value = String(value).slice(0, -1); render(); }
-    else if (key === '✓') { hideModal(); onConfirm(value ? parseFloat(value) : null); }
-    else if (key === '.') { if (!String(value).includes('.')) { value += '.'; render(); } }
-    else { value += key; render(); }
+    else if (key === '✓') { hideModal(); onConfirm(value ? parseTime(value) : null); }
+    else if (key === '.') {
+      if (!String(value).includes('.')) { value += '.'; render(); }
+    } else {
+      // Enforce max 2 decimal places
+      const dotIdx = String(value).indexOf('.');
+      if (dotIdx >= 0 && String(value).length - dotIdx > 2) return;
+      value += key;
+      render();
+    }
   };
   render();
 }
