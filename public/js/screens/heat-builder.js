@@ -1,6 +1,6 @@
 /**
  * WWSC — Heat Builder Screen (Individual Heats + Relay Teams)
- * F17: Unified screen for all races. F18: Progress tracker.
+ * v2.4.0: All times in centiseconds, formatTime() display, relay handicap
  */
 let hbRaces = [];
 let hbSelectedRace = null;
@@ -41,9 +41,7 @@ async function renderHeatBuilder(raceType) {
     return;
   }
 
-  // F17: Handle pending race type from sidebar click or reset
   if (raceType === 'reset') {
-    // Force default to the first individual race (usually 25m)
     const individualRaces = hbRaces.filter(r => !isRelayRace(r.race_type));
     hbSelectedRace = individualRaces.length > 0 ? individualRaces[0] : hbRaces[0];
     hbPreviewHeats = null;
@@ -74,7 +72,6 @@ async function renderHeatBuilder(raceType) {
     window._pendingHBRaceType = null;
   }
 
-  // Final validation and state reload
   if (!hbSelectedRace || !hbRaces.find(r => r.id === hbSelectedRace.id)) {
     const individualRaces = hbRaces.filter(r => !isRelayRace(r.race_type));
     hbSelectedRace = individualRaces.length > 0 ? individualRaces[0] : hbRaces[0];
@@ -84,11 +81,9 @@ async function renderHeatBuilder(raceType) {
     hbRelayConfirmed = false;
     hbRelayRanked = false;
   } else {
-    // Update local object from fresh list to get latest status
     hbSelectedRace = hbRaces.find(r => r.id === hbSelectedRace.id);
   }
 
-  // Load saved state for selected race
   if (isRelayRace(hbSelectedRace.race_type)) {
     if (hbSelectedRace.status === 'heats_generated' && !hbRelayTeams) {
       const saved = await API.getRelayTeams(hbSelectedRace.id);
@@ -108,9 +103,6 @@ async function renderHeatBuilder(raceType) {
   drawHeatBuilder();
 }
 
-// F24: Special event types (stroke-based races chosen by user)
-// Per Bryan's Excel: Standard = 25m + 50m + 25m Team Relay. Special = 75m, Backstroke, Breaststroke, Butterfly, Medley Relay
-// Note: Medley Relay is BOTH a relay (team event) AND a special event (user-selected via I11 dropdown)
 const SPECIAL_EVENT_TYPES = ['75m', 'backstroke', 'breaststroke', 'butterfly', 'medley_relay'];
 
 function isSpecialEvent(raceType) {
@@ -120,7 +112,6 @@ function isSpecialEvent(raceType) {
 function drawHeatBuilder() {
   const el = document.getElementById('content');
   
-  // F24: Group races logically
   const standardIndividual = hbRaces.filter(r => !isRelayRace(r.race_type) && !isSpecialEvent(r.race_type));
   const relayRaces = hbRaces.filter(r => isRelayRace(r.race_type));
   const specialEvents = hbRaces.filter(r => isSpecialEvent(r.race_type));
@@ -130,8 +121,6 @@ function drawHeatBuilder() {
 
   let progressHtml = '<div class="progress-tracker">';
   
-  // F1-fix: Combine standard individual + relay into STANDARD, special events stay separate
-  // Medley Relay is ONLY in SPECIAL (not duplicated in STANDARD)
   const standardRaces = [...standardIndividual, ...relayRaces.filter(r => !isSpecialEvent(r.race_type))];
   const specialRaces = [...specialEvents.filter(r => !isRelayRace(r.race_type)), ...relayRaces.filter(r => isSpecialEvent(r.race_type))];
   if (standardRaces.length > 0) {
@@ -155,9 +144,8 @@ function drawHeatBuilder() {
   }
   progressHtml += '</div>';
 
-  if (!hbSelectedRace) return; // Should not happen with renderHeatBuilder logic
+  if (!hbSelectedRace) return;
 
-  // F16: "Go to Results" only when ALL confirmed
   let goToResultsBtn = '';
   if (allConfirmed) {
     goToResultsBtn = '<div class="card" style="background:#e8f5e9;text-align:center;padding:16px;margin-top:12px"><strong style="color:var(--success)">All ' + hbRaces.length + ' races ready!</strong><br><button class="btn btn-accent btn-lg" onclick="navigate(\'results\')" style="margin-top:8px;font-size:18px;padding:14px 32px">Go to Results</button></div>';
@@ -216,12 +204,12 @@ function renderHeatTable(heats) {
 
   let html = '';
   for (const heat of heats) {
-    const maxTime = Math.max(...heat.lanes.map(l => l.handicap_time));
+    const maxTime = heat.max_time || (Math.max(...heat.lanes.map(l => l.handicap_time)) + 200);
     let rows = '';
     for (let li = 0; li < 4; li++) {
       const lane = heat.lanes[li];
       if (lane) {
-        rows += '<tr><td>' + lane.lane_number + '</td><td class="name-cell">' + lane.name + '</td><td>' + lane.handicap_time + 's</td><td>' + maxTime + 's</td><td style="font-weight:700;color:var(--accent)">+' + lane.start_delay + 's</td></tr>';
+        rows += '<tr><td>' + lane.lane_number + '</td><td class="name-cell">' + lane.name + '</td><td>' + formatTime(lane.handicap_time) + '</td><td style="color:#999">' + formatTime(maxTime) + '</td><td style="font-weight:700;color:var(--accent)">+' + formatTime(lane.start_delay) + '</td></tr>';
       } else {
         rows += '<tr><td>' + (li + 1) + '</td><td class="name-cell" style="color:#999;font-style:italic">— empty —</td><td></td><td></td><td></td></tr>';
       }
@@ -229,17 +217,18 @@ function renderHeatTable(heats) {
     
     html += `
       <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91">
-        <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91">
-          Heat ${heat.heat_number}
+        <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91;display:flex;justify-content:space-between;align-items:center">
+          <span>Heat ${heat.heat_number}</span>
+          <span style="font-weight:400;font-size:13px;opacity:0.8">Max: ${formatTime(maxTime)}</span>
         </div>
         <table class="spreadsheet-table" style="margin:0">
           <thead>
             <tr>
               <th style="width:50px">Lane</th>
               <th style="text-align:left;min-width:150px">Swimmer</th>
-              <th>PB Time ${tooltip('Personal Best — the fastest recorded time for this distance.')}</th>
-              <th>Max Time ${tooltip('The slowest PB in this heat. Used to calculate start delays.')}</th>
-              <th>Start Delay ${tooltip('Handicap delay = (Max PB - Swimmer PB) + 2')}</th>
+              <th>PB ${tooltip('Personal Best — the fastest recorded time for this distance.')}</th>
+              <th>Max Time ${tooltip('The slowest PB in this heat + 2s. Used to calculate start delays.')}</th>
+              <th>Start Delay ${tooltip('Handicap delay = Max Time - Swimmer PB')}</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -256,7 +245,6 @@ function renderHeatTable(heats) {
 function renderRelayContent() {
   const race = hbSelectedRace;
   const raceLabel = RACE_LABELS[race.race_type] || race.race_type;
-  const showSplits = ['25m_relay', 'pogo'].includes(race.race_type);
 
   let buttons = '<div class="toolbar">';
   buttons += '<h2 style="margin:0">' + raceLabel + '</h2><div class="toolbar-spacer"></div>';
@@ -269,7 +257,6 @@ function renderRelayContent() {
     }
   } else {
     buttons += '<button class="btn btn-accent" onclick="reshuffleHBRelayTeams()">' + tooltip('Discard current teams and re-randomize. Entered times will be lost.') + ' Re-Shuffle</button>';
-    // F3a: No Calculate Results in Heat Builder — belongs on Results screen
   }
   buttons += '</div>';
 
@@ -293,7 +280,6 @@ function renderRelayContent() {
 }
 
 function renderRelayTeamsInHB(teams, race) {
-  const isFinalized = hbRelayRanked; // Read-only after ranking
   let html = '';
 
   for (const team of teams) {
@@ -304,17 +290,17 @@ function renderRelayTeamsInHB(teams, race) {
     let rows = '';
     for (const m of members) {
       const pbCol = getPBForRelayHB(m, race.race_type);
-      const pbDisplay = pbCol != null ? pbCol + 's' : '—';
+      const pbDisplay = formatTime(pbCol);
       rows += '<tr><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td><td>' + (m.stroke || '—') + '</td><td class="time-cell">' + pbDisplay + '</td></tr>';
     }
 
-    // Heat Builder only shows team composition — time entry happens on Results/Relays screen
-    let totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:18px">' + (team.total_time != null ? team.total_time + 's' : '—') + '</td>';
+    let totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:18px">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
 
-    const targetDisplay = team.target_time ? 'Target: ' + team.target_time + 's' : '';
-    const startDisplay = 'Start: 2s';
+    const targetDisplay = team.target_time ? 'Target: ' + formatTime(team.target_time) : '';
+    const startDisplay = 'Delay: ' + formatTime(team.start_delay || 0);
+    const maxDisplay = team.max_time ? 'Max: ' + formatTime(team.max_time) : '';
 
-    html += '<div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid #0b3d91"><span style="flex-shrink:0">' + teamHeader + '</span><span style="font-weight:400;font-size:13px;color:#666;white-space:nowrap;flex-shrink:0">' + startDisplay + ' • ' + targetDisplay + ' ' + tooltip('Relay start time is fixed at 2s. Target = sum of team PBs. Enter only the Team Total time.') + '</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg ' + tooltip('Order in which swimmers race in the relay.') + '</th><th style="text-align:left;min-width:140px">Swimmer</th><th>Stroke ' + tooltip('Swimming style for this leg.') + '</th><th>PB ' + tooltip('Personal Best time for the relevant distance.') + '</th></tr></thead><tbody>' + rows + '<tr style="background:#f5f5f5;font-weight:700"><td></td><td colspan="2">Team Total</td>' + totalTimeCell + '</tr></tbody></table></div>';
+    html += '<div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid #0b3d91"><span style="flex-shrink:0">' + teamHeader + '</span><span style="font-weight:400;font-size:13px;color:#666;white-space:nowrap;flex-shrink:0">' + startDisplay + (targetDisplay ? ' • ' + targetDisplay : '') + (maxDisplay ? ' • ' + maxDisplay : '') + '</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th><th>Stroke</th><th>PB</th></tr></thead><tbody>' + rows + '<tr style="background:#f5f5f5;font-weight:700"><td></td><td colspan="2">Team Total</td>' + totalTimeCell + '</tr></tbody></table></div>';
   }
 
   return html;
@@ -400,6 +386,7 @@ async function loadSavedHeats(raceId) {
   return heats.map(function(h) {
     return {
       heat_number: h.heat_number,
+      max_time: h.max_time,
       lanes: h.lanes.map(function(l) {
         return { lane_number: l.lane_number, name: l.name, member_id: l.member_id, handicap_time: l.handicap_time, start_delay: l.start_delay };
       })
@@ -421,7 +408,6 @@ async function generateHBRelayTeams() {
 
 async function confirmHBRelayTeams() {
   if (!hbRelayTeams || hbRelayTeams.length === 0) return;
-  // F2: No confirmation dialog — just save directly like individual heats
   const result = await API.saveRelayTeams(hbSelectedRace.id, hbRelayTeams);
   if (result.error) { alert('Error: ' + result.error); return; }
   const saved = await API.getRelayTeams(hbSelectedRace.id);
@@ -441,10 +427,9 @@ async function reshuffleHBRelayTeams() {
 }
 
 function enterHBRelayTeamTime(teamId, currentValue) {
-  // F8: Always start numpad fresh (empty)
   showNumpad('', async function(value) {
     if (value == null) return;
-    await API.enterRelayTeamTime(teamId, parseInt(value));
+    await API.enterRelayTeamTime(teamId, value);
     const saved = await API.getRelayTeams(hbSelectedRace.id);
     hbRelayTeams = saved;
     drawHeatBuilder();
@@ -454,11 +439,9 @@ function enterHBRelayTeamTime(teamId, currentValue) {
 function enterHBRelaySplit(teamId, memberId, currentValue) {
   showNumpad(currentValue || '', async function(value) {
     if (value == null) return;
-    await API.enterRelaySplit(teamId, memberId, parseInt(value));
+    await API.enterRelaySplit(teamId, memberId, value);
     const saved = await API.getRelayTeams(hbSelectedRace.id);
     hbRelayTeams = saved;
     drawHeatBuilder();
   });
 }
-
-// F3a: calculateHBRelayResults removed — Calculate Results belongs on the Results screen, not Heat Builder

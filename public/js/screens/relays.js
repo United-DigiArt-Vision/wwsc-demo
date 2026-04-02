@@ -108,10 +108,8 @@ function drawRelays() {
   `;
 }
 
-function formatTime(seconds) {
-  if (seconds == null) return '—';
-  return seconds + 's';
-}
+// v2.4.0: formatTime() is now global from format.js (centiseconds)
+// Removed local formatTime — use the global one
 
 function renderRelayTable(teams, race) {
   const isBrace = ['25m_brace', '50m_brace'].includes(race.race_type);
@@ -130,7 +128,7 @@ function renderRelayTable(teams, race) {
     let rows = '';
     for (const m of members) {
       const pbCol = getPBForRelay(m, race.race_type);
-      const pbDisplay = pbCol != null ? pbCol + 's' : '—';
+      const pbDisplay = formatTime(pbCol);
 
       // Split time cell
       let splitCell;
@@ -154,19 +152,19 @@ function renderRelayTable(teams, race) {
     // Bryan: Team Total is always the primary input; splits are not required.
     let totalTimeCell;
     if (relayConfirmed && !relayEventFinalized) {
-      totalTimeCell = `<td class="time-input" onclick="enterRelayTeamTime(${team.id}, ${team.total_time || 0})" style="cursor:pointer;font-weight:700;font-size:16px">${team.total_time != null ? team.total_time + 's' : '⏱️ Tap'}</td>`;
+      totalTimeCell = `<td class="time-input" onclick="enterRelayTeamTime(${team.id}, ${team.total_time || 0})" style="cursor:pointer;font-weight:700;font-size:16px">${team.total_time != null ? formatTime(team.total_time) : '⏱️ Tap'}</td>`;
     } else {
-      totalTimeCell = `<td class="time-cell" style="font-weight:700;font-size:16px">${team.total_time != null ? team.total_time + 's' : '—'}</td>`;
+      totalTimeCell = `<td class="time-cell" style="font-weight:700;font-size:16px">${team.total_time != null ? formatTime(team.total_time) : '—'}</td>`;
     }
 
     let varianceDisplay = '';
     if ((isBrace || isMedley) && team.variance != null) {
       const varStyle = Math.abs(team.variance) < 3 ? 'color:var(--success);font-weight:700' : '';
-      varianceDisplay = `<span style="${varStyle}"> | Variance: ${team.variance >= 0 ? '+' : ''}${team.variance}s</span>`;
+      varianceDisplay = `<span style="${varStyle}"> | Variance: ${team.variance >= 0 ? '+' : ''}${formatTime(team.variance)}</span>`;
     }
 
-    let targetDisplay = team.target_time ? 'Target: ' + team.target_time + 's' : '';
-    let startDisplay = 'Start: 2s';
+    let targetDisplay = team.target_time ? 'Target: ' + formatTime(team.target_time) : '';
+    let startDisplay = 'Delay: ' + formatTime(team.start_delay || 0);
 
     // Column count: Leg + Swimmer + Stroke + (Split if showSplits) + PB = 4 or 5
     const colCount = showSplits ? 5 : 4;
@@ -287,7 +285,7 @@ function enterRelayTeamTime(teamId, currentValue) {
   // F8: Always start numpad fresh (empty) — same behavior as individual race time entry
   showNumpad('', async (value) => {
     if (value == null) return;
-    const result = await API.enterRelayTeamTime(teamId, parseInt(value));
+    const result = await API.enterRelayTeamTime(teamId, value);
     if (result.error) {
       alert('Error: ' + result.error);
       return;
@@ -302,7 +300,7 @@ function enterRelayTeamTime(teamId, currentValue) {
 function enterRelaySplit(teamId, memberId, currentValue) {
   showNumpad(currentValue || '', async (value) => {
     if (value == null) return;
-    const result = await API.enterRelaySplit(teamId, memberId, parseInt(value));
+    const result = await API.enterRelaySplit(teamId, memberId, value);
     if (result.error) {
       alert('Error: ' + result.error);
       return;
