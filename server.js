@@ -27,7 +27,12 @@ app.get('/api/version', (req, res) => res.json({ version: pkg.version }));
 
 app.get('/api/members', (req, res) => {
   try {
-    const members = db.prepare('SELECT * FROM member ORDER BY name').all();
+    const filter = req.query.filter || 'all';
+    let sql = 'SELECT * FROM member';
+    if (filter === 'active') sql += ' WHERE is_active = 1';
+    else if (filter === 'inactive') sql += ' WHERE is_active = 0';
+    sql += ' ORDER BY name';
+    const members = db.prepare(sql).all();
     res.json(members);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -122,9 +127,17 @@ app.post('/api/members/import', upload.single('file'), (req, res) => {
         for (const [db_col, idx] of Object.entries(cols)) {
           const val = parts[idx];
           if (val === '' || val === undefined) { times[db_col] = null; continue; }
-          const num = parseInt(val, 10);
+          const num = parseFloat(val);
           if (isNaN(num) || num < 0) { errors.push(`Row ${i + 1}: invalid time "${val}" for ${db_col}`); return; }
-          times[db_col] = num;
+          // v2.4.0: parse decimals → centiseconds
+          // If value has decimal → seconds, × 100. If integer > 500 → already centiseconds. Else → seconds × 100.
+          if (val.includes('.')) {
+            times[db_col] = Math.round(num * 100);
+          } else if (num > 500) {
+            times[db_col] = Math.round(num);
+          } else {
+            times[db_col] = Math.round(num * 100);
+          }
         }
 
         insert.run(name, new Date().toISOString().slice(0, 10),
@@ -388,7 +401,7 @@ function shuffle(arr) {
 }
 
 // Build heats from swimmers array (each has {id, name, handicap_time})
-const BASE_OFFSET = 2; // Bryan's Excel: MaxPB + 2, then delay = MaxTime - PB. Slowest gets +2s.
+const BASE_OFFSET = 200; // Bryan's Excel: MaxPB + 200cs (2.00s), then delay = MaxTime - PB. Slowest gets +2.00s.
 
 function buildHeats(swimmers) {
   const MAX_PER_HEAT = 4;
@@ -529,10 +542,11 @@ app.get('/api/races/:raceId/heats', (req, res) => {
       JOIN member m ON hl.member_id = m.id
       WHERE hl.heat_id = ? ORDER BY hl.lane_number
     `);
-    const result = heats.map(h => ({
-      ...h,
-      lanes: getLanes.all(h.id)
-    }));
+    const result = heats.map(h => {
+      const lanes = getLanes.all(h.id);
+      const maxTime = lanes.length > 0 ? Math.max(...lanes.map(l => l.handicap_time)) + BASE_OFFSET : 0;
+      return { ...h, max_time: maxTime, lanes };
+    });
     res.json(result);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -577,10 +591,11 @@ app.get('/api/events/:eventId/results', (req, res) => {
       const heats = getHeats.all(race.id);
       return {
         ...race,
-        heats: heats.map(h => ({
-          ...h,
-          lanes: getLanes.all(h.id)
-        }))
+        heats: heats.map(h => {
+          const lanes = getLanes.all(h.id);
+          const maxTime = lanes.length > 0 ? Math.max(...lanes.map(l => l.handicap_time)) + BASE_OFFSET : 0;
+          return { ...h, max_time: maxTime, lanes };
+        })
       };
     });
     res.json(result);
@@ -599,10 +614,10 @@ app.put('/api/heats/:heatId/lanes/:laneId/time', (req, res) => {
     // Bryan's Excel formula: finish_time = stopwatch reading (shared clock).
     // net_time = finish_time - start_delay (remove handicap delay to get actual swim time).
     // variance = net_time - PB (negative = faster than PB).
-    // break = variance < -1 (Bryan's Excel: IF(variance < -1, "break", "")).
+    // break = variance <= -100 (centiseconds: 1.00s improvement required).
     const net_time = finish_time - lane.start_delay;
     const variance = net_time - lane.handicap_time;
-    const is_break = (variance < -1) ? 1 : 0;
+    const is_break = (variance <= -100) ? 1 : 0;
 
     db.prepare(`
       UPDATE heat_lane SET finish_time = ?, net_time = ?, variance = ?, is_break = ?
@@ -610,6 +625,20 @@ app.put('/api/heats/:heatId/lanes/:laneId/time', (req, res) => {
     `).run(finish_time, net_time, variance, is_break, lane.id);
 
     res.json({ ok: true, finish_time, net_time, variance, is_break });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// PATCH /api/heat-lanes/:id/place — set manual place override
+app.patch('/api/heat-lanes/:id/place', (req, res) => {
+  try {
+    const { manual_place } = req.body;
+    if (manual_place != null && (manual_place < 1 || manual_place > 4)) {
+      return res.status(400).json({ error: 'manual_place must be 1-4 or null' });
+    }
+    const lane = db.prepare('SELECT * FROM heat_lane WHERE id = ?').get(req.params.id);
+    if (!lane) return res.status(404).json({ error: 'Lane not found' });
+    db.prepare('UPDATE heat_lane SET manual_place = ? WHERE id = ?').run(manual_place ?? null, req.params.id);
+    res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -644,7 +673,7 @@ app.post('/api/events/:eventId/finalize', (req, res) => {
     const finalize = db.transaction(() => {
       races.forEach(race => {
         const col = timeColumn(race.race_type);
-        if (!col) return; // skip relay types etc.
+        if (!col) return; // skip relay types — no PB updates, no time_history, no breakers
         const stroke = race.race_type;
         const seasonCol = `season_start_${stroke}`;
 
@@ -714,6 +743,38 @@ app.get('/api/events/:eventId/breakers', (req, res) => {
       improvement: b.previous_best - b.time
     }));
     res.json(result);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/events/:eventId/slow-swimmers — variance > 200 centiseconds (>2s slower than PB)
+app.get('/api/events/:eventId/slow-swimmers', (req, res) => {
+  try {
+    const races = db.prepare('SELECT * FROM event_race WHERE event_id = ?').all(req.params.eventId);
+    const slowSwimmers = [];
+    races.forEach(race => {
+      const col = timeColumn(race.race_type);
+      if (!col) return;
+      const heats = db.prepare('SELECT id FROM heat WHERE event_race_id = ?').all(race.id);
+      heats.forEach(h => {
+        const lanes = db.prepare(`
+          SELECT hl.*, m.name FROM heat_lane hl
+          JOIN member m ON hl.member_id = m.id
+          WHERE hl.heat_id = ? AND hl.variance > 200
+        `).all(h.id);
+        lanes.forEach(l => {
+          slowSwimmers.push({
+            name: l.name,
+            member_id: l.member_id,
+            race_type: race.race_type,
+            heat_number: h.heat_number,
+            pb: l.handicap_time,
+            net_time: l.net_time,
+            variance: l.variance
+          });
+        });
+      });
+    });
+    res.json(slowSwimmers);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -852,14 +913,6 @@ app.put('/api/races/:raceId/heats/move-swimmer', (req, res) => {
 
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// ════════════════════════════════════════════════════════
-//  VERSION API
-// ════════════════════════════════════════════════════════
-
-app.get('/api/version', (req, res) => {
-  res.json({ version: '1.0.0', name: 'WWSC Swimming App' });
 });
 
 // ════════════════════════════════════════════════════════
@@ -1060,6 +1113,22 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
       teams.forEach((t, i) => t.team_number = i + 1);
     }
 
+    // v2.4.0: Calculate relay handicap (start_delay and max_time per team)
+    // team_pb = sum of member PBs, maxTeamPB = MAX(team_pbs), maxTime = maxTeamPB + 200
+    // team.start_delay = maxTime - team_pb
+    const teamPBs = teams.map(t => {
+      const members = t.members || [];
+      return members.reduce((sum, m) => sum + (m.pb || 0), 0);
+    });
+    const maxTeamPB = Math.max(...teamPBs.filter(p => p > 0));
+    const maxTime = maxTeamPB + BASE_OFFSET;
+
+    teams.forEach((t, i) => {
+      const teamPB = teamPBs[i];
+      t.start_delay = teamPB > 0 ? maxTime - teamPB : 0;
+      t.max_time = maxTime;
+    });
+
     res.json({ teams });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1076,7 +1145,7 @@ app.post('/api/races/:raceId/save-relay-teams', (req, res) => {
     const delMembers = db.prepare('DELETE FROM relay_team_member WHERE relay_team_id = ?');
     const delTeams = db.prepare('DELETE FROM relay_team WHERE event_race_id = ?');
 
-    const insTeam = db.prepare('INSERT INTO relay_team (event_race_id, team_number, team_name, target_time) VALUES (?, ?, ?, ?)');
+    const insTeam = db.prepare('INSERT INTO relay_team (event_race_id, team_number, team_name, target_time, start_delay, max_time) VALUES (?, ?, ?, ?, ?, ?)');
     const insMember = db.prepare('INSERT INTO relay_team_member (relay_team_id, member_id, leg_order, stroke) VALUES (?, ?, ?, ?)');
 
     const batch = db.transaction(() => {
@@ -1084,7 +1153,7 @@ app.post('/api/races/:raceId/save-relay-teams', (req, res) => {
       delTeams.run(raceId);
 
       teams.forEach(team => {
-        const r = insTeam.run(raceId, team.team_number, team.team_name, team.target_time || null);
+        const r = insTeam.run(raceId, team.team_number, team.team_name, team.target_time || null, team.start_delay || 0, team.max_time || null);
         const teamId = r.lastInsertRowid;
         (team.members || []).forEach(m => {
           insMember.run(teamId, m.member_id, m.leg_order, m.stroke || null);
@@ -1132,13 +1201,15 @@ app.put('/api/relay-teams/:teamId/time', (req, res) => {
     const team = db.prepare('SELECT rt.*, er.race_type FROM relay_team rt JOIN event_race er ON rt.event_race_id = er.id WHERE rt.id = ?').get(req.params.teamId);
     if (!team) return res.status(404).json({ error: 'Team not found' });
 
+    // v2.4.0: net_time = total_time - start_delay, variance = net_time - target_time
+    const net_time = total_time - (team.start_delay || 0);
     let variance = null;
-    if (['25m_brace', '50m_brace', 'medley_relay'].includes(team.race_type) && team.target_time) {
-      variance = total_time - team.target_time;
+    if (team.target_time) {
+      variance = net_time - team.target_time;
     }
 
     db.prepare('UPDATE relay_team SET total_time = ?, variance = ? WHERE id = ?').run(total_time, variance, req.params.teamId);
-    res.json({ ok: true, total_time, variance });
+    res.json({ ok: true, total_time, net_time, variance });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
