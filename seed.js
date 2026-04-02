@@ -1,5 +1,6 @@
 /**
  * WWSC Seed Script — Loads demo data from Bryan's club if DB is empty.
+ * v2.4.0: All PB values in centiseconds with realistic hundredths.
  */
 const { db } = require('./db');
 
@@ -12,31 +13,32 @@ function seedIfEmpty() {
 
   console.log('🌱 Seeding demo data (WWSC Winter Weakies Swimming Club)...');
 
-  // Real members from Bryan's Excel with realistic handicap times (seconds)
+  // Real members from Bryan's Excel with realistic handicap times (centiseconds)
+  // 1312 = 13.12 seconds. Scaled 50m/75m/strokes proportionally with realistic variation.
   const members = [
-    { name: 'Bryan Hesketh',    t25: 13, t50: 32, t75: 52, back: 36, breast: 38, fly: 42 },
-    { name: 'Felicia O\'Brien', t25: 16, t50: 38, t75: 62, back: 44, breast: 42, fly: 50 },
-    { name: 'Glenne Murray',    t25: 21, t50: 49, t75: 78, back: 55, breast: 54, fly: 65 },
-    { name: 'Ben Chandler',     t25: 14, t50: 33, t75: 54, back: 37, breast: 39, fly: 43 },
-    { name: 'Mark Thompson',    t25: 15, t50: 35, t75: 57, back: 40, breast: 41, fly: 46 },
-    { name: 'Steve Collins',    t25: 17, t50: 40, t75: 64, back: 45, breast: 46, fly: 52 },
-    { name: 'Jenny Walsh',      t25: 18, t50: 42, t75: 67, back: 47, breast: 48, fly: 55 },
-    { name: 'Peter Davidson',   t25: 14, t50: 34, t75: 55, back: 38, breast: 40, fly: 44 },
-    { name: 'Lisa Chen',        t25: 16, t50: 37, t75: 60, back: 42, breast: 43, fly: 49 },
-    { name: 'David Hughes',     t25: 19, t50: 44, t75: 70, back: 50, breast: 49, fly: 58 },
-    { name: 'Karen Mitchell',   t25: 20, t50: 46, t75: 74, back: 52, breast: 51, fly: 61 },
-    { name: 'Rob Stewart',      t25: 15, t50: 36, t75: 58, back: 41, breast: 42, fly: 47 },
-    { name: 'Sandra Blake',     t25: 22, t50: 50, t75: 80, back: 56, breast: 55, fly: 66 },
-    { name: 'Tom Richards',     t25: 13, t50: 31, t75: 50, back: 35, breast: 37, fly: 41 },
-    { name: 'Michelle Lee',     t25: 17, t50: 41, t75: 65, back: 46, breast: 47, fly: 53 },
-    { name: 'Greg Patterson',   t25: 16, t50: 38, t75: 61, back: 43, breast: 44, fly: 50 },
-    { name: 'Wendy Cooper',     t25: 19, t50: 43, t75: 69, back: 49, breast: 48, fly: 57 },
-    { name: 'James Morton',     t25: 14, t50: 33, t75: 53, back: 37, breast: 39, fly: 43 },
-    { name: 'Diane Foster',     t25: 21, t50: 48, t75: 76, back: 54, breast: 53, fly: 63 },
-    { name: 'Paul Nguyen',      t25: 15, t50: 36, t75: 57, back: 40, breast: 41, fly: 47 },
-    { name: 'Helen Sharp',      t25: 18, t50: 42, t75: 66, back: 47, breast: 46, fly: 54 },
-    { name: 'Andrew Barnes',    t25: 16, t50: 39, t75: 62, back: 44, breast: 45, fly: 51 },
-    { name: 'Sue Williams',     t25: 20, t50: 47, t75: 75, back: 53, breast: 52, fly: 62 },
+    { name: 'Bryan Hesketh',    t25: 1312, t50: 3178, t75: 5192, back: 3589, breast: 3812, fly: 4234 },
+    { name: 'Felicia O\'Brien', t25: 1622, t50: 3834, t75: 6245, back: 4423, breast: 4178, fly: 5034 },
+    { name: 'Glenne Murray',    t25: 2145, t50: 4923, t75: 7834, back: 5512, breast: 5389, fly: 6523 },
+    { name: 'Ben Chandler',     t25: 1389, t50: 3312, t75: 5423, back: 3723, breast: 3934, fly: 4312 },
+    { name: 'Mark Thompson',    t25: 1534, t50: 3523, t75: 5734, back: 4012, breast: 4123, fly: 4623 },
+    { name: 'Steve Collins',    t25: 1712, t50: 4023, t75: 6412, back: 4534, breast: 4612, fly: 5223 },
+    { name: 'Jenny Walsh',      t25: 1823, t50: 4212, t75: 6734, back: 4712, breast: 4834, fly: 5534 },
+    { name: 'Peter Davidson',   t25: 1411, t50: 3412, t75: 5523, back: 3823, breast: 4023, fly: 4412 },
+    { name: 'Lisa Chen',        t25: 1598, t50: 3723, t75: 6023, back: 4212, breast: 4312, fly: 4923 },
+    { name: 'David Hughes',     t25: 1923, t50: 4423, t75: 7023, back: 5023, breast: 4923, fly: 5823 },
+    { name: 'Karen Mitchell',   t25: 2034, t50: 4623, t75: 7412, back: 5223, breast: 5123, fly: 6134 },
+    { name: 'Rob Stewart',      t25: 1523, t50: 3612, t75: 5834, back: 4123, breast: 4212, fly: 4723 },
+    { name: 'Sandra Blake',     t25: 2256, t50: 5034, t75: 8023, back: 5612, breast: 5523, fly: 6623 },
+    { name: 'Tom Richards',     t25: 1289, t50: 3112, t75: 5034, back: 3512, breast: 3712, fly: 4123 },
+    { name: 'Michelle Lee',     t25: 1745, t50: 4112, t75: 6523, back: 4623, breast: 4712, fly: 5334 },
+    { name: 'Greg Patterson',   t25: 1612, t50: 3823, t75: 6134, back: 4323, breast: 4412, fly: 5023 },
+    { name: 'Wendy Cooper',     t25: 1934, t50: 4334, t75: 6923, back: 4923, breast: 4823, fly: 5723 },
+    { name: 'James Morton',     t25: 1378, t50: 3323, t75: 5312, back: 3712, breast: 3923, fly: 4323 },
+    { name: 'Diane Foster',     t25: 2123, t50: 4823, t75: 7623, back: 5412, breast: 5323, fly: 6334 },
+    { name: 'Paul Nguyen',      t25: 1512, t50: 3612, t75: 5723, back: 4023, breast: 4123, fly: 4723 },
+    { name: 'Helen Sharp',      t25: 1834, t50: 4223, t75: 6623, back: 4723, breast: 4623, fly: 5423 },
+    { name: 'Andrew Barnes',    t25: 1623, t50: 3923, t75: 6234, back: 4412, breast: 4523, fly: 5123 },
+    { name: 'Sue Williams',     t25: 2045, t50: 4723, t75: 7523, back: 5323, breast: 5212, fly: 6223 },
   ];
 
   const insert = db.prepare(`
@@ -52,9 +54,6 @@ function seedIfEmpty() {
 
   insertAll();
   console.log(`✅ Seeded ${members.length} members.`);
-
-  // F4-fix: No demo event — Bryan should create events himself.
-  // Season Calendar should only show real events that actually happened.
 }
 
 module.exports = { seedIfEmpty };

@@ -1,9 +1,9 @@
 /**
- * WWSC — Members Screen
+ * WWSC — Members Screen (v2.4.0: centiseconds + filter buttons)
  */
 let membersCache = [];
 let memberSearch = '';
-let membersShowInactive = true; // Default to true so people don't "vanish" unexpectedly
+let memberFilter = 'active'; // 'active' | 'inactive' | 'all'
 
 async function renderMembers() {
   membersCache = await API.getMembers();
@@ -13,8 +13,11 @@ async function renderMembers() {
 function drawMembersList() {
   const filtered = membersCache.filter(m => {
     const matchesSearch = m.name.toLowerCase().includes(memberSearch.toLowerCase());
-    const matchesStatus = membersShowInactive ? true : !!m.is_active;
-    return matchesSearch && matchesStatus;
+    let matchesFilter = true;
+    if (memberFilter === 'active') matchesFilter = !!m.is_active;
+    else if (memberFilter === 'inactive') matchesFilter = !m.is_active;
+    // 'all' shows everyone
+    return matchesSearch && matchesFilter;
   });
   const el = document.getElementById('content');
   const strokes = ['25m', '50m', '75m', 'Backstroke', 'Breaststroke', 'Butterfly'];
@@ -29,10 +32,11 @@ function drawMembersList() {
       <button class="btn btn-primary" onclick="showAddMemberModal()">+ Add Member</button>
       <button class="btn btn-outline" onclick="showImportModal()">📁 Import CSV</button>
       <div class="toolbar-spacer"></div>
-      <label style="display:flex;align-items:center;gap:8px;font-size:14px">
-        <input type="checkbox" ${membersShowInactive ? 'checked' : ''} onchange="membersShowInactive=this.checked;drawMembersList()">
-        Show inactive
-      </label>
+      <div style="display:flex;gap:4px">
+        <button class="btn ${memberFilter === 'active' ? 'btn-primary' : 'btn-outline'}" style="min-height:40px;padding:8px 16px;font-size:14px" onclick="setMemberFilter('active')">Active</button>
+        <button class="btn ${memberFilter === 'inactive' ? 'btn-primary' : 'btn-outline'}" style="min-height:40px;padding:8px 16px;font-size:14px" onclick="setMemberFilter('inactive')">Inactive</button>
+        <button class="btn ${memberFilter === 'all' ? 'btn-primary' : 'btn-outline'}" style="min-height:40px;padding:8px 16px;font-size:14px" onclick="setMemberFilter('all')">All</button>
+      </div>
       <input id="members-search" class="form-control" style="max-width:300px" placeholder="Search members..." value="${memberSearch}" oninput="memberSearch=this.value;drawMembersList()">
     </div>
     <div style="overflow-x:auto">
@@ -46,14 +50,17 @@ function drawMembersList() {
         </tr>
       </thead>
       <tbody>
-        ${filtered.map(m => `
-          <tr>
-            <td style="font-weight:600">${m.name}</td>
+        ${filtered.map(m => {
+          const isInactive = !m.is_active;
+          const rowStyle = (memberFilter === 'all' && isInactive) ? 'opacity:0.6' : '';
+          return `
+          <tr style="${rowStyle}">
+            <td style="font-weight:600">${m.name}${(memberFilter === 'all' && isInactive) ? ' <span style="color:#999;font-size:12px">(Inactive)</span>' : ''}</td>
             <td><span class="tag ${m.is_active ? 'tag-active' : 'tag-inactive'}">${m.is_active ? 'Active' : 'Inactive'}</span></td>
-            ${strokeKeys.map(k => `<td style="font-size:18px;font-weight:600">${m[k] != null ? m[k] + 's' : '—'}</td>`).join('')}
+            ${strokeKeys.map(k => `<td style="font-size:18px;font-weight:600">${formatTime(m[k])}</td>`).join('')}
             <td><button class="btn btn-outline" onclick="showEditMemberModal(${m.id})">Edit</button></td>
           </tr>
-        `).join('')}
+        `}).join('')}
       </tbody>
     </table>
     </div>
@@ -68,23 +75,37 @@ function drawMembersList() {
   }
 }
 
+function setMemberFilter(f) {
+  memberFilter = f;
+  drawMembersList();
+}
+
 function memberFormHtml(m) {
   const fields = [
     { key: 'name', label: 'Full Name', type: 'text' },
-    { key: 'time_25m', label: '25m PB (seconds)', type: 'number' },
-    { key: 'time_50m', label: '50m PB (seconds)', type: 'number' },
-    { key: 'time_75m', label: '75m PB (seconds)', type: 'number' },
-    { key: 'time_backstroke', label: 'Backstroke PB (seconds)', type: 'number' },
-    { key: 'time_breaststroke', label: 'Breaststroke PB (seconds)', type: 'number' },
-    { key: 'time_butterfly', label: 'Butterfly PB (seconds)', type: 'number' },
+    { key: 'time_25m', label: '25m PB (e.g. 13.45)', type: 'text' },
+    { key: 'time_50m', label: '50m PB (e.g. 32.20)', type: 'text' },
+    { key: 'time_75m', label: '75m PB (e.g. 52.00)', type: 'text' },
+    { key: 'time_backstroke', label: 'Backstroke PB (e.g. 36.22)', type: 'text' },
+    { key: 'time_breaststroke', label: 'Breaststroke PB (e.g. 38.45)', type: 'text' },
+    { key: 'time_butterfly', label: 'Butterfly PB (e.g. 42.33)', type: 'text' },
   ];
   const isActive = m?.is_active ?? 1;
-  return fields.map(f => `
+  return fields.map(f => {
+    let displayVal = '';
+    if (f.key === 'name') {
+      displayVal = m?.[f.key] ?? '';
+    } else {
+      // Show centiseconds as formatted time for editing
+      displayVal = m?.[f.key] != null ? formatTime(m[f.key]) : '';
+      if (displayVal === '—') displayVal = '';
+    }
+    return `
     <div class="form-group">
       <label>${f.label}</label>
-      <input class="form-control" id="mf-${f.key}" type="${f.type}" value="${m?.[f.key] ?? ''}" ${f.type === 'number' ? 'min="0"' : ''}>
+      <input class="form-control" id="mf-${f.key}" type="${f.type}" value="${displayVal}">
     </div>
-  `).join('') + `
+  `}).join('') + `
     <div class="form-group">
       <label>Status</label>
       <select class="form-control" id="mf-is_active">
@@ -97,15 +118,15 @@ function memberFormHtml(m) {
 
 function getMemberFormData(isEdit) {
   const val = (id) => document.getElementById(id)?.value;
-  const intOrNull = (id) => { const v = val(id); return v !== '' && v != null ? parseInt(v) : null; };
+  const timeOrNull = (id) => { const v = val(id); return parseTime(v); };
   const data = {
     name: val('mf-name'),
-    time_25m: intOrNull('mf-time_25m'),
-    time_50m: intOrNull('mf-time_50m'),
-    time_75m: intOrNull('mf-time_75m'),
-    time_backstroke: intOrNull('mf-time_backstroke'),
-    time_breaststroke: intOrNull('mf-time_breaststroke'),
-    time_butterfly: intOrNull('mf-time_butterfly'),
+    time_25m: timeOrNull('mf-time_25m'),
+    time_50m: timeOrNull('mf-time_50m'),
+    time_75m: timeOrNull('mf-time_75m'),
+    time_backstroke: timeOrNull('mf-time_backstroke'),
+    time_breaststroke: timeOrNull('mf-time_breaststroke'),
+    time_butterfly: timeOrNull('mf-time_butterfly'),
   };
   data.is_active = parseInt(val('mf-is_active') ?? '1');
   return data;
@@ -156,6 +177,7 @@ async function deleteMember(id) {
 function showImportModal() {
   showModal('Import Members from CSV', `
     <p style="margin-bottom:12px">CSV format: <code>Name,25m,50m,75m,Backstroke,Breaststroke,Butterfly</code></p>
+    <p style="margin-bottom:12px;font-size:13px;color:var(--text-secondary)">Times can be in seconds (e.g. "13.45") or centiseconds (e.g. "1345"). The system detects the format automatically.</p>
     <div class="file-upload" onclick="document.getElementById('csv-file').click()">
       <input type="file" id="csv-file" accept=".csv" onchange="handleCSVSelect(this)">
       <span id="csv-label">Tap to select CSV file</span>

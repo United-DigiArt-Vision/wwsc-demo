@@ -14,6 +14,10 @@ const API = {
     const r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     return r.json();
   },
+  async patch(url, data) {
+    const r = await fetch(url, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    return r.json();
+  },
   async upload(url, file) {
     const fd = new FormData();
     fd.append('file', file);
@@ -71,4 +75,8 @@ const API = {
   enterRelayTeamTime: (teamId, totalTime) => API.put(`/api/relay-teams/${teamId}/time`, { total_time: totalTime }),
   enterRelaySplit: (teamId, memberId, splitTime) => API.put(`/api/relay-teams/${teamId}/member/${memberId}/split`, { split_time: splitTime }),
   rankRelay: (raceId) => API.post(`/api/races/${raceId}/rank-relay`),
+
+  // v2.4.0: Manual place + slow swimmers
+  setManualPlace: (laneId, manualPlace) => API.patch('/api/heat-lanes/' + laneId + '/place', { manual_place: manualPlace }),
+  getSlowSwimmers: (eventId) => API.get('/api/events/' + eventId + '/slow-swimmers'),
 };

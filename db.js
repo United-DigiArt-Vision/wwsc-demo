@@ -180,6 +180,56 @@ function runMigrations() {
   if (!attCols.includes('special_event_entry')) {
     db.exec("ALTER TABLE attendance ADD COLUMN special_event_entry TEXT");
   }
+
+  // v2.4.0: Add manual_place to heat_lane
+  const hlCols = db.prepare("PRAGMA table_info(heat_lane)").all().map(c => c.name);
+  if (!hlCols.includes('manual_place')) {
+    db.exec("ALTER TABLE heat_lane ADD COLUMN manual_place INTEGER");
+  }
+
+  // v2.4.0: Add start_delay and max_time to relay_team
+  const rtCols = db.prepare("PRAGMA table_info(relay_team)").all().map(c => c.name);
+  if (!rtCols.includes('start_delay')) {
+    db.exec("ALTER TABLE relay_team ADD COLUMN start_delay INTEGER DEFAULT 0");
+  }
+  if (!rtCols.includes('max_time')) {
+    db.exec("ALTER TABLE relay_team ADD COLUMN max_time INTEGER");
+  }
+
+  // v2.4.0: Centiseconds migration — detect old data and multiply × 100
+  // Idempotent: only runs if MAX(time_25m) < 500 (old seconds format)
+  const maxTime = db.prepare("SELECT MAX(time_25m) as m FROM member WHERE time_25m IS NOT NULL").get();
+  if (maxTime && maxTime.m != null && maxTime.m < 500) {
+    console.log('🔄 Migrating times from seconds to centiseconds (×100)...');
+
+    // Member PB times (6 cols + 6 season_start cols)
+    const timeCols = ['time_25m', 'time_50m', 'time_75m', 'time_backstroke', 'time_breaststroke', 'time_butterfly'];
+    const seasonTimeCols = ['season_start_25m', 'season_start_50m', 'season_start_75m', 'season_start_backstroke', 'season_start_breaststroke', 'season_start_butterfly'];
+    const allMemberCols = [...timeCols, ...seasonTimeCols];
+    allMemberCols.forEach(col => {
+      db.exec(`UPDATE member SET ${col} = ${col} * 100 WHERE ${col} IS NOT NULL`);
+    });
+
+    // heat_lane: handicap_time, start_delay, finish_time, net_time, variance
+    ['handicap_time', 'start_delay', 'finish_time', 'net_time', 'variance'].forEach(col => {
+      db.exec(`UPDATE heat_lane SET ${col} = ${col} * 100 WHERE ${col} IS NOT NULL`);
+    });
+
+    // relay_team: total_time, target_time, variance
+    ['total_time', 'target_time', 'variance'].forEach(col => {
+      db.exec(`UPDATE relay_team SET ${col} = ${col} * 100 WHERE ${col} IS NOT NULL`);
+    });
+
+    // relay_team_member: split_time
+    db.exec("UPDATE relay_team_member SET split_time = split_time * 100 WHERE split_time IS NOT NULL");
+
+    // time_history: time, previous_best
+    ['time', 'previous_best'].forEach(col => {
+      db.exec(`UPDATE time_history SET ${col} = ${col} * 100 WHERE ${col} IS NOT NULL`);
+    });
+
+    console.log('✅ Migration to centiseconds complete.');
+  }
 }
 
 runMigrations();

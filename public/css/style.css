@@ -452,6 +452,18 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
 .break-cell { background: #c8e6c9 !important; color: #2e7d32; }
 .break-row { background: #f1f8e9; }
 
+/* v2.4.0: Breaker row highlight */
+.break-row-highlight { background: #d4edda !important; }
+.break-row-highlight:hover { background: #c3e6cb !important; }
+.break-text { color: #155724; font-weight: 700; font-size: 13px; }
+
+/* v2.4.0: Slow swimmers warning */
+.slow-swimmers-card { background: #fff3e0; border-left: 6px solid #e65100; }
+
+/* v2.4.0: Results readout large font */
+.results-readout .name-cell { font-size: 18px !important; font-weight: 600; }
+.results-readout .time-cell { font-size: 18px !important; }
+
 .place-select {
   padding: 2px 4px; font-size: 13px; font-weight: 600;
   border: 1px solid #999; border-radius: 3px;

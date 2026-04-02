@@ -1,7 +1,6 @@
 /**
- * WWSC — Results Screen (Excel-Style Spreadsheet)
+ * WWSC — Results Screen (v2.4.0: centiseconds, break column, manual place, slow swimmers)
  * Enter times, calculate results, finalize, breakers.
- * R7.1–R7.12, R8.1–R8.4
  */
 let resRaces = [];
 let resSelectedRace = null;
@@ -23,13 +22,11 @@ async function renderResults() {
   resCompleted = (resEvent.status === 'completed');
 
   const allRaces = await API.getResults(resEvent.id);
-  // F2-fix: Include ALL races (individual + relay) in one dropdown
   const INDIVIDUAL_TYPES = ['25m','50m','75m','backstroke','breaststroke','butterfly'];
   const RELAY_TYPES = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
   resRaces = allRaces.filter(r => INDIVIDUAL_TYPES.includes(r.race_type) || RELAY_TYPES.includes(r.race_type));
   resHasRelays = allRaces.some(r => RELAY_TYPES.includes(r.race_type));
   
-  // F5/F7: Pre-load relay teams for relay races so they render inline
   for (const r of resRaces) {
     if (RELAY_TYPES.includes(r.race_type) && r.status === 'heats_generated') {
       try {
@@ -43,7 +40,6 @@ async function renderResults() {
     return;
   }
 
-  // F2: If navigated from sidebar race link, pre-select that race
   if (window._pendingRaceType) {
     const pending = resRaces.find(r => r.race_type === window._pendingRaceType);
     if (pending) resSelectedRace = pending;
@@ -62,7 +58,6 @@ async function renderResults() {
 function drawResults() {
   const el = document.getElementById('content');
   const race = resSelectedRace;
-  // Relay races have teams, not heats — check accordingly
   if (isResRaceRelay(race)) {
     if (!race || !race.relay_teams || race.relay_teams.length === 0) {
       el.innerHTML = `<h1>Results</h1><div class="card"><p>No relay teams generated for this race. <a href="#" onclick="navigate('heat-builder')">Generate teams first.</a></p></div>`;
@@ -92,18 +87,14 @@ function drawResults() {
     <div class="toolbar">
       <select class="form-control" style="max-width:300px" onchange="selectResRace(this.value)">
         ${(() => {
-          // F4: Group as Standard (25m, 50m, non-special relays) vs Special (medley, backstroke, etc.)
           const RELAY_TYPES = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
           const SPECIAL_TYPES = ['75m','backstroke','breaststroke','butterfly','medley_relay'];
           const standard = resRaces.filter(r => !SPECIAL_TYPES.includes(r.race_type));
           const special = resRaces.filter(r => SPECIAL_TYPES.includes(r.race_type));
           
-          // F6: Check if race actually has results entered (not just heats_generated status)
           function hasActualResults(r) {
             const isRelay = RELAY_TYPES.includes(r.race_type);
-            if (isRelay) {
-              return r.relay_teams && r.relay_teams.some(t => t.total_time != null);
-            }
+            if (isRelay) return r.relay_teams && r.relay_teams.some(t => t.total_time != null);
             return r.heats && r.heats.some(h => h.lanes && h.lanes.some(l => l.finish_time != null));
           }
           
@@ -135,28 +126,29 @@ function drawResults() {
       ` : ''}
     </div>
 
-    ${''}<!-- F2: Relays now integrated in dropdown -->
     ${resFinalized ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — breakers recorded. PBs not auto-updated — update manually via Members → select swimmer → edit time.</strong></div>' : ''}
     ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>✅ Event Completed</strong></div>' : ''}
 
-    ${''}<!-- Breakers Report temporarily hidden until Bryan confirms finish-time input method -->
-
-    <!-- Results Table -->
     <div style="overflow-x:auto;margin-bottom:16px">
       ${isResRaceRelay(race) ? renderRelayResultsInline(race) : renderResultsTable(race)}
     </div>
 
+    ${!isRelay ? renderBreakersSection(race) : ''}
+    <div id="slow-swimmers-section"></div>
   `;
+
+  // Load slow swimmers async
+  if (resFinalized || anyTimesEntered) {
+    loadSlowSwimmers();
+  }
 }
 
-function renderBreakersReport(race) {
-  // SSOT: breaker = variance < -1 (Bryan's Excel formula).
-  // net_time = actual swim time, variance = net_time - PB.
+function renderBreakersSection(race) {
+  // Collect breakers from current race
   const breakers = [];
-  for (const heat of race.heats) {
+  for (const heat of (race.heats || [])) {
     for (const lane of heat.lanes) {
-      // F9: Validate breaker data — net_time must be positive and realistic
-      if (lane.finish_time != null && lane.variance != null && lane.variance < -1 && lane.net_time > 0) {
+      if (lane.finish_time != null && lane.variance != null && lane.variance <= -100 && lane.net_time > 0) {
         breakers.push({
           name: lane.name || 'Unknown',
           heat: heat.heat_number,
@@ -168,14 +160,8 @@ function renderBreakersReport(race) {
     }
   }
 
-  if (breakers.length === 0) {
-    return `<div class="card" style="background:#fff8e1;border-left:6px solid #ffb300;margin-bottom:16px">
-      <strong>🏅 Breakers Report</strong><br>
-      No PB breakers in this race.
-    </div>`;
-  }
+  if (breakers.length === 0) return '';
 
-  // Sort by improvement (most improved first)
   breakers.sort((a, b) => b.improvement - a.improvement);
 
   let rows = breakers.map((b, i) => {
@@ -183,13 +169,13 @@ function renderBreakersReport(race) {
     return `<tr style="background:${i % 2 === 0 ? '#e8f5e9' : '#f1f8e9'}">
       <td style="padding:8px 12px;font-weight:${i === 0 ? '700' : '400'}">${medal}${b.name}</td>
       <td style="padding:8px 12px;text-align:center">Heat ${b.heat}</td>
-      <td style="padding:8px 12px;text-align:center">${b.pb}s</td>
-      <td style="padding:8px 12px;text-align:center;font-weight:700">${b.newTime}s</td>
-      <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">-${b.improvement}s</td>
+      <td style="padding:8px 12px;text-align:center">${formatTime(b.pb)}</td>
+      <td style="padding:8px 12px;text-align:center;font-weight:700">${formatTime(b.newTime)}</td>
+      <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">-${formatTime(b.improvement)}</td>
     </tr>`;
   }).join('');
 
-  return `<div class="card" style="background:#fff8e1;border-left:6px solid #ffb300;margin-bottom:16px">
+  return `<div class="card" style="background:#e8f5e9;border-left:6px solid #2e7d32;margin-bottom:16px">
     <strong style="font-size:1.1em">🏅 Breakers Report — ${breakers.length} PB${breakers.length !== 1 ? 's' : ''} Broken!</strong>
     <table style="width:100%;border-collapse:collapse;margin-top:10px">
       <thead>
@@ -210,7 +196,8 @@ function renderResultsTable(race) {
   let html = '';
 
   for (const heat of race.heats) {
-    // Bryan logic: places are ranked WITHIN EACH HEAT by raw finish time ascending.
+    const maxTime = heat.max_time || 0;
+    // Rank by finish_time within heat for live places
     const rankedLanes = heat.lanes
       .filter(l => l.finish_time != null)
       .slice()
@@ -224,58 +211,56 @@ function renderResultsTable(race) {
     for (let li = 0; li < heat.lanes.length; li++) {
       const lane = heat.lanes[li];
       const hasTime = lane.finish_time != null;
-      // SSOT: breaker = variance < -1 (Bryan's Excel: IF(variance < -1, "break", ""))
-      const isBreak = lane.finish_time != null && lane.variance != null && lane.variance < -1;
-      // Bryan logic: show a breaker marker only for the BEST breaker in this heat.
-      let bestBreakerId = null;
-      const breakersInHeat = heat.lanes.filter(x => x.finish_time != null && x.variance != null && x.variance < -1);
-      if (breakersInHeat.length > 0) {
-        breakersInHeat.sort((a, b) => a.variance - b.variance || a.finish_time - b.finish_time);
-        bestBreakerId = breakersInHeat[0].id;
-      }
-      const isTrophy = lane.id === bestBreakerId;
-      const breakCls = isBreak ? ' break-cell' : '';
-      const displayPlace = livePlaces[lane.id] || lane.place || null;
+      const isBreak = hasTime && lane.variance != null && lane.variance <= -100;
+      const autoPlace = livePlaces[lane.id] || lane.place || null;
+      const displayPlace = lane.manual_place || autoPlace;
 
       let finishCell;
       if (resFinalized) {
-        finishCell = `<td class="time-cell${breakCls}" style="font-weight:700">${hasTime ? lane.finish_time + 's' : '—'}</td>`;
+        finishCell = `<td class="time-cell" style="font-weight:700">${hasTime ? formatTime(lane.finish_time) : '—'}</td>`;
       } else {
-        finishCell = `<td class="time-input${breakCls}" onclick="enterFinishTime(${heat.id}, ${lane.id}, ${lane.finish_time || 0})" style="cursor:pointer;font-weight:700">${hasTime ? lane.finish_time + 's' : '⏱️ Tap'}</td>`;
+        finishCell = `<td class="time-input" onclick="enterFinishTime(${heat.id}, ${lane.id}, ${lane.finish_time || 0})" style="cursor:pointer;font-weight:700">${hasTime ? formatTime(lane.finish_time) : '⏱️ Tap'}</td>`;
       }
 
+      // Manual place dropdown
       let placeCell;
-      if (resFinalized || !hasTime) {
+      if (resFinalized) {
         placeCell = `<td style="font-weight:700;color:var(--primary)">${displayPlace ? ordinal(displayPlace) : '—'}</td>`;
       } else {
         placeCell = `<td>
-          <select class="place-select" onchange="overridePlace(${heat.id}, ${lane.id}, this.value)" onclick="event.stopPropagation()">
-            <option value="" ${!displayPlace ? 'selected' : ''}>—</option>
-            <option value="1" ${displayPlace === 1 ? 'selected' : ''}>1st</option>
-            <option value="2" ${displayPlace === 2 ? 'selected' : ''}>2nd</option>
-            <option value="3" ${displayPlace === 3 ? 'selected' : ''}>3rd</option>
-            <option value="4" ${displayPlace === 4 ? 'selected' : ''}>4th</option>
+          <select class="place-select" style="min-height:44px;padding:4px 8px;font-size:14px" onchange="setManualPlace(${lane.id}, this.value)" onclick="event.stopPropagation()">
+            <option value="" ${!lane.manual_place ? 'selected' : ''}>— ${autoPlace ? '('+ordinal(autoPlace)+')' : ''}</option>
+            <option value="1" ${lane.manual_place === 1 ? 'selected' : ''}>1st</option>
+            <option value="2" ${lane.manual_place === 2 ? 'selected' : ''}>2nd</option>
+            <option value="3" ${lane.manual_place === 3 ? 'selected' : ''}>3rd</option>
+            <option value="4" ${lane.manual_place === 4 ? 'selected' : ''}>4th</option>
           </select>
         </td>`;
       }
 
-      rows += `<tr class="${isBreak ? 'break-row' : ''}">
+      // Break column
+      const breakCell = hasTime ? (isBreak ? '<td class="break-text">BREAK</td>' : '<td style="color:#999">—</td>') : '<td>—</td>';
+
+      const rowClass = isBreak ? 'break-row-highlight' : '';
+
+      rows += `<tr class="${rowClass}">
         <td>${lane.lane_number}</td>
-        <td class="name-cell">${lane.name}</td>
-        <td class="time-cell">${lane.handicap_time}s ${tooltip('PB: ' + lane.handicap_time + 's')}</td>
-        <td class="time-cell">${lane.start_delay}s ${tooltip('Starts at ' + lane.start_delay + 's')}</td>
+        <td class="name-cell" style="font-size:18px">${lane.name}</td>
+        <td class="time-cell">${formatTime(lane.handicap_time)}</td>
+        <td class="time-cell">${formatTime(lane.start_delay)}</td>
         ${finishCell}
-        <td class="time-cell">${hasTime ? lane.net_time + 's' : '—'}</td>
-        <td class="time-cell" style="${hasTime && lane.variance < 0 ? 'color:var(--success);font-weight:700' : ''}">${hasTime ? (lane.variance >= 0 ? '+' : '') + lane.variance + 's' : '—'}</td>
+        <td class="time-cell">${hasTime ? formatTime(lane.net_time) : '—'}</td>
+        <td class="time-cell" style="${hasTime && lane.variance < 0 ? 'color:var(--success);font-weight:700' : ''}">${hasTime ? (lane.variance >= 0 ? '+' : '') + formatTime(lane.variance) : '—'}</td>
+        ${breakCell}
         ${placeCell}
-        <td style="text-align:center;font-size:20px">${isTrophy ? '🏆' : ''}</td>
       </tr>`;
     }
 
     html += `
       <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91">
-        <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91">
-          Heat ${heat.heat_number}
+        <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91;display:flex;justify-content:space-between;align-items:center">
+          <span>Heat ${heat.heat_number}</span>
+          <span style="font-weight:400;font-size:13px;opacity:0.8">Expected finish: ${formatTime(maxTime)}</span>
         </div>
         <div style="overflow-x:auto">
           <table class="spreadsheet-table">
@@ -288,8 +273,8 @@ function renderResultsTable(race) {
                 <th style="min-width:80px">Finish</th>
                 <th>Net</th>
                 <th>Variance</th>
+                <th>Break</th>
                 <th>Place</th>
-                <th style="width:40px">🏆</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
@@ -308,10 +293,56 @@ function ordinal(n) {
   return n + (s[(v-20)%10] || s[v] || s[0]);
 }
 
+// ── Slow Swimmers Section ──────────────────────────
+
+async function loadSlowSwimmers() {
+  if (!resEvent) return;
+  try {
+    const slow = await API.getSlowSwimmers(resEvent.id);
+    const section = document.getElementById('slow-swimmers-section');
+    if (!section) return;
+    if (!slow || slow.length === 0) {
+      section.innerHTML = '';
+      return;
+    }
+
+    const rows = slow.map(s => `
+      <tr>
+        <td class="name-cell">${s.name}</td>
+        <td>${s.race_type}</td>
+        <td class="time-cell">${formatTime(s.pb)}</td>
+        <td class="time-cell">${formatTime(s.net_time)}</td>
+        <td class="time-cell" style="font-weight:700;color:#e65100">+${formatTime(s.variance)}</td>
+      </tr>
+    `).join('');
+
+    section.innerHTML = `
+      <div class="card slow-swimmers-card" style="margin-top:16px">
+        <strong style="font-size:1.1em">⚠️ Swimmers Exceeding PB by >2 seconds</strong>
+        <p style="margin:8px 0;font-size:13px;color:var(--text-secondary)">These swimmers may need their PB times adjusted up. Times are NOT auto-adjusted.</p>
+        <table style="width:100%;border-collapse:collapse;margin-top:8px">
+          <thead>
+            <tr style="background:#e65100;color:#fff">
+              <th style="padding:8px 12px;text-align:left">Swimmer</th>
+              <th style="padding:8px 12px;text-align:center">Stroke</th>
+              <th style="padding:8px 12px;text-align:center">PB</th>
+              <th style="padding:8px 12px;text-align:center">Actual</th>
+              <th style="padding:8px 12px;text-align:center">Over by</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <p style="margin-top:8px;font-size:12px;color:#999">ℹ️ To update a PB: Members → select swimmer → edit time.</p>
+      </div>
+    `;
+  } catch (e) {
+    console.error('Failed to load slow swimmers:', e);
+  }
+}
+
 // ── Actions ─────────────────────────────────────────
 
 function selectResRace(raceId) {
-  // F5/F7: Stay on Results screen for ALL races (individual AND relay) — no navigation away
   resSelectedRace = resRaces.find(r => r.id === parseInt(raceId));
   drawResults();
 }
@@ -319,27 +350,27 @@ function selectResRace(raceId) {
 function enterFinishTime(heatId, laneId, currentValue) {
   showNumpad('', async (value) => {
     if (value == null) return;
-    const result = await API.enterTime(heatId, laneId, parseInt(value));
+    const result = await API.enterTime(heatId, laneId, value);
     if (result.error) {
       alert('Error: ' + result.error);
       return;
     }
-    // Refresh results
     renderResults();
   });
 }
 
-async function overridePlace(heatId, laneId, place) {
-  // For now, manual place override stores locally. Full implementation would need a backend endpoint.
-  // The calculate/rank endpoint will auto-set places, but user can override via dropdown.
-  if (place) {
-    // We'll handle this when Calculate is clicked — the rank endpoint sets places by finish_time
-    // For manual override, we'd need a dedicated endpoint. For now, just visual.
+async function setManualPlace(laneId, place) {
+  const manualPlace = place ? parseInt(place) : null;
+  const result = await API.setManualPlace(laneId, manualPlace);
+  if (result.error) {
+    alert('Error: ' + result.error);
+    return;
   }
+  renderResults();
 }
 
 async function calculateResults() {
-  confirmDialog('Save Rankings?', 'This will persist the current ranking (places 1st–4th) to the database. Rankings are already computed live.', async () => {
+  confirmDialog('Save Rankings?', 'This will persist the current ranking (places 1st–4th) to the database.', async () => {
     const result = await API.rankRace(resSelectedRace.id);
     if (result.error) {
       alert('Error: ' + result.error);
@@ -350,7 +381,6 @@ async function calculateResults() {
 }
 
 async function doFinalizeEvent(allComplete) {
-  // F11: Build detailed report of what's missing per race
   const RELAY_TYPES_F = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
   let totalMissing = 0;
   let reportLines = [];
@@ -394,8 +424,8 @@ async function doFinalizeEvent(allComplete) {
 
   const reportText = reportLines.join('\n');
   const warningText = totalMissing > 0
-    ? '⚠️ Missing results:\n\n' + reportText + '\n\nMissing entries will be skipped.\n\n💡 PBs are NOT auto-updated. To update a PB: go to Members → select swimmer → edit their time.'
-    : 'All results entered:\n\n' + reportText + '\n\n💡 PBs are NOT auto-updated. To update a PB: go to Members → select swimmer → edit their time.';
+    ? '⚠️ Missing results:\n\n' + reportText + '\n\nMissing entries will be skipped.\n\n💡 PBs are NOT auto-updated.'
+    : 'All results entered:\n\n' + reportText + '\n\n💡 PBs are NOT auto-updated.';
 
   confirmDialog('Finalize Event?', warningText, async () => {
     const result = await API.finalizeEvent(resEvent.id);
@@ -403,7 +433,6 @@ async function doFinalizeEvent(allComplete) {
       alert('Error: ' + result.error);
       return;
     }
-    // F12: Detailed finalization report
     let finalReport = 'Event finalized!\n\n';
     for (const race of resRaces) {
       const label = RACE_LABELS[race.race_type] || race.race_type;
@@ -422,7 +451,7 @@ async function doFinalizeEvent(allComplete) {
           for (const lane of heat.lanes) {
             total++;
             if (lane.finish_time != null) entered++;
-            if (lane.variance != null && lane.variance < -1 && lane.net_time > 0) breakers++;
+            if (lane.variance != null && lane.variance <= -100 && lane.net_time > 0) breakers++;
           }
         }
         finalReport += '• ' + label + ': ' + entered + '/' + total + ' results';
@@ -432,14 +461,14 @@ async function doFinalizeEvent(allComplete) {
         finalReport += '\n';
       }
     }
-    finalReport += '\n💡 PBs were not auto-updated. To update a PB: go to Members → select swimmer → edit their time.';
+    finalReport += '\n💡 PBs were not auto-updated. To update: Members → select swimmer → edit time.';
     alert(finalReport);
     renderResults();
   });
 }
 
 async function doUnlockEvent() {
-  if (!confirm('Unlock event? This allows you to change races and enter times again. Any finalized results remain for now but can be edited.')) return;
+  if (!confirm('Unlock event? This allows you to change races and enter times again.')) return;
   await fetch(`/api/events/${resEvent.id}/unlock`, { method: 'PUT' });
   renderResults();
 }
@@ -469,12 +498,12 @@ async function loadBreakers() {
   }
 
   const rows = breakers.map(b => `
-    <tr class="break-row">
+    <tr class="break-row-highlight">
       <td class="name-cell">${b.member_name}</td>
       <td>${b.stroke}</td>
-      <td class="time-cell">${b.old_pb}s</td>
-      <td class="time-cell" style="font-weight:700;color:var(--success)">${b.new_time}s</td>
-      <td style="font-weight:700;color:var(--success)">-${b.improvement}s</td>
+      <td class="time-cell">${formatTime(b.old_pb)}</td>
+      <td class="time-cell" style="font-weight:700;color:var(--success)">${formatTime(b.new_time)}</td>
+      <td style="font-weight:700;color:var(--success)">-${formatTime(b.improvement)}</td>
     </tr>
   `).join('');
 
@@ -495,7 +524,7 @@ async function loadBreakers() {
   `;
 }
 
-// ── Inline Relay Results (F5/F7) ─────────────────────
+// ── Inline Relay Results ─────────────────────────────
 
 const RES_RELAY_TYPES = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
 
@@ -532,26 +561,28 @@ function renderRelayResultsInline(race) {
     let rows = '';
     for (const m of members) {
       const pbCol = getRelayPBForResults(m, race.race_type);
-      const pbDisplay = pbCol != null ? pbCol + 's' : '—';
+      const pbDisplay = formatTime(pbCol);
       rows += '<tr><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td><td>' + (m.stroke || '—') + '</td><td class="time-cell">' + pbDisplay + '</td></tr>';
     }
 
     let totalTimeCell;
     if (!resFinalized) {
-      totalTimeCell = '<td class="time-input" onclick="enterRelayTimeInline(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700;font-size:16px">' + (team.total_time != null ? team.total_time + 's' : '⏱️ Tap') + '</td>';
+      totalTimeCell = '<td class="time-input" onclick="enterRelayTimeInline(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700;font-size:16px">' + (team.total_time != null ? formatTime(team.total_time) : '⏱️ Tap') + '</td>';
     } else {
-      totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:16px">' + (team.total_time != null ? team.total_time + 's' : '—') + '</td>';
+      totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:16px">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
     }
 
     let varianceDisplay = '';
     if (team.variance != null) {
-      const varStyle = Math.abs(team.variance) < 3 ? 'color:var(--success);font-weight:700' : '';
-      varianceDisplay = '<span style="' + varStyle + '"> | Variance: ' + (team.variance >= 0 ? '+' : '') + team.variance + 's</span>';
+      const varStyle = Math.abs(team.variance) < 300 ? 'color:var(--success);font-weight:700' : '';
+      varianceDisplay = '<span style="' + varStyle + '"> | Variance: ' + (team.variance >= 0 ? '+' : '') + formatTime(team.variance) + '</span>';
     }
 
-    const targetDisplay = team.target_time ? 'Target: ' + team.target_time + 's' : '';
+    const targetDisplay = team.target_time ? 'Target: ' + formatTime(team.target_time) : '';
+    const startDisplay = 'Delay: ' + formatTime(team.start_delay || 0);
+    const maxDisplay = team.max_time ? 'Max: ' + formatTime(team.max_time) : '';
 
-    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + '</span><span style="font-weight:400;font-size:13px;color:#666">Start: 2s' + (targetDisplay ? ' • ' + targetDisplay : '') + '</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th><th>Stroke</th><th>PB</th></tr></thead><tbody>' + rows + '<tr style="background:#f5f5f5;font-weight:700"><td></td><td colspan="2">Team Total' + varianceDisplay + '</td>' + totalTimeCell + '</tr></tbody></table></div>';
+    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + '</span><span style="font-weight:400;font-size:13px;color:#666">' + startDisplay + (targetDisplay ? ' • ' + targetDisplay : '') + (maxDisplay ? ' • ' + maxDisplay : '') + '</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th><th>Stroke</th><th>PB</th></tr></thead><tbody>' + rows + '<tr style="background:#f5f5f5;font-weight:700"><td></td><td colspan="2">Team Total' + varianceDisplay + '</td>' + totalTimeCell + '</tr></tbody></table></div>';
   }
 
   return html;
@@ -577,7 +608,7 @@ function getRelayPBForResults(member, raceType) {
 function enterRelayTimeInline(teamId, currentValue) {
   showNumpad('', async (value) => {
     if (value == null) return;
-    const result = await API.enterRelayTeamTime(teamId, parseInt(value));
+    const result = await API.enterRelayTeamTime(teamId, value);
     if (result.error) { alert('Error: ' + result.error); return; }
     renderResults();
   });
@@ -590,5 +621,3 @@ async function calculateRelayResultsInline() {
     renderResults();
   });
 }
-
-// Race labels: uses RACE_LABELS from heat-builder.js (loaded before this file)
