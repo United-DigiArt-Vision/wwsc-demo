@@ -414,18 +414,7 @@ function buildHeats(swimmers) {
 
   // T19j fix: Optimal heat distribution (maximize full 4-lane heats)
   // Example: 23 swimmers => 6 heats => 4,4,4,4,4,3
-  let numHeats = Math.min(Math.ceil(swimmers.length / MAX_PER_HEAT), MAX_HEATS);
-  
-  while (numHeats <= MAX_HEATS) {
-    const remainder = swimmers.length % numHeats;
-    if (remainder === 0 || remainder >= MIN_PER_HEAT) break;
-    numHeats += 1;
-    if (numHeats > Math.ceil(swimmers.length / MIN_PER_HEAT)) {
-      numHeats = Math.ceil(swimmers.length / MAX_PER_HEAT);
-      break;
-    }
-  }
-
+  const numHeats = Math.ceil(swimmers.length / MAX_PER_HEAT);
   const heats = Array.from({ length: numHeats }, () => []);
   const baseSize = Math.floor(swimmers.length / numHeats);
   const remainder = swimmers.length % numHeats;
