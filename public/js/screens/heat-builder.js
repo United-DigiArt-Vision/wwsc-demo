@@ -281,9 +281,18 @@ function renderRelayContent() {
 
 function renderRelayTeamsInHB(teams, race) {
   let html = '';
+  const isMedley = race.race_type === 'medley_relay';
+  const teamColors = ['#0b3d91', '#c62828', '#2e7d32', '#e65100', '#6a1b9a', '#00838f'];
+  const medleyColors = {
+    back: '#e3f2fd',
+    breast: '#fce4ec',
+    fly: '#fff3e0',
+    free: '#e8f5e9'
+  };
 
   for (let ti = 0; ti < teams.length; ti++) {
     const team = teams[ti];
+    const teamColor = teamColors[ti % teamColors.length];
     const members = team.members || [];
     const placeDisplay = team.place ? ordinalRelay(team.place) : '';
     const teamHeader = team.team_name + (placeDisplay ? ' — ' + placeDisplay : '');
@@ -292,7 +301,10 @@ function renderRelayTeamsInHB(teams, race) {
     for (const m of members) {
       const pbCol = getPBForRelayHB(m, race.race_type);
       const pbDisplay = formatTime(pbCol);
-      rows += '<tr><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td><td>' + (m.stroke || '—') + '</td><td class="time-cell">' + pbDisplay + '</td></tr>';
+      const strokeKey = isMedley ? (m.stroke || '').toLowerCase().substring(0, 4) : null;
+      const rowStyle = isMedley ? ' style="background:' + (medleyColors[strokeKey] || '#fff') + '"' : '';
+      
+      rows += '<tr' + rowStyle + '><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td><td>' + (m.stroke || '—') + '</td><td class="time-cell">' + pbDisplay + '</td></tr>';
     }
 
     // BF-5: Swim Twice — always show "Add Leg" option before confirming
@@ -300,7 +312,7 @@ function renderRelayTeamsInHB(teams, race) {
     if (!hbRelayConfirmed) {
       const nextLeg = members.length + 1;
       const memberOptions = members.map(function(m) { return '<option value="' + m.member_id + '">' + m.name + '</option>'; }).join('');
-      swimTwiceRow = '<tr style="background:#fff3e0"><td>' + nextLeg + '</td><td colspan="3"><div style="display:flex;align-items:center;gap:8px"><select id="hb-swim-twice-' + ti + '" class="form-control" style="max-width:200px;min-height:44px"><option value="">— Select swimmer —</option>' + memberOptions + '</select><button class="btn btn-accent" style="min-height:44px;white-space:nowrap" onclick="hbAddSwimTwice(' + ti + ')">➕ Swim Twice</button></div></td></tr>';
+      swimTwiceRow = '<tr style="background:#fafafa; border-top: 2px dashed #ccc"><td>' + nextLeg + '</td><td colspan="3"><div style="display:flex;align-items:center;gap:8px;padding:4px 0"><select id="hb-swim-twice-' + ti + '" class="form-control" style="max-width:200px;min-height:44px"><option value="">— Select swimmer —</option>' + memberOptions + '</select><button class="btn btn-accent" style="min-height:44px;white-space:nowrap" onclick="hbAddSwimTwice(' + ti + ')">➕ Swim Twice</button></div></td></tr>';
     }
 
     let totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:18px">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
@@ -309,7 +321,16 @@ function renderRelayTeamsInHB(teams, race) {
     const startDisplay = 'Delay: ' + formatTime(team.start_delay || 0);
     const maxDisplay = team.max_time ? 'Max: ' + formatTime(team.max_time) : '';
 
-    html += '<div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid #0b3d91"><span style="flex-shrink:0">' + teamHeader + '</span><span style="font-weight:400;font-size:13px;color:#666;white-space:nowrap;flex-shrink:0">' + startDisplay + (targetDisplay ? ' • ' + targetDisplay : '') + (maxDisplay ? ' • ' + maxDisplay : '') + '</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th><th>Stroke</th><th>PB</th></tr></thead><tbody>' + rows + swimTwiceRow + '<tr style="background:#f5f5f5;font-weight:700"><td></td><td colspan="2">Team Total</td>' + totalTimeCell + '</tr></tbody></table></div>';
+    html += '<div class="card" style="margin-bottom:40px;padding:0;overflow:hidden;border:4px solid ' + teamColor + ' shadow: 0 4px 6px rgba(0,0,0,0.1)">' +
+            '<div style="background:' + teamColor + ';color:white;padding:12px 16px;font-weight:800;font-size:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(0,0,0,0.1)">' +
+            '<span style="flex-shrink:0">' + teamHeader + '</span>' +
+            '<span style="font-weight:400;font-size:13px;color:rgba(255,255,255,0.9);white-space:nowrap;flex-shrink:0">' + startDisplay + (targetDisplay ? ' • ' + targetDisplay : '') + (maxDisplay ? ' • ' + maxDisplay : '') + '</span>' +
+            '</div>' +
+            '<table class="spreadsheet-table" style="margin:0">' +
+            '<thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th><th>Stroke</th><th>PB</th></tr></thead>' +
+            '<tbody>' + rows + swimTwiceRow + 
+            '<tr style="background:#f5f5f5;font-weight:700;border-top:2px solid ' + teamColor + '"><td></td><td colspan="2">Team Total</td>' + totalTimeCell + '</tr>' +
+            '</tbody></table></div>';
   }
 
   return html;
