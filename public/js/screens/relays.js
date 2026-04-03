@@ -117,8 +117,11 @@ function renderRelayTable(teams, race) {
   const showSplits = false; // Bryan: total times only, splits not required
 
   let html = '';
+  const teamColors = ['#1565c0', '#c62828', '#2e7d32', '#e65100', '#6a1b9a'];
 
-  for (const team of teams) {
+  for (let ti = 0; ti < teams.length; ti++) {
+    const team = teams[ti];
+    const teamColor = teamColors[ti % teamColors.length];
     const members = team.members || [];
     const placeDisplay = team.place ? ordinalRelay(team.place) : '';
     // F31: Simple header — just "Team 1", "Team 2", etc. (per Bryan's Excel)
@@ -170,7 +173,7 @@ function renderRelayTable(teams, race) {
     const colCount = showSplits ? 5 : 4;
 
     html += `
-      <div class="card" style="margin-bottom:12px;padding:0;overflow:hidden">
+      <div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border-left:5px solid ${teamColor}">
         <div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <span>${teamHeader}${needsManual ? ' ⚠️ Manual Entry' : ''}</span>
           <span style="font-weight:400;font-size:13px;color:#666">${startDisplay} ${targetDisplay ? '• ' + targetDisplay + ' ' : ''}${tooltip('Relay starting time is fixed at 2s. Enter only Team Total time; splits are not required.')}</span>

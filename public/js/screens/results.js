@@ -121,6 +121,9 @@ function drawResults() {
       ${resFinalized && !resCompleted ? `
         <button class="btn btn-accent" id="btn-complete-archive" onclick="doCompleteEvent()">✅ Complete Event</button>
       ` : ''}
+      ${resFinalized ? `
+        <button class="btn btn-outline" onclick="showReadout()" style="font-size:16px">📢 Readout</button>
+      ` : ''}
       ${resCompleted ? `
         <button class="btn btn-accent" disabled style="opacity:0.5;cursor:not-allowed">✅ Completed ✓</button>
       ` : ''}
@@ -135,11 +138,13 @@ function drawResults() {
 
     ${!isRelay ? renderBreakersSection(race) : ''}
     <div id="slow-swimmers-section"></div>
+    ${resFinalized ? '<div id="consolidated-breakers-section"></div>' : ''}
   `;
 
-  // Load slow swimmers async
+  // Load slow swimmers + consolidated breakers async
   if (resFinalized || anyTimesEntered) {
     loadSlowSwimmers();
+    if (resFinalized) loadConsolidatedBreakers();
   }
 }
 
@@ -222,14 +227,16 @@ function renderResultsTable(race) {
         finishCell = `<td class="time-input" onclick="enterFinishTime(${heat.id}, ${lane.id}, ${lane.finish_time || 0})" style="cursor:pointer;font-weight:700">${hasTime ? formatTime(lane.finish_time) : '⏱️ Tap'}</td>`;
       }
 
-      // Manual place dropdown
-      let placeCell;
+      // Auto place (GREEN) + Manual/Judge place (RED) — Bryan wants both visible
+      const autoPlaceCell = `<td style="text-align:center">${autoPlace ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#4caf50;color:white;font-weight:700;font-size:13px">${autoPlace}</span>` : '—'}</td>`;
+
+      let judgePlaceCell;
       if (resFinalized) {
-        placeCell = `<td style="font-weight:700;color:var(--primary)">${displayPlace ? ordinal(displayPlace) : '—'}</td>`;
+        judgePlaceCell = `<td style="text-align:center">${lane.manual_place ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#e53935;color:white;font-weight:700;font-size:13px">${lane.manual_place}</span>` : '—'}</td>`;
       } else {
-        placeCell = `<td>
-          <select class="place-select" style="min-height:44px;padding:4px 8px;font-size:14px" onchange="setManualPlace(${lane.id}, this.value)" onclick="event.stopPropagation()">
-            <option value="" ${!lane.manual_place ? 'selected' : ''}>— ${autoPlace ? '('+ordinal(autoPlace)+')' : ''}</option>
+        judgePlaceCell = `<td>
+          <select class="place-select" style="min-height:44px;padding:4px 8px;font-size:14px;border:2px solid #e53935;border-radius:6px" onchange="setManualPlace(${lane.id}, this.value)" onclick="event.stopPropagation()">
+            <option value="" ${!lane.manual_place ? 'selected' : ''}>—</option>
             <option value="1" ${lane.manual_place === 1 ? 'selected' : ''}>1st</option>
             <option value="2" ${lane.manual_place === 2 ? 'selected' : ''}>2nd</option>
             <option value="3" ${lane.manual_place === 3 ? 'selected' : ''}>3rd</option>
@@ -252,7 +259,8 @@ function renderResultsTable(race) {
         <td class="time-cell">${hasTime ? formatTime(lane.net_time) : '—'}</td>
         <td class="time-cell" style="${hasTime && lane.variance < 0 ? 'color:var(--success);font-weight:700' : ''}">${hasTime ? (lane.variance >= 0 ? '+' : '') + formatTime(lane.variance) : '—'}</td>
         ${breakCell}
-        ${placeCell}
+        ${autoPlaceCell}
+        ${judgePlaceCell}
       </tr>`;
     }
 
@@ -274,7 +282,8 @@ function renderResultsTable(race) {
                 <th>Net</th>
                 <th>Variance</th>
                 <th>Break</th>
-                <th>Place</th>
+                <th style="color:#4caf50">Auto</th>
+                <th style="color:#e53935">Judge</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
@@ -620,4 +629,113 @@ async function calculateRelayResultsInline() {
     if (result.error) { alert('Error: ' + result.error); return; }
     renderResults();
   });
+}
+
+// ── Consolidated Breaker Report (NF-2) — all breakers on one page ──
+
+async function loadConsolidatedBreakers() {
+  const section = document.getElementById('consolidated-breakers-section');
+  if (!section) return;
+  try {
+    const breakers = await API.getAllBreakers();
+    if (!breakers || breakers.length === 0) {
+      section.innerHTML = '';
+      return;
+    }
+    // Group by event date + stroke
+    const groups = {};
+    breakers.forEach(b => {
+      const key = b.event_date + ' — ' + b.stroke.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(b);
+    });
+
+    let html = `<div class="card" style="margin-top:24px;border:3px solid var(--success)">
+      <h3 style="color:var(--success);margin-bottom:12px">🏆 All Breakers (Consolidated)</h3>`;
+    
+    for (const [groupName, items] of Object.entries(groups)) {
+      html += `<div style="margin-bottom:16px">
+        <h4 style="color:var(--primary);margin:8px 0">${groupName}</h4>
+        <table class="spreadsheet-table" style="font-size:14px"><thead><tr>
+          <th style="text-align:left">Swimmer</th><th>Previous PB</th><th>New Time</th><th>Improvement</th>
+        </tr></thead><tbody>`;
+      items.forEach(b => {
+        html += `<tr>
+          <td style="text-align:left;font-weight:600">${b.member_name}</td>
+          <td>${formatTime(b.old_pb)}</td>
+          <td style="font-weight:700;color:var(--success)">${formatTime(b.new_time)}</td>
+          <td style="font-weight:700;color:var(--success)">-${formatTime(b.improvement)}</td>
+        </tr>`;
+      });
+      html += '</tbody></table></div>';
+    }
+    html += '</div>';
+    section.innerHTML = html;
+  } catch (e) { console.error('Failed to load consolidated breakers:', e); }
+}
+
+// ── Readout Mode (UX-1) — large font view for poolside announcements ──
+
+function showReadout() {
+  if (!resSelectedRace) return;
+  const race = resSelectedRace;
+  const isRelay = isResRaceRelay(race);
+
+  let rows = '';
+  if (isRelay) {
+    const teams = (race.relay_teams || []).slice().sort((a, b) => (a.place || 99) - (b.place || 99));
+    teams.forEach(t => {
+      rows += `<tr>
+        <td style="font-size:32px;font-weight:800;color:var(--primary)">${t.place ? ordinal(t.place) : '—'}</td>
+        <td style="font-size:28px;font-weight:700">${t.team_name || 'Team ' + t.team_number}</td>
+        <td style="font-size:28px">${t.total_time != null ? formatTime(t.total_time) : '—'}</td>
+        <td></td>
+      </tr>`;
+    });
+  } else {
+    const allLanes = [];
+    (race.heats || []).forEach(h => {
+      h.lanes.forEach(l => {
+        if (l.finish_time != null) {
+          const isBreak = l.variance != null && l.variance <= -100;
+          allLanes.push({ ...l, heat_number: h.heat_number, isBreak });
+        }
+      });
+    });
+    allLanes.sort((a, b) => {
+      const pa = a.manual_place || a.place || 99;
+      const pb = b.manual_place || b.place || 99;
+      return pa - pb || a.net_time - b.net_time;
+    });
+    allLanes.forEach((l, i) => {
+      const place = l.manual_place || l.place || (i + 1);
+      rows += `<tr style="${l.isBreak ? 'background:#e8f5e9' : ''}">
+        <td style="font-size:32px;font-weight:800;color:var(--primary)">${ordinal(place)}</td>
+        <td style="font-size:28px;font-weight:700">${l.name}</td>
+        <td style="font-size:28px">${formatTime(l.net_time)}</td>
+        <td style="font-size:24px;font-weight:700;color:${l.isBreak ? 'var(--success)' : '#999'}">${l.isBreak ? '🏆 BREAK' : ''}</td>
+      </tr>`;
+    });
+  }
+
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.remove('hidden');
+  overlay.innerHTML = `
+    <div style="background:white;width:95vw;max-width:700px;border-radius:16px;padding:24px;max-height:90vh;overflow-y:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 style="margin:0;font-size:24px">📢 Results Readout</h2>
+        <button class="btn btn-outline" onclick="hideModal()" style="font-size:18px">✕ Close</button>
+      </div>
+      <div style="text-align:center;margin-bottom:16px;font-size:20px;color:var(--primary);font-weight:700">${race.race_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="border-bottom:3px solid var(--primary)">
+          <th style="text-align:left;padding:8px;font-size:18px">Place</th>
+          <th style="text-align:left;padding:8px;font-size:18px">Name</th>
+          <th style="text-align:left;padding:8px;font-size:18px">Time</th>
+          <th style="text-align:left;padding:8px;font-size:18px">Break</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
 }
