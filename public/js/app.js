@@ -12,6 +12,7 @@ const screens = {
   'results': renderResults,
   'relays': renderRelays,
   'calendar': renderCalendar,
+  'breaker-report': renderBreakerReport,
 };
 
 function navigate(path) {

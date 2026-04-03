@@ -62,8 +62,10 @@ const API = {
   rankRace: (raceId) => API.post(`/api/races/${raceId}/rank`),
   finalizeEvent: (eventId) => API.post(`/api/events/${eventId}/finalize`),
   getBreakers: (eventId) => API.get(`/api/events/${eventId}/breakers`),
+  getAllBreakers: () => API.get('/api/reports/breakers'),
   completeEvent: (eventId) => API.post(`/api/events/${eventId}/complete`),
   getTimeHistory: (eventId) => API.get(`/api/events/${eventId}/time-history`),
+  getBreakersReport: () => API.get('/api/reports/breakers'),
 
   // Backup
   createBackup: () => API.post('/api/backup'),

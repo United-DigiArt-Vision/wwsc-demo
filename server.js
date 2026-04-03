@@ -403,29 +403,19 @@ function shuffle(arr) {
 // Build heats from swimmers array (each has {id, name, handicap_time})
 const BASE_OFFSET = 200; // Bryan's Excel: MaxPB + 200cs (2.00s), then delay = MaxTime - PB. Slowest gets +2.00s.
 
-function buildHeats(swimmers) {
+function buildHeats(swimmers, options = {}) {
   const MAX_PER_HEAT = 4;
   const MIN_PER_HEAT = 3;
   const MAX_HEATS = 10;
+  const doShuffle = options.shuffle !== false;
 
   if (swimmers.length < MIN_PER_HEAT) return { heats: [], warning: `Need at least ${MIN_PER_HEAT} swimmers with PB times` };
 
-  shuffle(swimmers);
+  if (doShuffle) shuffle(swimmers);
 
   // T19j fix: Optimal heat distribution (maximize full 4-lane heats)
   // Example: 23 swimmers => 6 heats => 4,4,4,4,4,3
-  let numHeats = Math.min(Math.ceil(swimmers.length / MAX_PER_HEAT), MAX_HEATS);
-  
-  while (numHeats <= MAX_HEATS) {
-    const remainder = swimmers.length % numHeats;
-    if (remainder === 0 || remainder >= MIN_PER_HEAT) break;
-    numHeats += 1;
-    if (numHeats > Math.ceil(swimmers.length / MIN_PER_HEAT)) {
-      numHeats = Math.ceil(swimmers.length / MAX_PER_HEAT);
-      break;
-    }
-  }
-
+  const numHeats = Math.ceil(swimmers.length / MAX_PER_HEAT);
   const heats = Array.from({ length: numHeats }, () => []);
   const baseSize = Math.floor(swimmers.length / numHeats);
   const remainder = swimmers.length % numHeats;
@@ -492,7 +482,34 @@ app.get('/api/races/:raceId/generate-heats', (req, res) => {
     return res.json({ heats: [], warning: 'Need at least 3 swimmers with PB times' });
   }
 
-  const result = buildHeats(swimmers);
+  let orderedSwimmers = swimmers;
+  let useExistingGrouping = false;
+
+  if (race.race_type === '50m') {
+    const baseRace = db.prepare('SELECT id FROM event_race WHERE event_id = ? AND race_type = ?').get(race.event_id, '25m');
+    if (baseRace) {
+      const baseOrder = db.prepare(`
+        SELECT hl.member_id
+        FROM heat h
+        JOIN heat_lane hl ON hl.heat_id = h.id
+        WHERE h.event_race_id = ?
+        ORDER BY h.heat_number, hl.lane_number
+      `).all(baseRace.id);
+
+      if (baseOrder.length > 0) {
+        const orderIndex = new Map(baseOrder.map((row, idx) => [row.member_id, idx]));
+        orderedSwimmers = swimmers.slice().sort((a, b) => {
+          const ai = orderIndex.has(a.id) ? orderIndex.get(a.id) : Number.MAX_SAFE_INTEGER;
+          const bi = orderIndex.has(b.id) ? orderIndex.get(b.id) : Number.MAX_SAFE_INTEGER;
+          if (ai !== bi) return ai - bi;
+          return a.name.localeCompare(b.name);
+        });
+        useExistingGrouping = true;
+      }
+    }
+  }
+
+  const result = buildHeats(orderedSwimmers, { shuffle: !useExistingGrouping });
   res.json({ heats: result.heats, warning: result.warning });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -741,6 +758,32 @@ app.get('/api/events/:eventId/breakers', (req, res) => {
       old_pb: b.previous_best,
       new_time: b.time,
       improvement: b.previous_best - b.time
+    }));
+    res.json(result);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/reports/breakers — list all breakers across events
+app.get('/api/reports/breakers', (req, res) => {
+  try {
+    const rows = db.prepare(`
+      SELECT th.*, m.name as member_name, e.date as event_date
+      FROM time_history th
+      JOIN member m ON th.member_id = m.id
+      JOIN event e ON th.event_id = e.id
+      WHERE th.is_break = 1
+      ORDER BY e.date DESC, th.stroke, m.name
+    `).all();
+
+    const result = rows.map(r => ({
+      event_id: r.event_id,
+      event_date: r.event_date,
+      member_id: r.member_id,
+      member_name: r.member_name,
+      stroke: r.stroke,
+      old_pb: r.previous_best,
+      new_time: r.time,
+      improvement: r.previous_best != null ? r.previous_best - r.time : null
     }));
     res.json(result);
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -1155,7 +1198,9 @@ app.post('/api/races/:raceId/save-relay-teams', (req, res) => {
       teams.forEach(team => {
         const r = insTeam.run(raceId, team.team_number, team.team_name, team.target_time || null, team.start_delay || 0, team.max_time || null);
         const teamId = r.lastInsertRowid;
+        // BF-5: Allow duplicate member_id (swim twice for uneven teams)
         (team.members || []).forEach(m => {
+          if (m.member_id == null) return;
           insMember.run(teamId, m.member_id, m.leg_order, m.stroke || null);
         });
       });

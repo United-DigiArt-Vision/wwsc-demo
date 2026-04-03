@@ -117,35 +117,80 @@ function renderRelayTable(teams, race) {
   const showSplits = false; // Bryan: total times only, splits not required
 
   let html = '';
+  const teamColors = ['#1565c0', '#c62828', '#2e7d32', '#e65100', '#6a1b9a'];
+  const medleyOrder = ['back', 'breast', 'fly', 'free'];
+  const medleyColors = {
+    back: '#e3f2fd',
+    breast: '#fce4ec',
+    fly: '#fff3e0',
+    free: '#e8f5e9'
+  };
 
-  for (const team of teams) {
-    const members = team.members || [];
+  for (let ti = 0; ti < teams.length; ti++) {
+    const team = teams[ti];
+    const teamColor = teamColors[ti % teamColors.length];
+    let members = team.members || [];
+    if (isMedley) {
+      members = members.slice().sort((a, b) => {
+        const aStroke = normalizeMedleyStroke(a.stroke);
+        const bStroke = normalizeMedleyStroke(b.stroke);
+        return medleyOrder.indexOf(aStroke) - medleyOrder.indexOf(bStroke);
+      });
+    }
     const placeDisplay = team.place ? ordinalRelay(team.place) : '';
     // F31: Simple header — just "Team 1", "Team 2", etc. (per Bryan's Excel)
     const teamHeader = `${team.team_name}${placeDisplay ? ' — ' + placeDisplay : ''}`;
     const needsManual = team.needs_manual_entry;
 
     let rows = '';
+    let lastStroke = null;
     for (const m of members) {
       const pbCol = getPBForRelay(m, race.race_type);
       const pbDisplay = formatTime(pbCol);
+      const strokeKey = isMedley ? normalizeMedleyStroke(m.stroke) : null;
+      const rowColor = isMedley ? (medleyColors[strokeKey] || '#f5f5f5') : '';
+      const isGroupStart = isMedley && strokeKey !== lastStroke;
+      const rowStyle = isMedley
+        ? ` style="background:${rowColor};${isGroupStart && lastStroke ? 'border-top:3px solid #0b3d91;' : ''}"`
+        : '';
+      lastStroke = isMedley ? strokeKey : lastStroke;
+      const strokeDisplay = isMedley ? (strokeKey ? strokeKey[0].toUpperCase() + strokeKey.slice(1) : '—') : (m.stroke || '—');
 
       // Split time cell
       let splitCell;
       if (relayConfirmed && showSplits && !relayEventFinalized) {
-        splitCell = `<td class="time-input" onclick="enterRelaySplit(${team.id}, ${m.member_id}, ${m.split_time || 0})" style="cursor:pointer;font-weight:700">${m.split_time != null ? m.split_time + 's' : '⏱️ Tap'}</td>`;
+        splitCell = `<td class="time-input" onclick="enterRelaySplit(${team.id}, ${m.member_id}, ${m.split_time || 0})" style="cursor:pointer;font-weight:700">${m.split_time != null ? formatTime(m.split_time) : '⏱️ Tap'}</td>`;
       } else if (showSplits) {
         splitCell = `<td class="time-cell">—</td>`;
       } else {
         splitCell = '';
       }
 
-      rows += `<tr>
+      rows += `<tr${rowStyle}>
         <td>${m.leg_order}</td>
         <td class="name-cell">${m.name}</td>
-        <td>${m.stroke || '—'}</td>
+        <td>${strokeDisplay}</td>
         ${splitCell}
         <td class="time-cell">${pbDisplay}</td>
+      </tr>`;
+    }
+
+    // BF-5: "Swim Twice" — always available so Bryan can add extra legs
+    let swimTwiceRow = '';
+    if (!relayConfirmed) {
+      const nextLeg = members.length + 1;
+      const memberOptions = members.map(m => `<option value="${m.member_id}">${m.name}</option>`).join('');
+      swimTwiceRow = `<tr style="background:#fff3e0">
+        <td>${nextLeg}</td>
+        <td colspan="${colCount - 1}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <select id="swim-twice-${team.team_number}" class="form-control" style="max-width:200px;min-height:44px">
+              <option value="">— Select swimmer —</option>
+              ${memberOptions}
+            </select>
+            <button class="btn btn-accent" style="min-height:44px;white-space:nowrap" onclick="addSwimTwice(${ti}, ${team.team_number})">➕ Swim Twice</button>
+          </div>
+        </td>
       </tr>`;
     }
 
@@ -170,7 +215,7 @@ function renderRelayTable(teams, race) {
     const colCount = showSplits ? 5 : 4;
 
     html += `
-      <div class="card" style="margin-bottom:12px;padding:0;overflow:hidden">
+      <div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border-left:5px solid ${teamColor}">
         <div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
           <span>${teamHeader}${needsManual ? ' ⚠️ Manual Entry' : ''}</span>
           <span style="font-weight:400;font-size:13px;color:#666">${startDisplay} ${targetDisplay ? '• ' + targetDisplay + ' ' : ''}${tooltip('Relay starting time is fixed at 2s. Enter only Team Total time; splits are not required.')}</span>
@@ -187,6 +232,7 @@ function renderRelayTable(teams, race) {
           </thead>
           <tbody>
             ${rows}
+            ${swimTwiceRow}
             <tr style="background:#f5f5f5;font-weight:700">
               <td></td>
               <td colspan="${colCount - 2}">Team Total${varianceDisplay}</td>
@@ -216,6 +262,15 @@ function getPBForRelay(member, raceType) {
     }
     default: return null;
   }
+}
+
+function normalizeMedleyStroke(stroke) {
+  const s = (stroke || '').toLowerCase();
+  if (s.startsWith('back')) return 'back';
+  if (s.startsWith('breast')) return 'breast';
+  if (s.startsWith('fly') || s.startsWith('butter')) return 'fly';
+  if (s.startsWith('free')) return 'free';
+  return 'free';
 }
 
 function ordinalRelay(n) {
@@ -249,6 +304,27 @@ async function reshuffleRelayTeams() {
     relayTeams = null;
     await generateRelayTeams();
   });
+}
+
+// BF-5: Add a swimmer to swim a second leg in uneven teams
+function addSwimTwice(teamIndex, teamNumber) {
+  const select = document.getElementById(`swim-twice-${teamNumber}`);
+  if (!select || !select.value) { alert('Please select a swimmer first.'); return; }
+  const memberId = parseInt(select.value);
+  const team = relayTeams[teamIndex];
+  if (!team) return;
+  const existingMember = team.members.find(m => m.member_id === memberId);
+  if (!existingMember) return;
+  const nextLeg = team.members.length + 1;
+  team.members.push({
+    member_id: existingMember.member_id,
+    name: existingMember.name,
+    leg_order: nextLeg,
+    stroke: existingMember.stroke || 'Free',
+    pb: existingMember.pb
+  });
+  team.needs_manual_entry = false;
+  drawRelays();
 }
 
 async function generateRelayTeams() {
