@@ -175,6 +175,26 @@ function renderRelayTable(teams, race) {
       </tr>`;
     }
 
+    // BF-5: "Swim Twice" — if team is short, show button to add a swimmer from same team
+    const MAX_TEAM_SIZE = isMedley ? 3 : 4;
+    let swimTwiceRow = '';
+    if (members.length < MAX_TEAM_SIZE && !relayConfirmed) {
+      const nextLeg = members.length + 1;
+      const memberOptions = members.map(m => `<option value="${m.member_id}">${m.name}</option>`).join('');
+      swimTwiceRow = `<tr style="background:#fff3e0">
+        <td>${nextLeg}</td>
+        <td colspan="${colCount - 1}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <select id="swim-twice-${team.team_number}" class="form-control" style="max-width:200px;min-height:44px">
+              <option value="">— Select swimmer —</option>
+              ${memberOptions}
+            </select>
+            <button class="btn btn-accent" style="min-height:44px;white-space:nowrap" onclick="addSwimTwice(${ti}, ${team.team_number})">➕ Swim Twice</button>
+          </div>
+        </td>
+      </tr>`;
+    }
+
     // Bryan: Team Total is always the primary input; splits are not required.
     let totalTimeCell;
     if (relayConfirmed && !relayEventFinalized) {
@@ -213,6 +233,7 @@ function renderRelayTable(teams, race) {
           </thead>
           <tbody>
             ${rows}
+            ${swimTwiceRow}
             <tr style="background:#f5f5f5;font-weight:700">
               <td></td>
               <td colspan="${colCount - 2}">Team Total${varianceDisplay}</td>
@@ -284,6 +305,27 @@ async function reshuffleRelayTeams() {
     relayTeams = null;
     await generateRelayTeams();
   });
+}
+
+// BF-5: Add a swimmer to swim a second leg in uneven teams
+function addSwimTwice(teamIndex, teamNumber) {
+  const select = document.getElementById(`swim-twice-${teamNumber}`);
+  if (!select || !select.value) { alert('Please select a swimmer first.'); return; }
+  const memberId = parseInt(select.value);
+  const team = relayTeams[teamIndex];
+  if (!team) return;
+  const existingMember = team.members.find(m => m.member_id === memberId);
+  if (!existingMember) return;
+  const nextLeg = team.members.length + 1;
+  team.members.push({
+    member_id: existingMember.member_id,
+    name: existingMember.name,
+    leg_order: nextLeg,
+    stroke: existingMember.stroke || 'Free',
+    pb: existingMember.pb
+  });
+  team.needs_manual_entry = false;
+  drawRelays();
 }
 
 async function generateRelayTeams() {
