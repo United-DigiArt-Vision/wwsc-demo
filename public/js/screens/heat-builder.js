@@ -282,7 +282,8 @@ function renderRelayContent() {
 function renderRelayTeamsInHB(teams, race) {
   let html = '';
 
-  for (const team of teams) {
+  for (let ti = 0; ti < teams.length; ti++) {
+    const team = teams[ti];
     const members = team.members || [];
     const placeDisplay = team.place ? ordinalRelay(team.place) : '';
     const teamHeader = team.team_name + (placeDisplay ? ' — ' + placeDisplay : '');
@@ -294,16 +295,43 @@ function renderRelayTeamsInHB(teams, race) {
       rows += '<tr><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td><td>' + (m.stroke || '—') + '</td><td class="time-cell">' + pbDisplay + '</td></tr>';
     }
 
+    // BF-5: Swim Twice — always show "Add Leg" option before confirming
+    let swimTwiceRow = '';
+    if (!hbRelayConfirmed) {
+      const nextLeg = members.length + 1;
+      const memberOptions = members.map(function(m) { return '<option value="' + m.member_id + '">' + m.name + '</option>'; }).join('');
+      swimTwiceRow = '<tr style="background:#fff3e0"><td>' + nextLeg + '</td><td colspan="3"><div style="display:flex;align-items:center;gap:8px"><select id="hb-swim-twice-' + ti + '" class="form-control" style="max-width:200px;min-height:44px"><option value="">— Select swimmer —</option>' + memberOptions + '</select><button class="btn btn-accent" style="min-height:44px;white-space:nowrap" onclick="hbAddSwimTwice(' + ti + ')">➕ Swim Twice</button></div></td></tr>';
+    }
+
     let totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:18px">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
 
     const targetDisplay = team.target_time ? 'Target: ' + formatTime(team.target_time) : '';
     const startDisplay = 'Delay: ' + formatTime(team.start_delay || 0);
     const maxDisplay = team.max_time ? 'Max: ' + formatTime(team.max_time) : '';
 
-    html += '<div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid #0b3d91"><span style="flex-shrink:0">' + teamHeader + '</span><span style="font-weight:400;font-size:13px;color:#666;white-space:nowrap;flex-shrink:0">' + startDisplay + (targetDisplay ? ' • ' + targetDisplay : '') + (maxDisplay ? ' • ' + maxDisplay : '') + '</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th><th>Stroke</th><th>PB</th></tr></thead><tbody>' + rows + '<tr style="background:#f5f5f5;font-weight:700"><td></td><td colspan="2">Team Total</td>' + totalTimeCell + '</tr></tbody></table></div>';
+    html += '<div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid #0b3d91"><span style="flex-shrink:0">' + teamHeader + '</span><span style="font-weight:400;font-size:13px;color:#666;white-space:nowrap;flex-shrink:0">' + startDisplay + (targetDisplay ? ' • ' + targetDisplay : '') + (maxDisplay ? ' • ' + maxDisplay : '') + '</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th><th>Stroke</th><th>PB</th></tr></thead><tbody>' + rows + swimTwiceRow + '<tr style="background:#f5f5f5;font-weight:700"><td></td><td colspan="2">Team Total</td>' + totalTimeCell + '</tr></tbody></table></div>';
   }
 
   return html;
+}
+
+// BF-5: Add swimmer to swim a second leg (Heat Builder version)
+function hbAddSwimTwice(teamIndex) {
+  var select = document.getElementById('hb-swim-twice-' + teamIndex);
+  if (!select || !select.value) { alert('Please select a swimmer first.'); return; }
+  var memberId = parseInt(select.value);
+  var team = hbRelayTeams[teamIndex];
+  if (!team) return;
+  var existing = team.members.find(function(m) { return m.member_id === memberId; });
+  if (!existing) return;
+  var nextLeg = team.members.length + 1;
+  team.members.push({
+    member_id: existing.member_id,
+    name: existing.name,
+    leg_order: nextLeg,
+    stroke: existing.stroke || 'Free'
+  });
+  renderHeatBuilder();
 }
 
 function getPBForRelayHB(member, raceType) {
