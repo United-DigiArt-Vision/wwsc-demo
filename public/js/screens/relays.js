@@ -175,10 +175,9 @@ function renderRelayTable(teams, race) {
       </tr>`;
     }
 
-    // BF-5: "Swim Twice" — if team is short, show button to add a swimmer from same team
-    const MAX_TEAM_SIZE = isMedley ? 3 : 4;
+    // BF-5: "Swim Twice" — always available so Bryan can add extra legs
     let swimTwiceRow = '';
-    if (members.length < MAX_TEAM_SIZE && !relayConfirmed) {
+    if (!relayConfirmed) {
       const nextLeg = members.length + 1;
       const memberOptions = members.map(m => `<option value="${m.member_id}">${m.name}</option>`).join('');
       swimTwiceRow = `<tr style="background:#fff3e0">
