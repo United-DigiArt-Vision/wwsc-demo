@@ -122,9 +122,7 @@ function drawResults() {
       ${resFinalized && !resCompleted ? `
         <button class="btn btn-accent" id="btn-complete-archive" onclick="doCompleteEvent()">✅ Complete Event</button>
       ` : ''}
-      ${resFinalized ? `
-        <button class="btn btn-outline" onclick="showReadout()" style="font-size:16px">📢 Readout</button>
-      ` : ''}
+
       ${resCompleted ? `
         <button class="btn btn-accent" disabled style="opacity:0.5;cursor:not-allowed">✅ Completed ✓</button>
       ` : ''}
