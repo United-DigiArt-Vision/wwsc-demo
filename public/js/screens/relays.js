@@ -118,35 +118,58 @@ function renderRelayTable(teams, race) {
 
   let html = '';
   const teamColors = ['#1565c0', '#c62828', '#2e7d32', '#e65100', '#6a1b9a'];
+  const medleyOrder = ['back', 'breast', 'fly', 'free'];
+  const medleyColors = {
+    back: '#e3f2fd',
+    breast: '#fce4ec',
+    fly: '#fff3e0',
+    free: '#e8f5e9'
+  };
 
   for (let ti = 0; ti < teams.length; ti++) {
     const team = teams[ti];
     const teamColor = teamColors[ti % teamColors.length];
-    const members = team.members || [];
+    let members = team.members || [];
+    if (isMedley) {
+      members = members.slice().sort((a, b) => {
+        const aStroke = normalizeMedleyStroke(a.stroke);
+        const bStroke = normalizeMedleyStroke(b.stroke);
+        return medleyOrder.indexOf(aStroke) - medleyOrder.indexOf(bStroke);
+      });
+    }
     const placeDisplay = team.place ? ordinalRelay(team.place) : '';
     // F31: Simple header — just "Team 1", "Team 2", etc. (per Bryan's Excel)
     const teamHeader = `${team.team_name}${placeDisplay ? ' — ' + placeDisplay : ''}`;
     const needsManual = team.needs_manual_entry;
 
     let rows = '';
+    let lastStroke = null;
     for (const m of members) {
       const pbCol = getPBForRelay(m, race.race_type);
       const pbDisplay = formatTime(pbCol);
+      const strokeKey = isMedley ? normalizeMedleyStroke(m.stroke) : null;
+      const rowColor = isMedley ? (medleyColors[strokeKey] || '#f5f5f5') : '';
+      const isGroupStart = isMedley && strokeKey !== lastStroke;
+      const rowStyle = isMedley
+        ? ` style="background:${rowColor};${isGroupStart && lastStroke ? 'border-top:3px solid #0b3d91;' : ''}"`
+        : '';
+      lastStroke = isMedley ? strokeKey : lastStroke;
+      const strokeDisplay = isMedley ? (strokeKey ? strokeKey[0].toUpperCase() + strokeKey.slice(1) : '—') : (m.stroke || '—');
 
       // Split time cell
       let splitCell;
       if (relayConfirmed && showSplits && !relayEventFinalized) {
-        splitCell = `<td class="time-input" onclick="enterRelaySplit(${team.id}, ${m.member_id}, ${m.split_time || 0})" style="cursor:pointer;font-weight:700">${m.split_time != null ? m.split_time + 's' : '⏱️ Tap'}</td>`;
+        splitCell = `<td class="time-input" onclick="enterRelaySplit(${team.id}, ${m.member_id}, ${m.split_time || 0})" style="cursor:pointer;font-weight:700">${m.split_time != null ? formatTime(m.split_time) : '⏱️ Tap'}</td>`;
       } else if (showSplits) {
         splitCell = `<td class="time-cell">—</td>`;
       } else {
         splitCell = '';
       }
 
-      rows += `<tr>
+      rows += `<tr${rowStyle}>
         <td>${m.leg_order}</td>
         <td class="name-cell">${m.name}</td>
-        <td>${m.stroke || '—'}</td>
+        <td>${strokeDisplay}</td>
         ${splitCell}
         <td class="time-cell">${pbDisplay}</td>
       </tr>`;
@@ -219,6 +242,15 @@ function getPBForRelay(member, raceType) {
     }
     default: return null;
   }
+}
+
+function normalizeMedleyStroke(stroke) {
+  const s = (stroke || '').toLowerCase();
+  if (s.startsWith('back')) return 'back';
+  if (s.startsWith('breast')) return 'breast';
+  if (s.startsWith('fly') || s.startsWith('butter')) return 'fly';
+  if (s.startsWith('free')) return 'free';
+  return 'free';
 }
 
 function ordinalRelay(n) {

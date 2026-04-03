@@ -81,6 +81,7 @@ function drawResults() {
     <div class="toolbar" style="align-items:flex-start">
       <h1 style="margin:0">Results — ${raceLabel}</h1>
       <div class="toolbar-spacer"></div>
+      <button class="btn btn-outline" onclick="showResultsReadout()">🗣️ Readout</button>
       <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
     </div>
 
@@ -218,7 +219,6 @@ function renderResultsTable(race) {
       const hasTime = lane.finish_time != null;
       const isBreak = hasTime && lane.variance != null && lane.variance <= -100;
       const autoPlace = livePlaces[lane.id] || lane.place || null;
-      const displayPlace = lane.manual_place || autoPlace;
 
       let finishCell;
       if (resFinalized) {
@@ -227,14 +227,14 @@ function renderResultsTable(race) {
         finishCell = `<td class="time-input" onclick="enterFinishTime(${heat.id}, ${lane.id}, ${lane.finish_time || 0})" style="cursor:pointer;font-weight:700">${hasTime ? formatTime(lane.finish_time) : '⏱️ Tap'}</td>`;
       }
 
-      // Auto place (GREEN) + Manual/Judge place (RED) — Bryan wants both visible
+      // Auto place (GREEN) + Manual place (RED) — show both columns
       const autoPlaceCell = `<td style="text-align:center">${autoPlace ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#4caf50;color:white;font-weight:700;font-size:13px">${autoPlace}</span>` : '—'}</td>`;
 
-      let judgePlaceCell;
+      let manualPlaceCell;
       if (resFinalized) {
-        judgePlaceCell = `<td style="text-align:center">${lane.manual_place ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#e53935;color:white;font-weight:700;font-size:13px">${lane.manual_place}</span>` : '—'}</td>`;
+        manualPlaceCell = `<td style="text-align:center">${lane.manual_place ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#e53935;color:white;font-weight:700;font-size:13px">${lane.manual_place}</span>` : '—'}</td>`;
       } else {
-        judgePlaceCell = `<td>
+        manualPlaceCell = `<td>
           <select class="place-select" style="min-height:44px;padding:4px 8px;font-size:14px;border:2px solid #e53935;border-radius:6px" onchange="setManualPlace(${lane.id}, this.value)" onclick="event.stopPropagation()">
             <option value="" ${!lane.manual_place ? 'selected' : ''}>—</option>
             <option value="1" ${lane.manual_place === 1 ? 'selected' : ''}>1st</option>
@@ -260,7 +260,7 @@ function renderResultsTable(race) {
         <td class="time-cell" style="${hasTime && lane.variance < 0 ? 'color:var(--success);font-weight:700' : ''}">${hasTime ? (lane.variance >= 0 ? '+' : '') + formatTime(lane.variance) : '—'}</td>
         ${breakCell}
         ${autoPlaceCell}
-        ${judgePlaceCell}
+        ${manualPlaceCell}
       </tr>`;
     }
 
@@ -283,7 +283,7 @@ function renderResultsTable(race) {
                 <th>Variance</th>
                 <th>Break</th>
                 <th style="color:#4caf50">Auto</th>
-                <th style="color:#e53935">Judge</th>
+                <th style="color:#e53935">Manual</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
@@ -294,6 +294,84 @@ function renderResultsTable(race) {
   }
 
   return html;
+}
+
+function buildResultsReadout(race) {
+  const raceLabel = RACE_LABELS[race.race_type] || race.race_type;
+  if (isResRaceRelay(race)) {
+    const teams = race.relay_teams || [];
+    if (teams.length === 0) return `${raceLabel} Results\nNo teams available.`;
+    let ranked = teams.slice().filter(t => t.total_time != null);
+    if (ranked.some(t => t.place != null)) {
+      ranked = ranked.sort((a, b) => (a.place ?? 999) - (b.place ?? 999));
+    } else {
+      ranked = ranked.sort((a, b) => (a.total_time ?? 999999) - (b.total_time ?? 999999));
+    }
+    const lines = [`${raceLabel} Results`];
+    ranked.forEach(t => {
+      const place = t.place ? ordinal(t.place) + ': ' : '';
+      const time = t.total_time != null ? formatTime(t.total_time) : '—';
+      lines.push(`${place}${t.team_name} — ${time}`);
+    });
+    return lines.join('\n');
+  }
+
+  const lines = [`${raceLabel} Results`];
+  for (const heat of race.heats || []) {
+    lines.push(`Heat ${heat.heat_number}:`);
+    if (!heat.lanes || heat.lanes.length === 0) {
+      lines.push('  No swimmers.');
+      continue;
+    }
+    const rankedLanes = heat.lanes
+      .filter(l => l.finish_time != null)
+      .slice()
+      .sort((a, b) => a.finish_time - b.finish_time);
+    const livePlaces = {};
+    rankedLanes.forEach((lane, idx) => {
+      livePlaces[lane.id] = idx + 1;
+    });
+
+    const placed = heat.lanes.map(lane => {
+      const autoPlace = livePlaces[lane.id] || lane.place || null;
+      const place = lane.manual_place || autoPlace;
+      return { lane, place };
+    }).filter(p => p.place != null)
+      .sort((a, b) => a.place - b.place);
+
+    if (placed.length === 0) {
+      lines.push('  No results.');
+      continue;
+    }
+
+    placed.forEach(p => {
+      const time = p.lane.finish_time != null ? formatTime(p.lane.finish_time) : '—';
+      lines.push(`  ${ordinal(p.place)}: ${p.lane.name} — ${time}`);
+    });
+  }
+
+  return lines.join('\n');
+}
+
+function showResultsReadout() {
+  const race = resSelectedRace;
+  if (!race) return;
+  const readout = buildResultsReadout(race);
+  showModal('Results Readout', `
+    <textarea id="results-readout-text" class="form-control" style="width:100%;min-height:220px;font-family:monospace">${readout}</textarea>
+  `, [
+    { label: 'Copy', cls: 'btn-primary', action: async () => {
+      const text = document.getElementById('results-readout-text')?.value || '';
+      try {
+        await navigator.clipboard.writeText(text);
+        hideModal();
+        alert('Readout copied to clipboard.');
+      } catch (e) {
+        alert('Copy failed. You can still select and copy manually.');
+      }
+    }},
+    { label: 'Close', cls: 'btn-outline' }
+  ]);
 }
 
 function ordinal(n) {
