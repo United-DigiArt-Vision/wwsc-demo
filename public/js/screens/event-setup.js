@@ -204,12 +204,12 @@ function renderAttRow(a, idx) {
     <tr>
       <td>${idx + 1}</td>
       <td class="name-cell">${a.name}</td>
-      <td class="time-cell">${a.time_25m ?? '—'}</td>
-      <td class="time-cell">${a.time_50m ?? '—'}</td>
-      <td class="time-cell">${a.time_75m ?? '—'}</td>
-      <td class="time-cell">${a.time_backstroke ?? '—'}</td>
-      <td class="time-cell">${a.time_breaststroke ?? '—'}</td>
-      <td class="time-cell">${a.time_butterfly ?? '—'}</td>
+      <td class="time-cell">${formatTime(a.time_25m)}</td>
+      <td class="time-cell">${formatTime(a.time_50m)}</td>
+      <td class="time-cell">${formatTime(a.time_75m)}</td>
+      <td class="time-cell">${formatTime(a.time_backstroke)}</td>
+      <td class="time-cell">${formatTime(a.time_breaststroke)}</td>
+      <td class="time-cell">${formatTime(a.time_butterfly)}</td>
       ${entryCell}
     </tr>
   `;
