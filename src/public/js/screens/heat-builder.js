@@ -357,9 +357,14 @@ function renderRelayTeamsInHB(teams, race) {
       swimTwiceRow = '<tr style="background:#fafafa; border-top: 2px dashed #ccc"><td>' + nextLeg + '</td><td colspan="' + colSpan + '"><div style="display:flex;align-items:center;gap:8px;padding:4px 0"><select id="hb-swim-twice-' + ti + '" class="form-control" style="max-width:240px;min-height:44px"><option value="">— Select swimmer —</option>' + memberOptions + '</select><button class="btn btn-accent" style="min-height:44px;white-space:nowrap" onclick="hbAddSwimTwice(' + ti + ')">' + addLabel + '</button></div></td></tr>';
     }
 
-    // BF0404-05: Team Total shows target_time (sum of PBs) before times are entered, or total_time after
-    const totalValue = team.total_time != null ? team.total_time : team.target_time;
-    let totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:18px">' + (totalValue != null ? formatWhole(totalValue) : '—') + '</td>';
+    // BF0404-05: Team Total shows target_time (whole seconds) before times are entered, or total_time (centiseconds) after
+    // v2.7.1: Must use correct formatter for each unit type
+    let totalTimeCell;
+    if (team.total_time != null) {
+      totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:18px">' + formatTime(team.total_time) + '</td>';
+    } else {
+      totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:18px">' + (team.target_time != null ? formatWhole(team.target_time) : '—') + '</td>';
+    }
 
     // BF0404-06: Start time prominent
     const startDisplay = '⏱️ Start: ' + formatWhole(team.start_delay || 0) + ' s';
