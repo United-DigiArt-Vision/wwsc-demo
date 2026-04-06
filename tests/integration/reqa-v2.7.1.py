@@ -8,6 +8,19 @@ import json, urllib.request, urllib.error
 B = "http://localhost:3000"
 PASS = 0; FAIL = 0; RESULTS = []
 
+# Health Check: verify server is running before tests start
+try:
+    _hc = urllib.request.urlopen(B + "/api/version", timeout=3)
+    _ver = json.loads(_hc.read()).get("version", "?")
+    print(f"  Server OK: v{_ver} on {B}")
+except Exception as _e:
+    print(f"\n  ❌ SERVER NOT REACHABLE at {B}")
+    print(f"  Error: {_e}")
+    print(f"\n  Please start the server first:")
+    print(f"    rm -rf src/data && node src/server.js")
+    print(f"  Then re-run this test.\n")
+    exit(1)
+
 def ok(name):
     global PASS; PASS += 1; RESULTS.append(("✅", name, "")); print(f"  ✅ {name}")
 
