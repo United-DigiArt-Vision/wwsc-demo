@@ -1,5 +1,9 @@
 # Swimming App — Claude Code Projektkontext
 
+## Quality Playbook (PFLICHT)
+**Lies und befolge ZUERST:** `../../../QUALITY_PLAYBOOK.md`
+Gilt für alle Projekte. Enthält die verbindliche Vorgehensweise für Tests, Qualitätssicherung und Auslieferung.
+
 ## Projektübersicht
 Die WWSC Swimming App ist ein Event-Management-System für Schwimmvereine zur Verwaltung von Wettkämpfen, Mitgliedern und Handicap-Berechnungen. Das System automatisiert die Erstellung von Heats, die Zeiterfassung (Relays) und die Ergebnisberechnung basierend auf Personal Best (PB) Zeiten.
 Kunde: Bryan Hesketh. Status: v2.7.0 live auf Render, wartet auf Kundenfeedback.
