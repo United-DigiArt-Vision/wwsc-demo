@@ -1155,19 +1155,11 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
       const teamSize = 4;
       const numTeams = members.length > 30 ? 4 : 3;
       
-      // BF2.6-25: Standard relays (25m/Pogo) also respect 'N' (Standard Events Only) 
-      // but in the sense of "Attendance". If they are 'N', they are in.
-      // BUT if this is a Medley Relay labeled as 25m_relay, we have a mismatch.
-      // Let's ensure ALL relay types filter out swimmers who are not participating.
-      const relayMembers = members.filter(m => {
-        const entry = (m.special_event_entry || '').trim();
-        // If it's a special race (Medley), 'N' means OUT.
-        // If it's a standard race (25m), 'N' is actually okay because it means "Standard Only".
-        // HOWEVER, Dino's screenshot shows Medley Relay. 
-        // If the Medley Relay is being generated via this block, 'N' must be OUT.
-        // UPDATE 2026-04-04: NULL/Empty also means NOT PARTICIPATING in relays if a special event is active.
-        return entry !== 'N' && entry !== ''; 
-      });
+      // v2.7.1: Standard relays (25m/Pogo) include ALL present swimmers.
+      // 'N' means "Standard Events Only" = they ARE in standard relays.
+      // null/empty entry also means they participate in standard events.
+      // Only Medley Relay filters by entry — handled in its own block below.
+      const relayMembers = members;
 
       if (relayMembers.length < 2) return res.json({ teams: [], warning: 'Need at least 2 swimmers' });
 
@@ -1196,11 +1188,9 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
       // R10.2, R10.3: Pairs (teams of 2)
       const pbCol = race.race_type === '25m_brace' ? 'time_25m' : 'time_50m';
       
-      // BF2.6-26: Filter out swimmers who said 'No' to special events for Brace relays
-      const relayMembers = members.filter(m => {
-        const entry = (m.special_event_entry || '').trim();
-        return entry !== 'N';
-      });
+      // v2.7.1: Brace relays are standard events — ALL present swimmers participate.
+      // 'N' means "Standard Events Only" = they ARE in Brace (it's standard).
+      const relayMembers = members;
 
       if (relayMembers.length < 2) return res.json({ teams: [], warning: 'Need at least 2 swimmers' });
 
