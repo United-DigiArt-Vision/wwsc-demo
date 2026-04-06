@@ -1,0 +1,7 @@
+node_modules/
+src/data/*.db
+src/data/*.db-wal
+src/data/*.db-shm
+src/data/backups/
+.DS_Store
+*.zip
