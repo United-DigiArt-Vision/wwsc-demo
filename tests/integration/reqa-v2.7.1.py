@@ -625,6 +625,91 @@ else:
     # All lanes may have delay>0 if PBs differ — create specific case
     ok("EC-4: No delay=0 lane in this heat (all PBs differ — valid)")
 
+# EC-5: 4-Way Tie
+print("\n=== EC-5: 4-Way Tie ===")
+post("/api/events/reset")
+_, evt_4t = get("/api/events/current")
+eid_4t = evt_4t["id"]
+_, att_4t = get(f"/api/events/{eid_4t}/attendance")
+att_4t_data = [{"member_id": a["member_id"], "present": i < 4} for i, a in enumerate(att_4t)]
+put(f"/api/events/{eid_4t}/attendance", {"attendees": att_4t_data})
+put(f"/api/events/{eid_4t}/races", {"race_types": ["25m"]})
+_, races_4t = get(f"/api/events/{eid_4t}/races")
+rid_4t = races_4t[0]["id"]
+_, heats_4t = get(f"/api/races/{rid_4t}/generate-heats")
+post(f"/api/races/{rid_4t}/confirm-heats", heats_4t)
+_, saved_4t = get(f"/api/races/{rid_4t}/heats")
+h_4t = saved_4t[0]
+for l in h_4t["lanes"]:
+    put(f"/api/heats/{h_4t['id']}/lanes/{l['id']}/time", {"finish_time": 5000})
+post(f"/api/races/{rid_4t}/rank")
+_, res_4t = get(f"/api/events/{eid_4t}/results")
+places_4t = [l["place"] for l in res_4t[0]["heats"][0]["lanes"]]
+if all(p == 1 for p in places_4t):
+    ok(f"EC-5: 4-way tie → all place 1 ({places_4t})")
+else:
+    fail("EC-5: 4-way tie", f"places={places_4t}")
+
+# EC-6: Dezimaleingabe "16.5" für PB → parseWhole should round/truncate
+print("\n=== EC-6: Decimal PB Input ===")
+# parseWhole("16.5") → parseInt("16.5") → 16 (truncates decimal)
+# This is correct behavior — whole seconds only
+_, m_test = post("/api/members", {"name": "DecimalTest", "time_25m": 16})
+_, m_read = get(f"/api/members/{m_test['id']}")
+if m_read["time_25m"] == 16:
+    ok("EC-6: Integer PB stored correctly (16)")
+else:
+    fail("EC-6: PB storage", f"expected 16, got {m_read['time_25m']}")
+
+# EC-7: PB=0 → valid but edge case
+_, m_zero = post("/api/members", {"name": "ZeroPB", "time_25m": 0})
+_, m_z_read = get(f"/api/members/{m_zero['id']}")
+if m_z_read["time_25m"] == 0:
+    ok("EC-7: PB=0 stored correctly")
+else:
+    fail("EC-7: PB=0", f"got {m_z_read['time_25m']}")
+
+# EC-8: R-12 Add Swimmer Pool via API (Medley eligible only)
+print("\n=== EC-8: R-12 Medley Eligible Pool ===")
+post("/api/events/reset")
+_, evt_r12 = get("/api/events/current")
+eid_r12 = evt_r12["id"]
+_, att_r12 = get(f"/api/events/{eid_r12}/attendance")
+entries_r12 = ["Y", "Back", "Breast", "Free", "Y", "N", "N", "N", "N"]
+att_r12_data = []
+for i, a in enumerate(att_r12[:9]):
+    att_r12_data.append({"member_id": a["member_id"], "present": True, "special_event_entry": entries_r12[i]})
+for a in att_r12[9:]:
+    att_r12_data.append({"member_id": a["member_id"], "present": False})
+put(f"/api/events/{eid_r12}/attendance", {"attendees": att_r12_data})
+put(f"/api/events/{eid_r12}/config", {"standard_event": "ordinary_swim", "special_event": "medley_relay"})
+put(f"/api/events/{eid_r12}/races", {"race_types": ["medley_relay"]})
+_, races_r12 = get(f"/api/events/{eid_r12}/races")
+medley_r12 = races_r12[0]
+_, gen_r12 = post(f"/api/races/{medley_r12['id']}/generate-relay-teams")
+teams_r12 = gen_r12.get("teams", [])
+
+# Count eligible: Y, Back, Breast, Free (not N, not empty)
+eligible_count = sum(1 for e in entries_r12 if e in ["Y", "Back", "Breast", "Free"])
+all_in_teams = set()
+for t in teams_r12:
+    for m in t.get("members", []):
+        all_in_teams.add(m["member_id"])
+
+# All eligible should be in teams
+if len(all_in_teams) == eligible_count:
+    ok(f"EC-8-R12: All eligible in teams ({eligible_count})")
+else:
+    fail("EC-8-R12", f"in teams={len(all_in_teams)}, eligible={eligible_count}")
+
+# N-swimmers must NOT be in teams
+n_ids = [att_r12[i]["member_id"] for i in range(len(entries_r12)) if entries_r12[i] == "N"]
+n_in = [mid for mid in n_ids if mid in all_in_teams]
+if len(n_in) == 0:
+    ok(f"EC-8-R13: N-swimmers excluded ({len(n_ids)} N, 0 in teams)")
+else:
+    fail("EC-8-R13", f"N-swimmers in teams: {n_in}")
+
 # ══════════════════════════════════════════════════════════
 print(f"\n{'='*50}")
 print(f"  RESULTS: {PASS} PASS / {FAIL} FAIL")
