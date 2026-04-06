@@ -70,3 +70,34 @@ function parseWhole(input) {
   if (isNaN(secs) || secs < 0) return null;
   return secs;
 }
+
+/**
+ * Ordinal suffix for relay/race placement (1st, 2nd, 3rd, 4th, …)
+ * Shared by heat-builder, relays, and results screens.
+ */
+function ordinal(n) {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+/**
+ * Get PB for a relay member based on race type and stroke.
+ * Shared by heat-builder, relays, and results screens.
+ */
+function getRelayPB(member, raceType) {
+  switch (raceType) {
+    case '25m_relay': return member.time_25m;
+    case '25m_brace': return member.time_25m;
+    case '50m_brace': return member.time_50m;
+    case 'pogo': return member.time_25m;
+    case 'medley_relay': {
+      const stroke = (member.stroke || '').toLowerCase();
+      if (stroke === 'back') return member.time_backstroke;
+      if (stroke === 'breast') return member.time_breaststroke;
+      if (stroke === 'free') return member.time_25m;
+      return member.time_25m;
+    }
+    default: return null;
+  }
+}

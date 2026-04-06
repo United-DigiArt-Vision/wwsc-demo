@@ -392,11 +392,8 @@ function showResultsReadout() {
   ]);
 }
 
-function ordinal(n) {
-  const s = ['th','st','nd','rd'];
-  const v = n % 100;
-  return n + (s[(v-20)%10] || s[v] || s[0]);
-}
+// ordinal() is now shared from format.js — this local alias kept for compatibility
+// function ordinal(n) → already defined in format.js, loaded before this file
 
 // ── Slow Swimmers Section ──────────────────────────
 
@@ -774,22 +771,8 @@ function renderRelayResultsInline(race) {
   return html;
 }
 
-function getRelayPBForResults(member, raceType) {
-  switch (raceType) {
-    case '25m_relay': return member.time_25m;
-    case '25m_brace': return member.time_25m;
-    case '50m_brace': return member.time_50m;
-    case 'pogo': return member.time_25m;
-    case 'medley_relay': {
-      const stroke = (member.stroke || '').toLowerCase();
-      if (stroke === 'back') return member.time_backstroke;
-      if (stroke === 'breast') return member.time_breaststroke;
-      if (stroke === 'free') return member.time_25m;
-      return member.time_25m;
-    }
-    default: return null;
-  }
-}
+// getRelayPBForResults → use shared getRelayPB from format.js
+function getRelayPBForResults(member, raceType) { return getRelayPB(member, raceType); }
 
 function enterRelayTimeInline(teamId, currentValue) {
   showNumpad('', async (value) => {

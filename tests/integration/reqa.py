@@ -202,14 +202,14 @@ if evt_id:
         if heats: ok(f"T19: Generate heats ({len(heats)} heats for 9 swimmers)")
         else: fail("T19: Generate heats", r)
 
-        # Handicap
+        # Handicap: start_delay = (max_PB + 2) - PB (BASE_OFFSET = 2)
         all_ok = True
         for h in heats:
             times = [l["handicap_time"] for l in h["lanes"]]
-            mx = max(times)
+            mx = max(times) + 2  # BASE_OFFSET
             for l in h["lanes"]:
                 if l["start_delay"] != mx - l["handicap_time"]: all_ok = False
-        if all_ok: ok("T20: Handicap start_delay = max - PB")
+        if all_ok: ok("T20: Handicap start_delay = (max+2) - PB")
         else: fail("T20: Handicap calc")
 
         # Randomisation

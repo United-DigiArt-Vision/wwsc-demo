@@ -308,7 +308,8 @@ function renderRelayTeamsInHB(teams, race) {
     const teamColor = teamColors[ti % teamColors.length];
     const members = team.members || [];
     const placeDisplay = team.place ? ordinalRelay(team.place) : '';
-    const teamHeader = team.team_name + (placeDisplay ? ' — ' + placeDisplay : '');
+    // R-15: Relay place display red + bold
+    const teamHeader = team.team_name + (placeDisplay ? ' — <span style="color:#e53935;font-weight:700;font-size:18px">' + placeDisplay + '</span>' : '');
 
     let rows = '';
     for (const m of members) {
@@ -427,28 +428,11 @@ function hbAddSwimTwice(teamIndex) {
   renderHeatBuilder();
 }
 
-function getPBForRelayHB(member, raceType) {
-  switch (raceType) {
-    case '25m_relay': return member.time_25m;
-    case '25m_brace': return member.time_25m;
-    case '50m_brace': return member.time_50m;
-    case 'pogo': return member.time_25m;
-    case 'medley_relay': {
-      const stroke = (member.stroke || '').toLowerCase();
-      if (stroke === 'back') return member.time_backstroke;
-      if (stroke === 'breast') return member.time_breaststroke;
-      if (stroke === 'free') return member.time_25m;
-      return member.time_25m;
-    }
-    default: return null;
-  }
-}
+// getPBForRelayHB → use shared getRelayPB from format.js
+function getPBForRelayHB(member, raceType) { return getRelayPB(member, raceType); }
 
-function ordinalRelay(n) {
-  const s = ['th', 'st', 'nd', 'rd'];
-  const v = n % 100;
-  return n + (s[(v - 20) % 10] || s[v] || s[0]);
-}
+// ordinalRelay → use shared ordinal from format.js
+function ordinalRelay(n) { return ordinal(n); }
 
 // ═══ Individual Actions ═══
 
