@@ -1,6 +1,6 @@
 /**
  * WWSC — Heat Builder Screen (Individual Heats + Relay Teams)
- * v2.4.0: All times in centiseconds, formatTime() display, relay handicap
+ * v2.6.0+: PB/Delay/Max in whole seconds, Finish/Net/Variance in centiseconds
  */
 let hbRaces = [];
 let hbSelectedRace = null;

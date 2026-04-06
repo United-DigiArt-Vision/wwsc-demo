@@ -1,5 +1,5 @@
 /**
- * WWSC — Results Screen (v2.4.0: centiseconds, break column, manual place, slow swimmers)
+ * WWSC — Results Screen (v2.6.0+: dual time system, break column, manual place, slow swimmers)
  * Enter times, calculate results, finalize, breakers.
  */
 let resRaces = [];
@@ -295,7 +295,7 @@ function renderResultsTable(race) {
                 <th style="text-align:left;min-width:140px">Swimmer</th>
                 <th>PB</th>
                 <th>Delay</th>
-                <th>Total</th>
+                <th>Exp. Finish</th>
                 <th style="min-width:80px">Finish</th>
                 <th>Net</th>
                 <th>Variance</th>

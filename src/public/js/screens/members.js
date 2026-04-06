@@ -1,5 +1,5 @@
 /**
- * WWSC — Members Screen (v2.4.0: centiseconds + filter buttons)
+ * WWSC — Members Screen (v2.6.0+: whole seconds, filter buttons)
  */
 let membersCache = [];
 let memberSearch = '';

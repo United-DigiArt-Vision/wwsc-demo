@@ -4,7 +4,8 @@
   "description": "WWSC Swimming Event Management System",
   "main": "server.js",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.0.0",
