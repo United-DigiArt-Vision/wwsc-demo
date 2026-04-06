@@ -1455,11 +1455,14 @@ app.put('/api/relay-teams/:teamId/time', (req, res) => {
     const team = db.prepare('SELECT rt.*, er.race_type FROM relay_team rt JOIN event_race er ON rt.event_race_id = er.id WHERE rt.id = ?').get(req.params.teamId);
     if (!team) return res.status(404).json({ error: 'Team not found' });
 
-    // v2.4.0: net_time = total_time - start_delay, variance = net_time - target_time
-    const net_time = total_time - (team.start_delay || 0);
+    // v2.7.1: start_delay and target_time are WHOLE SECONDS, total_time is CENTISECONDS.
+    // Convert whole seconds → centiseconds (*100) before arithmetic.
+    const startDelayCs = (team.start_delay || 0) * 100;
+    const targetTimeCs = (team.target_time || 0) * 100;
+    const net_time = total_time - startDelayCs;
     let variance = null;
     if (team.target_time) {
-      variance = net_time - team.target_time;
+      variance = net_time - targetTimeCs;
     }
 
     db.prepare('UPDATE relay_team SET total_time = ?, variance = ? WHERE id = ?').run(total_time, variance, req.params.teamId);
