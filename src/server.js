@@ -1345,8 +1345,13 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
       }
 
       // Finalize: set target times, sort members by medley order, set leg_order
+      // v2.7.1: Flag teams with missing PBs so UI can warn
       teams.forEach(t => {
-        t.target_time = t.members.reduce((sum, m) => sum + (m.pb || 0), 0);
+        const membersWithPB = t.members.filter(m => m.pb != null);
+        const membersWithoutPB = t.members.filter(m => m.pb == null);
+        t.target_time = membersWithPB.reduce((sum, m) => sum + m.pb, 0);
+        t.has_missing_pb = membersWithoutPB.length > 0;
+        t.missing_pb_count = membersWithoutPB.length;
         t.members.sort((a, b) => strokes.indexOf(a.stroke) - strokes.indexOf(b.stroke));
         t.members.forEach((m, idx) => m.leg_order = idx + 1);
       });

@@ -100,7 +100,7 @@ async function renderBreakerReport() {
             <tr>
               <td class="name-cell">${s.name}</td>
               <td>${stroke}</td>
-              <td class="time-cell">${formatTime(s.pb)}</td>
+              <td class="time-cell">${formatWhole(s.pb)}</td>
               <td class="time-cell" style="font-weight:700">${formatTime(s.net_time)}</td>
               <td class="time-cell" style="color:#e65100;font-weight:700">+${formatTime(s.variance)}</td>
             </tr>

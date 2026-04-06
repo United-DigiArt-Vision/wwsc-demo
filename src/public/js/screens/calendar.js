@@ -131,9 +131,9 @@ async function renderCalendar() {
       return;
     }
 
-    // Separate current/active event from completed ones
-    const currentEvent = activeEvents.find(ev => ev.status !== 'completed');
-    const completedEvents = activeEvents.filter(ev => ev.status === 'completed');
+    // Separate current/active event from completed/finalized ones
+    const currentEvent = activeEvents.find(ev => ev.status === 'setup');
+    const completedEvents = activeEvents.filter(ev => ev.status === 'completed' || ev.status === 'finalized');
     
     // Sort completed by date descending (most recent first)
     completedEvents.sort((a, b) => b.date.localeCompare(a.date));
