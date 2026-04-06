@@ -320,12 +320,13 @@ print("\n=== BUG 1: Relay Swim Twice Recalculation ===")
 # The server-side generate-relay-teams does calculate correctly.
 # Test: after save-relay-teams with modified teams, check the stored values.
 
-# Need a fresh non-completed event
+# Need a fresh non-completed event — complete existing ones first
+# Reset creates a new event automatically
 post("/api/events/reset")
-_, evt3 = post("/api/events", {"date": "2026-04-08"})
-eid3 = evt3["id"]
+_, current = get("/api/events/current")
+eid3 = current["id"]
 _, att3 = get(f"/api/events/{eid3}/attendance")
-att_data3 = [{"member_id": a["member_id"], "present": i < 9, "special_event_entry": None} for i, a in enumerate(att3)]
+att_data3 = [{"member_id": a["member_id"], "present": i < 9, "special_event_entry": "Y" if i < 9 else None} for i, a in enumerate(att3)]
 put(f"/api/events/{eid3}/attendance", {"attendees": att_data3})
 put(f"/api/events/{eid3}/races", {"race_types": ["25m_relay"]})
 _, races3 = get(f"/api/events/{eid3}/races")
