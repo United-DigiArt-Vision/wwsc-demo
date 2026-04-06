@@ -17,12 +17,12 @@
 | Req | Beschreibung | L3 API | L4 Display | L7 Edge | Status |
 |-----|-------------|--------|-----------|---------|--------|
 | R-01 | Tab Navigation | N/A | **IMPL (D-R01)** | N/A | OK |
-| R-02 | Members Whole Seconds | IMPL | **IMPL (D1)** | SPEC | OK |
+| R-02 | Members Whole Seconds | IMPL | **IMPL (D1)** | **IMPL (EC6/7)** | OK |
 | R-03 | Heats PB/Delay/Max Whole | IMPL | **IMPL (D3)** | IMPL | OK |
-| R-04 | Expected Finish PB+Delay | **IMPL (R04)** | **IMPL (D2,D3)** | SPEC | OK |
+| R-04 | Expected Finish PB+Delay | **IMPL (R04)** | **IMPL (D2,D3)** | **IMPL (EC4)** | OK |
 | R-05 | Auto-Place Gold/Silver/Bronze | IMPL | **IMPL (D5-D7)** | N/A | OK |
-| R-06 | Exceeded = Breakers Look | IMPL | **IMPL (D18)** | SPEC | OK |
-| R-07 | 25m Relay Einzelzeiten+Total | IMPL | **IMPL (D10)** | SPEC | OK |
+| R-06 | Exceeded = Breakers Look | IMPL | **IMPL (D18)** | **IMPL (UC34)** | OK |
+| R-07 | 25m Relay Einzelzeiten+Total | IMPL | **IMPL (D10)** | **IMPL (UC02)** | OK |
 | R-08 | 25m Relay Start prominent | N/A | **IMPL (D14)** | N/A | OK |
 | R-09 | 25m Relay ohne Stroke | N/A | **IMPL (D9)** | N/A | OK |
 | R-10 | Medley Einzelzeiten+Total | IMPL | **IMPL (D15)** | N/A | OK |
