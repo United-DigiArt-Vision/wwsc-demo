@@ -321,9 +321,16 @@ function addSwimTwice(teamIndex, teamNumber) {
     name: existingMember.name,
     leg_order: nextLeg,
     stroke: existingMember.stroke || 'Free',
-    pb: existingMember.pb
+    pb: existingMember.pb,
+    time_25m: existingMember.time_25m,
+    time_50m: existingMember.time_50m,
+    time_backstroke: existingMember.time_backstroke,
+    time_breaststroke: existingMember.time_breaststroke,
+    time_butterfly: existingMember.time_butterfly
   });
   team.needs_manual_entry = false;
+  // v2.7.1: Recalculate target/start/max after adding swimmer
+  recalcRelayTeam(team, relaySelectedRace.race_type, relayTeams);
   drawRelays();
 }
 

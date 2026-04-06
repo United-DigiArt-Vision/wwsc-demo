@@ -668,7 +668,20 @@ app.post('/api/races/:raceId/rank', (req, res) => {
     const batch = db.transaction(() => {
       heats.forEach(h => {
         const lanes = getLanes.all(h.id);
-        lanes.forEach((l, i) => setPlace.run(i + 1, l.id));
+        // v2.7.1: Equal finish_time → equal place (1,1,3 not 1,2,3)
+        let currentPlace = 0;
+        let prevFinish = null;
+        lanes.forEach((l, i) => {
+          if (l.finish_time == null) {
+            setPlace.run(null, l.id);
+          } else {
+            if (prevFinish === null || l.finish_time !== prevFinish) {
+              currentPlace = i + 1;
+            }
+            setPlace.run(currentPlace, l.id);
+            prevFinish = l.finish_time;
+          }
+        });
       });
     });
     batch();

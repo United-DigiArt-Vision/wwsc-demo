@@ -155,12 +155,15 @@ function renderBreakersSection(race) {
   for (const heat of (race.heats || [])) {
     for (const lane of heat.lanes) {
       if (lane.finish_time != null && lane.variance != null && lane.variance <= -100 && lane.net_time > 0) {
+        // v2.7.1: handicap_time is WHOLE SECONDS, net_time is CENTISECONDS
+        // Convert PB to centiseconds for correct improvement calculation
+        const pbCs = lane.handicap_time * 100;
         breakers.push({
           name: lane.name || 'Unknown',
           heat: heat.heat_number,
           pb: lane.handicap_time,
           newTime: lane.net_time,
-          improvement: lane.handicap_time - lane.net_time
+          improvement: pbCs - lane.net_time
         });
       }
     }
@@ -643,7 +646,7 @@ async function showSeasonReport() {
 
   if (report.breakers && report.breakers.length > 0) {
     html += '<div class="card"><h2>Record Breakers</h2><table><thead><tr><th>Swimmer</th><th>Stroke</th><th>Old PB</th><th>New Time</th><th>Improved</th></tr></thead><tbody>' +
-      report.breakers.map(b => '<tr><td>' + b.member_name + '</td><td>' + b.stroke + '</td><td>' + (b.old_pb || '?') + 's</td><td>' + b.new_time + 's</td><td style="color:green">⬇️ ' + (b.improvement ? b.improvement.toFixed(1) : '?') + 's</td></tr>').join('') +
+      report.breakers.map(b => '<tr><td>' + b.member_name + '</td><td>' + b.stroke + '</td><td>' + (b.old_pb != null ? formatTime(b.old_pb) : '?') + '</td><td>' + (b.new_time != null ? formatTime(b.new_time) : '?') + '</td><td style="color:green">⬇️ ' + (b.improvement != null ? formatTime(b.improvement) : '?') + '</td></tr>').join('') +
       '</tbody></table></div>';
   }
 

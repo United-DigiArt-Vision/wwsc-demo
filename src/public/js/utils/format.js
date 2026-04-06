@@ -82,6 +82,47 @@ function ordinal(n) {
 }
 
 /**
+ * Recalculate target_time, start_delay, max_time for a relay team
+ * after adding/removing a swimmer. Call this after modifying team.members.
+ * @param {object} team - The team object with members array
+ * @param {string} raceType - e.g. '25m_relay', 'medley_relay'
+ * @param {array} allTeams - All teams (needed for max_time calc in non-medley)
+ */
+function recalcRelayTeam(team, raceType, allTeams) {
+  var newTarget = 0;
+  for (var i = 0; i < team.members.length; i++) {
+    var pb = getRelayPB(team.members[i], raceType);
+    newTarget += (pb || 0);
+  }
+  team.target_time = newTarget > 0 ? newTarget : null;
+
+  if (raceType === 'medley_relay') {
+    team.start_delay = 2;
+    team.max_time = newTarget > 0 ? newTarget + 2 : 2;
+  } else {
+    // For standard relays: recalc based on max across all teams
+    var maxPB = 0;
+    for (var t = 0; t < allTeams.length; t++) {
+      var tTarget = 0;
+      for (var m = 0; m < allTeams[t].members.length; m++) {
+        var mpb = getRelayPB(allTeams[t].members[m], raceType);
+        tTarget += (mpb || 0);
+      }
+      if (tTarget > maxPB) maxPB = tTarget;
+    }
+    var maxTime = maxPB + 2;
+    team.start_delay = newTarget > 0 ? maxTime - newTarget : 0;
+    team.max_time = maxTime;
+    // Also update other teams' start_delay with new maxTime
+    for (var t2 = 0; t2 < allTeams.length; t2++) {
+      var t2Target = allTeams[t2].target_time || 0;
+      allTeams[t2].start_delay = t2Target > 0 ? maxTime - t2Target : 0;
+      allTeams[t2].max_time = maxTime;
+    }
+  }
+}
+
+/**
  * Get PB for a relay member based on race type and stroke.
  * Shared by heat-builder, relays, and results screens.
  */

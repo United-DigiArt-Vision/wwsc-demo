@@ -20,32 +20,63 @@ async function viewEventDetails(eventId) {
   modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
   try {
-    const [racesRes, breakersRes] = await Promise.all([
-      fetch('/api/events/' + eventId + '/races'),
-      fetch('/api/events/' + eventId + '/breakers')
-    ]);
-    const races = await racesRes.json();
-    const breakers = await breakersRes.json();
+    // v2.7.1: Use full report endpoint for attendance + results + breakers
+    const reportRes = await fetch('/api/events/' + eventId + '/report');
+    const report = await reportRes.json();
 
-    const racesWithResults = races.filter(r => r.heat_count > 0);
-    const raceList = racesWithResults.length > 0
-      ? racesWithResults.map(r => `<li style="padding:4px 0">${r.race_type}</li>`).join('')
-      : '<li style="color:#64748b">No races with results</li>';
+    // Attendance list
+    const attendees = report.attendance || [];
+    const attendeeList = attendees.length > 0
+      ? attendees.map(a => `<li style="padding:2px 0">${a.name}</li>`).join('')
+      : '<li style="color:#64748b">No attendance data</li>';
 
+    // Races with results
+    let racesHtml = '';
+    for (const race of (report.races || [])) {
+      const label = race.race_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      if (race.heats && race.heats.length > 0) {
+        let results = [];
+        for (const h of race.heats) {
+          for (const l of (h.lanes || [])) {
+            if (l.finish_time != null) {
+              results.push({ name: l.name, place: l.place || l.manual_place, time: l.finish_time });
+            }
+          }
+        }
+        results.sort((a, b) => (a.place || 99) - (b.place || 99));
+        const top3 = results.slice(0, 3).map(r =>
+          `<span style="margin-right:12px">${r.place ? ordinal(r.place) + ': ' : ''}${r.name} (${formatTime(r.time)})</span>`
+        ).join('');
+        racesHtml += `<li style="padding:4px 0"><strong>${label}</strong><br><span style="font-size:13px;color:#94a3b8">${top3 || 'No results'}</span></li>`;
+      } else if (race.teams && race.teams.length > 0) {
+        const ranked = race.teams.filter(t => t.total_time != null).sort((a, b) => (a.place || 99) - (b.place || 99));
+        const top3 = ranked.slice(0, 3).map(t =>
+          `<span style="margin-right:12px">${t.place ? ordinal(t.place) + ': ' : ''}${t.team_name} (${formatTime(t.total_time)})</span>`
+        ).join('');
+        racesHtml += `<li style="padding:4px 0"><strong>${label}</strong><br><span style="font-size:13px;color:#94a3b8">${top3 || 'No results'}</span></li>`;
+      } else {
+        racesHtml += `<li style="padding:4px 0;color:#64748b">${label} — no results</li>`;
+      }
+    }
+
+    // Breakers — use formatTime for correct display
+    const breakers = report.breakers || [];
     const breakerList = breakers.length > 0
       ? breakers.map(b => `
           <li style="padding:4px 0">
             <strong>${b.member_name}</strong> — ${b.stroke}:
-            ${b.old_pb || '?'}s → ${b.new_time}s
-            ${b.improvement ? `(⬇️ ${b.improvement.toFixed(1)}s)` : ''}
+            ${b.old_pb != null ? formatTime(b.old_pb) : '?'} → ${b.new_time != null ? formatTime(b.new_time) : '?'}
+            ${b.improvement != null ? '(⬇️ ' + formatTime(b.improvement) + ')' : ''}
           </li>
         `).join('')
       : '<li style="color:#64748b">No record breakers</li>';
 
     modal.querySelector('div > div').innerHTML = `
       <h3 style="margin:0 0 16px;font-size:20px">📊 Event Details</h3>
-      <h4 style="margin:16px 0 8px;color:#94a3b8">🏁 Races (${races.length})</h4>
-      <ul style="list-style:none;padding:0;margin:0">${raceList}</ul>
+      <h4 style="margin:16px 0 8px;color:#94a3b8">👥 Participants (${attendees.length})</h4>
+      <ul style="list-style:none;padding:0;margin:0;columns:2;font-size:14px">${attendeeList}</ul>
+      <h4 style="margin:16px 0 8px;color:#94a3b8">🏁 Races (${(report.races || []).length})</h4>
+      <ul style="list-style:none;padding:0;margin:0">${racesHtml}</ul>
       <h4 style="margin:16px 0 8px;color:#94a3b8">🏆 Record Breakers (${breakers.length})</h4>
       <ul style="list-style:none;padding:0;margin:0">${breakerList}</ul>
       <button class="btn" onclick="this.closest('div[style*=fixed]').remove()" style="margin-top:20px;width:100%">Close</button>

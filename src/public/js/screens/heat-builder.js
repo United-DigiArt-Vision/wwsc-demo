@@ -413,7 +413,7 @@ function hbAddSwimTwice(teamIndex) {
       auto = entry === 'Y';
     }
   }
-  team.members.push({
+  var newMember = {
     member_id: existing.member_id,
     name: existing.name,
     leg_order: nextLeg,
@@ -424,7 +424,11 @@ function hbAddSwimTwice(teamIndex) {
     time_backstroke: existing.time_backstroke,
     time_breaststroke: existing.time_breaststroke,
     time_butterfly: existing.time_butterfly
-  });
+  };
+  team.members.push(newMember);
+
+  // v2.7.1: Recalculate target_time, start_delay, max_time after adding swimmer
+  recalcRelayTeam(team, hbSelectedRace.race_type, hbRelayTeams);
   renderHeatBuilder();
 }
 

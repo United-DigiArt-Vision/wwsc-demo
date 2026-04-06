@@ -1,7 +1,12 @@
-# UNIT TEST SPEC — WWSC Swimming App v2.6.2 (Bryan Feedback 2026-04-04)
+# UNIT TEST SPEC — WWSC Swimming App v2.7.1 (Updated 2026-04-06)
 
 ## Ziel
-Diese Unit-Test-Spezifikation deckt die Logik, Formatierung, Ranking-Regeln und Datenfilter ab, die direkt aus Bryans Rückmeldung vom 04.04.2026 abgeleitet wurden.
+Diese Unit-Test-Spezifikation deckt die Logik, Formatierung, Ranking-Regeln und Datenfilter ab, die direkt aus Bryans Rückmeldungen vom 04.04 und 06.04.2026 abgeleitet wurden.
+
+## LEKTION (v2.7.1): Einheiten-Konsistenz als Pflichtprüfung
+Das System hat zwei Zeitsysteme: WHOLE SECONDS (PB, Delay, Max, Target) und CENTISECONDS (Finish, Net, Variance, Split, Total).
+Jede Berechnung und jede Anzeige, die Werte aus beiden Systemen mischt, MUSS konvertieren (*100 oder /100).
+Tests müssen ALLE Codepfade prüfen — Backend-API UND Frontend-Rendering — nicht nur einen davon.
 
 ## UT-01 — Ganze Sekunden: Members
 Design Ref: R-02
@@ -105,3 +110,64 @@ Design Ref: R-01
 - UT-14-1: Tab springt zum nächsten sichtbaren Eingabefeld
 - UT-14-2: Shift+Tab springt zurück
 - UT-14-3: Hidden/disabled Felder werden übersprungen
+
+## UT-15 — Einheiten-Konsistenz: Relay Variance (Bryan 06.04)
+Design Ref: Relay Variance Berechnung
+
+- UT-15-1: Relay total_time ist CENTISECONDS (via Numpad/parseTime)
+- UT-15-2: start_delay ist WHOLE SECONDS (aus DB)
+- UT-15-3: target_time ist WHOLE SECONDS (Summe der PBs)
+- UT-15-4: net_time = total_time(cs) - start_delay(s) * 100
+- UT-15-5: variance = net_time(cs) - target_time(s) * 100
+- UT-15-6: Beispiel: target=49s, delay=26s, total=7500cs → net=7500-2600=4900, var=4900-4900=0
+- UT-15-7: Anzeige variance mit formatTime() (centiseconds)
+
+## UT-16 — Einheiten-Konsistenz: Breakers Inline Report (Bryan 06.04)
+Design Ref: Results Breakers Section
+
+- UT-16-1: handicap_time (PB) ist WHOLE SECONDS
+- UT-16-2: net_time ist CENTISECONDS
+- UT-16-3: improvement = handicap_time(s) * 100 - net_time(cs) — MUSS konvertieren
+- UT-16-4: Beispiel: PB=14s, net=1300cs → improvement = 1400-1300 = 100cs → formatTime(100) = "1.00"
+- UT-16-5: Anzeige Old PB mit formatWhole() (ganze Sekunden)
+- UT-16-6: Anzeige New Time mit formatTime() (centiseconds)
+- UT-16-7: Anzeige Improved mit formatTime() (centiseconds)
+
+## UT-17 — Einheiten-Konsistenz: Event Report Breakers (Bryan 06.04)
+Design Ref: showSeasonReport()
+
+- UT-17-1: API liefert old_pb in CENTISECONDS (already converted *100 by server)
+- UT-17-2: API liefert new_time in CENTISECONDS
+- UT-17-3: API liefert improvement in CENTISECONDS
+- UT-17-4: Anzeige old_pb mit formatTime() — NICHT roher Wert + "s"
+- UT-17-5: Anzeige new_time mit formatTime()
+- UT-17-6: Anzeige improvement mit formatTime()
+
+## UT-18 — Einheiten-Konsistenz: Season Calendar Event Details (Bryan 06.04)
+Design Ref: viewEventDetails()
+
+- UT-18-1: Breaker old_pb Anzeige mit formatTime() — NICHT roher Wert + "s"
+- UT-18-2: Breaker new_time mit formatTime()
+- UT-18-3: Breaker improvement mit formatTime()
+
+## UT-19 — Individual Results: Equal Finish = Equal Place (Bryan 06.04)
+Design Ref: Auto-Placing Logik
+
+- UT-19-1: Zwei Swimmer mit identischer finish_time → gleicher Auto-Place
+- UT-19-2: Beispiel: 52.56 und 52.56 → beide 1st
+- UT-19-3: Nächster Platz springt (1,1,3 — nicht 1,2,3)
+
+## UT-20 — Relay Swim Twice: Recalculation (Bryan 06.04)
+Design Ref: Relay Add Swimmer
+
+- UT-20-1: Nach "Add Swimmer" wird target_time neu berechnet (PBs aller Legs)
+- UT-20-2: start_delay wird neu berechnet basierend auf neuem target
+- UT-20-3: max_time wird neu berechnet
+- UT-20-4: Team Total zeigt neuen target_time korrekt an
+
+## UT-21 — Relay Team Total Display Einheiten (Bryan 06.04)
+Design Ref: Heat Builder Relay Total
+
+- UT-21-1: Vor Zeiteingabe: Team Total = target_time → formatWhole() (ganze Sekunden)
+- UT-21-2: Nach Zeiteingabe: Team Total = total_time → formatTime() (centiseconds)
+- UT-21-3: NICHT mischen: formatWhole auf centisecond-Wert ist falsch
