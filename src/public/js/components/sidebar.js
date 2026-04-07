@@ -29,6 +29,9 @@ function renderSidebar(activeScreen) {
   // Load version from SSOT (package.json via /api/version)
   fetch('/api/version').then(r => r.json()).then(d => {
     const el = document.getElementById('app-version');
-    if (el) el.textContent = 'v' + d.version;
+    if (el) {
+      el.textContent = 'v' + d.version;
+      el.title = 'Build: ' + d.build;
+    }
   }).catch(() => {});
 }

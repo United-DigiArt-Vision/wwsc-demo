@@ -16,11 +16,21 @@ const upload = multer({ storage: multer.memoryStorage() });
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+// v2.7.2: Prevent browser caching of JS/CSS — ensures testers always get latest code
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.js') || filePath.endsWith('.css')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
 
-// Version endpoint (SSOT: package.json)
+// Version endpoint (SSOT: package.json + server start timestamp)
 const pkg = require('../package.json');
-app.get('/api/version', (req, res) => res.json({ version: pkg.version }));
+const BUILD_TIME = new Date().toISOString();
+app.get('/api/version', (req, res) => res.json({ version: pkg.version, build: BUILD_TIME }));
 
 // ════════════════════════════════════════════════════════
 //  MEMBERS API
@@ -700,6 +710,8 @@ app.post('/api/events/:eventId/finalize', (req, res) => {
     let breakersCount = 0;
 
     const finalize = db.transaction(() => {
+      // v2.7.2: Clear existing time_history for this event to prevent duplicates on re-finalize
+      db.prepare('DELETE FROM time_history WHERE event_id = ?').run(eventId);
       races.forEach(race => {
         const col = timeColumn(race.race_type);
         if (!col) return; // skip relay types — no PB updates, no time_history, no breakers
@@ -1375,7 +1387,8 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
     teams.forEach((t, i) => {
       const teamPB = teamPBs[i];
       t.target_time = teamPB > 0 ? teamPB : null;
-      if (race.race_type === 'medley_relay') {
+      if (race.race_type === 'medley_relay' || race.race_type === 'pogo') {
+        // Medley + Pogo: flat 2s start, nearest-to-target ranking
         t.start_delay = 2;
         t.max_time = teamPB > 0 ? teamPB + 2 : 2;
       } else {
@@ -1492,6 +1505,18 @@ app.put('/api/relay-teams/:teamId/member/:memberId/split', (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// v2.7.2: PUT /api/relay-teams/:teamId/member/:memberId/split2 — Pogo second timekeeper
+app.put('/api/relay-teams/:teamId/member/:memberId/split2', (req, res) => {
+  try {
+    const { split_time_2 } = req.body;
+    if (split_time_2 == null || split_time_2 < 0) return res.status(400).json({ error: 'split_time_2 required' });
+    const member = db.prepare('SELECT * FROM relay_team_member WHERE relay_team_id = ? AND member_id = ?').get(req.params.teamId, req.params.memberId);
+    if (!member) return res.status(404).json({ error: 'Team member not found' });
+    db.prepare('UPDATE relay_team_member SET split_time_2 = ? WHERE relay_team_id = ? AND member_id = ?').run(split_time_2, req.params.teamId, req.params.memberId);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // POST /api/races/:raceId/rank-relay
 app.post('/api/races/:raceId/rank-relay', (req, res) => {
   try {
@@ -1511,8 +1536,11 @@ app.post('/api/races/:raceId/rank-relay', (req, res) => {
         if (diff !== 0) return diff;
         return (a.team_number || 999) - (b.team_number || 999);
       });
+    } else if (race.race_type === 'pogo') {
+      // v2.7.2: Pogo = nearest to target (like Brace/Medley, per Bryan's Excel)
+      ranked = teams.sort((a, b) => Math.abs(a.variance ?? 9999) - Math.abs(b.variance ?? 9999));
     } else {
-      // 25m_relay, pogo: fastest total time wins
+      // 25m_relay: fastest total time wins
       ranked = teams.sort((a, b) => a.total_time - b.total_time);
     }
 
@@ -1522,7 +1550,7 @@ app.post('/api/races/:raceId/rank-relay', (req, res) => {
       let prevScore = null;
       ranked.forEach((t, i) => {
         let score;
-        if (['25m_brace', '50m_brace', 'medley_relay'].includes(race.race_type)) {
+        if (['25m_brace', '50m_brace', 'medley_relay', 'pogo'].includes(race.race_type)) {
           score = Math.abs(t.variance ?? 9999);
         } else {
           score = t.total_time ?? 9999;

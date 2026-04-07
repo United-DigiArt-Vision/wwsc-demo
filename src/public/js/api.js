@@ -78,6 +78,7 @@ const API = {
   getRelayTeams: (raceId) => API.get(`/api/races/${raceId}/relay-teams`),
   enterRelayTeamTime: (teamId, totalTime) => API.put(`/api/relay-teams/${teamId}/time`, { total_time: totalTime }),
   enterRelaySplit: (teamId, memberId, splitTime) => API.put(`/api/relay-teams/${teamId}/member/${memberId}/split`, { split_time: splitTime }),
+  enterRelaySplit2: (teamId, memberId, splitTime2) => API.put(`/api/relay-teams/${teamId}/member/${memberId}/split2`, { split_time_2: splitTime2 }),
   rankRelay: (raceId) => API.post(`/api/races/${raceId}/rank-relay`),
 
   // v2.4.0: Manual place + slow swimmers

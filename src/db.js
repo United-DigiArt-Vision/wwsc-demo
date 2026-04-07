@@ -196,6 +196,15 @@ function runMigrations() {
     db.exec("ALTER TABLE relay_team ADD COLUMN max_time INTEGER");
   }
 
+  // v2.7.2: Pogo uses 2 timekeepers — add second time columns
+  if (!hlCols.includes('finish_time_2')) {
+    db.exec("ALTER TABLE heat_lane ADD COLUMN finish_time_2 INTEGER");
+  }
+  const rtmCols = db.prepare("PRAGMA table_info(relay_team_member)").all().map(c => c.name);
+  if (!rtmCols.includes('split_time_2')) {
+    db.exec("ALTER TABLE relay_team_member ADD COLUMN split_time_2 INTEGER");
+  }
+
   // v2.6.0: PB times are now WHOLE SECONDS (not centiseconds).
   // Old v2.4.0 centisecond migration removed — no longer needed.
 }
