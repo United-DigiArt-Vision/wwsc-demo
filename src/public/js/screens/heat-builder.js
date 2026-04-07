@@ -294,7 +294,9 @@ function renderRelayTeamsInHB(teams, race) {
   const isMedley = race.race_type === 'medley_relay';
   const is25mRelay = race.race_type === '25m_relay';
   const showStroke = isMedley || ['25m_brace', '50m_brace'].includes(race.race_type); // BF0404-07: Hide stroke for 25m relay
+  const isPogo = race.race_type === 'pogo';
   const showSplits = is25mRelay; // BF0404-04: Show splits for 25m relay
+  const showPogoTimes = isPogo; // v2.7.3: Pogo shows T1/T2/Avg columns
   const teamColors = ['#0b3d91', '#c62828', '#2e7d32', '#e65100', '#6a1b9a', '#00838f'];
   const medleyColors = {
     back: '#e3f2fd',

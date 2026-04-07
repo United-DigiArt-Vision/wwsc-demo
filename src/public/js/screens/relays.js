@@ -115,7 +115,9 @@ function renderRelayTable(teams, race) {
   const isBrace = ['25m_brace', '50m_brace'].includes(race.race_type);
   const isMedley = race.race_type === 'medley_relay';
   const is25mRelay = race.race_type === '25m_relay';
+  const isPogo = race.race_type === 'pogo';
   const showSplits = is25mRelay; // BF2.6-05: Show splits for 25m relay
+  const showPogoTimes = isPogo; // v2.7.3: Pogo shows 2 timekeeper columns + average
   const showStroke = isMedley || isBrace; // BF2.6-07: Hide Stroke column for 25m relay (always Freestyle)
 
   let html = '';
@@ -182,17 +184,35 @@ function renderRelayTable(teams, race) {
         splitCell = '';
       }
 
+      // v2.7.3: Pogo — 2 timekeeper columns + average
+      let pogoCells = '';
+      if (showPogoTimes) {
+        const t1 = m.split_time;
+        const t2 = m.split_time_2;
+        const avg = (t1 != null && t2 != null) ? Math.round((t1 + t2) / 2) : null;
+        if (relayConfirmed && !relayEventFinalized) {
+          pogoCells = `<td class="time-input" onclick="enterRelaySplit(${team.id}, ${m.member_id}, ${t1 || 0})" style="cursor:pointer;font-weight:700">${t1 != null ? formatTime(t1) : '⏱️ T1'}</td>` +
+            `<td class="time-input" onclick="enterPogoSplit2(${team.id}, ${m.member_id}, ${t2 || 0})" style="cursor:pointer;font-weight:700">${t2 != null ? formatTime(t2) : '⏱️ T2'}</td>` +
+            `<td class="time-cell" style="font-weight:700;background:#e8f5e9">${avg != null ? formatTime(avg) : '—'}</td>`;
+        } else {
+          pogoCells = `<td class="time-cell">${t1 != null ? formatTime(t1) : '—'}</td>` +
+            `<td class="time-cell">${t2 != null ? formatTime(t2) : '—'}</td>` +
+            `<td class="time-cell" style="font-weight:700;background:#e8f5e9">${avg != null ? formatTime(avg) : '—'}</td>`;
+        }
+      }
+
       rows += `<tr${rowStyle}>
         <td>${m.leg_order}</td>
         <td class="name-cell">${m.name}</td>
         ${showStroke ? `<td>${strokeDisplay}</td>` : ''}
         ${splitCell}
+        ${pogoCells}
         <td class="time-cell">${pbDisplay}</td>
       </tr>`;
     }
 
-    // Column count: Leg + Swimmer + (Stroke if shown) + (Split if showSplits) + PB
-    const colCount = 2 + (showStroke ? 1 : 0) + (showSplits ? 1 : 0) + 1;
+    // Column count: Leg + Swimmer + (Stroke if shown) + (Split if showSplits) + (Pogo 3 cols) + PB
+    const colCount = 2 + (showStroke ? 1 : 0) + (showSplits ? 1 : 0) + (showPogoTimes ? 3 : 0) + 1;
 
     // BF-5: "Swim Twice" — always available so Bryan can add extra legs
     let swimTwiceRow = '';
@@ -244,6 +264,7 @@ function renderRelayTable(teams, race) {
               <th style="text-align:left;min-width:140px">Swimmer</th>
               ${showStroke ? '<th>Stroke ' + tooltip('Swimming style for this leg. For standard relays all swim freestyle. For Medley each swimmer has a different stroke.') + '</th>' : ''}
               ${showSplits ? '<th style="min-width:80px">Split ' + tooltip('Individual split time — how long THIS swimmer took for their leg. Tap to enter.') + '</th>' : ''}
+              ${showPogoTimes ? '<th style="min-width:70px">T1 ' + tooltip('Timekeeper 1 — first stopwatch reading.') + '</th><th style="min-width:70px">T2 ' + tooltip('Timekeeper 2 — second stopwatch reading.') + '</th><th style="min-width:70px;background:#e8f5e9">Avg ' + tooltip('Average of both timekeepers.') + '</th>' : ''}
               <th>PB ${tooltip('Personal Best time for the relevant distance.')}</th>
             </tr>
           </thead>
@@ -389,6 +410,21 @@ function enterRelaySplit(teamId, memberId, currentValue) {
       return;
     }
     // Refresh
+    const saved = await API.getRelayTeams(relaySelectedRace.id);
+    relayTeams = saved;
+    drawRelays();
+  });
+}
+
+// v2.7.3: Pogo second timekeeper entry
+function enterPogoSplit2(teamId, memberId, currentValue) {
+  showNumpad(currentValue || '', async (value) => {
+    if (value == null) return;
+    const result = await API.enterRelaySplit2(teamId, memberId, value);
+    if (result.error) {
+      alert('Error: ' + result.error);
+      return;
+    }
     const saved = await API.getRelayTeams(relaySelectedRace.id);
     relayTeams = saved;
     drawRelays();
