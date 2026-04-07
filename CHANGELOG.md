@@ -1,5 +1,21 @@
 # CHANGELOG — WWSC Swimming App
 
+## v2.7.3 (2026-04-07)
+
+### Features
+- **Pogo 2-Timekeeper UI:** Relays + Results zeigen T1/T2/Avg Spalten pro Swimmer
+- **Pogo Ranking:** nearest-to-target (wie Excel), flat 2s Start
+
+### Fixes
+- **Re-Finalize Duplikate:** DELETE vor INSERT in time_history verhindert doppelte Breakers
+- **Calendar:** Zeigt jetzt finalized UND completed Events
+- **Exceeded PB Format:** formatWhole statt formatTime fuer PB im Breaker Report
+- **Cache:** JS/CSS mit no-cache Headers, Build-Timestamp in /api/version
+- **Medley:** Target nur aus Members mit PB, fehlende PBs werden markiert
+- **Datenhygiene:** .dropboxignore fuer src/data/ und node_modules/
+
+---
+
 ## v2.7.2 (2026-04-06)
 
 ### Fixes
