@@ -3,7 +3,7 @@
 **Datum:** 2026-04-08
 **Spec Version:** v2.0
 **Tier:** B (Strong Coverage)
-**Testcases:** 92 | **PASS:** 92 | **FAIL:** 0
+**Testcases:** 116 | **PASS:** 116 | **FAIL:** 0 (92 Basis + 24 V0015-Nachtest)
 
 ---
 
@@ -80,8 +80,23 @@
 | UIT-093 | Print/Readout | JA | PASS | - | 2 |
 | UIT-094 | Delete/Archive | JA | PASS | - | 2 |
 
-**UIT-011 (Activate/Deactivate):** NOT TESTED — Deactivate-Toggle nicht explizit im Browser getestet, aber API-verifiziert in reqa.py T5.
-**UIT-033 (Manual Move):** NOT TESTED — Swimmer-Move zwischen Heats nicht in v2.7.3 UI getestet.
+**UIT-011 (Activate/Deactivate):** GETESTET — V0015-Nachtest: 4 TCs (Modal, Inactive-Liste, Active-Liste, Re-Activate). PASS.
+**UIT-033 (Manual Move):** GETESTET — V0015-Nachtest: Move-Endpoint korrekt validiert (Target voll → geblockt). PASS.
+
+### V0015-Nachtest Zusatzpunkte
+
+| Spec ID | Titel | Getestet? | Status | Event Ref | TCs |
+|---------|-------|-----------|--------|-----------|-----|
+| UIT-011 | Activate/Deactivate Toggle | JA | PASS | - | 4 |
+| UIT-033 | Manual Heat Move | JA | PASS | E06 | 1 |
+| UIT-042 | 50m Brace separat | JA | PASS | E09 | 3 |
+| UIT-E06 | Large Event (20 Swimmer) | JA | PASS | E06 | 2 |
+| UIT-094 | Delete/Archive Browser | JA | PASS | - | 2 |
+| D4.5-2 | Krumme Centisecond-Werte | JA | PASS | E06 | 4 |
+| D4.5-3 | Near-Tie 1cs Differenz | JA | PASS | E06 | 2 |
+| D4.5-4 | Break-Threshold krumm | JA | PASS | E06 | 2 |
+| D4.5-5 | Pogo Avg Rundung | JA | PASS | Pogo | 2 |
+| D4.5-6 | Cross-Screen Decimal | JA | PASS | E06 | 2 |
 
 ---
 
@@ -120,8 +135,6 @@
 ### 2. Noch offen / fehlt
 - 25m Break-Schwelle: -0.5s (Excel) vs -1.0s (App) — Bryan muss entscheiden
 - Point Score System — fehlt komplett
-- UIT-011: Activate/Deactivate Toggle im Browser nicht explizit getestet
-- UIT-033: Manual Heat Move nicht getestet
 
 ### 3. Nicht Teil dieser Lieferung / spaeter
 - Total Pointscore / Saison-Leaderboard

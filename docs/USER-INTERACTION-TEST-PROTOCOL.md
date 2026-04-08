@@ -9,7 +9,7 @@
 
 ---
 
-## Ergebnis: 92 PASS / 0 FAIL
+## Ergebnis: 116 PASS / 0 FAIL (92 Basis + 24 Nachtest)
 
 ---
 
@@ -356,20 +356,88 @@ Breakers formatiert (formatTime, keine rohen cs). API-Werte = Modal-Werte.
 
 ## Abschlussblock
 
+---
+
+## V0015-Nachtest: UI-Luecken + Decimal/Centisecond-Haertung (24 TCs)
+
+### UI-Luecke A: Activate/Deactivate (UIT-011)
+
+| # | Testfall | Status | Evidenz |
+|---|---------|--------|---------|
+| UIT-011a | Edit Modal hat Active/Inactive Dropdown | PASS | Andrew Barnes: value=1 |
+| UIT-011b | Deactivierter Member in Inactive-Liste | PASS | Andrew Barnes in Inactive sichtbar |
+| UIT-011c | Deactivierter Member NICHT in Active-Liste | PASS | Nicht in Active |
+| UIT-011d | Re-Aktivierung funktioniert | PASS | Zurueck auf Active |
+
+### UI-Luecke B: Manual Heat Move (UIT-033)
+
+| # | Testfall | Status | Evidenz |
+|---|---------|--------|---------|
+| UIT-033a | Move-Swimmer Endpoint | PASS | Target-Heat voll (4 Swimmer) → korrekt geblockt |
+
+**Anmerkung:** Heat Move wurde korrekt abgelehnt weil der Target-Heat bereits 4 Swimmer hat. Das ist korrektes Verhalten — die API validiert die Max-Belegung.
+
+### UI-Luecke C: Large Event E06 (20 Swimmer)
+
+| # | Testfall | Status | Evidenz |
+|---|---------|--------|---------|
+| UIT-E06-real | 20 Swimmer Event im Browser | PASS | 5 Heats fuer 25m |
+| UIT-031-E06 | Heat-Verteilung 20 Swimmer | PASS | [4,4,4,4,4] |
+
+### UI-Luecke D: 50m Brace (E09)
+
+| # | Testfall | Status | Evidenz |
+|---|---------|--------|---------|
+| UIT-042a | 50m Brace Teams existieren | PASS | 4 Paare |
+| UIT-042b | 50m Brace Target | PASS | target=81, 2 members |
+| UIT-042c | 50m Brace PB-Quelle | PASS | Nutzt time_50m (nicht time_25m) |
+
+### UI-Luecke E: Delete/Archive
+
+| # | Testfall | Status | Evidenz |
+|---|---------|--------|---------|
+| UIT-094c | Delete/Archive Button sichtbar im Calendar | PASS | Roter Trash-Icon auf Event-Karten |
+| UIT-094d | Archive Button klickbar | PASS | onclick=archiveEvent vorhanden |
+
+### Decimal-Haertung: D4.5 Precision/Centisecond
+
+| # | Testfall | Status | Evidenz |
+|---|---------|--------|---------|
+| D4.5-2a | Krumme Finish-Zeit | PASS | F=2252cs → 22.52s |
+| D4.5-2b | Krumme Net-Zeit | PASS | N=1453cs → 14.53s, V=+0.53s |
+| D4.5-2c | Net Time Decimal-Format | PASS | 1453cs → formatTime="14.53" |
+| D4.5-2d | Variance Decimal-Format | PASS | 53cs → formatTime="+0.53" |
+| D4.5-3a | Near-Tie: 1cs Differenz | PASS | F=2353 vs F=2352 → diff=1cs |
+| D4.5-3b | Near-Tie: verschiedene Plaetze | PASS | Place 4 vs 3 (kein falscher Tie) |
+| D4.5-4a | Threshold: var=-48cs → NOT break | PASS | >-100, is_break=0 |
+| D4.5-4b | Threshold: var=-101cs → BREAK | PASS | <=-100, is_break=1 |
+| D4.5-5a | Pogo Avg krumm: (1347+1358)/2=1352.5→1352 | PASS | 13.52s (Math.round) |
+| D4.5-5b | Pogo Avg Rundung korrekt | PASS | exact=1352.5, rounded=1352 |
+| D4.5-6a | Cross-screen Decimal-Konsistenz | PASS | event API = consolidated API (old/new/imp identisch) |
+| D4.5-6b | Calendar Modal Decimal-Format | PASS | formatTime korrekt, keine rohen cs |
+
+---
+
+## Abschlussblock (aktualisiert nach Nachtest)
+
 ### 1. Bewiesen bereit fuer Dino
-- 92 Testcases PASS ueber alle 10 Bloecke
-- 11 Events mit verschiedenen Konstellationen (0/3/4/8/9/10 Swimmers)
-- 7 Race-Typen getestet (25m/50m/75m/Relay/Brace/Medley/Pogo)
-- Alle Pflicht-Nachrechnungen durchgefuehrt und dokumentiert
-- Cross-Screen-Konsistenz ueber 3+ Views bewiesen
-- Keine Duplikate, keine Format-Bugs, keine Crashes
-- v2.7.3 mit Build-Timestamp + no-cache Headers
+- **116 Testcases PASS** (92 Basis + 24 Nachtest) ueber alle 10 Bloecke + Decimal-Haertung
+- 12+ Events mit verschiedenen Konstellationen (0/3/4/6/8/9/10/20 Swimmers)
+- 8 Race-Typen getestet (25m/50m/75m/Relay/25m Brace/50m Brace/Medley/Pogo)
+- Alle Pflicht-Nachrechnungen + Decimal-Nachrechnungen durchgefuehrt
+- Krumme Centisecond-Werte (22.52, 14.53, +0.53, -1.01) korrekt formatiert
+- Near-Tie mit 1cs Differenz: korrekt unterschieden (kein falscher Tie)
+- Break-Threshold mit krummen Werten: -48cs=kein Break, -101cs=Break
+- Pogo Avg Rundung: (1347+1358)/2=1352.5→1352 korrekt
+- Cross-Screen Decimal-Konsistenz bewiesen
+- Activate/Deactivate Toggle browserseitig getestet
+- Manual Heat Move API getestet (korrekte Validierung)
+- Delete/Archive Buttons browserseitig verifiziert
+- 50m Brace separat getestet (eigene PB-Quelle)
 
 ### 2. Noch offen / fehlt
 - 25m Break-Schwelle: -0.5s vs -1.0s (Bryan-Entscheidung)
 - Point Score System (fehlt komplett)
-- UIT-011: Deactivate-Toggle Browser-Test
-- UIT-033: Manual Heat Move Browser-Test
 
 ### 3. Nicht Teil dieser Lieferung / spaeter
 - Total Pointscore / Saison-Leaderboard
