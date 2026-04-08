@@ -206,14 +206,20 @@ function renderResultsTable(race) {
 
   for (const heat of race.heats) {
     const maxTime = heat.max_time || 0;
-    // Rank by finish_time within heat for live places
+    // Rank by finish_time within heat for live places — with tie handling
     const rankedLanes = heat.lanes
       .filter(l => l.finish_time != null)
       .slice()
       .sort((a, b) => a.finish_time - b.finish_time);
     const livePlaces = {};
+    let currentPlace = 0;
+    let prevFinish = null;
     rankedLanes.forEach((lane, idx) => {
-      livePlaces[lane.id] = idx + 1;
+      if (prevFinish === null || lane.finish_time !== prevFinish) {
+        currentPlace = idx + 1;
+      }
+      livePlaces[lane.id] = currentPlace;
+      prevFinish = lane.finish_time;
     });
 
     let rows = '';

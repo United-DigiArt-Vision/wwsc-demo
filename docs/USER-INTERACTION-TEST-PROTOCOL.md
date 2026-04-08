@@ -1,173 +1,142 @@
-# USER INTERACTION TEST PROTOCOL — WWSC Swimming App v2.7.3
-
-**Datum:** 2026-04-07
-**Tester:** Claude Code
-**Umgebung:** Preview-Server (localhost:3000), frische DB (Seed: 23 Members)
-**Testdaten:** 1 Event, 12 Swimmer present, Races: 25m, 50m, 25m Relay, Pogo, Medley Relay
-**Version:** v2.7.3, Build: 2026-04-07T17:31:27.776Z
+# USER INTERACTION TEST PROTOCOL — Edge Cases & Permutationen
+**Version:** v2.7.3 (nach Live-Place-Fix)
+**Datum:** 2026-04-08
+**Tester:** Claude Code (Browser-basiert via Preview)
+**Spezifikation:** USER-INTERACTION-TEST-SPEC.md v2.0
 
 ---
 
-## J1: Dashboard
+## Szenario 1: Null-State (0 Schwimmer)
+
+**Setup:** Event erstellt, 0 Members present.
 
 | # | Testfall | Soll | Ist | Status |
 |---|---------|------|-----|--------|
-| J1-1 | Version sichtbar | v2.7.3 unten links | v2.7.3 sichtbar | PASS |
-| J1-2 | Active Members | 23 (Seed) | 23 | PASS |
-| J1-3 | Kein Event aktiv | "Ready for New Event?" | Korrekt angezeigt | PASS |
-| J1-4 | Present/Events/Date | "—" wenn kein Event | "—" | PASS |
+| S1-1 | Times Sheet laedt | Seite zeigt Attendance | Attendance: 0 | PASS |
+| S1-2 | Attendance Count | 0 | 0 | PASS |
+| S1-3 | Build Heats unterer Button | disabled bei < 3 | disabled=true | PASS |
+| S1-4 | Min-Swimmers Warnung | "Need at least 3" sichtbar | Sichtbar | PASS |
+| S1-5 | Heat Builder bei 0 Races | Freundliche Meldung, kein Crash | "No events selected. Go to Times Sheet." | PASS |
+| S1-6 | Results bei 0 Heats | Freundliche Meldung, kein Crash | "No races with heats yet." | PASS |
+| S1-7 | Build Heats oberer Button | Sollte disabled oder abgefangen | Nicht disabled, aber alert() bei Klick | PASS (funktional ok, UX verbesserbar) |
 
 ---
 
-## J2: Times Sheet
+## Szenario 2: Asymmetrische Relays (11 Schwimmer)
+
+**Setup:** 11 Members present. Races: 25m + 25m Relay.
 
 | # | Testfall | Soll | Ist | Status |
 |---|---------|------|-----|--------|
-| J2-1 | PBs ganze Sekunden | 16, 39, 62 etc. | Korrekt, keine Dezimalen | PASS |
-| J2-2 | Medley Counter | Back/Breast/Free/Y Counts | Back:2, Breast:2, Free:2, Yes:3, No:3 | PASS |
-| J2-3 | Standard Dropdown | Pogo | Pogo ausgewaehlt | PASS |
-| J2-4 | Special Dropdown | Medley Relay | Medley Relay ausgewaehlt | PASS |
-| J2-5 | Attendance Count | 12 | 12 | PASS |
-| J2-6 | Medley Count | 9 (12-3N) | 9 | PASS |
+| S2-1 | Heat-Verteilung 11 Swimmer | 3 Heats [4,4,3] | [4,4,3] | PASS |
+| S2-2 | Relay Teams | 3 Teams (asymmetrisch) | Team1: 3, Team2: 4, Team3: 4 | PASS |
+| S2-3 | Target = Summe PBs | Team1: 13+16+18=47 | 47 | PASS |
+| S2-4 | Target = Summe PBs | Team2: 14+16+18+21=69 | 69 | PASS |
+| S2-5 | Target = Summe PBs | Team3: 14+16+19+21=70 | 70 | PASS |
+| S2-6 | Variance Team1 | 7100-2500-4700=-100cs | -100cs | PASS |
+| S2-7 | Variance Team2 | 7200-300-6900=0cs | 0cs | PASS |
+| S2-8 | Variance Team3 | 7300-200-7000=100cs | 100cs | PASS |
+| S2-9 | Ranking | Fastest total_time wins | [1,2,3] | PASS |
+| S2-10 | UI: Place rot+fett | "1st" sichtbar | Sichtbar, Start: 25s, Target: 47 | PASS |
+
+**Nachrechnung S2-6:** `total(7100) - delay(25)*100 - target(47)*100 = 7100 - 2500 - 4700 = -100` ✅
 
 ---
 
-## J3: Heat Builder
+## Szenario 3: Extreme Gleichstaende (Ties)
+
+**Setup:** 4 Members, 50m Individual.
+**Aktion:** Lane 1 = break finish (45.00). Lane 2 = extreme (226.00). Lane 3+4 = tied (52.00).
 
 | # | Testfall | Soll | Ist | Status |
 |---|---------|------|-----|--------|
-| J3-1 | 5 Races im Progress Tracker | 25m+50m+Relay+Pogo+Medley | Alle sichtbar mit Checkmarks | PASS |
+| S3-1 | DB-Places bei Tie | [1, 4, 2, 2] | [1, 4, 2, 2] | PASS |
+| S3-2 | UI Live-Places bei Tie | Beide Tied-Swimmer = 2nd 🏆 | 2 🏆 + 2 🏆 (beide Silver) | PASS |
+| S3-3 | Gold fuer 1st | Bryan = Gold | 1 🏆 (Gold) | PASS |
+| S3-4 | 4th fuer langsamsten | Andrew = 4 (grau) | 4 (grau) | PASS |
+| S3-5 | Kein 3rd (uebersprungen) | Platz 3 existiert nicht | Korrekt — 1,2,2,4 | PASS |
+
+**BUG GEFUNDEN UND GEFIXT:** Die Live-Place-Berechnung in `results.js` vergab Plaetze per Index (1,2,3,4) ohne Tie-Handling. Fix: `livePlaces` nutzt jetzt dieselbe Logik wie der Server — gleiche `finish_time` = gleicher `place`.
 
 ---
 
-## J4: Results — Individual (25m)
+## Szenario 4: Extreme Abweichungen
+
+**Setup:** 50m, 4 Members. Lane 1: exakter Break-Threshold. Lane 2: 3 Minuten ueber PB.
 
 | # | Testfall | Soll | Ist | Status |
 |---|---------|------|-----|--------|
-| J4-1 | "Exp. Finish" Spalte | Spaltenname "Exp. Finish" | Korrekt | PASS |
-| J4-2 | Exp. Finish Berechnung | PB+Delay: 16+7=23 | 23 | PASS |
-| J4-3 | PB/Delay/ExpFinish | Ganze Sekunden | Korrekt, keine Dezimalen | PASS |
-| J4-4 | Finish/Net/Variance | XX.XX Format | 22.00, 15.00, -1.00 | PASS |
-| J4-5 | Gold/Silver/Bronze | Farbige Medal-Zellen | Gold:3, Silver:3, Bronze:3 | PASS |
-| J4-6 | Break Detection | Variance <= -1.00 → "BREAK" | 6 Break-Zeilen gefunden | PASS |
-| J4-7 | Inline Breakers Report | Old PB (ganz), New (XX.XX), Imp (-X.XX) | 16, 15.00, -1.00 | PASS |
-| J4-8 | Nachrechnung Greg | PB=16, D=7, F=22.00→N=15.00→V=-1.00 | Korrekt | PASS |
-| J4-9 | Nachrechnung Felicia | PB=16, D=7, F=23.00→N=16.00→V=+0.00 | Korrekt | PASS |
+| S4-1 | Break Detection (exact -1.00s) | is_break=1 | is_break=1 | PASS |
+| S4-2 | Nachrechnung Break | PB=32, D=14, F=45.00→Net=31.00→Var=-1.00 | net=3100cs, var=-100cs | PASS |
+| S4-3 | Extreme Slow formatiert | 226.00s (3min+) als "226.00" | "226.00" sichtbar | PASS |
+| S4-4 | Nachrechnung Extreme | PB=39, D=7, F=226.00→Net=219.00→Var=+180.00 | net=21900cs, var=18000cs | PASS |
+| S4-5 | Break-Text sichtbar | "BREAK" in Break-Spalte | 1 Break-Zelle | PASS |
+| S4-6 | Keine Format-Anomalien | Keine abgeschnittenen Zeiten | Alles korrekt dargestellt | PASS |
+
+**Nachrechnung S4-2:** `finish(4500) - delay(14)*100 = 4500-1400 = 3100 = net`. `3100 - PB(32)*100 = 3100-3200 = -100 = variance` ✅
+**Nachrechnung S4-4:** `finish(22600) - delay(7)*100 = 22600-700 = 21900 = net`. `21900 - PB(39)*100 = 21900-3900 = 18000 = variance = 180.00s` ✅
 
 ---
 
-## J5: Results — Medley Relay
+## Szenario 5: Cross-Screen Konsistenz (End-to-End)
+
+**Setup:** Event aus S3/S4 finalized + completed. Breaker: Bryan Hesketh 50m.
 
 | # | Testfall | Soll | Ist | Status |
 |---|---------|------|-----|--------|
-| J5-1 | Start: 2 s (flat) | Alle Teams Start=2 | "Start: 2 s" sichtbar | PASS |
-| J5-2 | Stroke-Spalte | Back/Breast/Free | Sichtbar | PASS |
-| J5-3 | Place rot+fett | "1st" in rot+fett | Korrekt | PASS |
-| J5-4 | PBs stroke-spezifisch | Ben=37(back), Bryan=38(breast), Greg=16(free) | Korrekt | PASS |
-| J5-5 | Target Berechnung | 37+38+16=91 | Target: 91 | PASS |
-| J5-6 | Variance Nachrechnung | Total=94.00=9400cs, Var=9400-200-9100=100cs=+1.00 | +1.00 | PASS |
-| J5-7 | Kein Exceeded Report | Nicht auf Relay-Seite | Nicht vorhanden | PASS |
+| S5-1 | Event Breakers API | 1 Breaker | 1 | PASS |
+| S5-2 | Consolidated Breakers API | 1 (nur dieses Event) | 1 | PASS |
+| S5-3 | Event Report API | 1 Breaker | 1 | PASS |
+| S5-4 | Werte Event API | old=3200, new=3100, imp=100 | Korrekt | PASS |
+| S5-5 | Werte Consolidated API | old=3200, new=3100, imp=100 | Korrekt | PASS |
+| S5-6 | Werte Report API | old=3200, new=3100, imp=100 | Korrekt | PASS |
+| S5-7 | Cross-Screen Match | Alle 3 identisch | **PASS** | PASS |
+| S5-8 | Calendar Modal | "32.00 → 31.00 (⬇️ 1.00)" | Korrekt formatiert | PASS |
+| S5-9 | Keine rohen Centiseconds | Kein "3200s" oder "0.32" | Raw=false, Formatted=true | PASS |
+| S5-10 | Console Errors | 0 | 0 | PASS |
 
----
-
-## J5b: Results — Pogo
-
-| # | Testfall | Soll | Ist | Status |
-|---|---------|------|-----|--------|
-| J5b-1 | T1/T2/Avg Spalten | 3 Spalten sichtbar | T1, T2, Avg mit Tooltips | PASS |
-| J5b-2 | T1 Wert | 13.45 | 13.45 | PASS |
-| J5b-3 | T2 Wert | 13.55 | 13.55 | PASS |
-| J5b-4 | Average Berechnung | (1345+1355)/2=1350→13.50 | 13.50 (gruen hervorgehoben) | PASS |
-| J5b-5 | Start: 2 s | Flat Start | "Start: 2 s" | PASS |
-| J5b-6 | Target Berechnung | 13+16+18+21=68 | Target: 68 | PASS |
-| J5b-7 | Place rot+fett | "1st" in rot+fett | Korrekt | PASS |
-
----
-
-## J6: Finalize → Calendar → Report
-
-| # | Testfall | Soll | Ist | Status |
-|---|---------|------|-----|--------|
-| J6-1 | Event im Calendar | Completed Event sichtbar | "Tue, 7 Apr 2026" mit Done | PASS |
-| J6-2 | Event Details Modal | Participants + Races + Breakers | 12 Participants, 5 Races | PASS |
-| J6-3 | Race Results im Modal | Top-3 mit formatTime | 25m: Greg(22.00), Jenny(21.00), Bryan(22.00) | PASS |
-| J6-4 | Breakers im Modal | formatTime, keine rohen Werte | "13.00 → 12.00 (1.00)" | PASS |
-| J6-5 | Keine rohen Centiseconds | Kein "1400s" oder "0.14" | Bestaetigt (Raw: false) | PASS |
-
----
-
-## J7: Breaker Report Screen — Cross-Screen-Konsistenz
-
-| # | Testfall | Soll | Ist | Status |
-|---|---------|------|-----|--------|
-| J7-1 | Breaker Count | 6 (3x25m + 3x50m) | 6 | PASS |
-| J7-2 | Old PB Format | XX.XX (formatTime) | 13.00, 16.00, 18.00 | PASS |
-| J7-3 | New Time Format | XX.XX | 12.00, 15.00, 17.00 | PASS |
-| J7-4 | Improved By | -X.XX | -1.00 | PASS |
-| J7-5 | Keine Duplikate | Genau 6, nicht 12 | 6 | PASS |
-| J7-6 | Kein "0.14" | formatWhole wo noetig | Bestaetigt | PASS |
-| J7-7 | Konsistenz Results↔Report | Gleiche Swimmer, gleiche Werte | Konsistent | PASS |
-| J7-8 | Konsistenz Report↔Calendar | Gleiche Breakers | Konsistent (6 in beiden) | PASS |
-
----
-
-## J8: Members + Datenhygiene
-
-| # | Testfall | Soll | Ist | Status |
-|---|---------|------|-----|--------|
-| J8-1 | Member Count | 23 (Seed) | 23 | PASS |
-| J8-2 | Keine Testdaten | 0 Dummy-Namen | 0 (kein CSV/Test/NoPB/Extra) | PASS |
-| J8-3 | PBs ganze Sekunden | Keine Dezimalen | Bestaetigt | PASS |
-| J8-4 | Alle Active | 23/23 | 23/23 | PASS |
-
----
-
-## Console Errors
-
-| # | Testfall | Soll | Ist | Status |
-|---|---------|------|-----|--------|
-| CE-1 | JS Console Errors | 0 | 0 | PASS |
+**Nachrechnung S5:** PB=32s=3200cs. Net=3100cs. Improvement=3200-3100=100cs=1.00s. Calendar: "32.00 → 31.00 (1.00)" ✅
 
 ---
 
 ## ZUSAMMENFASSUNG
 
-| Kategorie | Tests | PASS | FAIL |
-|-----------|-------|------|------|
-| Dashboard | 4 | 4 | 0 |
-| Times Sheet | 6 | 6 | 0 |
-| Heat Builder | 1 | 1 | 0 |
-| Results Individual | 9 | 9 | 0 |
-| Medley Relay | 7 | 7 | 0 |
-| Pogo | 7 | 7 | 0 |
-| Calendar + Report | 5 | 5 | 0 |
-| Cross-Screen Konsistenz | 8 | 8 | 0 |
-| Members + Datenhygiene | 4 | 4 | 0 |
-| Console | 1 | 1 | 0 |
-| **GESAMT** | **52** | **52** | **0** |
+| Szenario | Tests | PASS | FAIL | Bugs gefunden |
+|----------|-------|------|------|---------------|
+| S1: Null-State | 7 | 7 | 0 | 0 (UX-Hinweis: oberer Button nicht disabled) |
+| S2: Asymmetrische Relays | 10 | 10 | 0 | 0 |
+| S3: Extreme Gleichstaende | 5 | 5 | 0 | 1 Bug gefunden+gefixt (Live-Place Tie) |
+| S4: Extreme Abweichungen | 6 | 6 | 0 | 0 |
+| S5: Cross-Screen Konsistenz | 10 | 10 | 0 | 0 |
+| **GESAMT** | **38** | **38** | **0** | **1 Bug gefixt** |
+
+---
+
+## Bug waehrend Test gefunden und gefixt
+
+**Live-Place Tie-Handling in results.js:**
+- **Problem:** `livePlaces` vergab Plaetze per Index (1,2,3,4) statt gleichen Platz bei gleicher Finish-Time.
+- **Fix:** Tie-Logik in `livePlaces` Berechnung — gleiche `finish_time` = gleicher `place`, naechster Platz springt.
+- **Verifiziert:** 3-way tie zeigt korrekt [1,4,2,2] mit passenden Medal-Colors.
 
 ---
 
 ## Endabnahme-Liste
 
 ### Fuer Bryan jetzt bereit:
-- Individual Races (25m/50m/75m/Back/Breast/Fly) mit Handicap, Break-Detection, Medal-Styling
-- 25m Relay mit Splits
-- 25m/50m Brace (nearest-to-target)
-- Medley Relay (stroke-specific PBs, Start=2, nearest-to-target, Gleichstand)
-- Pogo (2 Timekeeper T1/T2/Avg, Start=2, nearest-to-target)
-- Breakers Report (konsistent ueber alle Screens, keine Duplikate)
-- Exceeded Report (korrekte PB-Formatierung)
-- Season Calendar + Event Details (Participants + Races + Breakers)
-- Equal Place bei gleicher Finish-Zeit (1,1,3)
-- v2.7.3 mit Build-Timestamp, no-cache Headers
+- Alle Individual Races mit Handicap, Break-Detection, Medal-Styling, Tie-Handling
+- 25m Relay mit Splits, asymmetrische Teams
+- 25m/50m Brace, Medley Relay, Pogo (2 Timekeeper)
+- Breakers/Exceeded Reports konsistent ueber alle Screens
+- Season Calendar mit Event Details
+- Extreme Zeiten korrekt formatiert (bis 226.00s+)
+- Equal Place bei Ties (1,1,3 / 1,4,2,2 etc.)
+- Null-State: kein Crash, freundliche Meldungen
 
 ### Noch offen:
-- 25m Break-Schwelle: -0.5s (Excel) vs -1.0s (App) — Bryan muss entscheiden
-- Point Score System — fehlt komplett
+- 25m Break-Schwelle: -0.5s vs -1.0s (Bryan muss entscheiden)
+- Point Score System (fehlt komplett)
 
 ### Spaeter / nice-to-have:
-- Total Pointscore / Saison-Leaderboard
-- Zeiten-Historie pro Distanz
-- 10-Personen Relay
-- Pogo Auto-Total aus Avg-Summe
+- Oberer "Build Heats" Button bei < 3 Swimmers disabled machen
+- Total Pointscore, Zeiten-Historie, 10-Personen Relay
