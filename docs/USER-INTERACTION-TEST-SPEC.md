@@ -112,6 +112,14 @@ Diese Dimensionen sind die Grundlage der Testabdeckung. Eine starke UI-Testabnah
 - D4-9: gleiche absolute Variance bei Relay
 - D4-10: Partial Result / unvollstaendige Eingaben
 
+### D4.5 — Praezisions-/Format-Dimensionen (WWSC-spezifisch)
+- D4.5-1: whole-second Darstellung
+- D4.5-2: echte Centisecond-Werte mit nicht-runden Decimals (z. B. 23.52)
+- D4.5-3: near-tie mit Centisecond-Differenz (z. B. 23.52 vs 23.53)
+- D4.5-4: threshold-nahe Faelle mit nicht-runden Werten
+- D4.5-5: Rundungsrelevante Avg-/Derived-Werte
+- D4.5-6: Cross-screen Decimal-/Format-Konsistenz
+
 ### D5 — Workflow-/State-Lage
 - D5-1: Setup
 - D5-2: Heats generiert
@@ -197,6 +205,7 @@ Mindestens diese **16 Event-/Konfigurationsklassen** muessen real im Browser get
 | E14 | Exceeded Extreme | D4-8 | Format / extreme slow |
 | E15 | Re-finalize Event | D5-5/6/7 | no duplicates / consistency |
 | E16 | Calendar / Details Event | D6-8/9/10 | finalize → calendar → report |
+| E17 | Precision / Decimal Event | D4.5-2/3/4/5/6 | echte Decimal-/Centisecond-Haertung |
 
 ---
 
@@ -392,6 +401,16 @@ Nachrechnen von:
 - Formatierung intakt
 - keine abgeschnittenen / rohen internen Werte
 
+### UIT-058 — Decimal-/Centisecond-Präzision Individual
+- echte nicht-runde Finish-Werte (z. B. 23.52, 47.38, 19.87)
+- keine ausschließliche Abdeckung über .00 / .50
+- sichtbare Formatkonsistenz in Results
+
+### UIT-059 — Near-Tie / Threshold Precision
+- near-tie mit minimaler Centisecond-Differenz
+- threshold-nahe Break-Faelle mit nicht-runden Werten
+- korrektes Ranking / Break-Verhalten ohne Rundungsfehler
+
 ---
 
 # Block 7 — Relay Results / Team Cards
@@ -413,6 +432,11 @@ Nachrechnen von:
 ### UIT-063 — Exclusion Rules
 - bestimmte Reports/Views enthalten Relays nur dort, wo spezifiziert
 - keine falschen Eintraege im Exceeded Report
+
+### UIT-064 — Decimal-/Avg-/Rundungsprüfung Relay
+- Relay/Pogo/Avg nicht nur mit glatten Werten
+- Rundung und Anzeige explizit pruefen
+- Derived values bleiben ueber UI konsistent
 
 ---
 
@@ -437,6 +461,11 @@ Nachrechnen von:
 ### UIT-073 — Report Scope
 - was erscheint / nicht erscheint
 - Relay-Ausnahmen korrekt
+
+### UIT-074 — Decimal Cross-Screen Consistency
+- dieselben nicht-runden Decimal-/Centisecond-Werte ueber mehrere Ansichten vergleichen
+- Results vs Breaker Report vs Exceeded Report vs Calendar / Event Modal
+- keine abgeschnittenen, falsch skalierten oder unterschiedlich gerundeten Werte
 
 ---
 

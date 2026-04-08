@@ -103,13 +103,72 @@ function drawRelays() {
     })() : ''}
 
     <div style="overflow-x:auto;margin-bottom:16px">
-      ${relayTeams && relayTeams.length > 0 ? renderRelayTable(relayTeams, race) : '<div class="card"><p>Tap "Generate Teams" to create balanced relay teams.</p></div>'}
+      ${relayTeams && relayTeams.length > 0 ? (isBrace ? renderBraceTable(relayTeams, race) : renderRelayTable(relayTeams, race)) : '<div class="card"><p>Tap "Generate Teams" to create balanced relay teams.</p></div>'}
     </div>
   `;
 }
 
 // v2.4.0: formatTime() is now global from format.js (centiseconds)
 // Removed local formatTime — use the global one
+
+// v2.7.4: Brace Relay — compact lane-based layout (one row per pair)
+function renderBraceTable(teams, race) {
+  let rows = '';
+  for (const team of teams) {
+    const members = team.members || [];
+    const names = members.map(m => m.name).join(' + ');
+    const pbs = members.map(m => formatWhole(getRelayPB(m, race.race_type))).join(' + ');
+    const targetDisplay = formatWhole(team.target_time);
+    const startDisplay = formatWhole(team.start_delay || 0);
+    const placeDisplay = team.place ? ordinal(team.place) : '—';
+    const placeStyle = team.place ? 'color:#e53935;font-weight:700' : '';
+
+    let totalCell;
+    if (relayConfirmed && !relayEventFinalized) {
+      totalCell = `<td class="time-input" onclick="enterRelayTeamTime(${team.id}, ${team.total_time || 0})" style="cursor:pointer;font-weight:700">${team.total_time != null ? formatTime(team.total_time) : '⏱️ Tap'}</td>`;
+    } else {
+      totalCell = `<td style="font-weight:700">${team.total_time != null ? formatTime(team.total_time) : '—'}</td>`;
+    }
+
+    const varDisplay = team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—';
+    const varStyle = team.variance != null && Math.abs(team.variance) < 300 ? 'color:var(--success);font-weight:700' : '';
+
+    rows += `<tr>
+      <td>${team.team_number}</td>
+      <td class="name-cell">${names}</td>
+      <td>${pbs}</td>
+      <td>${targetDisplay}</td>
+      <td>${startDisplay}</td>
+      ${totalCell}
+      <td style="${varStyle}">${varDisplay}</td>
+      <td style="${placeStyle}">${placeDisplay}</td>
+    </tr>`;
+  }
+
+  return `
+    <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91">
+      <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center">
+        <span>${RACE_LABELS[race.race_type] || race.race_type}</span>
+        <span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | nearest-to-target wins</span>
+      </div>
+      <table class="spreadsheet-table" style="margin:0">
+        <thead>
+          <tr>
+            <th style="width:50px">Lane</th>
+            <th style="text-align:left;min-width:200px">Pair</th>
+            <th>PBs</th>
+            <th>Target</th>
+            <th>Start</th>
+            <th style="min-width:80px">Finish</th>
+            <th>Variance</th>
+            <th>Place</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
 
 function renderRelayTable(teams, race) {
   const isBrace = ['25m_brace', '50m_brace'].includes(race.race_type);

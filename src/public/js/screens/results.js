@@ -133,7 +133,7 @@ function drawResults() {
     ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>✅ Event Completed</strong></div>' : ''}
 
     <div style="overflow-x:auto;margin-bottom:16px">
-      ${isResRaceRelay(race) ? renderRelayResultsInline(race) : renderResultsTable(race)}
+      ${isResRaceRelay(race) ? (['25m_brace','50m_brace'].includes(race.race_type) ? renderBraceResultsInline(race) : renderRelayResultsInline(race)) : renderResultsTable(race)}
     </div>
 
     ${!isRelay ? renderBreakersSection(race) : ''}
@@ -706,6 +706,48 @@ const RES_RELAY_TYPES = ['25m_relay','25m_brace','50m_brace','medley_relay','pog
 
 function isResRaceRelay(race) {
   return RES_RELAY_TYPES.includes(race.race_type);
+}
+
+// v2.7.4: Brace Relay — compact lane-based layout in Results
+function renderBraceResultsInline(race) {
+  const teams = race.relay_teams || [];
+  if (teams.length === 0) return '<div class="card"><p>No brace teams generated yet.</p></div>';
+
+  const ranked = teams.some(t => t.place != null);
+  let actionsHtml = '';
+  if (!resFinalized) {
+    actionsHtml = '<div class="toolbar" style="margin-bottom:12px">';
+    if (!ranked) {
+      const anyTimes = teams.some(t => t.total_time != null);
+      actionsHtml += '<button class="btn btn-primary" onclick="calculateRelayResultsInline()" ' + (anyTimes ? '' : 'disabled') + '>📊 Calculate Results</button>';
+    } else {
+      actionsHtml += '<span style="color:var(--success);font-weight:700">🏆 Results Calculated</span>';
+    }
+    actionsHtml += '</div>';
+  }
+
+  let rows = '';
+  for (const team of teams) {
+    const members = team.members || [];
+    const names = members.map(m => m.name).join(' + ');
+    const pbs = members.map(m => formatWhole(getRelayPBForResults(m, race.race_type))).join(' + ');
+    const placeDisplay = team.place ? ordinal(team.place) : '—';
+    const placeStyle = team.place ? 'color:#e53935;font-weight:700;font-size:16px' : '';
+
+    let totalCell;
+    if (!resFinalized) {
+      totalCell = '<td onclick="enterRelayTimeInline(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '⏱️ Tap') + '</td>';
+    } else {
+      totalCell = '<td style="font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
+    }
+
+    const varDisplay = team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—';
+    const varStyle = team.variance != null && Math.abs(team.variance) < 300 ? 'color:var(--success);font-weight:700' : '';
+
+    rows += '<tr><td>' + team.team_number + '</td><td class="name-cell">' + names + '</td><td>' + pbs + '</td><td>' + formatWhole(team.target_time) + '</td><td>' + formatWhole(team.start_delay || 0) + '</td>' + totalCell + '<td style="' + varStyle + '">' + varDisplay + '</td><td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
+  }
+
+  return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span><span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | nearest-to-target wins</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Lane</th><th style="text-align:left;min-width:200px">Pair</th><th>PBs</th><th>Target</th><th>Start</th><th style="min-width:80px">Finish</th><th>Variance</th><th>Place</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 
 function renderRelayResultsInline(race) {

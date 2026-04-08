@@ -1,5 +1,16 @@
 # CHANGELOG — WWSC Swimming App
 
+## v2.7.4 (2026-04-08)
+
+### Features (Bryan Feedback)
+- **Brace Relay Layout:** Kompaktes lane-basiertes Layout (eine Zeile pro Pair statt ausufernde Team-Karten)
+- **Brace Start=2:** Alle Brace Teams starten bei 2 (flat, wie Medley/Pogo)
+- **Brace Teilnahme:** Y+N beide im Brace (Standard Distance, kein Special Filter)
+- **Brace keine Breakers:** Gewinner = lowest variance overall
+- **Relay Team Count:** <11 Swimmer = 2 Teams, >=11 = 3 Teams (statt >30=4, sonst 3)
+
+---
+
 ## v2.7.3 (2026-04-07)
 
 ### Features

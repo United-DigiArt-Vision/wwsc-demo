@@ -1163,9 +1163,9 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
 
     if (race.race_type === '25m_relay' || race.race_type === 'pogo') {
       // R10.1, R10.5: Teams of 4
-      // R10.8: 3 lanes/teams default, 4 if >30 swimmers
+      // v2.7.4: Bryan rule — <11 swimmers = 2 teams, >=11 = 3 teams
       const teamSize = 4;
-      const numTeams = members.length > 30 ? 4 : 3;
+      const numTeams = relayMembers.length >= 11 ? 3 : 2;
       
       // v2.7.1: Standard relays (25m/Pogo) include ALL present swimmers.
       // 'N' means "Standard Events Only" = they ARE in standard relays.
@@ -1387,8 +1387,8 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
     teams.forEach((t, i) => {
       const teamPB = teamPBs[i];
       t.target_time = teamPB > 0 ? teamPB : null;
-      if (race.race_type === 'medley_relay' || race.race_type === 'pogo') {
-        // Medley + Pogo: flat 2s start, nearest-to-target ranking
+      if (race.race_type === 'medley_relay' || race.race_type === 'pogo' || race.race_type === '25m_brace' || race.race_type === '50m_brace') {
+        // v2.7.4: Medley + Pogo + Brace: flat 2s start, nearest-to-target ranking
         t.start_delay = 2;
         t.max_time = teamPB > 0 ? teamPB + 2 : 2;
       } else {
