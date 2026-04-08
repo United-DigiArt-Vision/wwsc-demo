@@ -1163,15 +1163,12 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
 
     if (race.race_type === '25m_relay' || race.race_type === 'pogo') {
       // R10.1, R10.5: Teams of 4
+      // v2.7.1: Standard relays (25m/Pogo) include ALL present swimmers.
+      const relayMembers = members;
+
       // v2.7.4: Bryan rule — <11 swimmers = 2 teams, >=11 = 3 teams
       const teamSize = 4;
       const numTeams = relayMembers.length >= 11 ? 3 : 2;
-      
-      // v2.7.1: Standard relays (25m/Pogo) include ALL present swimmers.
-      // 'N' means "Standard Events Only" = they ARE in standard relays.
-      // null/empty entry also means they participate in standard events.
-      // Only Medley Relay filters by entry — handled in its own block below.
-      const relayMembers = members;
 
       if (relayMembers.length < 2) return res.json({ teams: [], warning: 'Need at least 2 swimmers' });
 
