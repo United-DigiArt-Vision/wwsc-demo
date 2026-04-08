@@ -281,12 +281,71 @@ function renderRelayContent() {
 
   let content = '';
   if (hbRelayTeams && hbRelayTeams.length > 0) {
-    content = renderRelayTeamsInHB(hbRelayTeams, race);
+    const isBraceHB = ['25m_brace', '50m_brace'].includes(race.race_type);
+    content = isBraceHB ? renderBraceTeamsInHB(hbRelayTeams, race) : renderRelayTeamsInHB(hbRelayTeams, race);
   } else {
     content = '<div class="card"><p>Tap "Generate Teams" to create balanced relay teams.</p></div>';
   }
 
   return buttons + '<div style="margin-bottom:16px">' + content + '</div>';
+}
+
+// v2.7.4: Brace in Heat Builder — compact lane-based layout (like Individual Heats)
+function renderBraceTeamsInHB(teams, race) {
+  let rows = '';
+  for (const team of teams) {
+    const members = team.members || [];
+    const names = members.map(m => m.name).join(' + ');
+    const pbs = members.map(m => formatWhole(getPBForRelayHB(m, race.race_type))).join(' + ');
+    const targetDisplay = formatWhole(team.target_time);
+    const startDisplay = formatWhole(team.start_delay || 0);
+    const placeDisplay = team.place ? ordinalRelay(team.place) : '—';
+    const placeStyle = team.place ? 'color:#e53935;font-weight:700' : '';
+
+    let totalCell;
+    if (team.total_time != null) {
+      totalCell = '<td style="font-weight:700">' + formatTime(team.total_time) + '</td>';
+    } else {
+      totalCell = '<td style="font-weight:700">' + formatWhole(team.target_time) + '</td>';
+    }
+
+    const varDisplay = team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—';
+
+    rows += '<tr>' +
+      '<td>' + team.team_number + '</td>' +
+      '<td class="name-cell">' + names + '</td>' +
+      '<td>' + pbs + '</td>' +
+      '<td>' + targetDisplay + '</td>' +
+      '<td style="font-weight:700;color:var(--accent)">+' + startDisplay + '</td>' +
+      totalCell +
+      '<td>' + varDisplay + '</td>' +
+      '<td style="' + placeStyle + '">' + placeDisplay + '</td>' +
+      '</tr>';
+  }
+
+  return `
+    <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91">
+      <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91;display:flex;justify-content:space-between;align-items:center">
+        <span>${RACE_LABELS[race.race_type] || race.race_type}</span>
+        <span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | nearest-to-target wins</span>
+      </div>
+      <table class="spreadsheet-table" style="margin:0">
+        <thead>
+          <tr>
+            <th style="width:50px">Lane</th>
+            <th style="text-align:left;min-width:200px">Pair</th>
+            <th>PBs</th>
+            <th>Target</th>
+            <th>Start Delay</th>
+            <th>Team Total</th>
+            <th>Variance</th>
+            <th>Place</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
 }
 
 function renderRelayTeamsInHB(teams, race) {
