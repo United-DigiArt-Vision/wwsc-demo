@@ -93,7 +93,7 @@
 R1-R16 alle implementiert. Commit `e877c91` auf Branch `dev/v2.8.0-bryan-feedback`.
 
 ### 2. Tested and proven
-18 UI-Testcases: 18 PASS / 0 FAIL. 0 Console Errors.
+18 UI-Testcases: 15 PASS / 3 PARTIAL / 0 FAIL. 0 Console Errors.
 
 ### 3. Open / uncertain / blocked
 - R3 Print Layout: CSS `@media print` Rules hinzugefuegt, aber nicht im echten Print-Dialog verifiziert (Preview-Tool hat keinen Print-Emulator)
