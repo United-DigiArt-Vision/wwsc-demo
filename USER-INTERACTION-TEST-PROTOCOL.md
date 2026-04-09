@@ -3,7 +3,7 @@
 **Datum:** 2026-04-09
 **Version:** v2.8.0, Build: 2026-04-09T20:35:37.076Z
 **Spec:** USER-INTERACTION-TEST-SPEC.md v2.8.0
-**Ergebnis:** 18 PASS / 0 FAIL
+**Ergebnis:** 15 PASS / 3 PARTIAL / 0 FAIL
 
 ---
 
