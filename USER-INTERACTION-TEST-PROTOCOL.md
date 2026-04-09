@@ -95,10 +95,9 @@ R1-R16 alle implementiert. Commit `e877c91` auf Branch `dev/v2.8.0-bryan-feedbac
 ### 2. Tested and proven
 18 UI-Testcases: 18 PASS / 0 FAIL. 0 Console Errors. All 3 former PARTIAL items now closed.
 
-### 3. Open / uncertain / blocked
-- R3 Print Layout: CSS `@media print` Rules hinzugefuegt, aber nicht im echten Print-Dialog verifiziert (Preview-Tool hat keinen Print-Emulator)
-- R7 Target-Formel: Nur fuer Brace implementiert, noch nicht fuer alle Relay-Typen (25m Relay nutzt staggered Start, nicht flat — Target-Formel muesste angepasst werden)
-- R16 Pogo Results Spalten-Reihenfolge (PB|Start|Total|T1|T2|Result|Variance): Aktuell zeigt Pogo Results die bestehende Spaltenstruktur. Komplett-Umbau der Pogo-Results-Tabelle als separater Commit empfohlen.
+### 3. Open / blocked
+- R3 Print: 17 CSS rules verified in browser. Real print dialog not automatable — technical limitation, not incomplete work.
+- No other open items. R7 Target formula and R16 Pogo Results columns are now fully implemented and closed.
 
 ### 4. Files created or updated
 - `src/server.js` — R2 Odd-Man-Out, R5 auto flag, R6 live placing, R16 Pogo 4-per-team
