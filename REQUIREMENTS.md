@@ -164,3 +164,20 @@ Anpassungen nach Kunden-Feedback (Bryan) zu v2.7.4.
 - Im Pogo Heat Builder gibt es keinen "Swim Twice" Button, kein freies Dropdown für weitere Schwimmer und keine "Team Total" Fußzeile.
 - Es werden exakt 4 Schwimmer pro Pogo-Team generiert.
 - Die Spalten im Pogo Results Tab sind exakt: PBs, Start, Total, T1, T2, Result (Average), Variance.
+
+### R17: Distanz-Exklusivität für 25m und 50m (Acceptance Finding)
+**Kontext:** Im aktuellen Build werden gleichzeitig mehrere Varianten derselben Distanz angezeigt bzw. zugelassen (z. B. `25m Freestyle`, `25m Brace Relay`, `25m Team Relay`). Das widerspricht Bryans fachlicher Logik.
+**Fachregel:** Pro Distanz darf immer nur **eine einzige** aktive Variante existieren.
+**Konkrete Regel:**
+- Wenn `25m Brace Relay` aktiv ist, darf **keine andere 25m-Variante** gleichzeitig aktiv sein.
+- Wenn `25m Team Relay` aktiv ist, darf **keine andere 25m-Variante** gleichzeitig aktiv sein.
+- Wenn `25m Freestyle` aktiv ist, darf **keine andere 25m-Variante** gleichzeitig aktiv sein.
+- Dasselbe gilt analog für **alle 50m-Kombinationen**.
+**Anforderung:**
+- Die UI / Event-Auswahl / Build-Heats-Logik muss diese Exklusivität systemweit durchsetzen.
+- Es darf niemals gleichzeitig mehr als eine 25m-Variante aktiv sein.
+- Es darf niemals gleichzeitig mehr als eine 50m-Variante aktiv sein.
+**Akzeptanzkriterium:**
+- Wählt der User eine 25m-Variante, werden alle anderen 25m-Varianten deaktiviert / ausgeblendet / verhindert.
+- Wählt der User eine 50m-Variante, werden alle anderen 50m-Varianten deaktiviert / ausgeblendet / verhindert.
+- Heat Builder, Results, Calendar und Reports dürfen nie mehrere konkurrierende Varianten derselben Distanz parallel zeigen.

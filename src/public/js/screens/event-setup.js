@@ -388,12 +388,12 @@ function buildRaceTypes() {
   // Standard always includes 25m + 50m individual
   types.push('25m', '50m');
   
-  // Add standard event relay
+  // R17: Distance exclusivity — only ONE relay variant per distance
   const std = eventConfig.standard_event;
   if (std === '25m_brace') types.push('25m_brace');
   else if (std === '50m_brace') types.push('50m_brace');
   else if (std === 'pogo') types.push('pogo');
-  types.push('25m_relay'); // always have team relay
+  else types.push('25m_relay'); // Only add 25m_relay for Ordinary Swim (no double 25m variants)
 
   // Add special event
   const special = eventConfig.special_event;

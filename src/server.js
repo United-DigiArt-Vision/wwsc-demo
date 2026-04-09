@@ -1377,9 +1377,9 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
         }
       }
 
-      // 3. Handle leftover swimmers (not enough for a complete team)
+      // R18: Do NOT create incomplete teams. Leftover swimmers (< 3 for medley) are excluded.
       const leftovers = allPool.filter(s => !s.assigned);
-      if (leftovers.length > 0) {
+      if (leftovers.length >= 3) { // Only create a team if we have enough for a complete medley team
         // Create a partial team so they are visible
         const partialTeam = {
           team_number: numTeams + 1,
