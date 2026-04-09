@@ -30,24 +30,21 @@ async function viewEventDetails(eventId) {
       ? attendees.map(a => `<li style="padding:2px 0">${a.name}</li>`).join('')
       : '<li style="color:#64748b">No attendance data</li>';
 
-    // Races with results
+    // R14: Races with heat-by-heat breakdown
     let racesHtml = '';
     for (const race of (report.races || [])) {
       const label = race.race_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
       if (race.heats && race.heats.length > 0) {
-        let results = [];
+        // R14: Each heat gets its own block
         for (const h of race.heats) {
-          for (const l of (h.lanes || [])) {
-            if (l.finish_time != null) {
-              results.push({ name: l.name, place: l.place || l.manual_place, time: l.finish_time });
-            }
-          }
+          const lanes = (h.lanes || []).filter(l => l.finish_time != null);
+          lanes.sort((a, b) => (a.place || a.manual_place || 99) - (b.place || b.manual_place || 99));
+          const top3 = lanes.slice(0, 3).map(l => {
+            const place = l.place || l.manual_place;
+            return `<span style="margin-right:12px">${place ? ordinal(place) + ': ' : ''}${l.name} (${formatTime(l.finish_time)})</span>`;
+          }).join('');
+          racesHtml += `<li style="padding:4px 0"><strong>${label} - Heat ${h.heat_number}</strong><br><span style="font-size:13px;color:#94a3b8">${top3 || 'No results'}</span></li>`;
         }
-        results.sort((a, b) => (a.place || 99) - (b.place || 99));
-        const top3 = results.slice(0, 3).map(r =>
-          `<span style="margin-right:12px">${r.place ? ordinal(r.place) + ': ' : ''}${r.name} (${formatTime(r.time)})</span>`
-        ).join('');
-        racesHtml += `<li style="padding:4px 0"><strong>${label}</strong><br><span style="font-size:13px;color:#94a3b8">${top3 || 'No results'}</span></li>`;
       } else if (race.teams && race.teams.length > 0) {
         const ranked = race.teams.filter(t => t.total_time != null).sort((a, b) => (a.place || 99) - (b.place || 99));
         const top3 = ranked.slice(0, 3).map(t =>
@@ -79,7 +76,8 @@ async function viewEventDetails(eventId) {
       <ul style="list-style:none;padding:0;margin:0">${racesHtml}</ul>
       <h4 style="margin:16px 0 8px;color:#94a3b8">🏆 Record Breakers (${breakers.length})</h4>
       <ul style="list-style:none;padding:0;margin:0">${breakerList}</ul>
-      <button class="btn" onclick="this.closest('div[style*=fixed]').remove()" style="margin-top:20px;width:100%">Close</button>
+      <button class="btn btn-accent" onclick="openEventReportFromCalendar(${eventId})" style="margin-top:16px;width:100%">📄 View Event Report</button>
+      <button class="btn" onclick="this.closest('div[style*=fixed]').remove()" style="margin-top:8px;width:100%">Close</button>
     `;
   } catch (e) {
     modal.querySelector('div > div').innerHTML = `
@@ -237,6 +235,25 @@ async function renderCalendar() {
     content.innerHTML = html;
   } catch (e) {
     content.innerHTML = `<h1>📅 Season Calendar</h1><div class="card" style="color:#ef4444">Error: ${e.message}</div>`;
+  }
+}
+
+// R15: Open Event Report from Calendar (uses same logic as showSeasonReport but with arbitrary eventId)
+async function openEventReportFromCalendar(eventId) {
+  try {
+    const report = await (await fetch('/api/events/' + eventId + '/report')).json();
+    if (report.error) { alert('Error: ' + report.error); return; }
+    // Reuse showSeasonReport rendering if resEvent is set, otherwise build inline
+    // For simplicity, we call the same report-generation logic
+    if (typeof showSeasonReport === 'function') {
+      // Temporarily set resEvent for the report function
+      const origEvent = window.resEvent;
+      window.resEvent = { id: eventId };
+      await showSeasonReport();
+      window.resEvent = origEvent;
+    }
+  } catch (e) {
+    alert('Error loading report: ' + e.message);
   }
 }
 

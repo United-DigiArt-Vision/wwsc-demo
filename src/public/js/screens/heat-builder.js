@@ -354,7 +354,7 @@ function renderRelayTeamsInHB(teams, race) {
   const is25mRelay = race.race_type === '25m_relay';
   const showStroke = isMedley || ['25m_brace', '50m_brace'].includes(race.race_type); // BF0404-07: Hide stroke for 25m relay
   const isPogo = race.race_type === 'pogo';
-  const showSplits = is25mRelay; // BF0404-04: Show splits for 25m relay
+  const showSplits = false; // R4/R8: Split removed from HB per Bryan v2.8.0
   const showPogoTimes = isPogo; // v2.7.3: Pogo shows T1/T2/Avg columns
   const teamColors = ['#0b3d91', '#c62828', '#2e7d32', '#e65100', '#6a1b9a', '#00838f'];
   const medleyColors = {
@@ -394,9 +394,9 @@ function renderRelayTeamsInHB(teams, race) {
       rows += '<tr' + rowStyle + '><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td>' + (showStroke ? '<td>' + strokeDisplay + '</td>' : '') + splitCell + '<td class="time-cell">' + pbDisplay + '</td></tr>';
     }
 
-    // BF2.6-10: Medley Add Swimmer should list all eligible medley swimmers, not just current team members
+    // R16: No Swim Twice for Pogo
     let swimTwiceRow = '';
-    if (!hbRelayConfirmed) {
+    if (!hbRelayConfirmed && !isPogo) {
       const nextLeg = members.length + 1;
       let optionPool = members;
       if (isMedley) {
@@ -444,8 +444,8 @@ function renderRelayTeamsInHB(teams, race) {
             '</div>' +
             '<table class="spreadsheet-table" style="margin:0">' +
             '<thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + strokeHeader + splitHeader + '<th>PB</th></tr></thead>' +
-            '<tbody>' + rows + swimTwiceRow + 
-            '<tr style="background:#f5f5f5;font-weight:700;border-top:2px solid ' + teamColor + '"><td></td><td colspan="' + totalColSpan + '">Team Total</td>' + totalTimeCell + '</tr>' +
+            '<tbody>' + rows + swimTwiceRow +
+            (isPogo ? '' : '<tr style="background:#f5f5f5;font-weight:700;border-top:2px solid ' + teamColor + '"><td></td><td colspan="' + totalColSpan + '">Team Total</td>' + totalTimeCell + '</tr>') +
             '</tbody></table></div>';
   }
 

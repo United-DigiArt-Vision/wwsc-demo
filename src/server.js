@@ -1161,9 +1161,31 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
 
     let teams = [];
 
-    if (race.race_type === '25m_relay' || race.race_type === 'pogo') {
-      // R10.1, R10.5: Teams of 4
-      // v2.7.1: Standard relays (25m/Pogo) include ALL present swimmers.
+    if (race.race_type === 'pogo') {
+      // R16: Pogo — exactly 4 swimmers per team, no swim-twice
+      const relayMembers = members;
+      if (relayMembers.length < 4) return res.json({ teams: [], warning: 'Need at least 4 swimmers for Pogo' });
+      const swimmersWithPB = relayMembers.map(m => ({ ...m, pb: m.time_25m || 9999 }));
+      swimmersWithPB.sort((a, b) => a.pb - b.pb);
+      const numTeams = Math.floor(swimmersWithPB.length / 4);
+      const distributed = distributeRoundRobin(swimmersWithPB.slice(0, numTeams * 4), numTeams);
+
+      teams = distributed.map((teamMembers, ti) => {
+        const targetTime = teamMembers.reduce((sum, m) => sum + (m.pb !== 9999 ? m.pb : 0), 0);
+        return {
+          team_number: ti + 1,
+          team_name: TEAM_NAMES[ti] || `Team ${ti + 1}`,
+          members: teamMembers.map((m, mi) => ({
+            member_id: m.id, name: m.name, leg_order: mi + 1, stroke: 'Free',
+            pb: m.pb !== 9999 ? m.pb : null,
+            time_25m: m.time_25m, time_50m: m.time_50m, time_backstroke: m.time_backstroke, time_breaststroke: m.time_breaststroke, time_butterfly: m.time_butterfly
+          })),
+          target_time: targetTime > 0 ? targetTime : null
+        };
+      });
+
+    } else if (race.race_type === '25m_relay') {
+      // v2.7.1: Standard relays include ALL present swimmers.
       const relayMembers = members;
 
       // v2.7.4: Bryan rule — <11 swimmers = 2 teams, >=11 = 3 teams
@@ -1214,9 +1236,31 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
         const slow = pool.pop();
         pairs.push([fast, slow]);
       }
-      // Odd swimmer out — solo team
+      // R2: Odd Man Out — find best partner from already-paired swimmers
       if (pool.length === 1) {
-        pairs.push([pool[0]]);
+        const oddSwimmer = pool[0];
+        const oddPB = oddSwimmer.pb !== 9999 ? oddSwimmer.pb : 0;
+        // Calculate average team PB of existing pairs
+        const teamTotals = pairs.map(p => p.reduce((s, m) => s + (m.pb !== 9999 ? m.pb : 0), 0));
+        const avgTeamPB = teamTotals.length > 0 ? teamTotals.reduce((a, b) => a + b, 0) / teamTotals.length : 0;
+        // Find best partner: minimize abs(oddPB + partnerPB - avgTeamPB)
+        let bestPartner = null;
+        let bestDelta = Infinity;
+        for (const pair of pairs) {
+          for (const m of pair) {
+            const potentialTotal = oddPB + (m.pb !== 9999 ? m.pb : 0);
+            const delta = Math.abs(potentialTotal - avgTeamPB);
+            if (delta < bestDelta) {
+              bestDelta = delta;
+              bestPartner = m;
+            }
+          }
+        }
+        if (bestPartner) {
+          pairs.push([oddSwimmer, { ...bestPartner, leg_order: 2 }]);
+        } else {
+          pairs.push([oddSwimmer]); // Fallback: solo if no partners exist
+        }
       }
 
       teams = pairs.map((pair, ti) => {
@@ -1324,7 +1368,7 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
             const openStrokes = strokes.filter(st => !team.members.find(m => m.stroke === st));
             if (openStrokes.length > 0) {
               const stroke = openStrokes[0];
-              team.members.push({ member_id: s.id, name: s.name, stroke, pb: medleyPB(s, stroke), auto: true,
+              team.members.push({ member_id: s.id, name: s.name, stroke, pb: medleyPB(s, stroke), auto: s.isWildcard === true,
                 time_25m: s.time_25m, time_50m: s.time_50m, time_backstroke: s.time_backstroke, time_breaststroke: s.time_breaststroke, time_butterfly: s.time_butterfly });
               s.assigned = true;
               break;
@@ -1484,6 +1528,30 @@ app.put('/api/relay-teams/:teamId/time', (req, res) => {
     }
 
     db.prepare('UPDATE relay_team SET total_time = ?, variance = ? WHERE id = ?').run(total_time, variance, req.params.teamId);
+
+    // R6: Auto-rank all teams in this race after each time entry (live placing)
+    const raceId = team.event_race_id;
+    const allTeams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(raceId);
+    if (allTeams.length > 0) {
+      let ranked;
+      if (['25m_brace', '50m_brace', 'medley_relay', 'pogo'].includes(team.race_type)) {
+        ranked = allTeams.sort((a, b) => Math.abs(a.variance ?? 9999) - Math.abs(b.variance ?? 9999));
+      } else {
+        ranked = allTeams.sort((a, b) => a.total_time - b.total_time);
+      }
+      const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
+      let currentPlace = 0, prevScore = null;
+      ranked.forEach((t, i) => {
+        let score = ['25m_brace', '50m_brace', 'medley_relay', 'pogo'].includes(team.race_type)
+          ? Math.abs(t.variance ?? 9999) : (t.total_time ?? 9999);
+        if (prevScore === null || score !== prevScore) currentPlace = i + 1;
+        setPlace.run(currentPlace, t.id);
+        prevScore = score;
+      });
+      // Clear place for teams without times
+      db.prepare('UPDATE relay_team SET place = NULL WHERE event_race_id = ? AND total_time IS NULL').run(raceId);
+    }
+
     res.json({ ok: true, total_time, net_time, variance });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });

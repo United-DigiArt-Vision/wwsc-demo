@@ -552,4 +552,13 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
   .break-cell, .break-row { background: #e8f5e9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   h1 { font-size: 20px; }
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  /* R3: Compact relay layout for print — teams side by side */
+  .card { margin-bottom: 8px !important; padding: 0 !important; break-inside: avoid; }
+  .card [style*="background:var(--primary)"], .card [style*="background:#0b3d91"] { padding: 4px 8px !important; font-size: 12px !important; }
+  .spreadsheet-table td, .spreadsheet-table th { padding: 4px 6px !important; font-size: 11px !important; }
+  .report-table td, .report-table th { padding: 4px 6px !important; font-size: 11px !important; }
+  .time-input { cursor: default !important; }
+  .progress-tracker, .progress-item, .progress-section, .progress-label { display: none !important; }
+  [style*="margin-bottom:40px"] { margin-bottom: 8px !important; }
+  [style*="margin-bottom:24px"] { margin-bottom: 8px !important; }
 }

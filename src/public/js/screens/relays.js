@@ -175,7 +175,7 @@ function renderRelayTable(teams, race) {
   const isMedley = race.race_type === 'medley_relay';
   const is25mRelay = race.race_type === '25m_relay';
   const isPogo = race.race_type === 'pogo';
-  const showSplits = is25mRelay; // BF2.6-05: Show splits for 25m relay
+  const showSplits = false; // R4/R8: Split removed per Bryan v2.8.0
   const showPogoTimes = isPogo; // v2.7.3: Pogo shows 2 timekeeper columns + average
   const showStroke = isMedley || isBrace; // BF2.6-07: Hide Stroke column for 25m relay (always Freestyle)
 

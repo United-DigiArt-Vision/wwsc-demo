@@ -47,13 +47,14 @@ async function renderBreakerReport() {
       const oldPb = b.old_pb != null ? formatTime(b.old_pb) : '—';
       const newTime = b.new_time != null ? formatTime(b.new_time) : '—';
       const improvement = b.improvement != null ? '-' + formatTime(b.improvement) : '—';
+      // R13: Unified format matching R10
       return `
         <tr>
           <td class="name-cell">${b.member_name}</td>
-          <td>${b.stroke}</td>
-          <td class="time-cell">${oldPb}</td>
-          <td class="time-cell" style="font-weight:700">${newTime}</td>
-          <td class="time-cell" style="color:var(--success);font-weight:700">${improvement}</td>
+          <td style="text-align:center">${b.stroke}</td>
+          <td style="text-align:center">${oldPb}</td>
+          <td style="text-align:center;font-weight:700">${newTime}</td>
+          <td style="text-align:center;color:var(--success);font-weight:700">${improvement}</td>
         </tr>
       `;
     }).join('');
@@ -62,14 +63,14 @@ async function renderBreakerReport() {
       <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden">
         <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700">${date}</div>
         <div style="overflow-x:auto">
-          <table class="spreadsheet-table">
+          <table class="report-table" style="width:100%;border-collapse:collapse;table-layout:fixed">
             <thead>
               <tr>
-                <th style="text-align:left">Swimmer</th>
-                <th>Stroke</th>
-                <th>Old PB</th>
-                <th>New Time</th>
-                <th>Improved By</th>
+                <th style="text-align:left;width:25%">Swimmer</th>
+                <th style="text-align:center;width:25%">Event/Heat</th>
+                <th style="text-align:center;width:15%">Old PB</th>
+                <th style="text-align:center;width:15%">New Time</th>
+                <th style="text-align:center;width:20%">Variance</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
@@ -96,13 +97,14 @@ async function renderBreakerReport() {
       exDates.forEach(date => {
         const rows = exGrouped[date].map(s => {
           const stroke = (s.race_type || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+          // R13: Unified format
           return `
             <tr>
               <td class="name-cell">${s.name}</td>
-              <td>${stroke}</td>
-              <td class="time-cell">${formatWhole(s.pb)}</td>
-              <td class="time-cell" style="font-weight:700">${formatTime(s.net_time)}</td>
-              <td class="time-cell" style="color:#e65100;font-weight:700">+${formatTime(s.variance)}</td>
+              <td style="text-align:center">${stroke}</td>
+              <td style="text-align:center">${formatWhole(s.pb)}</td>
+              <td style="text-align:center;font-weight:700">${formatTime(s.net_time)}</td>
+              <td style="text-align:center;color:#e65100;font-weight:700">+${formatTime(s.variance)}</td>
             </tr>
           `;
         }).join('');
@@ -111,14 +113,14 @@ async function renderBreakerReport() {
           <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden">
             <div style="background:#e65100;color:white;padding:10px 16px;font-weight:700">${date}</div>
             <div style="overflow-x:auto">
-              <table class="spreadsheet-table">
+              <table class="report-table" style="width:100%;border-collapse:collapse;table-layout:fixed">
                 <thead>
                   <tr>
-                    <th style="text-align:left">Swimmer</th>
-                    <th>Stroke</th>
-                    <th>PB</th>
-                    <th>Actual</th>
-                    <th>Over by</th>
+                    <th style="text-align:left;width:25%">Swimmer</th>
+                    <th style="text-align:center;width:25%">Event/Heat</th>
+                    <th style="text-align:center;width:15%">Old PB</th>
+                    <th style="text-align:center;width:15%">New Time</th>
+                    <th style="text-align:center;width:20%">Variance</th>
                   </tr>
                 </thead>
                 <tbody>${rows}</tbody>

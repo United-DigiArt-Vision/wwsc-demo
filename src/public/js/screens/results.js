@@ -47,7 +47,13 @@ async function renderResults() {
   }
 
   if (!resSelectedRace || !resRaces.find(r => r.id === resSelectedRace.id)) {
-    resSelectedRace = resRaces[0];
+    // R9: Prefer a race that actually has heats/teams, to avoid empty default
+    const RELAY_TYPES_SEL = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
+    const raceWithData = resRaces.find(r => {
+      if (RELAY_TYPES_SEL.includes(r.race_type)) return r.relay_teams && r.relay_teams.length > 0;
+      return r.heats && r.heats.length > 0;
+    });
+    resSelectedRace = raceWithData || resRaces[0];
   } else {
     resSelectedRace = resRaces.find(r => r.id === resSelectedRace.id);
   }
@@ -58,12 +64,12 @@ async function renderResults() {
 function drawResults() {
   const el = document.getElementById('content');
   const race = resSelectedRace;
-  if (isResRaceRelay(race)) {
-    if (!race || !race.relay_teams || race.relay_teams.length === 0) {
-      el.innerHTML = `<h1>Results</h1><div class="card"><p>No relay teams generated for this race. <a href="#" onclick="navigate('heat-builder')">Generate teams first.</a></p></div>`;
-      return;
-    }
-  } else if (!race || !race.heats || race.heats.length === 0) {
+  // R9: Check if current race has data — but still render the race selector so user can switch tabs
+  const currentRaceHasData = isResRaceRelay(race)
+    ? (race && race.relay_teams && race.relay_teams.length > 0)
+    : (race && race.heats && race.heats.length > 0);
+
+  if (!currentRaceHasData && resRaces.length <= 1) {
     el.innerHTML = `<h1>Results</h1><div class="card"><p>No heats generated for this race. <a href="#" onclick="navigate('heat-builder')">Generate heats first.</a></p></div>`;
     return;
   }
@@ -133,19 +139,22 @@ function drawResults() {
     ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>✅ Event Completed</strong></div>' : ''}
 
     <div style="overflow-x:auto;margin-bottom:16px">
-      ${isResRaceRelay(race) ? (['25m_brace','50m_brace'].includes(race.race_type) ? renderBraceResultsInline(race) : renderRelayResultsInline(race)) : renderResultsTable(race)}
+      ${currentRaceHasData
+        ? (isResRaceRelay(race) ? (['25m_brace','50m_brace'].includes(race.race_type) ? renderBraceResultsInline(race) : renderRelayResultsInline(race)) : renderResultsTable(race))
+        : '<div class="card" style="background:#fff3e0;border-left:4px solid #e65100;padding:16px"><strong>No heats generated for this race.</strong><br>Go to <a href="#" onclick="navigate(\'heat-builder\')">Heat Builder</a> to generate heats first.</div>'
+      }
     </div>
 
-    ${!isRelay ? renderBreakersSection(race) : ''}
+    ${(currentRaceHasData && !isRelay) ? renderBreakersSection(race) : ''}
     <div id="slow-swimmers-section"></div>
-    ${resFinalized ? '<div id="consolidated-breakers-section"></div>' : ''}
+    ${/* R11: Consolidated Report removed from Results page — only on Breaker Report sidebar page */''}
   `;
 
   // Load slow swimmers + consolidated breakers async
   // BF2.6-16: Only show slow swimmers for individual races, not relays
   if (resFinalized || anyTimesEntered) {
     if (!isRelay) loadSlowSwimmers();
-    if (resFinalized) loadConsolidatedBreakers();
+    // R11: Consolidated report removed from Results page
   }
 }
 
@@ -173,27 +182,30 @@ function renderBreakersSection(race) {
 
   breakers.sort((a, b) => b.improvement - a.improvement);
 
+  // R10: Unified report table format
+  const raceLabel = RACE_LABELS[race.race_type] || race.race_type;
   let rows = breakers.map((b, i) => {
     const medal = i === 0 ? '🏆 ' : '';
     return `<tr style="background:${i % 2 === 0 ? '#e8f5e9' : '#f1f8e9'}">
       <td style="padding:8px 12px;font-weight:${i === 0 ? '700' : '400'}">${medal}${b.name}</td>
-      <td style="padding:8px 12px;text-align:center">Heat ${b.heat}</td>
+      <td style="padding:8px 12px;text-align:center">${raceLabel} - Heat ${b.heat}</td>
       <td style="padding:8px 12px;text-align:center">${formatWhole(b.pb)}</td>
       <td style="padding:8px 12px;text-align:center;font-weight:700">${formatTime(b.newTime)}</td>
       <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">-${formatTime(b.improvement)}</td>
     </tr>`;
   }).join('');
 
+  // R10: Unified column headers: Swimmer | Event/Heat | Old PB | New Time | Variance
   return `<div class="card" style="background:#e8f5e9;border-left:6px solid #2e7d32;margin-bottom:16px">
     <strong style="font-size:1.1em">🏅 Breakers Report — ${breakers.length} PB${breakers.length !== 1 ? 's' : ''} Broken!</strong>
-    <table style="width:100%;border-collapse:collapse;margin-top:10px">
+    <table class="report-table" style="width:100%;border-collapse:collapse;margin-top:10px;table-layout:fixed">
       <thead>
         <tr style="background:#2e7d32;color:#fff">
-          <th style="padding:8px 12px;text-align:left">Swimmer</th>
-          <th style="padding:8px 12px;text-align:center">Heat</th>
-          <th style="padding:8px 12px;text-align:center">Old PB</th>
-          <th style="padding:8px 12px;text-align:center">New Time</th>
-          <th style="padding:8px 12px;text-align:center">Improved By</th>
+          <th style="padding:8px 12px;text-align:left;width:25%">Swimmer</th>
+          <th style="padding:8px 12px;text-align:center;width:25%">Event/Heat</th>
+          <th style="padding:8px 12px;text-align:center;width:15%">Old PB</th>
+          <th style="padding:8px 12px;text-align:center;width:15%">New Time</th>
+          <th style="padding:8px 12px;text-align:center;width:20%">Variance</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
@@ -409,14 +421,18 @@ function showResultsReadout() {
 async function loadSlowSwimmers() {
   if (!resEvent) return;
   try {
-    const slow = await API.getSlowSwimmers(resEvent.id);
+    const allSlow = await API.getSlowSwimmers(resEvent.id);
     const section = document.getElementById('slow-swimmers-section');
     if (!section) return;
+    // R12: Filter to current race type only
+    const currentRace = resSelectedRace;
+    const slow = currentRace ? allSlow.filter(s => s.race_type === currentRace.race_type) : allSlow;
     if (!slow || slow.length === 0) {
       section.innerHTML = '';
       return;
     }
 
+    const raceLabel = currentRace ? (RACE_LABELS[currentRace.race_type] || currentRace.race_type) : '';
     const rows = slow.map(s => `
       <tr>
         <td class="name-cell">${s.name}</td>
@@ -427,14 +443,14 @@ async function loadSlowSwimmers() {
       </tr>
     `).join('');
 
-    // BF2.6-14: Same format as Breakers Report (card with colored left border)
+    // R10: Unified report format with Event/Heat column
     const slowRows = slow.map((s, i) => `
       <tr>
         <td style="text-align:left;font-weight:${i === 0 ? '700' : '400'}">${s.name}</td>
-        <td>${s.race_type}</td>
-        <td class="time-cell">${formatWhole(s.pb)}</td>
-        <td class="time-cell" style="font-weight:700">${formatTime(s.net_time)}</td>
-        <td class="time-cell" style="color:#e65100;font-weight:700">+${formatTime(s.variance)}</td>
+        <td style="text-align:center">${raceLabel}${s.heat_number ? ' - Heat ' + s.heat_number : ''}</td>
+        <td style="text-align:center">${formatWhole(s.pb)}</td>
+        <td style="text-align:center;font-weight:700">${formatTime(s.net_time)}</td>
+        <td style="text-align:center;color:#e65100;font-weight:700">+${formatTime(s.variance)}</td>
       </tr>
     `).join('');
 
@@ -444,14 +460,14 @@ async function loadSlowSwimmers() {
       <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:1px solid #ffcc80">
         <div style="background:#e65100;color:white;padding:10px 16px;font-weight:700">Exceeding Report — ${slow.length} swimmer${slow.length !== 1 ? 's' : ''}</div>
         <div style="overflow-x:auto">
-          <table class="spreadsheet-table">
+          <table class="report-table" style="width:100%;border-collapse:collapse;table-layout:fixed">
             <thead>
               <tr>
-                <th style="text-align:left">Swimmer</th>
-                <th>Stroke</th>
-                <th>PB</th>
-                <th>Actual</th>
-                <th>Over by</th>
+                <th style="text-align:left;width:25%">Swimmer</th>
+                <th style="text-align:center;width:25%">Event/Heat</th>
+                <th style="text-align:center;width:15%">Old PB</th>
+                <th style="text-align:center;width:15%">New Time</th>
+                <th style="text-align:center;width:20%">Variance</th>
               </tr>
             </thead>
             <tbody>${slowRows}</tbody>
@@ -731,23 +747,33 @@ function renderBraceResultsInline(race) {
     const members = team.members || [];
     const names = members.map(m => m.name).join(' + ');
     const pbs = members.map(m => formatWhole(getRelayPBForResults(m, race.race_type))).join(' + ');
-    const placeDisplay = team.place ? ordinal(team.place) : '—';
-    const placeStyle = team.place ? 'color:#e53935;font-weight:700;font-size:16px' : '';
+    const totalPB = team.target_time; // R7: renamed from "Target" to "Total"
+    const startDelay = team.start_delay || 0;
+    const targetCalc = totalPB != null ? totalPB + startDelay : null; // R7: new Target = Total + Start
 
-    let totalCell;
+    // R7: Gold/Silver/Bronze color coding for place
+    let placeBg = '', placeColor = '';
+    if (team.place === 1) { placeBg = '#FFD700'; placeColor = '#333'; }
+    else if (team.place === 2) { placeBg = '#C0C0C0'; placeColor = '#333'; }
+    else if (team.place === 3) { placeBg = '#CD7F32'; placeColor = '#fff'; }
+    const placeDisplay = team.place ? ordinal(team.place) : '—';
+    const placeStyle = team.place ? 'background:' + placeBg + ';color:' + placeColor + ';font-weight:700;font-size:16px;text-align:center' : '';
+
+    let finishCell;
     if (!resFinalized) {
-      totalCell = '<td onclick="enterRelayTimeInline(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '⏱️ Tap') + '</td>';
+      finishCell = '<td onclick="enterRelayTimeInline(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '⏱️ Tap') + '</td>';
     } else {
-      totalCell = '<td style="font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
+      finishCell = '<td style="font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
     }
 
     const varDisplay = team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—';
     const varStyle = team.variance != null && Math.abs(team.variance) < 300 ? 'color:var(--success);font-weight:700' : '';
 
-    rows += '<tr><td>' + team.team_number + '</td><td class="name-cell">' + names + '</td><td>' + pbs + '</td><td>' + formatWhole(team.target_time) + '</td><td>' + formatWhole(team.start_delay || 0) + '</td>' + totalCell + '<td style="' + varStyle + '">' + varDisplay + '</td><td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
+    rows += '<tr><td>' + team.team_number + '</td><td class="name-cell">' + names + '</td><td>' + pbs + '</td><td>' + formatWhole(totalPB) + '</td><td>' + formatWhole(startDelay) + '</td><td>' + (targetCalc != null ? formatWhole(targetCalc) : '—') + '</td>' + finishCell + '<td style="' + varStyle + '">' + varDisplay + '</td><td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
   }
 
-  return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span><span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | nearest-to-target wins</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Lane</th><th style="text-align:left;min-width:200px">Pair</th><th>PBs</th><th>Target</th><th>Start</th><th style="min-width:80px">Finish</th><th>Variance</th><th>Place</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  // R7: Updated column order: PBs | Total | Start | Target (new) | Finish | Variance | Place
+  return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span><span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | nearest-to-target wins</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Lane</th><th style="text-align:left;min-width:180px">Pair</th><th>PBs</th><th>Total</th><th>Start</th><th>Target</th><th style="min-width:80px">Finish</th><th>Variance</th><th>Place</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 
 function renderRelayResultsInline(race) {
