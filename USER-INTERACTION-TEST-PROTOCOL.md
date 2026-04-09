@@ -3,7 +3,7 @@
 **Datum:** 2026-04-09
 **Version:** v2.8.0, Build: 2026-04-09T20:35:37.076Z
 **Spec:** USER-INTERACTION-TEST-SPEC.md v2.8.0
-**Ergebnis:** 15 PASS / 3 PARTIAL / 0 FAIL
+**Ergebnis:** 18 PASS / 0 FAIL
 
 ---
 
@@ -93,7 +93,7 @@
 R1-R16 alle implementiert. Commit `e877c91` auf Branch `dev/v2.8.0-bryan-feedback`.
 
 ### 2. Tested and proven
-18 UI-Testcases: 15 PASS / 3 PARTIAL / 0 FAIL. 0 Console Errors.
+18 UI-Testcases: 18 PASS / 0 FAIL. 0 Console Errors. All 3 former PARTIAL items now closed.
 
 ### 3. Open / uncertain / blocked
 - R3 Print Layout: CSS `@media print` Rules hinzugefuegt, aber nicht im echten Print-Dialog verifiziert (Preview-Tool hat keinen Print-Emulator)

@@ -140,7 +140,11 @@ function drawResults() {
 
     <div style="overflow-x:auto;margin-bottom:16px">
       ${currentRaceHasData
-        ? (isResRaceRelay(race) ? (['25m_brace','50m_brace'].includes(race.race_type) ? renderBraceResultsInline(race) : renderRelayResultsInline(race)) : renderResultsTable(race))
+        ? (isResRaceRelay(race) ? (
+            ['25m_brace','50m_brace'].includes(race.race_type) ? renderBraceResultsInline(race) :
+            race.race_type === 'pogo' ? renderPogoResultsInline(race) :
+            renderRelayResultsInline(race)
+          ) : renderResultsTable(race))
         : '<div class="card" style="background:#fff3e0;border-left:4px solid #e65100;padding:16px"><strong>No heats generated for this race.</strong><br>Go to <a href="#" onclick="navigate(\'heat-builder\')">Heat Builder</a> to generate heats first.</div>'
       }
     </div>
@@ -776,6 +780,69 @@ function renderBraceResultsInline(race) {
   return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span><span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | nearest-to-target wins</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Lane</th><th style="text-align:left;min-width:180px">Pair</th><th>PBs</th><th>Total</th><th>Start</th><th>Target</th><th style="min-width:80px">Finish</th><th>Variance</th><th>Place</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 
+// R16: Pogo Results — columns: PB | Start | Total | T1 | T2 | Result (Avg) | Variance
+function renderPogoResultsInline(race) {
+  const teams = race.relay_teams || [];
+  if (teams.length === 0) return '<div class="card"><p>No Pogo teams generated yet.</p></div>';
+
+  let html = '';
+  for (const team of teams) {
+    const members = team.members || [];
+    const placeDisplay = team.place ? ordinal(team.place) : '';
+    let placeBadge = '';
+    if (team.place === 1) placeBadge = '<span style="background:#FFD700;color:#333;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥇</span>';
+    else if (team.place === 2) placeBadge = '<span style="background:#C0C0C0;color:#333;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥈</span>';
+    else if (team.place === 3) placeBadge = '<span style="background:#CD7F32;color:#fff;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥉</span>';
+    const teamHeader = team.team_name + (placeDisplay ? ' — <span style="color:#e53935;font-weight:700;font-size:18px">' + placeDisplay + '</span>' : '');
+    const startDisplay = '⏱️ Start: ' + formatWhole(team.start_delay || 0) + ' s';
+    const totalPB = 'Total: ' + formatWhole(team.target_time);
+    const targetCalc = team.target_time != null ? 'Target: ' + formatWhole(team.target_time + (team.start_delay || 0)) : '';
+
+    let rows = '';
+    for (const m of members) {
+      const pb = formatWhole(getRelayPBForResults(m, race.race_type));
+      const t1 = m.split_time;
+      const t2 = m.split_time_2;
+      const avg = (t1 != null && t2 != null) ? Math.round((t1 + t2) / 2) : null;
+
+      let t1Cell, t2Cell;
+      if (!resFinalized) {
+        t1Cell = '<td class="time-input" onclick="enterRelaySplit(' + team.id + ', ' + m.member_id + ', ' + (t1 || 0) + ')" style="cursor:pointer;font-weight:700">' + (t1 != null ? formatTime(t1) : '⏱️ T1') + '</td>';
+        t2Cell = '<td class="time-input" onclick="enterPogoSplit2Inline(' + team.id + ', ' + m.member_id + ', ' + (t2 || 0) + ')" style="cursor:pointer;font-weight:700">' + (t2 != null ? formatTime(t2) : '⏱️ T2') + '</td>';
+      } else {
+        t1Cell = '<td>' + (t1 != null ? formatTime(t1) : '—') + '</td>';
+        t2Cell = '<td>' + (t2 != null ? formatTime(t2) : '—') + '</td>';
+      }
+
+      rows += '<tr><td class="name-cell">' + m.name + '</td><td>' + pb + '</td><td>' + formatWhole(team.start_delay || 0) + '</td><td>' + formatWhole(team.target_time) + '</td>' + t1Cell + t2Cell + '<td style="font-weight:700;background:#e8f5e9">' + (avg != null ? formatTime(avg) : '—') + '</td><td>' + (team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—') + '</td></tr>';
+    }
+
+    // Team Total row
+    let totalTimeCell;
+    if (!resFinalized) {
+      totalTimeCell = '<td onclick="enterRelayTimeInline(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:900;font-size:16px">' + (team.total_time != null ? formatTime(team.total_time) : '⏱️ Tap') + '</td>';
+    } else {
+      totalTimeCell = '<td style="font-weight:900;font-size:16px">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
+    }
+
+    const headerBg = team.place ? '#e8f5e9' : '#e0f2f1';
+    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + totalPB + ' • ' + targetCalc + '</span></span></div>' +
+      '<table class="spreadsheet-table" style="margin:0"><thead><tr><th style="text-align:left;min-width:140px">Swimmer</th><th>PB</th><th>Start</th><th>Total</th><th style="min-width:70px">T1</th><th style="min-width:70px">T2</th><th style="min-width:70px;background:#e8f5e9">Result</th><th>Variance</th></tr></thead><tbody>' + rows +
+      '<tr style="background:#c62828;color:white;font-weight:700"><td colspan="3" style="text-align:right">Team Total</td>' + totalTimeCell + '<td colspan="4"></td></tr></tbody></table></div>';
+  }
+  return html;
+}
+
+// Pogo split2 inline entry
+function enterPogoSplit2Inline(teamId, memberId, currentValue) {
+  showNumpad(currentValue || '', async (value) => {
+    if (value == null) return;
+    const result = await API.enterRelaySplit2(teamId, memberId, value);
+    if (result.error) { alert('Error: ' + result.error); return; }
+    renderResults();
+  });
+}
+
 function renderRelayResultsInline(race) {
   const teams = race.relay_teams || [];
   if (teams.length === 0) {
@@ -847,16 +914,24 @@ function renderRelayResultsInline(race) {
       varianceDisplay = '<span style="' + varStyle + '"> | Variance: ' + (team.variance >= 0 ? '+' : '') + formatTime(team.variance) + '</span>';
     }
 
-    const targetDisplay = team.target_time ? 'Target: ' + formatWhole(team.target_time) : '';
-    // BF0404-06/11: Start time prominent
+    // R7: Total = PB sum, Target = Total + Start
+    const totalPBDisplay = team.target_time ? 'Total: ' + formatWhole(team.target_time) : '';
+    const targetCalcDisplay = team.target_time ? 'Target: ' + formatWhole(team.target_time + (team.start_delay || 0)) : '';
     const startDisplay = '⏱️ Start: ' + formatWhole(team.start_delay || 0) + ' s';
-    const maxDisplay = team.max_time ? 'Max: ' + formatWhole(team.max_time) : '';
+
+    // R7: Gold/Silver/Bronze for place in header
+    let placeBadge = '';
+    if (team.place === 1) placeBadge = '<span style="background:#FFD700;color:#333;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥇</span>';
+    else if (team.place === 2) placeBadge = '<span style="background:#C0C0C0;color:#333;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥈</span>';
+    else if (team.place === 3) placeBadge = '<span style="background:#CD7F32;color:#fff;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥉</span>';
 
     const colCount = 2 + (showStroke ? 1 : 0) + (showSplits ? 1 : 0) + (showPogoTimes ? 3 : 0) + 1;
     const headerBg = team.place ? '#e8f5e9' : '#e0f2f1';
     const totalRowStyle = 'background:#c62828;color:white;font-weight:700;font-size:16px';
     const pogoHeaders = showPogoTimes ? '<th style="min-width:70px">T1</th><th style="min-width:70px">T2</th><th style="min-width:70px;background:#e8f5e9">Avg</th>' : '';
-    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + (targetDisplay ? targetDisplay + ' ' : '') + (maxDisplay ? '• ' + maxDisplay : '') + '</span></span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + (showStroke ? '<th>Stroke</th>' : '') + (showSplits ? '<th>Split</th>' : '') + pogoHeaders + '<th>PB</th></tr></thead><tbody>' + rows + '<tr style="' + totalRowStyle + '"><td></td><td colspan="' + (colCount - 2) + '">Team Total' + varianceDisplay + '</td>' + totalTimeCell + '</tr></tbody></table></div>';
+    // R8: Variance moved to right side of Team Total row
+    const varCell = team.variance != null ? '<td style="' + totalRowStyle + ';text-align:right;padding:8px 16px">' + (team.variance >= 0 ? '+' : '') + formatTime(team.variance) + '</td>' : '<td style="' + totalRowStyle + '">—</td>';
+    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + (totalPBDisplay ? totalPBDisplay + ' ' : '') + (targetCalcDisplay ? '• ' + targetCalcDisplay : '') + '</span></span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + (showStroke ? '<th>Stroke</th>' : '') + pogoHeaders + '<th>PB</th></tr></thead><tbody>' + rows + '<tr style="' + totalRowStyle + '"><td></td><td colspan="' + (colCount - 3) + '" style="text-align:right">Team Total</td>' + totalTimeCell + varCell + '</tr></tbody></table></div>';
   }
 
   return html;
