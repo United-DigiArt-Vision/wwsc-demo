@@ -1533,17 +1533,13 @@ app.put('/api/relay-teams/:teamId/time', (req, res) => {
     const raceId = team.event_race_id;
     const allTeams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(raceId);
     if (allTeams.length > 0) {
-      let ranked;
-      if (['25m_brace', '50m_brace', 'medley_relay', 'pogo'].includes(team.race_type)) {
-        ranked = allTeams.sort((a, b) => Math.abs(a.variance ?? 9999) - Math.abs(b.variance ?? 9999));
-      } else {
-        ranked = allTeams.sort((a, b) => a.total_time - b.total_time);
-      }
+      // R20: Unified — ALL relay types: fastest total_time wins
+      let ranked = allTeams.sort((a, b) => (a.total_time ?? 9999) - (b.total_time ?? 9999));
       const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
       let currentPlace = 0, prevScore = null;
+      // R20: Unified — all use total_time as score
       ranked.forEach((t, i) => {
-        let score = ['25m_brace', '50m_brace', 'medley_relay', 'pogo'].includes(team.race_type)
-          ? Math.abs(t.variance ?? 9999) : (t.total_time ?? 9999);
+        let score = t.total_time ?? 9999;
         if (prevScore === null || score !== prevScore) currentPlace = i + 1;
         setPlace.run(currentPlace, t.id);
         prevScore = score;
@@ -1590,36 +1586,17 @@ app.post('/api/races/:raceId/rank-relay', (req, res) => {
 
     const teams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(req.params.raceId);
 
-    let ranked;
-    if (['25m_brace', '50m_brace'].includes(race.race_type)) {
-      // R10.7: Nearest to target time wins (use ?? not || because variance=0 is valid!)
-      ranked = teams.sort((a, b) => Math.abs(a.variance ?? 9999) - Math.abs(b.variance ?? 9999));
-    } else if (race.race_type === 'medley_relay') {
-      // BF2.6-17/18/19: fixed 2s start, nearest to target wins, equal variances share place
-      ranked = teams.sort((a, b) => {
-        const diff = Math.abs(a.variance ?? 9999) - Math.abs(b.variance ?? 9999);
-        if (diff !== 0) return diff;
-        return (a.team_number || 999) - (b.team_number || 999);
-      });
-    } else if (race.race_type === 'pogo') {
-      // v2.7.2: Pogo = nearest to target (like Brace/Medley, per Bryan's Excel)
-      ranked = teams.sort((a, b) => Math.abs(a.variance ?? 9999) - Math.abs(b.variance ?? 9999));
-    } else {
-      // 25m_relay: fastest total time wins
-      ranked = teams.sort((a, b) => a.total_time - b.total_time);
-    }
+    // R20: Unified place logic — ALL relay types use fastest total_time wins
+    // This is the same intuitive logic as individual races:
+    // best effective performance (lowest finish time after handicap) = 1st
+    let ranked = teams.sort((a, b) => (a.total_time ?? 9999) - (b.total_time ?? 9999));
 
     const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
     const batch = db.transaction(() => {
       let currentPlace = 0;
       let prevScore = null;
       ranked.forEach((t, i) => {
-        let score;
-        if (['25m_brace', '50m_brace', 'medley_relay', 'pogo'].includes(race.race_type)) {
-          score = Math.abs(t.variance ?? 9999);
-        } else {
-          score = t.total_time ?? 9999;
-        }
+        let score = t.total_time ?? 9999;
         if (prevScore === null || score !== prevScore) currentPlace = i + 1;
         setPlace.run(currentPlace, t.id);
         prevScore = score;

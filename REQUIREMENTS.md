@@ -181,3 +181,24 @@ Anpassungen nach Kunden-Feedback (Bryan) zu v2.7.4.
 - Wählt der User eine 25m-Variante, werden alle anderen 25m-Varianten deaktiviert / ausgeblendet / verhindert.
 - Wählt der User eine 50m-Variante, werden alle anderen 50m-Varianten deaktiviert / ausgeblendet / verhindert.
 - Heat Builder, Results, Calendar und Reports dürfen nie mehrere konkurrierende Varianten derselben Distanz parallel zeigen.
+
+### R20: Einheitliche Platzierungslogik für alle Special Races (Acceptance Finding)
+**Kontext:** Die bisherige dokumentierte Logik für Brace/Medley/Pogo nutzte teilweise `nearest-to-target` über `abs(variance)`. Im Acceptance-Test wurde entschieden, dass dieses Verhalten für Bryan nicht verständlich genug ist.
+**Neue Fachregel:** Die Platzierung soll für **alle Special Races** nach derselben verständlichen Logik funktionieren wie bei den anderen Races:
+- beste effektive Leistung = Platz 1
+- zweitbeste effektive Leistung = Platz 2
+- drittbeste effektive Leistung = Platz 3
+- usw.
+**Handicap-Regel:** Handicap / Start-Delay / Startoffset muss in die effektive gewertete Leistung eingerechnet werden.
+**Scope:** Diese Regel muss erneut und systemweit für alle Special Races geprüft und vereinheitlicht werden:
+- 25m Brace
+- 50m Brace
+- Medley Relay
+- Pogo
+**Anforderung:**
+- Keine unverständliche Sonder-Platzierungslogik mehr.
+- Keine Sprünge oder Rankings, die aus Usersicht nicht nachvollziehbar sind.
+- Die Ranking-Logik für alle Special Races muss neu geprüft und bei Bedarf umgestellt werden.
+**Akzeptanzkriterium:**
+- Bei allen Special Races ergibt sich die Platzierung aus der verständlichen, handicap-berücksichtigten Leistungsreihenfolge.
+- Gleichstände müssen nachvollziehbar und konsistent behandelt werden.

@@ -196,3 +196,63 @@ Claude Code muss nach Abschluss folgende Dokumente liefern:
 - [ ] 5. Asserte (4-Schwimmer-Zwang): Die generierten Teams bestehen aus exakt 4 Schwimmern. (Falls bei 14 Schwimmern der Rest automatisch mit Doppel-Schwimmern aufgefüllt wird, um 4er-Teams zu bilden, ist das OK, aber eine Lane/Team darf niemals 5 oder nur 3 Schwimmer anzeigen).
 - [ ] 6. Wechsle in die Results-Ansicht für "Pogo".
 - [ ] 7. Asserte (Spalten): Die Header haben exakt folgende Reihenfolge: `PB`, `Start`, `Total`, `T1 (Tap)`, `T2 (Tap)`, `Result`, `Variance`.
+
+## Acceptance Expansion — R17 to R20 exhaustive matrix
+
+### UI-TC-19 to UI-TC-68 — Special Races Comprehensive Validation (50 new cases)
+
+#### R17 — Distance Exclusivity Matrix
+- [ ] UI-TC-19: Select 25m Freestyle path → verify 25m Brace hidden/blocked
+- [ ] UI-TC-20: Select 25m Brace path → verify 25m Freestyle hidden/blocked
+- [ ] UI-TC-21: Select 25m Team Relay path → verify other 25m variants hidden/blocked
+- [ ] UI-TC-22: Select 50m Freestyle path → verify 50m Brace hidden/blocked
+- [ ] UI-TC-23: Select 50m Brace path → verify 50m Freestyle hidden/blocked
+- [ ] UI-TC-24: Switch from one 25m variant to another → verify stale 25m tabs/results do not persist
+- [ ] UI-TC-25: Switch from one 50m variant to another → verify stale 50m tabs/results do not persist
+- [ ] UI-TC-26: Verify Heat Builder never shows two 25m variants together
+- [ ] UI-TC-27: Verify Results never shows two 25m variants together
+- [ ] UI-TC-28: Verify Calendar/Event Details never show two 25m variants together
+- [ ] UI-TC-29: Verify Reports never mix conflicting 25m variants together as active races
+- [ ] UI-TC-30: Repeat same checks for 50m across Heat Builder, Results, Calendar, Reports
+
+#### R18 — Incomplete Team / Leftover Handling
+- [ ] UI-TC-31: Medley with exactly 3 eligible swimmers → 1 valid team
+- [ ] UI-TC-32: Medley with 4 eligible swimmers → no invalid second team
+- [ ] UI-TC-33: Medley with 5 eligible swimmers → no invalid leftover team
+- [ ] UI-TC-34: Medley with 6 eligible swimmers → 2 valid teams
+- [ ] UI-TC-35: Medley with 7 eligible swimmers → leftover handling visible and valid
+- [ ] UI-TC-36: Medley with 8 eligible swimmers → no invalid partial team
+- [ ] UI-TC-37: Medley with 9 eligible swimmers → 3 valid teams
+- [ ] UI-TC-38: Medley with 10 eligible swimmers → leftover handling valid
+- [ ] UI-TC-39: Medley with 11 eligible swimmers → leftover handling valid
+- [ ] UI-TC-40: Medley with 12 eligible swimmers → 4 valid teams
+- [ ] UI-TC-41: Medley with 13 eligible + 1 N → N excluded, leftover eligible handled clearly
+- [ ] UI-TC-42: Verify no 1-swimmer team is rendered
+- [ ] UI-TC-43: Verify no 2-swimmer invalid medley team is rendered if race requires complete team structure
+- [ ] UI-TC-44: Verify UI makes unassigned/unused swimmer state explicit if such a case exists
+- [ ] UI-TC-45: Verify Results/Calendar do not silently act as if excluded leftovers never existed when they should be visible
+
+#### R19/R20 — Unified Place Logic Across Special Races
+- [ ] UI-TC-46: 25m Brace — verify fastest effective performance gets 1st
+- [ ] UI-TC-47: 25m Brace — verify second-fastest effective performance gets 2nd
+- [ ] UI-TC-48: 25m Brace — verify tie handling is understandable and consistent
+- [ ] UI-TC-49: 25m Brace — verify no confusing ranking jumps
+- [ ] UI-TC-50: 50m Brace — verify fastest effective performance gets 1st
+- [ ] UI-TC-51: 50m Brace — verify second-fastest effective performance gets 2nd
+- [ ] UI-TC-52: 50m Brace — verify tie handling is understandable and consistent
+- [ ] UI-TC-53: 50m Brace — verify no confusing ranking jumps
+- [ ] UI-TC-54: Medley — verify fastest effective performance gets 1st
+- [ ] UI-TC-55: Medley — verify second-fastest effective performance gets 2nd
+- [ ] UI-TC-56: Medley — verify tie handling is understandable and consistent
+- [ ] UI-TC-57: Medley — verify no confusing ranking jumps
+- [ ] UI-TC-58: Pogo — verify fastest effective performance gets 1st
+- [ ] UI-TC-59: Pogo — verify second-fastest effective performance gets 2nd
+- [ ] UI-TC-60: Pogo — verify tie handling is understandable and consistent
+- [ ] UI-TC-61: Pogo — verify no confusing ranking jumps
+- [ ] UI-TC-62: Cross-race consistency — same conceptual ranking behavior across Brace, Medley, Pogo
+- [ ] UI-TC-63: Handicap sensitivity — better effective performance after handicap wins even if raw finish looks slower
+- [ ] UI-TC-64: Near-tie scenario — ordering remains understandable
+- [ ] UI-TC-65: Exact tie scenario — equal ranking rendered consistently
+- [ ] UI-TC-66: Overwrite an entered time → places recalculate consistently
+- [ ] UI-TC-67: Delete an entered time → places recalculate consistently
+- [ ] UI-TC-68: Verify Results, Breaker reports, Calendar summaries all reflect the updated ranking logic consistently where applicable
