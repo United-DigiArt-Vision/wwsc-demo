@@ -75,7 +75,7 @@ Claude Code muss nach Abschluss folgende Dokumente liefern:
 - [ ] 4. Trage eine *identische* Zeit (gleiche Variance) für Team 3 ein. Asserte: Das Live-Tie-Handling greift (z. B. "1=" für Team 2 und Team 3).
 
 ### UI-TC-07: Bryans Realdaten-Szenario (Verifikation R6 Live-Placing & Mathematik)
-- [ ] 1. **Setup:** Erstelle ein "50m Brace Relay" Event (Start: 2s, nearest-to-target wins) mit den exakten PBs aus Bryans Screenshot:
+- [ ] 1. **Setup:** Erstelle ein "50m Brace Relay" Event (Start: 2s, fastest finish wins (R20)) mit den exakten PBs aus Bryans Screenshot:
       - Lane 1: Bryan H. (32) + Glenne M. (49) -> Target 81
       - Lane 2: Ben C. (33) + Diane F. (48) -> Target 81
       - Lane 3: James M. (33) + Karen M. (46) -> Target 79
@@ -87,7 +87,7 @@ Claude Code muss nach Abschluss folgende Dokumente liefern:
       - Lane 1 Variance: `-1.01`
       - Lane 2 Variance: `-2.01`
       - Lane 3 Variance: `-1.99`
-- [ ] 4. **Live-Placing Assertion (R6):** Asserte, dass *ohne Klick auf Calculate Results* sofort folgende Platzierungen ("Place") zugewiesen werden (Logik: "nearest-to-target wins" = absolute Variance entscheidet):
+- [ ] 4. **Live-Placing Assertion (R6):** Asserte, dass *ohne Klick auf Calculate Results* sofort folgende Platzierungen ("Place") zugewiesen werden (Logik: "fastest finish wins (R20)" = fastest total_time wins):
       - Lane 1 (abs 1.01) -> Place `1`
       - Lane 3 (abs 1.99) -> Place `2`
       - Lane 2 (abs 2.01) -> Place `3`
@@ -100,7 +100,7 @@ Claude Code muss nach Abschluss folgende Dokumente liefern:
       - Trage Finish-Zeiten ein, sodass Team C am schnellsten, Team A in der Mitte und Team B am langsamsten ist.
       - Asserte: Das Live-Placing sortiert sofort: C=1, A=2, B=3 (auf Basis Net Time).
 - [ ] 2. **Provokation 2 (Medley Relay - Nearest-to-target Wins):** Erstelle ein "50m Medley Relay".
-      - *Logik-Check:* Nearest-to-target Wins (absolute Variance entscheidet).
+      - *Logik-Check:* Nearest-to-target Wins (fastest total_time wins).
       - Trage Finish-Zeiten ein.
       - Asserte: Das Live-Placing nutzt exakt die Variance-Logik in Echtzeit.
 - [ ] 3. **Provokation 3 (Pogo Relay - Exakte Vorhersage):** Erstelle ein "25m Pogo".

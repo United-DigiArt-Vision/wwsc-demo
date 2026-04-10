@@ -327,7 +327,7 @@ function renderBraceTeamsInHB(teams, race) {
     <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91">
       <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91;display:flex;justify-content:space-between;align-items:center">
         <span>${RACE_LABELS[race.race_type] || race.race_type}</span>
-        <span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | nearest-to-target wins</span>
+        <span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | fastest finish wins</span>
       </div>
       <table class="spreadsheet-table" style="margin:0">
         <thead>
