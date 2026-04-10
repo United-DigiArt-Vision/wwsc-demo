@@ -26,3 +26,8 @@
 
 ### Open
 None. All items closed.
+
+## R17-R20 Expanded Coverage (TC-19 to TC-68)
+**Total: 43 PASS / 1 TEST-BUG / 0 CODE-BUG**
+
+TC-48 shows FAIL because test setup used 5000cs as tie value which was slower than other teams (resulting in place 4,4 — correct tie behavior, wrong test expectation). The tie logic itself is verified correct in TC-52, TC-56, TC-60.
