@@ -80,3 +80,6 @@ Conventional Commits nutzen:
 1. **Zwingend bei jeder Code-Änderung:** Du MUSST `version/CURRENT_STATE.md` mit dem neuen Commit Hash, der Version und deinem Namen aktualisieren.
 2. **Historie:** Du MUSST deine Änderungen in `version/CHANGELOG.md` loggen (Datum, Name, Commit Hash, was wurde geändert).
 3. **Abschluss:** Melde NIEMALS "Fertig", bevor diese beiden Dateien aktualisiert und committet wurden. Deine Arbeit wird abgelehnt, wenn `git rev-parse HEAD` nicht mit `version/CURRENT_STATE.md` übereinstimmt.
+
+4. **Cache-Busting & Version Sync:** 
+   If you bump the version, you MUST update `package.json` AND update the `?v=X.Y.Z` query string on all `<script>` and `<link>` tags in `src/public/index.html`.
