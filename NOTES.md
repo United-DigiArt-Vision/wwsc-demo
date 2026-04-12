@@ -1,3 +1,43 @@
+## Session Handoff — 2026-04-11 spätabends
+
+### Exakter Stand beim Pausieren
+- Arbeitsbasis: `v2.8.0`
+- Aktueller Code-Commit im Dropbox-Projekt: `b11e24d`
+- Test-Runtime lief zuletzt lokal unter: `~/.openclaw/workspace/temp/wwsc-v280-runtime`
+- Server konnte nach vielen Fehlstarts wieder online gebracht werden, indem er direkt mit `node src/server.js` gestartet wurde.
+- Dino konnte danach live testen.
+
+### Was live bestätigt wurde
+- Pogo Results: Für Teilnehmer 1 und 2 konnten `T1` und `T2` eingegeben werden.
+- Diese Werte wurden korrekt und getrennt gespeichert.
+- Damit ist der ursprüngliche Pogo-Hotfix zumindest teilweise live bestätigt.
+
+### Neuer Befund aus Dinos Acceptance Test
+1. **Beim dritten Teilnehmer (Pogo, Eingabe T1) hat sich der Tab / die App geschlossen.**
+   - Das ist noch NICHT sauber klassifiziert.
+   - Wir dürfen daraus aktuell NICHT ableiten, ob es ein echter JS-/UI-Bug, ein Mobile-Browser-Absturz, ein OS-Tab-Kill oder ein Bedien-/Gestenproblem war.
+   - Wichtig: Der Server lief weiter. Der Absturz war also NICHT eindeutig ein Server-Crash.
+
+2. **Variance-Anzeige in Pogo wirkt falsch:**
+   - Dino meldet, dass überall `-0,38` angezeigt wird.
+   - Aktueller Verdacht: In `src/public/js/screens/results.js` wird pro Zeile dieselbe `team.variance` gerendert, statt einer schwimmerbezogenen Kennzahl.
+   - Das kann fachlich korrekt als Team-Wert gemeint sein, ist dann aber UX-seitig irreführend; oder es ist ein echter Anzeige-Bug. Beides ist offen.
+
+### Update 2026-04-12 mittags — Aktueller Stand vor Claude-Code-Eskalation
+- Variance wurde lokal von Team-Variance auf individuelle Swimmer-Variance umgestellt.
+- `Exp. Finish` wurde ergänzt und verschoben; `Target` wurde ergänzt.
+- Mehrere lokale Fix-Versuche am Pogo-Numpad durchgeführt.
+- **Trotzdem weiterhin offen:**
+  1. Bereits eingetragene T1/T2-Werte lassen sich nachträglich nicht zuverlässig editieren (Numpad öffnet, reagiert aber nicht sauber).
+  2. Pogo-Tabellenlayout ist weiterhin visuell inkonsistent; insbesondere `Result` ist aus Dinos Sicht nicht sauber dargestellt.
+- Entscheidung: Keine weiteren Ad-hoc-Patches. Saubere Übergabe an Claude Code mit klarer Aufgabenbeschreibung.
+
+### Klare No-Go-Regel
+- **Kein Deploy**
+- **keine Bryan-Auslieferung**
+- **keine PASS-Behauptung für Pogo Results**
+solange der neue Acceptance-Befund (Tab-Absturz + Variance-Frage) nicht sauber aufgeklärt ist.
+
 ## Bryan Follow-Up (v2.8.0 Release)
 Wenn wir die Version 2.8.0 an Bryan ausliefern, muss die Nachricht an ihn zwingend folgende zwei Punkte enthalten:
 

@@ -166,39 +166,79 @@ Anpassungen nach Kunden-Feedback (Bryan) zu v2.7.4.
 - Die Spalten im Pogo Results Tab sind exakt: PBs, Start, Total, T1, T2, Result (Average), Variance.
 
 ### R17: Distanz-Exklusivität für 25m und 50m (Acceptance Finding)
-**Kontext:** Im aktuellen Build werden gleichzeitig mehrere Varianten derselben Distanz angezeigt bzw. zugelassen (z. B. `25m Freestyle`, `25m Brace Relay`, `25m Team Relay`). Das widerspricht Bryans fachlicher Logik.
-**Fachregel:** Pro Distanz darf immer nur **eine einzige** aktive Variante existieren.
-**Konkrete Regel:**
-- Wenn `25m Brace Relay` aktiv ist, darf **keine andere 25m-Variante** gleichzeitig aktiv sein.
-- Wenn `25m Team Relay` aktiv ist, darf **keine andere 25m-Variante** gleichzeitig aktiv sein.
-- Wenn `25m Freestyle` aktiv ist, darf **keine andere 25m-Variante** gleichzeitig aktiv sein.
-- Dasselbe gilt analog für **alle 50m-Kombinationen**.
+**Status:** 🟡 Teilweise umgesetzt / live geprüft / weiter systemweit beobachten
+**Kontext:** Im aktuellen Build wurden gleichzeitig mehrere Varianten derselben Distanz angezeigt bzw. zugelassen (z. B. `25m Freestyle`, `25m Brace Relay`, `25m Team Relay`). Das widersprach Bryans fachlicher Logik.
+**Präzisierte Fachregel nach Acceptance-Test:**
+- **Ordinary Swim** ist die definierte Ausnahme und enthält bewusst:
+  - `25m Freestyle`
+  - `50m Freestyle`
+  - `25m Team Relay`
+- Für die **Sonderkonfigurationen** gilt Exklusivität innerhalb der betroffenen Distanz:
+  - Wenn `25m Brace Relay` aktiv ist, dürfen `25m Freestyle` und `25m Team Relay` nicht gleichzeitig aktiv sein.
+  - Wenn `50m Brace Relay` aktiv ist, darf `50m Freestyle` nicht gleichzeitig aktiv sein.
+  - Wenn `Pogo` aktiv ist, darf `25m Team Relay` nicht gleichzeitig aktiv sein.
+**Aktuelle umgesetzte Verbesserung (live von Dino geprüft):**
+- Bei Auswahl von `25m Brace` wird jetzt nur noch eine 25m-Variante angezeigt; `25m Freestyle` wird nicht mehr parallel angezeigt.
+- Diese Verbesserung soll in die nächste Bryan-Nachricht als umgesetzter Wunsch aufgenommen werden.
 **Anforderung:**
-- Die UI / Event-Auswahl / Build-Heats-Logik muss diese Exklusivität systemweit durchsetzen.
-- Es darf niemals gleichzeitig mehr als eine 25m-Variante aktiv sein.
-- Es darf niemals gleichzeitig mehr als eine 50m-Variante aktiv sein.
+- Die UI / Event-Auswahl / Build-Heats-Logik muss diese Exklusivität systemweit korrekt durchsetzen.
+- Ordinary Swim bleibt als definierter Standardfall erlaubt.
+- Heat Builder, Results, Calendar und Reports dürfen bei Sonderkonfigurationen keine konkurrierenden Distanzvarianten parallel zeigen.
 **Akzeptanzkriterium:**
-- Wählt der User eine 25m-Variante, werden alle anderen 25m-Varianten deaktiviert / ausgeblendet / verhindert.
-- Wählt der User eine 50m-Variante, werden alle anderen 50m-Varianten deaktiviert / ausgeblendet / verhindert.
-- Heat Builder, Results, Calendar und Reports dürfen nie mehrere konkurrierende Varianten derselben Distanz parallel zeigen.
+- `25m Brace` → sichtbar nur `25m Brace Relay` (plus fachlich erlaubte andere Distanzen), kein `25m Freestyle`, kein `25m Team Relay`.
+- `50m Brace` → kein `50m Freestyle` parallel.
+- `Pogo` → kein `25m Team Relay` parallel.
+- `Ordinary Swim` → `25m Freestyle` + `50m Freestyle` + `25m Team Relay` bleiben korrekt sichtbar.
+- Heat Builder, Results, Calendar und Reports folgen derselben Regel ohne stale Tabs / alte Race-Sets.
 
-### R20: Einheitliche Platzierungslogik für alle Special Races (Acceptance Finding)
-**Kontext:** Die bisherige dokumentierte Logik für Brace/Medley/Pogo nutzte teilweise `nearest-to-target` über `abs(variance)`. Im Acceptance-Test wurde entschieden, dass dieses Verhalten für Bryan nicht verständlich genug ist.
-**Neue Fachregel:** Die Platzierung soll für **alle Special Races** nach derselben verständlichen Logik funktionieren wie bei den anderen Races:
-- beste effektive Leistung = Platz 1
-- zweitbeste effektive Leistung = Platz 2
-- drittbeste effektive Leistung = Platz 3
-- usw.
-**Handicap-Regel:** Handicap / Start-Delay / Startoffset muss in die effektive gewertete Leistung eingerechnet werden.
-**Scope:** Diese Regel muss erneut und systemweit für alle Special Races geprüft und vereinheitlicht werden:
+### R18: Medley-Restlogik / Leftover-Handling (Acceptance Finding)
+**Status:** 🟡 Teilweise geklärt / fachliche Restfrage für Bryan offen
+**Kontext:** In Medley-Szenarien mit nicht glatt aufgehender Teilnehmerzahl war die Grundregel klar, aber ein fachlicher Sonderfall blieb offen: wie mit einem übrig gebliebenen, grundsätzlich gültigen Medley-Teilnehmer umzugehen ist.
+**Geklärter Stand:**
+- `N`-Schwimmer sind korrekt aus Medley ausgeschlossen.
+- Unvollständige bzw. fachlich ungültige Mini-Teams dürfen nicht stillschweigend als normale Medley-Teams gerendert werden.
+**Noch offene Fachfrage an Bryan:**
+- Wie soll mit einem übrig gebliebenen **gültigen** Medley-Teilnehmer umgegangen werden, wenn kein vollständiges Team mehr gebildet werden kann?
+**Anforderung:**
+- Die App darf keine fachlich ungültigen Medley-Teams erzeugen.
+- Leftover-Fälle müssen entweder korrekt behandelt oder explizit als nicht zugewiesen / nicht gerendert behandelt werden.
+- Die endgültige Business-Regel für den verbleibenden Einzelteilnehmer wird mit Bryan bestätigt.
+**Akzeptanzkriterium:**
+- Keine 1er-/2er-Pseudo-Medley-Teams.
+- `N`-Teilnehmer fließen nicht in Medley ein.
+- Der verbleibende offene Leftover-Fall ist dokumentiert und in der nächsten Bryan-Nachricht explizit zur Klärung enthalten.
+
+### R19: Live-Platzierungslogik muss für Nutzer nachvollziehbar sein (Acceptance Finding)
+**Status:** 🟡 In Arbeit / mit R20 gekoppelt
+**Kontext:** Dino hat im Acceptance-Test mehrfach Stellen gefunden, an denen die angezeigte Platzierung zwar technisch erklärbar wirkte, aber für einen Nutzer nicht nachvollziehbar genug war.
+**Anforderung:**
+- Die sichtbare Platzierung muss für Bryan ohne technische Hintergrundlogik plausibel lesbar sein.
+- Änderungen an Teamzeiten müssen zu konsistenten, sofort sichtbaren und erklärbaren Platzierungsänderungen führen.
+- Gleichstände müssen sichtbar und logisch konsistent dargestellt werden.
+**Akzeptanzkriterium:**
+- Keine überraschenden oder widersprüchlich wirkenden Ranking-Sprünge im UI.
+- Dieselbe Logik wird in Heat Builder, Results und Folgescreens konsistent dargestellt.
+- Alle verbleibenden fachlichen Unsicherheiten werden nicht versteckt, sondern dokumentiert.
+
+### R20: Platzierungslogik für Special Races (Brace / Medley / Pogo) — fachlich noch zu bestätigen
+**Status:** 🔴 Fachlich nicht endgültig geklärt / Bryan-Bestätigung erforderlich
+**Kontext:** Die Projektdokumentation enthält aktuell zwei konkurrierende Wahrheiten:
+1. **Legacy-Dokumentation:** Brace / Medley / teilweise Pogo nutzen `nearest-to-target` bzw. `abs(variance)`.
+2. **Neuere Acceptance-/Implementierungsrichtung:** Special Races werden aktuell eher wie `fastest finish` / `fastest total_time` behandelt.
+Dino hat im Acceptance-Test korrekt erkannt, dass diese Logik aktuell nicht aus der gesamten Doku eindeutig ableitbar ist.
+**Aktuelle Arbeitsannahme für die App / nächste Bryan-Nachricht:**
+- Wir lassen die aktuelle Implementierungsrichtung vorerst stehen.
+- In der nächsten Nachricht an Bryan benennen wir diese Logik ausdrücklich als **Annahme** und bitten um Bestätigung, ob das fachlich so gewollt ist.
+**Scope:**
 - 25m Brace
 - 50m Brace
 - Medley Relay
 - Pogo
 **Anforderung:**
-- Keine unverständliche Sonder-Platzierungslogik mehr.
-- Keine Sprünge oder Rankings, die aus Usersicht nicht nachvollziehbar sind.
-- Die Ranking-Logik für alle Special Races muss neu geprüft und bei Bedarf umgestellt werden.
-**Akzeptanzkriterium:**
-- Bei allen Special Races ergibt sich die Platzierung aus der verständlichen, handicap-berücksichtigten Leistungsreihenfolge.
-- Gleichstände müssen nachvollziehbar und konsistent behandelt werden.
+- Keine stillschweigende Fachentscheidung mehr an dieser Stelle.
+- Die aktive Logik muss bis zur Bryan-Klärung als vorläufige Arbeitsannahme dokumentiert bleiben.
+- Nach Bryan-Antwort muss R20 auf einen eindeutigen finalen Soll-Zustand aktualisiert werden.
+**Akzeptanzkriterium (vorläufig):**
+- Die aktuell im Produkt sichtbare Logik ist konsistent umgesetzt und im UI nicht widersprüchlich beschriftet.
+- Die offene Fachfrage wird in der nächsten Bryan-Nachricht explizit gestellt.
+- Nach Bryan-Antwort wird R20 entweder auf `fastest finish / total_time` ODER auf `nearest-to-target / abs(variance)` finalisiert und alle abhängigen Specs entsprechend harmonisiert.

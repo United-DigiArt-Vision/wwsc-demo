@@ -256,3 +256,121 @@ Claude Code muss nach Abschluss folgende Dokumente liefern:
 - [ ] UI-TC-66: Overwrite an entered time → places recalculate consistently
 - [ ] UI-TC-67: Delete an entered time → places recalculate consistently
 - [ ] UI-TC-68: Verify Results, Breaker reports, Calendar summaries all reflect the updated ranking logic consistently where applicable
+
+## Acceptance Expansion II — UI-TC-69 to UI-TC-168 (100-case pre-delivery sweep)
+
+### Goal
+Mandatory pre-delivery browser validation for current version before release candidate handoff.
+This sweep exists because prior proxy/API-based PASS claims were not reliable enough. These cases must be executed as genuine browser/user-interaction tests.
+
+### A. Race Configuration & Exclusivity (UI-TC-69 to UI-TC-88)
+- [ ] UI-TC-69: Ordinary Swim shows 25m Freestyle + 50m Freestyle + 25m Team Relay
+- [ ] UI-TC-70: Ordinary Swim does NOT show 25m Brace Relay
+- [ ] UI-TC-71: Ordinary Swim does NOT show 50m Brace Relay
+- [ ] UI-TC-72: Ordinary Swim does NOT show Pogo unless selected
+- [ ] UI-TC-73: 25m Brace shows 25m Brace Relay + 50m Freestyle
+- [ ] UI-TC-74: 25m Brace does NOT show 25m Freestyle
+- [ ] UI-TC-75: 25m Brace does NOT show 25m Team Relay
+- [ ] UI-TC-76: 50m Brace shows 25m Freestyle + 50m Brace Relay
+- [ ] UI-TC-77: 50m Brace does NOT show 50m Freestyle
+- [ ] UI-TC-78: Pogo shows 25m Freestyle + 50m Freestyle + Pogo
+- [ ] UI-TC-79: Pogo does NOT show 25m Team Relay
+- [ ] UI-TC-80: Add Butterfly special to Ordinary → all standard tabs remain + Butterfly appears
+- [ ] UI-TC-81: Add Butterfly special to 25m Brace → 25m Brace + 50m + Butterfly only
+- [ ] UI-TC-82: Add Butterfly special to 50m Brace → 25m + 50m Brace + Butterfly only
+- [ ] UI-TC-83: Add Butterfly special to Pogo → 25m + 50m + Pogo + Butterfly only
+- [ ] UI-TC-84: Switch Ordinary → 25m Brace → verify stale 25m tabs removed immediately
+- [ ] UI-TC-85: Switch 25m Brace → 50m Brace → verify stale 50m tab removed immediately
+- [ ] UI-TC-86: Switch 50m Brace → Pogo → verify stale relay tabs removed immediately
+- [ ] UI-TC-87: Switch Pogo → Ordinary → verify standard relay returns correctly
+- [ ] UI-TC-88: Browser refresh preserves correct tab set for current config
+
+### B. Heat Builder Core Flows (UI-TC-89 to UI-TC-108)
+- [ ] UI-TC-89: Ordinary Swim heat generation with minimum valid attendance
+- [ ] UI-TC-90: Ordinary Swim heat generation with 12 swimmers
+- [ ] UI-TC-91: 25m Brace heat generation with valid brace pairings
+- [ ] UI-TC-92: 50m Brace heat generation with valid brace pairings
+- [ ] UI-TC-93: Pogo heat generation creates expected relay rows
+- [ ] UI-TC-94: Medley heat generation creates only valid complete teams
+- [ ] UI-TC-95: Heat Builder empty state message visible before generation
+- [ ] UI-TC-96: Generate Heats button works after config change
+- [ ] UI-TC-97: Confirm Heats appears only when appropriate
+- [ ] UI-TC-98: Confirming one race updates confirmation counter correctly
+- [ ] UI-TC-99: Confirming all races unlocks clean progression to Results
+- [ ] UI-TC-100: Return to Event Setup and change config resets stale generated heats
+- [ ] UI-TC-101: 25m individual table shows PB / Max / Delay columns correctly
+- [ ] UI-TC-102: Relay table shows Pair/Team / Target / Start / Total / Variance / Place columns correctly
+- [ ] UI-TC-103: Relay table does not show obsolete Split column in generation state
+- [ ] UI-TC-104: Team headers render place badges only when place exists
+- [ ] UI-TC-105: Medal/place styling appears only after ranking exists
+- [ ] UI-TC-106: Generate twice does not duplicate teams/heats visually
+- [ ] UI-TC-107: Navigation away and back preserves current generated state correctly
+- [ ] UI-TC-108: Heat Builder reset route actually clears stale cached builder state
+
+### C. Results Screen Live Ranking & Recalculation (UI-TC-109 to UI-TC-128)
+- [ ] UI-TC-109: Individual race live placing updates after first time entry
+- [ ] UI-TC-110: Individual race live placing updates after second time entry
+- [ ] UI-TC-111: Individual race tie on finish_time gives equal place
+- [ ] UI-TC-112: Relay race updates place after first team time entry
+- [ ] UI-TC-113: Relay race updates place after multiple team entries
+- [ ] UI-TC-114: Relay race recalculates after overwriting a faster time with slower one
+- [ ] UI-TC-115: Relay race recalculates after overwriting a slower time with faster one
+- [ ] UI-TC-116: Relay race recalculates after deleting a time
+- [ ] UI-TC-117: Relay ranking ignores teams without times
+- [ ] UI-TC-118: Results summary text shows correct ranked-count / missing-count
+- [ ] UI-TC-119: Brace Results header text matches current active rule text
+- [ ] UI-TC-120: Medley Results header text matches current active rule text
+- [ ] UI-TC-121: Pogo Results header text matches current active rule text
+- [ ] UI-TC-122: Results tab order matches active race order
+- [ ] UI-TC-123: Results page does not show stale race tabs from previous config
+- [ ] UI-TC-124: Save Rankings persists current place display
+- [ ] UI-TC-125: Reload Results page retains persisted places
+- [ ] UI-TC-126: Manual place overrides remain separate from auto-place where designed
+- [ ] UI-TC-127: Resetting / editing event config removes invalid stale persisted places
+- [ ] UI-TC-128: Calendar top-3 summary reflects latest saved places
+
+### D. Special Race Ranking Matrix (UI-TC-129 to UI-TC-148)
+- [ ] UI-TC-129: 25m Brace ranking behavior matches current app rule consistently across 4 teams
+- [ ] UI-TC-130: 25m Brace equal total_time produces equal place
+- [ ] UI-TC-131: 25m Brace near-tie recalculates correctly when one team improves by 0.01
+- [ ] UI-TC-132: 25m Brace variance display updates correctly after time entry
+- [ ] UI-TC-133: 50m Brace ranking behavior matches current app rule consistently across 4 teams
+- [ ] UI-TC-134: 50m Brace equal total_time produces equal place
+- [ ] UI-TC-135: 50m Brace near-tie recalculates correctly when one team improves by 0.01
+- [ ] UI-TC-136: 50m Brace variance display updates correctly after time entry
+- [ ] UI-TC-137: Medley ranking behavior matches current app rule consistently across 3 teams
+- [ ] UI-TC-138: Medley equal total_time produces equal place
+- [ ] UI-TC-139: Medley near-tie recalculates correctly when one team improves by 0.01
+- [ ] UI-TC-140: Medley variance display updates correctly after time entry
+- [ ] UI-TC-141: Pogo ranking behavior matches current app rule consistently across 3 teams
+- [ ] UI-TC-142: Pogo equal total_time produces equal place
+- [ ] UI-TC-143: Pogo near-tie recalculates correctly when one team improves by 0.01
+- [ ] UI-TC-144: Pogo variance display updates correctly after time entry
+- [ ] UI-TC-145: Cross-check Brace visual place vs sorted Team Total values
+- [ ] UI-TC-146: Cross-check Medley visual place vs sorted Team Total values
+- [ ] UI-TC-147: Cross-check Pogo visual place vs sorted Team Total values
+- [ ] UI-TC-148: Record any remaining ambiguity versus legacy nearest-to-target docs explicitly in protocol notes
+
+### E. Incomplete Team / Leftover / Edge Cases (UI-TC-149 to UI-TC-158)
+- [ ] UI-TC-149: Medley with 3 eligible swimmers creates exactly 1 valid team
+- [ ] UI-TC-150: Medley with 4 eligible swimmers creates no invalid extra team
+- [ ] UI-TC-151: Medley with 5 eligible swimmers creates no invalid leftover team
+- [ ] UI-TC-152: Medley with 7 eligible swimmers handles leftovers without phantom team rows
+- [ ] UI-TC-153: Medley with 10 eligible swimmers handles leftovers without broken UI
+- [ ] UI-TC-154: Brace with odd swimmer count creates no broken pair row
+- [ ] UI-TC-155: Pogo with missing participant scenario does not create malformed team row
+- [ ] UI-TC-156: N-flagged swimmer excluded from special-race team generation where applicable
+- [ ] UI-TC-157: Y-flagged swimmer included where applicable without leakage to N swimmers
+- [ ] UI-TC-158: No 1-member or 2-member invalid Medley team row is ever rendered
+
+### F. Cross-Screen Consistency & Reports (UI-TC-159 to UI-TC-168)
+- [ ] UI-TC-159: Heat Builder active races == Results active races
+- [ ] UI-TC-160: Heat Builder active races == Season Calendar race list
+- [ ] UI-TC-161: Results saved places == Season Calendar displayed top places
+- [ ] UI-TC-162: Breaker Report reflects current saved race results without stale rows
+- [ ] UI-TC-163: Dashboard progression status reflects actual event state
+- [ ] UI-TC-164: Navigation through Dashboard → Heat Builder → Results → Calendar retains coherence
+- [ ] UI-TC-165: Browser refresh on Results page retains correct active race set
+- [ ] UI-TC-166: Browser refresh on Calendar page retains correct historical snapshot
+- [ ] UI-TC-167: No stale tab set survives config change + generation + refresh cycle
+- [ ] UI-TC-168: Final pre-delivery smoke run across Ordinary, 25m Brace, 50m Brace, Pogo, Medley passes without contradiction
