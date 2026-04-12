@@ -85,4 +85,6 @@ Conventional Commits nutzen:
 3. **Version-Bump-Regel:** Wenn du einen neuen Feature-Branch startest, MUSS dein ERSTER Commit der Version-Bump in `package.json` sein.
 4. **Cache-Busting & Version Sync:** Wenn du die Version bumpst, MUSST du `package.json` UND den `?v=X.Y.Z` Query String auf allen `<script>` und `<link>` Tags in `src/public/index.html` aktualisieren.
 5. **Release-Anker synchron halten:** Wenn ein Release / eine Lieferung vorbereitet wird, prüfe Konsistenz zwischen `package.json`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `STABLE.md`, `/api/version` und Git Tag.
-6. **Abschluss:** Melde NIEMALS "Fertig", bevor diese Dateien aktualisiert und committet wurden. Deine Arbeit wird abgelehnt, wenn `git rev-parse HEAD` nicht mit `version/CURRENT_STATE.md` übereinstimmt.
+6. **CHANGELOG Pflichtfelder:** Jeder CHANGELOG-Eintrag MUSS enthalten: Date, App Version (from `package.json`), Branch, Commit, Editor, Changes.
+7. **Konsistenzpflicht:** `version/CURRENT_STATE.md` und der neueste Eintrag in `version/CHANGELOG.md` MÜSSEN denselben aktuellen Commit, dieselbe App-Version und denselben Branch widerspiegeln.
+8. **Abschluss:** Melde NIEMALS "Fertig", bevor diese Dateien aktualisiert und committet wurden. Deine Arbeit wird abgelehnt, wenn `git rev-parse HEAD` nicht mit `version/CURRENT_STATE.md` übereinstimmt oder CHANGELOG/CURRENT_STATE inkonsistent sind.
