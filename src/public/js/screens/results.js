@@ -1019,7 +1019,10 @@ async function loadConsolidatedBreakers() {
       <h3 style="color:var(--success);margin-bottom:12px">🏆 All Breakers (Consolidated)</h3>`;
     
     for (const [groupName, items] of Object.entries(groups)) {
-      items.sort((a, b) => b.variance - a.variance);
+      items.sort((a, b) => {
+        if (b.variance !== a.variance) return b.variance - a.variance;
+        return a.member_name.localeCompare(b.member_name);
+      });
       html += `<div style="margin-bottom:16px">
         <h4 style="color:var(--primary);margin:8px 0">${groupName}</h4>
         <table class="spreadsheet-table" style="font-size:14px"><thead><tr>
