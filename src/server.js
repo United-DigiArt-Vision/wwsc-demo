@@ -801,16 +801,21 @@ app.get('/api/reports/breakers', (req, res) => {
       ORDER BY e.date DESC, th.stroke, m.name
     `).all();
 
-    const result = rows.map(r => ({
-      event_id: r.event_id,
-      event_date: r.event_date,
-      member_id: r.member_id,
-      member_name: r.member_name,
-      stroke: r.stroke,
-      old_pb: r.previous_best != null ? r.previous_best * 100 : null, // whole→cs
-      new_time: r.time,
-      improvement: r.previous_best != null ? (r.previous_best * 100) - r.time : null
-    }));
+    const result = rows.map(r => {
+      const oldPbCs = r.previous_best != null ? r.previous_best * 100 : null;
+      const improvement = oldPbCs != null ? oldPbCs - r.time : null;
+      return {
+        event_id: r.event_id,
+        event_date: r.event_date,
+        member_id: r.member_id,
+        member_name: r.member_name,
+        stroke: r.stroke,
+        old_pb: oldPbCs,
+        new_time: r.time,
+        improvement,
+        variance: improvement != null ? Math.abs(improvement) : null
+      };
+    });
     res.json(result);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
