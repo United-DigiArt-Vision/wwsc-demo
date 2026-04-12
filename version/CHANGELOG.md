@@ -11,11 +11,24 @@
 
 ---
 
+## 2026-04-12 — fix: Pogo table headers — min-width + nowrap for all columns
+- **Timestamp:** 2026-04-12 17:10:00
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **RecordedCommit:** PENDING
+- **Editor:** Claude Code
+- **Changes:**
+  - Removed table-layout:fixed + colgroup (caused Start/Exp.F headers to merge visually)
+  - Each TH now has explicit min-width + white-space:nowrap
+  - Result header: font-weight:800 + green background for clear visibility
+  - overflow-x:auto container ensures horizontal scroll on narrow viewports
+  - Browser-verified: all 10 headers clearly visible and aligned on desktop + mobile
+
 ## 2026-04-12 — fix: Pogo crash investigation + defensive error handling
 - **Timestamp:** 2026-04-12 16:50:00
 - **App Version (from package.json):** 2.8.0
 - **Branch:** dev/v2.8.0-bryan-feedback
-- **RecordedCommit:** PENDING
+- **RecordedCommit:** 44aee23
 - **Editor:** Claude Code
 - **Changes:**
   - Executed exact 9-step repro sequence with real UI clicks — no crash, 0 console errors, 0 server errors
