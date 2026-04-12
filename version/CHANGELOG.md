@@ -10,6 +10,20 @@
 
 ---
 
+## 2026-04-12 — docs: finalize version ssot state
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **Commit:** TO_BE_FINALIZED
+- **Editor:** Balerion
+- **Changes:** Final SSOT completion commit according to SR-VERSION-003. Current state and changelog aligned to the absolute HEAD without requiring another sync commit.
+
+## 2026-04-12 — docs: sync version changelog with HEAD history
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **Commit:** 30d3c19
+- **Editor:** Balerion
+- **Changes:** Synced `version/CHANGELOG.md` with the recent HEAD history of versioning-related commits.
+
 ## 2026-04-12 — docs: sync current state with latest versioning commit
 - **App Version (from package.json):** 2.8.0
 - **Branch:** dev/v2.8.0-bryan-feedback
