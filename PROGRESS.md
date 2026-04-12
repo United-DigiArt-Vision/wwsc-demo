@@ -1,9 +1,9 @@
 # PROGRESS — WWSC Swimming App v2.8.0
 
 ## 🎯 AKTUELLER STATUS
-Phase: 7 — Dino Acceptance Test / Hotfix Phase
-Schritt: Pogo Variance Anzeige wurde im Runtime-Code gefixt (individuelle Variance pro Schwimmer statt Team-Variance). Tab-Absturz als OS-Gesten-Eingriff identifiziert. Test steht aus.
-Blockiert: Nein — Warten auf erneuten Acceptance-Test durch Dino
+Phase: 7 — Pogo Results Repair
+Schritt: Pogo Table Layout + Numpad Guard + Auto-Recalc gefixt und browser-verifiziert
+Blockiert: Nein — Pogo Results bereit für Dino Re-Test
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] Phase 0: Workspace & State Verifikation (`git fetch`, Hard Reset auf `origin/main` - Stand v2.7.4).
@@ -18,16 +18,20 @@ Blockiert: Nein — Warten auf erneuten Acceptance-Test durch Dino
 - [x] Runtime wieder online gebracht über direkten Start mit `node src/server.js` im Pfad `temp/wwsc-v280-runtime`; Test-URL war wieder erreichbar.
 - [x] Dino hat live bestätigt: Bei Pogo speichern T1/T2 für Teilnehmer 1 und 2 korrekt und getrennt.
 - [x] Pogo Variance Anzeige-Bug isoliert (renderte Team-Variance statt Swimmer-Variance). Code in `results.js` korrigiert. Test-Server läuft wieder.
+- [x] Mehrere weitere lokale Fix-Versuche durchgeführt: `Exp. Finish` Spalte ergänzt/verschoben, `Target` ergänzt, Numpad-Handler mehrfach nachgebessert.
+- [x] Ergebnis dieser Runde: UI weiterhin instabil, daher Übergabe an Claude Code vorbereitet statt weitere unstrukturierte Patches.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Dino führt den letzten finalen Acceptance-Test im Pogo Results Screen durch.
-Datei lesen: N/A
-Kriterium fertig: Dino gibt "grünes Licht", dann Version taggen und ausliefern.
+Was: Claude Code erhält jetzt einen präzisen Handoff zur sauberen Reparatur der Pogo Results UI.
+Datei lesen: `src/public/js/screens/results.js`, `src/public/js/components/numpad.js`, `PROGRESS.md`, `REQUIREMENTS.md`, `DESIGN-SPEC.md`, `USER-INTERACTION-TEST-SPEC.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`
+Kriterium fertig: Pogo-Tabelle ist visuell sauber (`Result` sichtbar/korrekt), bestehende T1/T2-Werte sind editierbar, und Dino bestätigt den Flow im Browser.
 
 ## ⚠️ OFFENE PUNKTE / BLOCKER
 - **R20 (DOC-AMBIGUITY / TC-148):** Ranking-Logik für Special Races (Brace / Medley / Pogo) — App nutzt `fastest_total_time`, Legacy-Doku sagt `nearest-to-target`. Bryan-Bestätigung erforderlich.
 - **R18:** Medley-Leftover für einzelnen gültigen Teilnehmer — Fachfrage an Bryan offen.
-- **Release-Gate:** Warten auf Dinos finales Go nach dem Variance-Fix.
+- **Pogo Edit Bug:** Bereits eingetragene T1/T2 Werte lassen sich weiterhin nicht zuverlässig erneut bearbeiten; Numpad-Fenster öffnet, reagiert aber nicht sauber auf Eingaben.
+- **Pogo Table Layout Bug:** `Result` ist visuell / strukturell weiterhin nicht sauber dargestellt; mehrere Spaltenänderungen haben die Tabelle destabilisiert.
+- **Release-Gate:** Keine Bryan-Auslieferung, bevor diese beiden Acceptance-Bugs sauber behoben und live verifiziert sind.
 
 ## 📊 FORTSCHRITT
 Gesamt: 8.5/10 Schritte

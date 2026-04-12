@@ -4,10 +4,10 @@
 **Base Branch:** main
 **Base Commit:** 15275df
 **Target Branch:** dev/v2.8.0-bryan-feedback
-**Last Commit:** 60e502b
-**Last Editor:** Balerion
+**LastCommit:** (pending — will be updated after commit)
+**LastEditor:** Claude Code
 **Date:** 2026-04-12
-**Timestamp:** 2026-04-12 12:27:00
+**Timestamp:** 2026-04-12 21:30:00
 **Version SSOT:** `package.json`
 **Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.0`
 

@@ -11,6 +11,26 @@
 
 ---
 
+## 2026-04-12 — fix: Pogo Results table layout + numpad guard + auto-recalc
+- **Timestamp:** 2026-04-12 21:30:00
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **Commit:** (pending)
+- **Editor:** Claude Code
+- **Changes:**
+  - results.js: Pogo table uses table-layout:fixed with colgroup + overflow-x:auto so all 10 columns (Swimmer|PB|Start|Exp.F|Total|Tgt|T1|T2|Result|Var.) fit without horizontal scroll
+  - numpad.js: Re-entry guard — if numpad is already open when showNumpad is called, existing instance is closed first to prevent stacked handlers
+  - server.js: New function recalcPogoTeamIfNeeded() called from split + split2 endpoints — auto-calculates team total_time (sum of member averages), variance, and live place for Pogo teams
+  - Browser-verified: T1/T2 independent, Result correct, Variance correct, re-edit works, 0 console errors
+
+## 2026-04-12 — docs: finalize version ssot state
+- **Timestamp:** 2026-04-12 12:27:33
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **Commit:** 1d8f120
+- **Editor:** Balerion
+- **Changes:** Final SSOT completion commit after the numpad-fix so CURRENT_STATE and CHANGELOG point to the absolute HEAD.
+
 ## 2026-04-12 — fix: reset stale numpad handlers before reopening
 - **Timestamp:** 2026-04-12 12:27:00
 - **App Version (from package.json):** 2.8.0

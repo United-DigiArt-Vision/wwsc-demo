@@ -1562,6 +1562,10 @@ app.put('/api/relay-teams/:teamId/member/:memberId/split', (req, res) => {
     if (!member) return res.status(404).json({ error: 'Team member not found' });
 
     db.prepare('UPDATE relay_team_member SET split_time = ? WHERE relay_team_id = ? AND member_id = ?').run(split_time, req.params.teamId, req.params.memberId);
+
+    // Pogo auto-recalc: update team total_time + variance from member averages
+    recalcPogoTeamIfNeeded(req.params.teamId);
+
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1574,9 +1578,55 @@ app.put('/api/relay-teams/:teamId/member/:memberId/split2', (req, res) => {
     const member = db.prepare('SELECT * FROM relay_team_member WHERE relay_team_id = ? AND member_id = ?').get(req.params.teamId, req.params.memberId);
     if (!member) return res.status(404).json({ error: 'Team member not found' });
     db.prepare('UPDATE relay_team_member SET split_time_2 = ? WHERE relay_team_id = ? AND member_id = ?').run(split_time_2, req.params.teamId, req.params.memberId);
+
+    // Pogo auto-recalc: update team total_time + variance from member averages
+    recalcPogoTeamIfNeeded(req.params.teamId);
+
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
+
+// Pogo: recalculate team total_time, variance, and live place after T1/T2 entry
+function recalcPogoTeamIfNeeded(teamId) {
+  const team = db.prepare('SELECT rt.*, er.race_type FROM relay_team rt JOIN event_race er ON rt.event_race_id = er.id WHERE rt.id = ?').get(teamId);
+  if (!team || team.race_type !== 'pogo') return;
+
+  const members = db.prepare('SELECT * FROM relay_team_member WHERE relay_team_id = ?').all(teamId);
+  // Calculate sum of member averages (only members with both T1 and T2)
+  let totalAvg = 0;
+  let completeCount = 0;
+  for (const m of members) {
+    if (m.split_time != null && m.split_time_2 != null) {
+      totalAvg += Math.round((m.split_time + m.split_time_2) / 2);
+      completeCount++;
+    }
+  }
+
+  if (completeCount === 0) return; // No complete pairs yet
+
+  // Set team total_time to sum of completed averages
+  const startDelayCs = (team.start_delay || 0) * 100;
+  const targetTimeCs = (team.target_time || 0) * 100;
+  const variance = targetTimeCs ? (totalAvg - targetTimeCs) : null;
+
+  db.prepare('UPDATE relay_team SET total_time = ?, variance = ? WHERE id = ?').run(totalAvg, variance, teamId);
+
+  // R6: Auto-rank all teams in this race (live placing)
+  const raceId = team.event_race_id;
+  const allTeams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(raceId);
+  if (allTeams.length > 0) {
+    let ranked = allTeams.sort((a, b) => (a.total_time ?? 9999) - (b.total_time ?? 9999));
+    const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
+    let currentPlace = 0, prevScore = null;
+    ranked.forEach((t, i) => {
+      let score = t.total_time ?? 9999;
+      if (prevScore === null || score !== prevScore) currentPlace = i + 1;
+      setPlace.run(currentPlace, t.id);
+      prevScore = score;
+    });
+    db.prepare('UPDATE relay_team SET place = NULL WHERE event_race_id = ? AND total_time IS NULL').run(raceId);
+  }
+}
 
 // POST /api/races/:raceId/rank-relay
 app.post('/api/races/:raceId/rank-relay', (req, res) => {

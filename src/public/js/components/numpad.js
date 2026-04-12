@@ -3,10 +3,15 @@
  * On confirm, sends parseTime(value) — centiseconds integer.
  */
 function showNumpad(currentValue, onConfirm) {
+  // Guard: if numpad is already open, close it first to prevent stacked handlers
+  const overlay = document.getElementById('modal-overlay');
+  if (!overlay.classList.contains('hidden') && typeof window.numpadKey === 'function') {
+    hideModal();
+  }
+
   let value = (currentValue === 0 || currentValue) ? currentValue : '';
   if (typeof value === 'number') value = formatTime(value);
   value = String(value);
-  const overlay = document.getElementById('modal-overlay');
   overlay.classList.remove('hidden');
 
   function displayValue(raw) {
