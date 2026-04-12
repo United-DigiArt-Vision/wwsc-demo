@@ -297,8 +297,9 @@ function renderBraceTeamsInHB(teams, race) {
     const members = team.members || [];
     const names = members.map(m => m.name).join(' + ');
     const pbs = members.map(m => formatWhole(getPBForRelayHB(m, race.race_type))).join(' + ');
-    const targetDisplay = formatWhole(team.target_time);
+    const totalDisplay = formatWhole(team.target_time);
     const startDisplay = formatWhole(team.start_delay || 0);
+    const targetDisplay = formatWhole((team.target_time || 0) + (team.start_delay || 0));
     const placeDisplay = team.place ? ordinalRelay(team.place) : '—';
     const placeStyle = team.place ? 'color:#e53935;font-weight:700' : '';
 
@@ -315,9 +316,9 @@ function renderBraceTeamsInHB(teams, race) {
       '<td>' + team.team_number + '</td>' +
       '<td class="name-cell">' + names + '</td>' +
       '<td>' + pbs + '</td>' +
-      '<td>' + targetDisplay + '</td>' +
+      '<td>' + totalDisplay + '</td>' +
       '<td style="font-weight:700;color:var(--accent)">+' + startDisplay + '</td>' +
-      totalCell +
+      '<td>' + targetDisplay + '</td>' +
       '<td>' + varDisplay + '</td>' +
       '<td style="' + placeStyle + '">' + placeDisplay + '</td>' +
       '</tr>';
@@ -327,7 +328,7 @@ function renderBraceTeamsInHB(teams, race) {
     <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91">
       <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91;display:flex;justify-content:space-between;align-items:center">
         <span>${RACE_LABELS[race.race_type] || race.race_type}</span>
-        <span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | nearest-to-target wins</span>
+        <span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | fastest finish wins</span>
       </div>
       <table class="spreadsheet-table" style="margin:0">
         <thead>
@@ -335,9 +336,9 @@ function renderBraceTeamsInHB(teams, race) {
             <th style="width:50px">Lane</th>
             <th style="text-align:left;min-width:200px">Pair</th>
             <th>PBs</th>
-            <th>Target</th>
+            <th>Total</th>
             <th>Start Delay</th>
-            <th>Team Total</th>
+            <th>Target</th>
             <th>Variance</th>
             <th>Place</th>
           </tr>
@@ -354,7 +355,7 @@ function renderRelayTeamsInHB(teams, race) {
   const is25mRelay = race.race_type === '25m_relay';
   const showStroke = isMedley || ['25m_brace', '50m_brace'].includes(race.race_type); // BF0404-07: Hide stroke for 25m relay
   const isPogo = race.race_type === 'pogo';
-  const showSplits = is25mRelay; // BF0404-04: Show splits for 25m relay
+  const showSplits = false; // R4/R8: Split removed from HB per Bryan v2.8.0
   const showPogoTimes = isPogo; // v2.7.3: Pogo shows T1/T2/Avg columns
   const teamColors = ['#0b3d91', '#c62828', '#2e7d32', '#e65100', '#6a1b9a', '#00838f'];
   const medleyColors = {
@@ -394,9 +395,9 @@ function renderRelayTeamsInHB(teams, race) {
       rows += '<tr' + rowStyle + '><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td>' + (showStroke ? '<td>' + strokeDisplay + '</td>' : '') + splitCell + '<td class="time-cell">' + pbDisplay + '</td></tr>';
     }
 
-    // BF2.6-10: Medley Add Swimmer should list all eligible medley swimmers, not just current team members
+    // R16: No Swim Twice for Pogo
     let swimTwiceRow = '';
-    if (!hbRelayConfirmed) {
+    if (!hbRelayConfirmed && !isPogo) {
       const nextLeg = members.length + 1;
       let optionPool = members;
       if (isMedley) {
@@ -427,10 +428,10 @@ function renderRelayTeamsInHB(teams, race) {
       totalTimeCell = '<td class="time-cell" style="font-weight:700;font-size:18px">' + (team.target_time != null ? formatWhole(team.target_time) : '—') + '</td>';
     }
 
-    // BF0404-06: Start time prominent
-    const startDisplay = '⏱️ Start: ' + formatWhole(team.start_delay || 0) + ' s';
-    const targetDisplay = team.target_time ? 'Target: ' + formatWhole(team.target_time) : '';
-    const maxDisplay = team.max_time ? 'Max: ' + formatWhole(team.max_time) : '';
+    // Consistent naming with Results: Total = PB sum, Start Delay separate, Target = Total + Start Delay
+    const startDelayDisplay = '⏱️ Start Delay: ' + formatWhole(team.start_delay || 0) + ' s';
+    const totalDisplay = team.target_time != null ? 'Total: ' + formatWhole(team.target_time) : '';
+    const targetDisplay = team.target_time != null ? 'Target: ' + formatWhole(team.target_time + (team.start_delay || 0)) : '';
 
     // Column counts for colspan
     const totalColSpan = 1 + (showStroke ? 1 : 0) + (showSplits ? 1 : 0); // leg + swimmer + optional stroke + optional split (PB is the last cell)
@@ -440,12 +441,12 @@ function renderRelayTeamsInHB(teams, race) {
     html += '<div class="card" style="margin-bottom:40px;padding:0;overflow:hidden;border:4px solid ' + teamColor + '">' +
             '<div style="background:' + teamColor + ';color:white;padding:12px 16px;font-weight:800;font-size:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(0,0,0,0.1)">' +
             '<span style="flex-shrink:0">' + teamHeader + '</span>' +
-            '<span style="display:flex;align-items:center;gap:12px;flex-shrink:0"><span style="background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:rgba(255,255,255,0.9);white-space:nowrap">' + (targetDisplay ? targetDisplay : '') + (maxDisplay ? ' • ' + maxDisplay : '') + '</span></span>' +
+            '<span style="display:flex;align-items:center;gap:12px;flex-shrink:0"><span style="background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px">' + startDelayDisplay + '</span><span style="font-weight:400;font-size:13px;color:rgba(255,255,255,0.9);white-space:nowrap">' + (totalDisplay ? totalDisplay : '') + (targetDisplay ? ' • ' + targetDisplay : '') + '</span></span>' +
             '</div>' +
             '<table class="spreadsheet-table" style="margin:0">' +
             '<thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + strokeHeader + splitHeader + '<th>PB</th></tr></thead>' +
-            '<tbody>' + rows + swimTwiceRow + 
-            '<tr style="background:#f5f5f5;font-weight:700;border-top:2px solid ' + teamColor + '"><td></td><td colspan="' + totalColSpan + '">Team Total</td>' + totalTimeCell + '</tr>' +
+            '<tbody>' + rows + swimTwiceRow +
+            (isPogo ? '' : '<tr style="background:#f5f5f5;font-weight:700;border-top:2px solid ' + teamColor + '"><td></td><td colspan="' + totalColSpan + '">Team Total</td>' + totalTimeCell + '</tr>') +
             '</tbody></table></div>';
   }
 

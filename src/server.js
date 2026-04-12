@@ -801,16 +801,30 @@ app.get('/api/reports/breakers', (req, res) => {
       ORDER BY e.date DESC, th.stroke, m.name
     `).all();
 
-    const result = rows.map(r => ({
-      event_id: r.event_id,
-      event_date: r.event_date,
-      member_id: r.member_id,
-      member_name: r.member_name,
-      stroke: r.stroke,
-      old_pb: r.previous_best != null ? r.previous_best * 100 : null, // whole→cs
-      new_time: r.time,
-      improvement: r.previous_best != null ? (r.previous_best * 100) - r.time : null
-    }));
+    const result = rows.map(r => {
+      const oldPbCs = r.previous_best != null ? r.previous_best * 100 : null;
+      const improvement = oldPbCs != null ? oldPbCs - r.time : null;
+      return {
+        event_id: r.event_id,
+        event_date: r.event_date,
+        member_id: r.member_id,
+        member_name: r.member_name,
+        stroke: r.stroke,
+        old_pb: oldPbCs,
+        new_time: r.time,
+        improvement,
+        variance: improvement != null ? Math.abs(improvement) : null
+      };
+    });
+    // Sort: date DESC, then strongest variance first, then name for deterministic tie-break
+    result.sort((a, b) => {
+      const dateCmp = (b.event_date || '').localeCompare(a.event_date || '');
+      if (dateCmp !== 0) return dateCmp;
+      const varA = a.variance ?? 0;
+      const varB = b.variance ?? 0;
+      if (varB !== varA) return varB - varA; // largest absolute variance first
+      return (a.member_name || '').localeCompare(b.member_name || '');
+    });
     res.json(result);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1161,9 +1175,31 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
 
     let teams = [];
 
-    if (race.race_type === '25m_relay' || race.race_type === 'pogo') {
-      // R10.1, R10.5: Teams of 4
-      // v2.7.1: Standard relays (25m/Pogo) include ALL present swimmers.
+    if (race.race_type === 'pogo') {
+      // R16: Pogo — exactly 4 swimmers per team, no swim-twice
+      const relayMembers = members;
+      if (relayMembers.length < 4) return res.json({ teams: [], warning: 'Need at least 4 swimmers for Pogo' });
+      const swimmersWithPB = relayMembers.map(m => ({ ...m, pb: m.time_25m || 9999 }));
+      swimmersWithPB.sort((a, b) => a.pb - b.pb);
+      const numTeams = Math.floor(swimmersWithPB.length / 4);
+      const distributed = distributeRoundRobin(swimmersWithPB.slice(0, numTeams * 4), numTeams);
+
+      teams = distributed.map((teamMembers, ti) => {
+        const targetTime = teamMembers.reduce((sum, m) => sum + (m.pb !== 9999 ? m.pb : 0), 0);
+        return {
+          team_number: ti + 1,
+          team_name: TEAM_NAMES[ti] || `Team ${ti + 1}`,
+          members: teamMembers.map((m, mi) => ({
+            member_id: m.id, name: m.name, leg_order: mi + 1, stroke: 'Free',
+            pb: m.pb !== 9999 ? m.pb : null,
+            time_25m: m.time_25m, time_50m: m.time_50m, time_backstroke: m.time_backstroke, time_breaststroke: m.time_breaststroke, time_butterfly: m.time_butterfly
+          })),
+          target_time: targetTime > 0 ? targetTime : null
+        };
+      });
+
+    } else if (race.race_type === '25m_relay') {
+      // v2.7.1: Standard relays include ALL present swimmers.
       const relayMembers = members;
 
       // v2.7.4: Bryan rule — <11 swimmers = 2 teams, >=11 = 3 teams
@@ -1214,9 +1250,31 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
         const slow = pool.pop();
         pairs.push([fast, slow]);
       }
-      // Odd swimmer out — solo team
+      // R2: Odd Man Out — find best partner from already-paired swimmers
       if (pool.length === 1) {
-        pairs.push([pool[0]]);
+        const oddSwimmer = pool[0];
+        const oddPB = oddSwimmer.pb !== 9999 ? oddSwimmer.pb : 0;
+        // Calculate average team PB of existing pairs
+        const teamTotals = pairs.map(p => p.reduce((s, m) => s + (m.pb !== 9999 ? m.pb : 0), 0));
+        const avgTeamPB = teamTotals.length > 0 ? teamTotals.reduce((a, b) => a + b, 0) / teamTotals.length : 0;
+        // Find best partner: minimize abs(oddPB + partnerPB - avgTeamPB)
+        let bestPartner = null;
+        let bestDelta = Infinity;
+        for (const pair of pairs) {
+          for (const m of pair) {
+            const potentialTotal = oddPB + (m.pb !== 9999 ? m.pb : 0);
+            const delta = Math.abs(potentialTotal - avgTeamPB);
+            if (delta < bestDelta) {
+              bestDelta = delta;
+              bestPartner = m;
+            }
+          }
+        }
+        if (bestPartner) {
+          pairs.push([oddSwimmer, { ...bestPartner, leg_order: 2 }]);
+        } else {
+          pairs.push([oddSwimmer]); // Fallback: solo if no partners exist
+        }
       }
 
       teams = pairs.map((pair, ti) => {
@@ -1324,7 +1382,7 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
             const openStrokes = strokes.filter(st => !team.members.find(m => m.stroke === st));
             if (openStrokes.length > 0) {
               const stroke = openStrokes[0];
-              team.members.push({ member_id: s.id, name: s.name, stroke, pb: medleyPB(s, stroke), auto: true,
+              team.members.push({ member_id: s.id, name: s.name, stroke, pb: medleyPB(s, stroke), auto: s.isWildcard === true,
                 time_25m: s.time_25m, time_50m: s.time_50m, time_backstroke: s.time_backstroke, time_breaststroke: s.time_breaststroke, time_butterfly: s.time_butterfly });
               s.assigned = true;
               break;
@@ -1333,9 +1391,9 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
         }
       }
 
-      // 3. Handle leftover swimmers (not enough for a complete team)
+      // R18: Do NOT create incomplete teams. Leftover swimmers (< 3 for medley) are excluded.
       const leftovers = allPool.filter(s => !s.assigned);
-      if (leftovers.length > 0) {
+      if (leftovers.length >= 3) { // Only create a team if we have enough for a complete medley team
         // Create a partial team so they are visible
         const partialTeam = {
           team_number: numTeams + 1,
@@ -1484,6 +1542,26 @@ app.put('/api/relay-teams/:teamId/time', (req, res) => {
     }
 
     db.prepare('UPDATE relay_team SET total_time = ?, variance = ? WHERE id = ?').run(total_time, variance, req.params.teamId);
+
+    // R6: Auto-rank all teams in this race after each time entry (live placing)
+    const raceId = team.event_race_id;
+    const allTeams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(raceId);
+    if (allTeams.length > 0) {
+      // R20: Unified — ALL relay types: fastest total_time wins
+      let ranked = allTeams.sort((a, b) => (a.total_time ?? 9999) - (b.total_time ?? 9999));
+      const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
+      let currentPlace = 0, prevScore = null;
+      // R20: Unified — all use total_time as score
+      ranked.forEach((t, i) => {
+        let score = t.total_time ?? 9999;
+        if (prevScore === null || score !== prevScore) currentPlace = i + 1;
+        setPlace.run(currentPlace, t.id);
+        prevScore = score;
+      });
+      // Clear place for teams without times
+      db.prepare('UPDATE relay_team SET place = NULL WHERE event_race_id = ? AND total_time IS NULL').run(raceId);
+    }
+
     res.json({ ok: true, total_time, net_time, variance });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1498,6 +1576,10 @@ app.put('/api/relay-teams/:teamId/member/:memberId/split', (req, res) => {
     if (!member) return res.status(404).json({ error: 'Team member not found' });
 
     db.prepare('UPDATE relay_team_member SET split_time = ? WHERE relay_team_id = ? AND member_id = ?').run(split_time, req.params.teamId, req.params.memberId);
+
+    // Pogo auto-recalc: update team total_time + variance from member averages
+    recalcPogoTeamIfNeeded(req.params.teamId);
+
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -1510,9 +1592,55 @@ app.put('/api/relay-teams/:teamId/member/:memberId/split2', (req, res) => {
     const member = db.prepare('SELECT * FROM relay_team_member WHERE relay_team_id = ? AND member_id = ?').get(req.params.teamId, req.params.memberId);
     if (!member) return res.status(404).json({ error: 'Team member not found' });
     db.prepare('UPDATE relay_team_member SET split_time_2 = ? WHERE relay_team_id = ? AND member_id = ?').run(split_time_2, req.params.teamId, req.params.memberId);
+
+    // Pogo auto-recalc: update team total_time + variance from member averages
+    recalcPogoTeamIfNeeded(req.params.teamId);
+
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
+
+// Pogo: recalculate team total_time, variance, and live place after T1/T2 entry
+function recalcPogoTeamIfNeeded(teamId) {
+  const team = db.prepare('SELECT rt.*, er.race_type FROM relay_team rt JOIN event_race er ON rt.event_race_id = er.id WHERE rt.id = ?').get(teamId);
+  if (!team || team.race_type !== 'pogo') return;
+
+  const members = db.prepare('SELECT * FROM relay_team_member WHERE relay_team_id = ?').all(teamId);
+  // Calculate sum of member averages (only members with both T1 and T2)
+  let totalAvg = 0;
+  let completeCount = 0;
+  for (const m of members) {
+    if (m.split_time != null && m.split_time_2 != null) {
+      totalAvg += Math.round((m.split_time + m.split_time_2) / 2);
+      completeCount++;
+    }
+  }
+
+  if (completeCount === 0) return; // No complete pairs yet
+
+  // Set team total_time to sum of completed averages
+  const startDelayCs = (team.start_delay || 0) * 100;
+  const targetTimeCs = (team.target_time || 0) * 100;
+  const variance = targetTimeCs ? (totalAvg - targetTimeCs) : null;
+
+  db.prepare('UPDATE relay_team SET total_time = ?, variance = ? WHERE id = ?').run(totalAvg, variance, teamId);
+
+  // R6: Auto-rank all teams in this race (live placing)
+  const raceId = team.event_race_id;
+  const allTeams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(raceId);
+  if (allTeams.length > 0) {
+    let ranked = allTeams.sort((a, b) => (a.total_time ?? 9999) - (b.total_time ?? 9999));
+    const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
+    let currentPlace = 0, prevScore = null;
+    ranked.forEach((t, i) => {
+      let score = t.total_time ?? 9999;
+      if (prevScore === null || score !== prevScore) currentPlace = i + 1;
+      setPlace.run(currentPlace, t.id);
+      prevScore = score;
+    });
+    db.prepare('UPDATE relay_team SET place = NULL WHERE event_race_id = ? AND total_time IS NULL').run(raceId);
+  }
+}
 
 // POST /api/races/:raceId/rank-relay
 app.post('/api/races/:raceId/rank-relay', (req, res) => {
@@ -1522,36 +1650,17 @@ app.post('/api/races/:raceId/rank-relay', (req, res) => {
 
     const teams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(req.params.raceId);
 
-    let ranked;
-    if (['25m_brace', '50m_brace'].includes(race.race_type)) {
-      // R10.7: Nearest to target time wins (use ?? not || because variance=0 is valid!)
-      ranked = teams.sort((a, b) => Math.abs(a.variance ?? 9999) - Math.abs(b.variance ?? 9999));
-    } else if (race.race_type === 'medley_relay') {
-      // BF2.6-17/18/19: fixed 2s start, nearest to target wins, equal variances share place
-      ranked = teams.sort((a, b) => {
-        const diff = Math.abs(a.variance ?? 9999) - Math.abs(b.variance ?? 9999);
-        if (diff !== 0) return diff;
-        return (a.team_number || 999) - (b.team_number || 999);
-      });
-    } else if (race.race_type === 'pogo') {
-      // v2.7.2: Pogo = nearest to target (like Brace/Medley, per Bryan's Excel)
-      ranked = teams.sort((a, b) => Math.abs(a.variance ?? 9999) - Math.abs(b.variance ?? 9999));
-    } else {
-      // 25m_relay: fastest total time wins
-      ranked = teams.sort((a, b) => a.total_time - b.total_time);
-    }
+    // R20: Unified place logic — ALL relay types use fastest total_time wins
+    // This is the same intuitive logic as individual races:
+    // best effective performance (lowest finish time after handicap) = 1st
+    let ranked = teams.sort((a, b) => (a.total_time ?? 9999) - (b.total_time ?? 9999));
 
     const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
     const batch = db.transaction(() => {
       let currentPlace = 0;
       let prevScore = null;
       ranked.forEach((t, i) => {
-        let score;
-        if (['25m_brace', '50m_brace', 'medley_relay', 'pogo'].includes(race.race_type)) {
-          score = Math.abs(t.variance ?? 9999);
-        } else {
-          score = t.total_time ?? 9999;
-        }
+        let score = t.total_time ?? 9999;
         if (prevScore === null || score !== prevScore) currentPlace = i + 1;
         setPlace.run(currentPlace, t.id);
         prevScore = score;

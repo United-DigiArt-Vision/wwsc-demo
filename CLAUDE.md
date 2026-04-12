@@ -74,3 +74,18 @@ Conventional Commits nutzen:
 ## Kontaktpunkte
 - **Kunde**: Bryan Hesketh (via Upwork)
 - **Entwickler**: Dino / United DigiArt Vision
+
+## Versioning & Changelog (SSOT) - PFLICHT
+**Semantic Version SSOT:** `package.json`
+**Code-State SSOT:** `version/CURRENT_STATE.md`
+**History SSOT:** `version/CHANGELOG.md`
+
+1. **Zwingend bei jeder Code-Änderung:** Du MUSST `version/CURRENT_STATE.md` mit dem neuen Commit Hash, Branch-Kontext, Datum und deinem Namen aktualisieren.
+2. **Historie:** Du MUSST deine Änderungen in `version/CHANGELOG.md` loggen (Datum, Name, Commit Hash, was wurde geändert).
+3. **Version-Bump-Regel:** Wenn du einen neuen Feature-Branch startest, MUSS dein ERSTER Commit der Version-Bump in `package.json` sein.
+4. **Cache-Busting & Version Sync:** Wenn du die Version bumpst, MUSST du `package.json` UND den `?v=X.Y.Z` Query String auf allen `<script>` und `<link>` Tags in `src/public/index.html` aktualisieren.
+5. **Release-Anker synchron halten:** Wenn ein Release / eine Lieferung vorbereitet wird, prüfe Konsistenz zwischen `package.json`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `STABLE.md`, `/api/version` und Git Tag.
+6. **CHANGELOG Pflichtfelder:** Jeder CHANGELOG-Eintrag MUSS enthalten: Date, Timestamp (`YYYY-MM-DD HH:MM:SS`), App Version (from `package.json`), Branch, Commit, Editor, Changes.
+7. **CURRENT_STATE Pflichtfelder:** `version/CURRENT_STATE.md` MUSS enthalten: Date und Timestamp (`YYYY-MM-DD HH:MM:SS`) zusätzlich zu Commit/Branch/Version.
+8. **Konsistenzpflicht:** `version/CURRENT_STATE.md` und der neueste Eintrag in `version/CHANGELOG.md` MÜSSEN denselben aktuellen Commit, dieselbe App-Version und denselben Branch widerspiegeln.
+9. **Abschluss:** Melde NIEMALS "Fertig", "gefixt", "committed", "ready for testing" oder irgendetwas Vergleichbares, bevor `version/CHANGELOG.md` und `version/CURRENT_STATE.md` aktualisiert wurden UND der finale SSOT-Abschluss-Commit erstellt wurde. Deine Arbeit wird abgelehnt, wenn `git rev-parse HEAD` nicht mit `version/CURRENT_STATE.md` übereinstimmt oder CHANGELOG/CURRENT_STATE inkonsistent sind.

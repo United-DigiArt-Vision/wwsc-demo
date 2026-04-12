@@ -3,10 +3,17 @@
  * On confirm, sends parseTime(value) — centiseconds integer.
  */
 function showNumpad(currentValue, onConfirm) {
-  let value = (currentValue === 0 || currentValue) ? currentValue : '';
-  if (typeof value === 'number') value = formatTime(value);
-  value = String(value);
+  // Guard: if numpad is already open, close it first to prevent stacked handlers
   const overlay = document.getElementById('modal-overlay');
+  if (!overlay.classList.contains('hidden') && typeof window.numpadKey === 'function') {
+    hideModal();
+  }
+
+  // For re-editing (currentValue > 0): start with empty input so user types fresh.
+  // Show old value as reference label above the input.
+  const isReEdit = (typeof currentValue === 'number' && currentValue > 0);
+  const oldLabel = isReEdit ? formatTime(currentValue) : '';
+  let value = '';
   overlay.classList.remove('hidden');
 
   function displayValue(raw) {
@@ -17,14 +24,16 @@ function showNumpad(currentValue, onConfirm) {
   }
 
   function render() {
+    const oldHint = oldLabel ? `<div style="font-size:13px;color:var(--text-secondary);text-align:center;margin-bottom:4px">was: ${oldLabel}s</div>` : '';
     overlay.innerHTML = `
       <div class="modal" style="max-width:340px">
+        ${oldHint}
         <div style="font-size:36px;font-weight:700;text-align:center;padding:16px;background:var(--bg);border-radius:var(--radius);margin-bottom:16px;min-height:60px">${displayValue(value)}<span style="font-size:18px;color:var(--text-secondary)">s</span></div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
           ${[1,2,3,4,5,6,7,8,9,'.',0,'⌫'].map(k => `
-            <button class="btn btn-outline" style="font-size:24px;min-height:60px" onclick="numpadKey('${k}')">${k}</button>
+            <button type="button" class="btn btn-outline" data-numpad-key="${k}" style="font-size:24px;min-height:60px">${k}</button>
           `).join('')}
-          <button class="btn btn-success" style="grid-column: span 3; font-size:24px;min-height:60px;margin-top:8px" onclick="numpadKey('✓')">OK ✓</button>
+          <button type="button" class="btn btn-success" data-numpad-key="✓" style="grid-column: span 3; font-size:24px;min-height:60px;margin-top:8px">OK ✓</button>
         </div>
       </div>
     `;
@@ -40,10 +49,21 @@ function showNumpad(currentValue, onConfirm) {
 
   document.addEventListener('keydown', keyHandler);
 
+  const clickHandler = (e) => {
+    const btn = e.target.closest('[data-numpad-key]');
+    if (!btn) return;
+    e.preventDefault();
+    const key = btn.getAttribute('data-numpad-key');
+    window.numpadKey(key);
+  };
+  overlay.addEventListener('click', clickHandler);
+
   const originalHideModal = window.hideModal;
   window.hideModal = () => {
     document.removeEventListener('keydown', keyHandler);
+    overlay.removeEventListener('click', clickHandler);
     window.hideModal = originalHideModal;
+    delete window.numpadKey;
     originalHideModal();
   };
 

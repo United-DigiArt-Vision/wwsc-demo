@@ -385,15 +385,26 @@ document.addEventListener('keydown', function(e) {
 
 function buildRaceTypes() {
   const types = [];
-  // Standard always includes 25m + 50m individual
-  types.push('25m', '50m');
-  
-  // Add standard event relay
   const std = eventConfig.standard_event;
-  if (std === '25m_brace') types.push('25m_brace');
-  else if (std === '50m_brace') types.push('50m_brace');
-  else if (std === 'pogo') types.push('pogo');
-  types.push('25m_relay'); // always have team relay
+
+  // R17: Distance exclusivity — only ONE variant per distance (25m OR 50m)
+  // If Brace/Pogo is selected, it REPLACES the individual race for that distance
+  if (std === '25m_brace') {
+    // 25m Brace replaces both 25m individual AND 25m relay
+    types.push('25m_brace');
+    types.push('50m'); // 50m individual stays
+  } else if (std === '50m_brace') {
+    // 50m Brace replaces 50m individual
+    types.push('25m'); // 25m individual stays
+    types.push('50m_brace');
+  } else if (std === 'pogo') {
+    // Pogo replaces 25m relay
+    types.push('25m', '50m'); // Both individuals stay
+    types.push('pogo');
+  } else {
+    // Ordinary Swim: 25m + 50m individual + 25m relay
+    types.push('25m', '50m', '25m_relay');
+  }
 
   // Add special event
   const special = eventConfig.special_event;

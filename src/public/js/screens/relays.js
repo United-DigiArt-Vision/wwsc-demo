@@ -149,7 +149,7 @@ function renderBraceTable(teams, race) {
     <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91">
       <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center">
         <span>${RACE_LABELS[race.race_type] || race.race_type}</span>
-        <span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | nearest-to-target wins</span>
+        <span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | fastest finish wins</span>
       </div>
       <table class="spreadsheet-table" style="margin:0">
         <thead>
@@ -175,7 +175,7 @@ function renderRelayTable(teams, race) {
   const isMedley = race.race_type === 'medley_relay';
   const is25mRelay = race.race_type === '25m_relay';
   const isPogo = race.race_type === 'pogo';
-  const showSplits = is25mRelay; // BF2.6-05: Show splits for 25m relay
+  const showSplits = false; // R4/R8: Split removed per Bryan v2.8.0
   const showPogoTimes = isPogo; // v2.7.3: Pogo shows 2 timekeeper columns + average
   const showStroke = isMedley || isBrace; // BF2.6-07: Hide Stroke column for 25m relay (always Freestyle)
 

@@ -47,7 +47,13 @@ async function renderResults() {
   }
 
   if (!resSelectedRace || !resRaces.find(r => r.id === resSelectedRace.id)) {
-    resSelectedRace = resRaces[0];
+    // R9: Prefer a race that actually has heats/teams, to avoid empty default
+    const RELAY_TYPES_SEL = ['25m_relay','25m_brace','50m_brace','medley_relay','pogo'];
+    const raceWithData = resRaces.find(r => {
+      if (RELAY_TYPES_SEL.includes(r.race_type)) return r.relay_teams && r.relay_teams.length > 0;
+      return r.heats && r.heats.length > 0;
+    });
+    resSelectedRace = raceWithData || resRaces[0];
   } else {
     resSelectedRace = resRaces.find(r => r.id === resSelectedRace.id);
   }
@@ -58,12 +64,12 @@ async function renderResults() {
 function drawResults() {
   const el = document.getElementById('content');
   const race = resSelectedRace;
-  if (isResRaceRelay(race)) {
-    if (!race || !race.relay_teams || race.relay_teams.length === 0) {
-      el.innerHTML = `<h1>Results</h1><div class="card"><p>No relay teams generated for this race. <a href="#" onclick="navigate('heat-builder')">Generate teams first.</a></p></div>`;
-      return;
-    }
-  } else if (!race || !race.heats || race.heats.length === 0) {
+  // R9: Check if current race has data — but still render the race selector so user can switch tabs
+  const currentRaceHasData = isResRaceRelay(race)
+    ? (race && race.relay_teams && race.relay_teams.length > 0)
+    : (race && race.heats && race.heats.length > 0);
+
+  if (!currentRaceHasData && resRaces.length <= 1) {
     el.innerHTML = `<h1>Results</h1><div class="card"><p>No heats generated for this race. <a href="#" onclick="navigate('heat-builder')">Generate heats first.</a></p></div>`;
     return;
   }
@@ -133,19 +139,26 @@ function drawResults() {
     ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>✅ Event Completed</strong></div>' : ''}
 
     <div style="overflow-x:auto;margin-bottom:16px">
-      ${isResRaceRelay(race) ? (['25m_brace','50m_brace'].includes(race.race_type) ? renderBraceResultsInline(race) : renderRelayResultsInline(race)) : renderResultsTable(race)}
+      ${currentRaceHasData
+        ? (isResRaceRelay(race) ? (
+            ['25m_brace','50m_brace'].includes(race.race_type) ? renderBraceResultsInline(race) :
+            race.race_type === 'pogo' ? renderPogoResultsInline(race) :
+            renderRelayResultsInline(race)
+          ) : renderResultsTable(race))
+        : '<div class="card" style="background:#fff3e0;border-left:4px solid #e65100;padding:16px"><strong>No heats generated for this race.</strong><br>Go to <a href="#" onclick="navigate(\'heat-builder\')">Heat Builder</a> to generate heats first.</div>'
+      }
     </div>
 
-    ${!isRelay ? renderBreakersSection(race) : ''}
+    ${(currentRaceHasData && !isRelay) ? renderBreakersSection(race) : ''}
     <div id="slow-swimmers-section"></div>
-    ${resFinalized ? '<div id="consolidated-breakers-section"></div>' : ''}
+    ${/* R11: Consolidated Report removed from Results page — only on Breaker Report sidebar page */''}
   `;
 
   // Load slow swimmers + consolidated breakers async
-  // BF2.6-16: Only show slow swimmers for individual races, not relays
+  // Exceeding report is needed for relevant races on Results page as well
   if (resFinalized || anyTimesEntered) {
-    if (!isRelay) loadSlowSwimmers();
-    if (resFinalized) loadConsolidatedBreakers();
+    loadSlowSwimmers();
+    // R11: Consolidated report removed from Results page
   }
 }
 
@@ -171,29 +184,31 @@ function renderBreakersSection(race) {
 
   if (breakers.length === 0) return '';
 
-  breakers.sort((a, b) => b.improvement - a.improvement);
+  breakers.sort((a, b) => b.variance - a.variance);
 
+  // R10: Unified report table format
+  const raceLabel = RACE_LABELS[race.race_type] || race.race_type;
   let rows = breakers.map((b, i) => {
-    const medal = i === 0 ? '🏆 ' : '';
     return `<tr style="background:${i % 2 === 0 ? '#e8f5e9' : '#f1f8e9'}">
-      <td style="padding:8px 12px;font-weight:${i === 0 ? '700' : '400'}">${medal}${b.name}</td>
-      <td style="padding:8px 12px;text-align:center">Heat ${b.heat}</td>
+      <td style="padding:8px 12px;font-weight:600">${b.name}</td>
+      <td style="padding:8px 12px;text-align:center">${raceLabel} - Heat ${b.heat}</td>
       <td style="padding:8px 12px;text-align:center">${formatWhole(b.pb)}</td>
       <td style="padding:8px 12px;text-align:center;font-weight:700">${formatTime(b.newTime)}</td>
-      <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">-${formatTime(b.improvement)}</td>
+      <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">-${formatTime(b.variance != null ? b.variance : b.improvement)}</td>
     </tr>`;
   }).join('');
 
+  // R10: Unified column headers: Swimmer | Event/Heat | Old PB | New Time | Variance
   return `<div class="card" style="background:#e8f5e9;border-left:6px solid #2e7d32;margin-bottom:16px">
     <strong style="font-size:1.1em">🏅 Breakers Report — ${breakers.length} PB${breakers.length !== 1 ? 's' : ''} Broken!</strong>
-    <table style="width:100%;border-collapse:collapse;margin-top:10px">
+    <table class="report-table" style="width:100%;border-collapse:collapse;margin-top:10px;table-layout:fixed">
       <thead>
         <tr style="background:#2e7d32;color:#fff">
-          <th style="padding:8px 12px;text-align:left">Swimmer</th>
-          <th style="padding:8px 12px;text-align:center">Heat</th>
-          <th style="padding:8px 12px;text-align:center">Old PB</th>
-          <th style="padding:8px 12px;text-align:center">New Time</th>
-          <th style="padding:8px 12px;text-align:center">Improved By</th>
+          <th style="padding:8px 12px;text-align:left;width:25%">Swimmer</th>
+          <th style="padding:8px 12px;text-align:center;width:25%">Event/Heat</th>
+          <th style="padding:8px 12px;text-align:center;width:15%">Old PB</th>
+          <th style="padding:8px 12px;text-align:center;width:15%">New Time</th>
+          <th style="padding:8px 12px;text-align:center;width:20%">Variance</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
@@ -409,14 +424,18 @@ function showResultsReadout() {
 async function loadSlowSwimmers() {
   if (!resEvent) return;
   try {
-    const slow = await API.getSlowSwimmers(resEvent.id);
+    const allSlow = await API.getSlowSwimmers(resEvent.id);
     const section = document.getElementById('slow-swimmers-section');
     if (!section) return;
+    // R12: Filter to current race type only
+    const currentRace = resSelectedRace;
+    const slow = currentRace ? allSlow.filter(s => s.race_type === currentRace.race_type) : allSlow;
     if (!slow || slow.length === 0) {
       section.innerHTML = '';
       return;
     }
 
+    const raceLabel = currentRace ? (RACE_LABELS[currentRace.race_type] || currentRace.race_type) : '';
     const rows = slow.map(s => `
       <tr>
         <td class="name-cell">${s.name}</td>
@@ -427,37 +446,39 @@ async function loadSlowSwimmers() {
       </tr>
     `).join('');
 
-    // BF2.6-14: Same format as Breakers Report (card with colored left border)
+    // R10: Unified report format with Event/Heat column
     const slowRows = slow.map((s, i) => `
-      <tr>
-        <td style="text-align:left;font-weight:${i === 0 ? '700' : '400'}">${s.name}</td>
-        <td>${s.race_type}</td>
-        <td class="time-cell">${formatWhole(s.pb)}</td>
-        <td class="time-cell" style="font-weight:700">${formatTime(s.net_time)}</td>
-        <td class="time-cell" style="color:#e65100;font-weight:700">+${formatTime(s.variance)}</td>
+      <tr style="background:${i % 2 === 0 ? '#fffaf5' : '#ffffff'}">
+        <td style="text-align:left;font-weight:600;padding:12px 14px;border-bottom:1px solid #ffe0b2">${s.name}</td>
+        <td style="text-align:center;padding:12px 14px;border-bottom:1px solid #ffe0b2">${raceLabel}${s.heat_number ? ' - Heat ' + s.heat_number : ''}</td>
+        <td style="text-align:center;padding:12px 14px;border-bottom:1px solid #ffe0b2">${formatWhole(s.pb)}</td>
+        <td style="text-align:center;font-weight:700;padding:12px 14px;border-bottom:1px solid #ffe0b2">${formatTime(s.net_time)}</td>
+        <td style="text-align:center;color:#e65100;font-weight:700;padding:12px 14px;border-bottom:1px solid #ffe0b2">+${formatTime(s.variance)}</td>
       </tr>
     `).join('');
 
     section.innerHTML = `
-      <h3 style="margin-top:20px;color:#e65100">⚠️ Swimmers Exceeding PB by >2 seconds</h3>
-      <p style="margin:8px 0;font-size:13px;color:var(--text-secondary)">These swimmers may need their PB times adjusted up. Times are NOT auto-adjusted.</p>
-      <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:1px solid #ffcc80">
-        <div style="background:#e65100;color:white;padding:10px 16px;font-weight:700">Exceeding Report — ${slow.length} swimmer${slow.length !== 1 ? 's' : ''}</div>
+      <div class="card" style="margin-top:20px;margin-bottom:16px;padding:0;overflow:hidden;border:2px solid #ffcc80">
+        <div style="background:#e65100;color:white;padding:10px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <strong style="font-size:1.1em">⚠️ Exceeding Report — ${slow.length} swimmer${slow.length !== 1 ? 's' : ''}</strong>
+          <span style="font-size:12px;font-weight:400;opacity:0.95">More than 2 seconds over PB</span>
+        </div>
+        <div style="padding:10px 16px;font-size:13px;color:var(--text-secondary);background:#fff8f1;border-bottom:1px solid #ffe0b2">These swimmers may need their PB times adjusted up. Times are NOT auto-updated.</div>
         <div style="overflow-x:auto">
-          <table class="spreadsheet-table">
+          <table class="report-table" style="width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed">
             <thead>
               <tr>
-                <th style="text-align:left">Swimmer</th>
-                <th>Stroke</th>
-                <th>PB</th>
-                <th>Actual</th>
-                <th>Over by</th>
+                <th style="text-align:left;width:25%;padding:12px 14px;border-bottom:2px solid #ffe0b2">Swimmer</th>
+                <th style="text-align:center;width:25%;padding:12px 14px;border-bottom:2px solid #ffe0b2">Event/Heat</th>
+                <th style="text-align:center;width:15%;padding:12px 14px;border-bottom:2px solid #ffe0b2">Old PB</th>
+                <th style="text-align:center;width:15%;padding:12px 14px;border-bottom:2px solid #ffe0b2">New Time</th>
+                <th style="text-align:center;width:20%;padding:12px 14px;border-bottom:2px solid #ffe0b2">Variance</th>
               </tr>
             </thead>
             <tbody>${slowRows}</tbody>
           </table>
         </div>
-        <div style="padding:10px 16px;font-size:12px;color:#999;background:#fff3e0">ℹ️ To update a PB: Members → select swimmer → edit time.</div>
+        <div style="padding:10px 16px;font-size:12px;color:#8d6e63;background:#fff3e0">ℹ️ To update a PB: Members → select swimmer → edit time.</div>
       </div>
     `;
   } catch (e) {
@@ -731,24 +752,134 @@ function renderBraceResultsInline(race) {
     const members = team.members || [];
     const names = members.map(m => m.name).join(' + ');
     const pbs = members.map(m => formatWhole(getRelayPBForResults(m, race.race_type))).join(' + ');
-    const placeDisplay = team.place ? ordinal(team.place) : '—';
-    const placeStyle = team.place ? 'color:#e53935;font-weight:700;font-size:16px' : '';
+    const totalPB = team.target_time; // R7: renamed from "Target" to "Total"
+    const startDelay = team.start_delay || 0;
+    const targetCalc = totalPB != null ? totalPB + startDelay : null; // R7: new Target = Total + Start
 
-    let totalCell;
+    // R7: Gold/Silver/Bronze color coding for place
+    let placeBg = '', placeColor = '';
+    if (team.place === 1) { placeBg = '#FFD700'; placeColor = '#333'; }
+    else if (team.place === 2) { placeBg = '#C0C0C0'; placeColor = '#333'; }
+    else if (team.place === 3) { placeBg = '#CD7F32'; placeColor = '#fff'; }
+    const placeDisplay = team.place ? ordinal(team.place) : '—';
+    const placeStyle = team.place ? 'background:' + placeBg + ';color:' + placeColor + ';font-weight:700;font-size:16px;text-align:center' : '';
+
+    let finishCell;
     if (!resFinalized) {
-      totalCell = '<td onclick="enterRelayTimeInline(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '⏱️ Tap') + '</td>';
+      finishCell = '<td onclick="enterRelayTimeInline(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '⏱️ Tap') + '</td>';
     } else {
-      totalCell = '<td style="font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
+      finishCell = '<td style="font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
     }
 
     const varDisplay = team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—';
     const varStyle = team.variance != null && Math.abs(team.variance) < 300 ? 'color:var(--success);font-weight:700' : '';
 
-    rows += '<tr><td>' + team.team_number + '</td><td class="name-cell">' + names + '</td><td>' + pbs + '</td><td>' + formatWhole(team.target_time) + '</td><td>' + formatWhole(team.start_delay || 0) + '</td>' + totalCell + '<td style="' + varStyle + '">' + varDisplay + '</td><td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
+    rows += '<tr><td>' + team.team_number + '</td><td class="name-cell">' + names + '</td><td>' + pbs + '</td><td>' + formatWhole(totalPB) + '</td><td>' + formatWhole(startDelay) + '</td><td>' + (targetCalc != null ? formatWhole(targetCalc) : '—') + '</td>' + finishCell + '<td style="' + varStyle + '">' + varDisplay + '</td><td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
   }
 
-  return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span><span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | nearest-to-target wins</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Lane</th><th style="text-align:left;min-width:200px">Pair</th><th>PBs</th><th>Target</th><th>Start</th><th style="min-width:80px">Finish</th><th>Variance</th><th>Place</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  // R7: Updated column order: PBs | Total | Start | Target (new) | Finish | Variance | Place
+  return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span><span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | fastest finish wins</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Lane</th><th style="text-align:left;min-width:180px">Pair</th><th>PBs</th><th>Total</th><th>Start</th><th>Target</th><th style="min-width:80px">Finish</th><th>Variance</th><th>Place</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
+
+// R16: Pogo Results — columns: PB | Start | Total | T1 | T2 | Result (Avg) | Variance
+function renderPogoResultsInline(race) {
+  const teams = race.relay_teams || [];
+  if (teams.length === 0) return '<div class="card"><p>No Pogo teams generated yet.</p></div>';
+
+  let html = '';
+  for (const team of teams) {
+    const members = team.members || [];
+    const placeDisplay = team.place ? ordinal(team.place) : '';
+    let placeBadge = '';
+    if (team.place === 1) placeBadge = '<span style="background:#FFD700;color:#333;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥇</span>';
+    else if (team.place === 2) placeBadge = '<span style="background:#C0C0C0;color:#333;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥈</span>';
+    else if (team.place === 3) placeBadge = '<span style="background:#CD7F32;color:#fff;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥉</span>';
+    const teamHeader = team.team_name + (placeDisplay ? ' — <span style="color:#e53935;font-weight:700;font-size:18px">' + placeDisplay + '</span>' : '');
+    const startDisplay = '⏱️ Start: ' + formatWhole(team.start_delay || 0) + ' s';
+    const totalPB = 'Total: ' + formatWhole(team.target_time);
+    const targetCalc = team.target_time != null ? 'Target: ' + formatWhole(team.target_time + (team.start_delay || 0)) : '';
+
+    let rows = '';
+    for (const m of members) {
+      const t1 = m.split_time;
+      const t2 = m.split_time_2;
+      const pbRaw = getRelayPBForResults(m, race.race_type);
+      const pb = formatWhole(pbRaw);
+      const avg = (t1 != null && t2 != null) ? Math.round((t1 + t2) / 2) : null;
+      const expectedFinishSecs = (pbRaw != null ? (pbRaw + (team.start_delay || 0)) : null);
+      // Calculate individual variance based on PB + start_delay vs avg time
+      const targetTimeCs = expectedFinishSecs != null ? expectedFinishSecs * 100 : null;
+      const indVariance = (avg != null && targetTimeCs != null) ? (avg - targetTimeCs) : null;
+
+      let t1Cell, t2Cell;
+      if (!resFinalized) {
+        t1Cell = '<td class="time-input pogo-edit" data-team-id="' + team.id + '" data-member-id="' + m.member_id + '" data-split="1" data-current="' + (t1 || 0) + '" style="cursor:pointer;font-weight:700">' + (t1 != null ? formatTime(t1) : '⏱️ T1') + '</td>';
+        t2Cell = '<td class="time-input pogo-edit" data-team-id="' + team.id + '" data-member-id="' + m.member_id + '" data-split="2" data-current="' + (t2 || 0) + '" style="cursor:pointer;font-weight:700">' + (t2 != null ? formatTime(t2) : '⏱️ T2') + '</td>';
+      } else {
+        t1Cell = '<td>' + (t1 != null ? formatTime(t1) : '—') + '</td>';
+        t2Cell = '<td>' + (t2 != null ? formatTime(t2) : '—') + '</td>';
+      }
+
+      const targetDisplay = team.target_time != null ? formatWhole(team.target_time + (team.start_delay || 0)) : '—';
+      const resultCell = '<td class="result-cell" style="font-weight:700;background:#e8f5e9;color:#111">' + (avg != null ? formatTime(avg) : '—') + '</td>';
+      const varianceCell = '<td>' + (indVariance != null ? ((indVariance >= 0 ? '+' : '') + formatTime(indVariance)) : '—') + '</td>';
+      rows += '<tr>'
+        + '<td class="name-cell">' + m.name + '</td>'
+        + '<td>' + pb + '</td>'
+        + '<td>' + formatWhole(team.start_delay || 0) + '</td>'
+        + '<td>' + (expectedFinishSecs != null ? formatWhole(expectedFinishSecs) : '—') + '</td>'
+        + '<td>' + formatWhole(team.target_time) + '</td>'
+        + '<td>' + targetDisplay + '</td>'
+        + t1Cell
+        + t2Cell
+        + resultCell
+        + varianceCell
+        + '</tr>';
+    }
+
+    // R16: No Team Total for Pogo — time entry happens per swimmer (T1/T2)
+    const headerBg = team.place ? '#e8f5e9' : '#e0f2f1';
+    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + totalPB + ' • ' + targetCalc + '</span></span></div>' +
+      '<div style="overflow-x:auto"><table class="spreadsheet-table" style="margin:0;font-size:12px;width:100%"><thead><tr style="white-space:nowrap"><th style="text-align:left;min-width:90px">Swimmer</th><th style="min-width:30px">PB</th><th style="min-width:36px">Start</th><th style="min-width:42px">Exp.F</th><th style="min-width:36px">Total</th><th style="min-width:36px">Tgt</th><th style="min-width:50px">T1</th><th style="min-width:50px">T2</th><th style="min-width:52px;background:#2e7d32;color:#fff;font-weight:800;text-shadow:none">Result</th><th style="min-width:48px">Var.</th></tr></thead><tbody>' + rows +
+      '</tbody></table></div></div>'; // R16: No Team Total footer for Pogo
+  }
+  return html;
+}
+
+// Pogo split1 inline entry (T1) — must call renderResults, not drawRelays
+function enterPogoSplit1Inline(teamId, memberId, currentValue) {
+  showNumpad(currentValue || '', async (value) => {
+    try {
+      if (value == null) return;
+      const result = await API.enterRelaySplit(teamId, memberId, value);
+      if (result.error) { alert('Error: ' + result.error); return; }
+      renderResults();
+    } catch (err) { console.error('Pogo T1 save error:', err); }
+  });
+}
+
+// Pogo split2 inline entry (T2)
+function enterPogoSplit2Inline(teamId, memberId, currentValue) {
+  showNumpad(currentValue || '', async (value) => {
+    try {
+      if (value == null) return;
+      const result = await API.enterRelaySplit2(teamId, memberId, value);
+      if (result.error) { alert('Error: ' + result.error); return; }
+      renderResults();
+    } catch (err) { console.error('Pogo T2 save error:', err); }
+  });
+}
+
+document.addEventListener('click', (e) => {
+  const cell = e.target.closest('.pogo-edit');
+  if (!cell) return;
+  const teamId = Number(cell.dataset.teamId);
+  const memberId = Number(cell.dataset.memberId);
+  const split = cell.dataset.split;
+  const current = Number(cell.dataset.current || 0);
+  if (split === '1') enterPogoSplit1Inline(teamId, memberId, current);
+  else enterPogoSplit2Inline(teamId, memberId, current);
+});
 
 function renderRelayResultsInline(race) {
   const teams = race.relay_teams || [];
@@ -805,7 +936,7 @@ function renderRelayResultsInline(race) {
           '<td class="time-cell" style="font-weight:700;background:#e8f5e9">' + (avg != null ? formatTime(avg) : '—') + '</td>';
       }
 
-      rows += '<tr><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td>' + (showStroke ? '<td>' + strokeDisplay + '</td>' : '') + (showSplits ? '<td class="time-cell">' + splitDisplay + '</td>' : '') + pogoCells + '<td class="time-cell">' + pbDisplay + '</td></tr>';
+      rows += '<tr><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td>' + (showStroke ? '<td>' + strokeDisplay + '</td>' : '') + '<td class="time-cell">' + pbDisplay + '</td>' + (showSplits ? '<td class="time-cell">' + splitDisplay + '</td>' : '') + pogoCells + '</tr>';
     }
 
     let totalTimeCell;
@@ -821,16 +952,25 @@ function renderRelayResultsInline(race) {
       varianceDisplay = '<span style="' + varStyle + '"> | Variance: ' + (team.variance >= 0 ? '+' : '') + formatTime(team.variance) + '</span>';
     }
 
-    const targetDisplay = team.target_time ? 'Target: ' + formatWhole(team.target_time) : '';
-    // BF0404-06/11: Start time prominent
+    // R7: Total = PB sum, Target = Total + Start
+    const totalPBDisplay = team.target_time ? 'Total: ' + formatWhole(team.target_time) : '';
+    const targetCalcDisplay = team.target_time ? 'Target: ' + formatWhole(team.target_time + (team.start_delay || 0)) : '';
     const startDisplay = '⏱️ Start: ' + formatWhole(team.start_delay || 0) + ' s';
-    const maxDisplay = team.max_time ? 'Max: ' + formatWhole(team.max_time) : '';
 
-    const colCount = 2 + (showStroke ? 1 : 0) + (showSplits ? 1 : 0) + (showPogoTimes ? 3 : 0) + 1;
+    // R7: Gold/Silver/Bronze for place in header
+    let placeBadge = '';
+    if (team.place === 1) placeBadge = '<span style="background:#FFD700;color:#333;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥇</span>';
+    else if (team.place === 2) placeBadge = '<span style="background:#C0C0C0;color:#333;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥈</span>';
+    else if (team.place === 3) placeBadge = '<span style="background:#CD7F32;color:#fff;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥉</span>';
+
+    const colCount = 2 + (showStroke ? 1 : 0) + 1 + (showSplits ? 1 : 0) + (showPogoTimes ? 3 : 0);
     const headerBg = team.place ? '#e8f5e9' : '#e0f2f1';
     const totalRowStyle = 'background:#c62828;color:white;font-weight:700;font-size:16px';
+    const splitHeader = showSplits ? '<th>Result</th>' : '';
     const pogoHeaders = showPogoTimes ? '<th style="min-width:70px">T1</th><th style="min-width:70px">T2</th><th style="min-width:70px;background:#e8f5e9">Avg</th>' : '';
-    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + (targetDisplay ? targetDisplay + ' ' : '') + (maxDisplay ? '• ' + maxDisplay : '') + '</span></span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + (showStroke ? '<th>Stroke</th>' : '') + (showSplits ? '<th>Split</th>' : '') + pogoHeaders + '<th>PB</th></tr></thead><tbody>' + rows + '<tr style="' + totalRowStyle + '"><td></td><td colspan="' + (colCount - 2) + '">Team Total' + varianceDisplay + '</td>' + totalTimeCell + '</tr></tbody></table></div>';
+    // R8: Variance moved to right side of Team Total row
+    const varCell = team.variance != null ? '<td style="' + totalRowStyle + ';text-align:right;padding:8px 16px">' + (team.variance >= 0 ? '+' : '') + formatTime(team.variance) + '</td>' : '<td style="' + totalRowStyle + '">—</td>';
+    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + (totalPBDisplay ? totalPBDisplay + ' ' : '') + (targetCalcDisplay ? '• ' + targetCalcDisplay : '') + '</span></span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + (showStroke ? '<th>Stroke</th>' : '') + '<th>PB</th>' + splitHeader + pogoHeaders + '</tr></thead><tbody>' + rows + '<tr style="' + totalRowStyle + '"><td></td><td colspan="' + (colCount - 3) + '" style="text-align:right">Team Total</td>' + totalTimeCell + varCell + '</tr></tbody></table></div>';
   }
 
   return html;
@@ -879,17 +1019,21 @@ async function loadConsolidatedBreakers() {
       <h3 style="color:var(--success);margin-bottom:12px">🏆 All Breakers (Consolidated)</h3>`;
     
     for (const [groupName, items] of Object.entries(groups)) {
+      items.sort((a, b) => {
+        if (b.variance !== a.variance) return b.variance - a.variance;
+        return a.member_name.localeCompare(b.member_name);
+      });
       html += `<div style="margin-bottom:16px">
         <h4 style="color:var(--primary);margin:8px 0">${groupName}</h4>
         <table class="spreadsheet-table" style="font-size:14px"><thead><tr>
-          <th style="text-align:left">Swimmer</th><th>Previous PB</th><th>New Time</th><th>Improvement</th>
+          <th style="text-align:left">Swimmer</th><th>Previous PB</th><th>New Time</th><th>Variance</th>
         </tr></thead><tbody>`;
       items.forEach(b => {
         html += `<tr>
           <td style="text-align:left;font-weight:600">${b.member_name}</td>
           <td>${formatTime(b.old_pb)}</td>
           <td style="font-weight:700;color:var(--success)">${formatTime(b.new_time)}</td>
-          <td style="font-weight:700;color:var(--success)">-${formatTime(b.improvement)}</td>
+          <td style="font-weight:700;color:var(--success)">-${formatTime(b.variance != null ? b.variance : b.improvement)}</td>
         </tr>`;
       });
       html += '</tbody></table></div>';
