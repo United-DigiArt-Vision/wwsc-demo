@@ -189,9 +189,8 @@ function renderBreakersSection(race) {
   // R10: Unified report table format
   const raceLabel = RACE_LABELS[race.race_type] || race.race_type;
   let rows = breakers.map((b, i) => {
-    const medal = i === 0 ? '🏆 ' : '';
     return `<tr style="background:${i % 2 === 0 ? '#e8f5e9' : '#f1f8e9'}">
-      <td style="padding:8px 12px;font-weight:${i === 0 ? '700' : '400'}">${medal}${b.name}</td>
+      <td style="padding:8px 12px;font-weight:600">${b.name}</td>
       <td style="padding:8px 12px;text-align:center">${raceLabel} - Heat ${b.heat}</td>
       <td style="padding:8px 12px;text-align:center">${formatWhole(b.pb)}</td>
       <td style="padding:8px 12px;text-align:center;font-weight:700">${formatTime(b.newTime)}</td>
