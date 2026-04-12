@@ -816,6 +816,15 @@ app.get('/api/reports/breakers', (req, res) => {
         variance: improvement != null ? Math.abs(improvement) : null
       };
     });
+    // Sort: date DESC, then strongest variance first, then name for deterministic tie-break
+    result.sort((a, b) => {
+      const dateCmp = (b.event_date || '').localeCompare(a.event_date || '');
+      if (dateCmp !== 0) return dateCmp;
+      const varA = a.variance ?? 0;
+      const varB = b.variance ?? 0;
+      if (varB !== varA) return varB - varA; // largest absolute variance first
+      return (a.member_name || '').localeCompare(b.member_name || '');
+    });
     res.json(result);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
