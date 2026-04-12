@@ -12,10 +12,10 @@
 ---
 
 ## 2026-04-12 — fix: Pogo Results table layout + numpad guard + auto-recalc
-- **Timestamp:** 2026-04-12 21:30:00
+- **Timestamp:** 2026-04-12 13:20:00
 - **App Version (from package.json):** 2.8.0
 - **Branch:** dev/v2.8.0-bryan-feedback
-- **Commit:** 0bf51fe
+- **Commit:** d57e781
 - **Editor:** Claude Code
 - **Changes:**
   - results.js: Pogo table uses table-layout:fixed with colgroup + overflow-x:auto so all 10 columns (Swimmer|PB|Start|Exp.F|Total|Tgt|T1|T2|Result|Var.) fit without horizontal scroll
