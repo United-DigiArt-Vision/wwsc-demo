@@ -935,7 +935,7 @@ function renderRelayResultsInline(race) {
           '<td class="time-cell" style="font-weight:700;background:#e8f5e9">' + (avg != null ? formatTime(avg) : '—') + '</td>';
       }
 
-      rows += '<tr><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td>' + (showStroke ? '<td>' + strokeDisplay + '</td>' : '') + (showSplits ? '<td class="time-cell">' + splitDisplay + '</td>' : '') + pogoCells + '<td class="time-cell">' + pbDisplay + '</td></tr>';
+      rows += '<tr><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td>' + (showStroke ? '<td>' + strokeDisplay + '</td>' : '') + '<td class="time-cell">' + pbDisplay + '</td>' + (showSplits ? '<td class="time-cell">' + splitDisplay + '</td>' : '') + pogoCells + '</tr>';
     }
 
     let totalTimeCell;
@@ -962,13 +962,14 @@ function renderRelayResultsInline(race) {
     else if (team.place === 2) placeBadge = '<span style="background:#C0C0C0;color:#333;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥈</span>';
     else if (team.place === 3) placeBadge = '<span style="background:#CD7F32;color:#fff;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px">🥉</span>';
 
-    const colCount = 2 + (showStroke ? 1 : 0) + (showSplits ? 1 : 0) + (showPogoTimes ? 3 : 0) + 1;
+    const colCount = 2 + (showStroke ? 1 : 0) + 1 + (showSplits ? 1 : 0) + (showPogoTimes ? 3 : 0);
     const headerBg = team.place ? '#e8f5e9' : '#e0f2f1';
     const totalRowStyle = 'background:#c62828;color:white;font-weight:700;font-size:16px';
+    const splitHeader = showSplits ? '<th>Result</th>' : '';
     const pogoHeaders = showPogoTimes ? '<th style="min-width:70px">T1</th><th style="min-width:70px">T2</th><th style="min-width:70px;background:#e8f5e9">Avg</th>' : '';
     // R8: Variance moved to right side of Team Total row
     const varCell = team.variance != null ? '<td style="' + totalRowStyle + ';text-align:right;padding:8px 16px">' + (team.variance >= 0 ? '+' : '') + formatTime(team.variance) + '</td>' : '<td style="' + totalRowStyle + '">—</td>';
-    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + (totalPBDisplay ? totalPBDisplay + ' ' : '') + (targetCalcDisplay ? '• ' + targetCalcDisplay : '') + '</span></span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + (showStroke ? '<th>Stroke</th>' : '') + pogoHeaders + '<th>PB</th></tr></thead><tbody>' + rows + '<tr style="' + totalRowStyle + '"><td></td><td colspan="' + (colCount - 3) + '" style="text-align:right">Team Total</td>' + totalTimeCell + varCell + '</tr></tbody></table></div>';
+    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + (totalPBDisplay ? totalPBDisplay + ' ' : '') + (targetCalcDisplay ? '• ' + targetCalcDisplay : '') + '</span></span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + (showStroke ? '<th>Stroke</th>' : '') + '<th>PB</th>' + splitHeader + pogoHeaders + '</tr></thead><tbody>' + rows + '<tr style="' + totalRowStyle + '"><td></td><td colspan="' + (colCount - 3) + '" style="text-align:right">Team Total</td>' + totalTimeCell + varCell + '</tr></tbody></table></div>';
   }
 
   return html;
