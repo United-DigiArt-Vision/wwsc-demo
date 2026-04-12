@@ -9,9 +9,11 @@ function showNumpad(currentValue, onConfirm) {
     hideModal();
   }
 
-  let value = (currentValue === 0 || currentValue) ? currentValue : '';
-  if (typeof value === 'number') value = formatTime(value);
-  value = String(value);
+  // For re-editing (currentValue > 0): start with empty input so user types fresh.
+  // Show old value as reference label above the input.
+  const isReEdit = (typeof currentValue === 'number' && currentValue > 0);
+  const oldLabel = isReEdit ? formatTime(currentValue) : '';
+  let value = '';
   overlay.classList.remove('hidden');
 
   function displayValue(raw) {
@@ -22,8 +24,10 @@ function showNumpad(currentValue, onConfirm) {
   }
 
   function render() {
+    const oldHint = oldLabel ? `<div style="font-size:13px;color:var(--text-secondary);text-align:center;margin-bottom:4px">was: ${oldLabel}s</div>` : '';
     overlay.innerHTML = `
       <div class="modal" style="max-width:340px">
+        ${oldHint}
         <div style="font-size:36px;font-weight:700;text-align:center;padding:16px;background:var(--bg);border-radius:var(--radius);margin-bottom:16px;min-height:60px">${displayValue(value)}<span style="font-size:18px;color:var(--text-secondary)">s</span></div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
           ${[1,2,3,4,5,6,7,8,9,'.',0,'⌫'].map(k => `

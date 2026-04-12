@@ -1,20 +1,20 @@
 # CURRENT_STATE
 
 **Version (from `package.json`):** 2.8.0
-**Base Branch:** main
-**Base Commit:** 15275df
-**Target Branch:** dev/v2.8.0-bryan-feedback
-**LastCommit:** d57e781
+**BaseBranch:** main
+**BaseCommit:** 15275df
+**TargetBranch:** dev/v2.8.0-bryan-feedback
+**RecordedCommit:** PENDING
 **LastEditor:** Claude Code
 **Date:** 2026-04-12
-**Timestamp:** 2026-04-12 13:20:00
+**Timestamp:** 2026-04-12 13:40:00
+**WorkingTreeStatus:** clean
+**ModifiedFiles:** —
 **Version SSOT:** `package.json`
 **Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.0`
 
 ## Rules
 - `package.json` is the only SSOT for semantic version numbers.
-- `CURRENT_STATE.md` is the SSOT for current branch / commit / codebase context.
-- Before marking work as done, `git rev-parse HEAD` MUST match `Last Commit` above.
-- If version changes, `package.json`, cache-busting in `src/public/index.html`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, and release anchors MUST stay in sync.
-- SR-VERSION-002: `CURRENT_STATE.md` must show the absolute HEAD.
-- SR-VERSION-003: The final SSOT completion commit is the terminating end-state; no further sync commit is required after it.
+- `CURRENT_STATE.md` records the last documented commit anchor plus working tree state.
+- `version/CHANGELOG.md` must reflect the same RecordedCommit / Branch / Version.
+- If version changes, `package.json`, cache-busting in `src/public/index.html`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, and release anchors must stay in sync.
