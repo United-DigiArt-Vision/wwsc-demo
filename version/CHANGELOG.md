@@ -11,6 +11,14 @@
 
 ---
 
+## 2026-04-12 — fix: remove trophy icon from first breaker row
+- **Timestamp:** 2026-04-12 18:29:43
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **RecordedCommit:** 6de1c2f
+- **Editor:** Balerion
+- **Changes:** Removed the trophy icon from the first Breakers report row so the swimmer names align consistently and the table looks cleaner.
+
 ## 2026-04-12 — fix: improve exceeding report row separation
 - **Timestamp:** 2026-04-12 18:23:01
 - **App Version (from package.json):** 2.8.0
@@ -18,11 +26,3 @@
 - **RecordedCommit:** 2578ef3
 - **Editor:** Balerion
 - **Changes:** Improved the Exceeding Report table readability with stronger row separation, cell padding, bottom borders, and alternating row backgrounds to match the Breakers report more closely.
-
-## 2026-04-12 — fix: harmonize exceeding report layout with breakers
-- **Timestamp:** 2026-04-12 18:16:54
-- **App Version (from package.json):** 2.8.0
-- **Branch:** dev/v2.8.0-bryan-feedback
-- **RecordedCommit:** 1b2f4ce
-- **Editor:** Balerion
-- **Changes:** Reworked the Exceeding Report block to match the Breakers-style card layout more closely: single integrated header, cleaner spacing, aligned report table, and less visually fragmented structure.
