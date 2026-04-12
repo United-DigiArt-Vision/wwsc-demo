@@ -297,8 +297,9 @@ function renderBraceTeamsInHB(teams, race) {
     const members = team.members || [];
     const names = members.map(m => m.name).join(' + ');
     const pbs = members.map(m => formatWhole(getPBForRelayHB(m, race.race_type))).join(' + ');
-    const targetDisplay = formatWhole(team.target_time);
+    const totalDisplay = formatWhole(team.target_time);
     const startDisplay = formatWhole(team.start_delay || 0);
+    const targetDisplay = formatWhole((team.target_time || 0) + (team.start_delay || 0));
     const placeDisplay = team.place ? ordinalRelay(team.place) : '—';
     const placeStyle = team.place ? 'color:#e53935;font-weight:700' : '';
 
@@ -315,9 +316,9 @@ function renderBraceTeamsInHB(teams, race) {
       '<td>' + team.team_number + '</td>' +
       '<td class="name-cell">' + names + '</td>' +
       '<td>' + pbs + '</td>' +
-      '<td>' + targetDisplay + '</td>' +
+      '<td>' + totalDisplay + '</td>' +
       '<td style="font-weight:700;color:var(--accent)">+' + startDisplay + '</td>' +
-      totalCell +
+      '<td>' + targetDisplay + '</td>' +
       '<td>' + varDisplay + '</td>' +
       '<td style="' + placeStyle + '">' + placeDisplay + '</td>' +
       '</tr>';
