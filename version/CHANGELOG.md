@@ -13,9 +13,16 @@
 ## 2026-04-12 — docs: finalize version ssot state
 - **App Version (from package.json):** 2.8.0
 - **Branch:** dev/v2.8.0-bryan-feedback
-- **Commit:** TO_BE_FINALIZED
+- **Commit:** f755d7b
 - **Editor:** Balerion
 - **Changes:** Final SSOT completion commit according to SR-VERSION-003. Current state and changelog aligned to the absolute HEAD without requiring another sync commit.
+
+## 2026-04-12 — feat: add expected finish column to pogo results
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **Commit:** 734eaf1
+- **Editor:** Balerion
+- **Changes:** Added `Exp. Finish` column to Pogo results table so users can see expected target time (`PB + Start`) next to Result and Variance.
 
 ## 2026-04-12 — docs: sync version changelog with HEAD history
 - **App Version (from package.json):** 2.8.0
