@@ -3,11 +3,6 @@
  * On confirm, sends parseTime(value) — centiseconds integer.
  */
 function showNumpad(currentValue, onConfirm) {
-  // Reset any previous numpad instance to avoid stale key handlers / closures
-  if (typeof window.hideModal === 'function') {
-    try { window.hideModal(); } catch (_) {}
-  }
-
   let value = (currentValue === 0 || currentValue) ? currentValue : '';
   if (typeof value === 'number') value = formatTime(value);
   value = String(value);
@@ -49,6 +44,7 @@ function showNumpad(currentValue, onConfirm) {
   window.hideModal = () => {
     document.removeEventListener('keydown', keyHandler);
     window.hideModal = originalHideModal;
+    delete window.numpadKey;
     originalHideModal();
   };
 
