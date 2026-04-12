@@ -804,17 +804,20 @@ function renderPogoResultsInline(race) {
       const t1 = m.split_time;
       const t2 = m.split_time_2;
       const avg = (t1 != null && t2 != null) ? Math.round((t1 + t2) / 2) : null;
+      // Calculate individual variance based on PB + start_delay vs avg time
+      const targetTimeCs = (getRelayPBForResults(m, race.race_type) + (team.start_delay || 0)) * 100;
+      const indVariance = (avg != null && targetTimeCs) ? (avg - targetTimeCs) : null;
 
       let t1Cell, t2Cell;
       if (!resFinalized) {
-        t1Cell = '<td class="time-input" onclick="enterRelaySplit(' + team.id + ', ' + m.member_id + ', ' + (t1 || 0) + ')" style="cursor:pointer;font-weight:700">' + (t1 != null ? formatTime(t1) : '⏱️ T1') + '</td>';
+        t1Cell = '<td class="time-input" onclick="enterPogoSplit1Inline(' + team.id + ', ' + m.member_id + ', ' + (t1 || 0) + ')" style="cursor:pointer;font-weight:700">' + (t1 != null ? formatTime(t1) : '⏱️ T1') + '</td>';
         t2Cell = '<td class="time-input" onclick="enterPogoSplit2Inline(' + team.id + ', ' + m.member_id + ', ' + (t2 || 0) + ')" style="cursor:pointer;font-weight:700">' + (t2 != null ? formatTime(t2) : '⏱️ T2') + '</td>';
       } else {
         t1Cell = '<td>' + (t1 != null ? formatTime(t1) : '—') + '</td>';
         t2Cell = '<td>' + (t2 != null ? formatTime(t2) : '—') + '</td>';
       }
 
-      rows += '<tr><td class="name-cell">' + m.name + '</td><td>' + pb + '</td><td>' + formatWhole(team.start_delay || 0) + '</td><td>' + formatWhole(team.target_time) + '</td>' + t1Cell + t2Cell + '<td style="font-weight:700;background:#e8f5e9">' + (avg != null ? formatTime(avg) : '—') + '</td><td>' + (team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—') + '</td></tr>';
+      rows += '<tr><td class="name-cell">' + m.name + '</td><td>' + pb + '</td><td>' + formatWhole(team.start_delay || 0) + '</td><td>' + formatWhole(team.target_time) + '</td>' + t1Cell + t2Cell + '<td style="font-weight:700;background:#e8f5e9">' + (avg != null ? formatTime(avg) : '—') + '</td><td>' + (indVariance != null ? ((indVariance >= 0 ? '+' : '') + formatTime(indVariance)) : '—') + '</td></tr>';
     }
 
     // R16: No Team Total for Pogo — time entry happens per swimmer (T1/T2)
@@ -826,7 +829,17 @@ function renderPogoResultsInline(race) {
   return html;
 }
 
-// Pogo split2 inline entry
+// Pogo split1 inline entry (T1) — must call renderResults, not drawRelays
+function enterPogoSplit1Inline(teamId, memberId, currentValue) {
+  showNumpad(currentValue || '', async (value) => {
+    if (value == null) return;
+    const result = await API.enterRelaySplit(teamId, memberId, value);
+    if (result.error) { alert('Error: ' + result.error); return; }
+    renderResults();
+  });
+}
+
+// Pogo split2 inline entry (T2)
 function enterPogoSplit2Inline(teamId, memberId, currentValue) {
   showNumpad(currentValue || '', async (value) => {
     if (value == null) return;
