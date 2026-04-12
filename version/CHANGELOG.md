@@ -11,11 +11,23 @@
 
 ---
 
+## 2026-04-12 — fix: Pogo crash investigation + defensive error handling
+- **Timestamp:** 2026-04-12 16:50:00
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **RecordedCommit:** PENDING
+- **Editor:** Claude Code
+- **Changes:**
+  - Executed exact 9-step repro sequence with real UI clicks — no crash, 0 console errors, 0 server errors
+  - results.js: Added try/catch to enterPogoSplit1Inline and enterPogoSplit2Inline async callbacks
+  - app.js: Added global window error + unhandledrejection handlers to catch and log any silent errors
+  - If crash recurs, console will now capture the error instead of silent tab close
+
 ## 2026-04-12 — fix: Numpad re-edit UX — clear on open for existing values
 - **Timestamp:** 2026-04-12 13:40:00
 - **App Version (from package.json):** 2.8.0
 - **Branch:** dev/v2.8.0-bryan-feedback
-- **RecordedCommit:** PENDING
+- **RecordedCommit:** 6cc9514
 - **Editor:** Claude Code
 - **Changes:**
   - numpad.js: When re-editing an existing T1/T2 value, the numpad now starts with empty input (0.00) and shows "was: X.XXs" as reference. Previously the old value was pre-filled with 2 decimal places, blocking further digit entry without visible backspace effect — this was the root cause of the re-edit bug.

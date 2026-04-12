@@ -25,6 +25,14 @@ function navigate(path) {
   if (renderFn) renderFn(param);
 }
 
+// Global error handlers — catch unhandled errors to prevent silent tab crashes
+window.addEventListener('error', (e) => {
+  console.error('WWSC unhandled error:', e.message, e.filename, e.lineno);
+});
+window.addEventListener('unhandledrejection', (e) => {
+  console.error('WWSC unhandled rejection:', e.reason);
+});
+
 // Initial load
 document.addEventListener('DOMContentLoaded', () => {
   const hash = window.location.hash.slice(2);

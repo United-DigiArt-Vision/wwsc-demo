@@ -848,20 +848,24 @@ function renderPogoResultsInline(race) {
 // Pogo split1 inline entry (T1) — must call renderResults, not drawRelays
 function enterPogoSplit1Inline(teamId, memberId, currentValue) {
   showNumpad(currentValue || '', async (value) => {
-    if (value == null) return;
-    const result = await API.enterRelaySplit(teamId, memberId, value);
-    if (result.error) { alert('Error: ' + result.error); return; }
-    renderResults();
+    try {
+      if (value == null) return;
+      const result = await API.enterRelaySplit(teamId, memberId, value);
+      if (result.error) { alert('Error: ' + result.error); return; }
+      renderResults();
+    } catch (err) { console.error('Pogo T1 save error:', err); }
   });
 }
 
 // Pogo split2 inline entry (T2)
 function enterPogoSplit2Inline(teamId, memberId, currentValue) {
   showNumpad(currentValue || '', async (value) => {
-    if (value == null) return;
-    const result = await API.enterRelaySplit2(teamId, memberId, value);
-    if (result.error) { alert('Error: ' + result.error); return; }
-    renderResults();
+    try {
+      if (value == null) return;
+      const result = await API.enterRelaySplit2(teamId, memberId, value);
+      if (result.error) { alert('Error: ' + result.error); return; }
+      renderResults();
+    } catch (err) { console.error('Pogo T2 save error:', err); }
   });
 }
 
