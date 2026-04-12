@@ -155,9 +155,9 @@ function drawResults() {
   `;
 
   // Load slow swimmers + consolidated breakers async
-  // BF2.6-16: Only show slow swimmers for individual races, not relays
+  // Exceeding report is needed for relevant races on Results page as well
   if (resFinalized || anyTimesEntered) {
-    if (!isRelay) loadSlowSwimmers();
+    loadSlowSwimmers();
     // R11: Consolidated report removed from Results page
   }
 }
