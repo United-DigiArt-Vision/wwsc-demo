@@ -76,10 +76,13 @@ Conventional Commits nutzen:
 - **Entwickler**: Dino / United DigiArt Vision
 
 ## Versioning & Changelog (SSOT) - PFLICHT
-**Single Source of Truth:** `version/CURRENT_STATE.md` und `version/CHANGELOG.md`
-1. **Zwingend bei jeder Code-Änderung:** Du MUSST `version/CURRENT_STATE.md` mit dem neuen Commit Hash, der Version und deinem Namen aktualisieren.
-2. **Historie:** Du MUSST deine Änderungen in `version/CHANGELOG.md` loggen (Datum, Name, Commit Hash, was wurde geändert).
-3. **Abschluss:** Melde NIEMALS "Fertig", bevor diese beiden Dateien aktualisiert und committet wurden. Deine Arbeit wird abgelehnt, wenn `git rev-parse HEAD` nicht mit `version/CURRENT_STATE.md` übereinstimmt.
+**Semantic Version SSOT:** `package.json`
+**Code-State SSOT:** `version/CURRENT_STATE.md`
+**History SSOT:** `version/CHANGELOG.md`
 
-4. **Cache-Busting & Version Sync:** 
-   If you bump the version, you MUST update `package.json` AND update the `?v=X.Y.Z` query string on all `<script>` and `<link>` tags in `src/public/index.html`.
+1. **Zwingend bei jeder Code-Änderung:** Du MUSST `version/CURRENT_STATE.md` mit dem neuen Commit Hash, Branch-Kontext, Datum und deinem Namen aktualisieren.
+2. **Historie:** Du MUSST deine Änderungen in `version/CHANGELOG.md` loggen (Datum, Name, Commit Hash, was wurde geändert).
+3. **Version-Bump-Regel:** Wenn du einen neuen Feature-Branch startest, MUSS dein ERSTER Commit der Version-Bump in `package.json` sein.
+4. **Cache-Busting & Version Sync:** Wenn du die Version bumpst, MUSST du `package.json` UND den `?v=X.Y.Z` Query String auf allen `<script>` und `<link>` Tags in `src/public/index.html` aktualisieren.
+5. **Release-Anker synchron halten:** Wenn ein Release / eine Lieferung vorbereitet wird, prüfe Konsistenz zwischen `package.json`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `STABLE.md`, `/api/version` und Git Tag.
+6. **Abschluss:** Melde NIEMALS "Fertig", bevor diese Dateien aktualisiert und committet wurden. Deine Arbeit wird abgelehnt, wenn `git rev-parse HEAD` nicht mit `version/CURRENT_STATE.md` übereinstimmt.
