@@ -11,6 +11,14 @@
 
 ---
 
+## 2026-04-12 — fix: reset stale numpad handlers before reopening
+- **Timestamp:** 2026-04-12 12:27:00
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **Commit:** 60e502b
+- **Editor:** Balerion
+- **Changes:** Fixed stale numpad state by closing any previous numpad instance before opening a new one, so existing T1/T2 values can be edited again.
+
 ## 2026-04-12 — docs: finalize version ssot state
 - **Timestamp:** 2026-04-12 11:39:30
 - **App Version (from package.json):** 2.8.0
