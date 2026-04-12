@@ -459,10 +459,12 @@ async function loadSlowSwimmers() {
     `).join('');
 
     section.innerHTML = `
-      <h3 style="margin-top:20px;color:#e65100">⚠️ Swimmers Exceeding PB by >2 seconds</h3>
-      <p style="margin:8px 0;font-size:13px;color:var(--text-secondary)">These swimmers may need their PB times adjusted up. Times are NOT auto-adjusted.</p>
-      <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:1px solid #ffcc80">
-        <div style="background:#e65100;color:white;padding:10px 16px;font-weight:700">Exceeding Report — ${slow.length} swimmer${slow.length !== 1 ? 's' : ''}</div>
+      <div class="card" style="margin-top:20px;margin-bottom:16px;padding:0;overflow:hidden;border:2px solid #ffcc80">
+        <div style="background:#e65100;color:white;padding:10px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <strong style="font-size:1.1em">⚠️ Exceeding Report — ${slow.length} swimmer${slow.length !== 1 ? 's' : ''}</strong>
+          <span style="font-size:12px;font-weight:400;opacity:0.95">More than 2 seconds over PB</span>
+        </div>
+        <div style="padding:10px 16px;font-size:13px;color:var(--text-secondary);background:#fff8f1;border-bottom:1px solid #ffe0b2">These swimmers may need their PB times adjusted up. Times are NOT auto-updated.</div>
         <div style="overflow-x:auto">
           <table class="report-table" style="width:100%;border-collapse:collapse;table-layout:fixed">
             <thead>
@@ -477,7 +479,7 @@ async function loadSlowSwimmers() {
             <tbody>${slowRows}</tbody>
           </table>
         </div>
-        <div style="padding:10px 16px;font-size:12px;color:#999;background:#fff3e0">ℹ️ To update a PB: Members → select swimmer → edit time.</div>
+        <div style="padding:10px 16px;font-size:12px;color:#8d6e63;background:#fff3e0">ℹ️ To update a PB: Members → select swimmer → edit time.</div>
       </div>
     `;
   } catch (e) {

@@ -11,6 +11,14 @@
 
 ---
 
+## 2026-04-12 — fix: restore exceeding report on results page
+- **Timestamp:** 2026-04-12 18:09:56
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **RecordedCommit:** 697bf93
+- **Editor:** Balerion
+- **Changes:** Restored the exceeding report (>2 seconds over PB) on the Results page for relevant races, using the same async load path again instead of suppressing it.
+
 ## 2026-04-12 — fix: calculate heat builder target as total plus start delay
 - **Timestamp:** 2026-04-12 17:58:56
 - **App Version (from package.json):** 2.8.0
@@ -18,11 +26,3 @@
 - **RecordedCommit:** e2f0f5c
 - **Editor:** Balerion
 - **Changes:** Corrected Heat Builder target calculation so `Target = Total + Start Delay` instead of incorrectly reusing the Total value.
-
-## 2026-04-12 — fix: align heat builder total/target naming with results
-- **Timestamp:** 2026-04-12 17:52:08
-- **App Version (from package.json):** 2.8.0
-- **Branch:** dev/v2.8.0-bryan-feedback
-- **RecordedCommit:** cd0e195
-- **Editor:** Balerion
-- **Changes:** Updated Heat Builder naming and calculations so `Total` = PB sum, `Start Delay` stays separate, and `Target` = Total + Start Delay, matching the Results page.
