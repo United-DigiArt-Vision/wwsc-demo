@@ -184,7 +184,7 @@ function renderBreakersSection(race) {
 
   if (breakers.length === 0) return '';
 
-  breakers.sort((a, b) => b.improvement - a.improvement);
+  breakers.sort((a, b) => b.variance - a.variance);
 
   // R10: Unified report table format
   const raceLabel = RACE_LABELS[race.race_type] || race.race_type;
@@ -194,7 +194,7 @@ function renderBreakersSection(race) {
       <td style="padding:8px 12px;text-align:center">${raceLabel} - Heat ${b.heat}</td>
       <td style="padding:8px 12px;text-align:center">${formatWhole(b.pb)}</td>
       <td style="padding:8px 12px;text-align:center;font-weight:700">${formatTime(b.newTime)}</td>
-      <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">-${formatTime(b.improvement)}</td>
+      <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">-${formatTime(b.variance != null ? b.variance : b.improvement)}</td>
     </tr>`;
   }).join('');
 
@@ -1023,14 +1023,14 @@ async function loadConsolidatedBreakers() {
       html += `<div style="margin-bottom:16px">
         <h4 style="color:var(--primary);margin:8px 0">${groupName}</h4>
         <table class="spreadsheet-table" style="font-size:14px"><thead><tr>
-          <th style="text-align:left">Swimmer</th><th>Previous PB</th><th>New Time</th><th>Improvement</th>
+          <th style="text-align:left">Swimmer</th><th>Previous PB</th><th>New Time</th><th>Variance</th>
         </tr></thead><tbody>`;
       items.forEach(b => {
         html += `<tr>
           <td style="text-align:left;font-weight:600">${b.member_name}</td>
           <td>${formatTime(b.old_pb)}</td>
           <td style="font-weight:700;color:var(--success)">${formatTime(b.new_time)}</td>
-          <td style="font-weight:700;color:var(--success)">-${formatTime(b.improvement)}</td>
+          <td style="font-weight:700;color:var(--success)">-${formatTime(b.variance != null ? b.variance : b.improvement)}</td>
         </tr>`;
       });
       html += '</tbody></table></div>';

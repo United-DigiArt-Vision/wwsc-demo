@@ -11,6 +11,14 @@
 
 ---
 
+## 2026-04-12 — fix: expose breaker variance for correct report sorting
+- **Timestamp:** 2026-04-12 18:52:01
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **RecordedCommit:** d92ce1d
+- **Editor:** Balerion
+- **Changes:** Extended `/api/reports/breakers` to include `variance`, so the Breaker Report page can actually sort by variance descending instead of sorting on a missing field.
+
 ## 2026-04-12 — fix: sort breaker report by variance descending
 - **Timestamp:** 2026-04-12 18:39:06
 - **App Version (from package.json):** 2.8.0
@@ -18,11 +26,3 @@
 - **RecordedCommit:** 2fe7250
 - **Editor:** Balerion
 - **Changes:** Changed Breaker Report sorting to use `variance` descending exactly as requested, instead of sorting by improvement.
-
-## 2026-04-12 — fix: sort consolidated breakers by improvement descending
-- **Timestamp:** 2026-04-12 18:35:14
-- **App Version (from package.json):** 2.8.0
-- **Branch:** dev/v2.8.0-bryan-feedback
-- **RecordedCommit:** 795ca96
-- **Editor:** Balerion
-- **Changes:** Sorted the Breaker Report page within each group by highest improvement first, so the swimmer with the strongest variance/improvement appears at the top.
