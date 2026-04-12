@@ -17,6 +17,13 @@
 - **Editor:** Balerion
 - **Changes:** Final SSOT completion commit according to SR-VERSION-003. Current state and changelog aligned to the absolute HEAD without requiring another sync commit.
 
+## 2026-04-12 — docs: enforce mandatory post-commit version workflow
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **Commit:** 8109830
+- **Editor:** Balerion
+- **Changes:** Hardened the rules so no one may report work as done before `version/CHANGELOG.md`, `version/CURRENT_STATE.md`, and the final SSOT completion commit are completed.
+
 ## 2026-04-12 — feat: add expected finish column to pogo results
 - **App Version (from package.json):** 2.8.0
 - **Branch:** dev/v2.8.0-bryan-feedback
