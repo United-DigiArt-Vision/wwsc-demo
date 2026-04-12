@@ -812,15 +812,15 @@ function renderPogoResultsInline(race) {
 
       let t1Cell, t2Cell;
       if (!resFinalized) {
-        t1Cell = '<td class="time-input" onclick="enterPogoSplit1Inline(' + team.id + ', ' + m.member_id + ', ' + (t1 || 0) + ')" style="cursor:pointer;font-weight:700">' + (t1 != null ? formatTime(t1) : '⏱️ T1') + '</td>';
-        t2Cell = '<td class="time-input" onclick="enterPogoSplit2Inline(' + team.id + ', ' + m.member_id + ', ' + (t2 || 0) + ')" style="cursor:pointer;font-weight:700">' + (t2 != null ? formatTime(t2) : '⏱️ T2') + '</td>';
+        t1Cell = '<td class="time-input pogo-edit" data-team-id="' + team.id + '" data-member-id="' + m.member_id + '" data-split="1" data-current="' + (t1 || 0) + '" style="cursor:pointer;font-weight:700">' + (t1 != null ? formatTime(t1) : '⏱️ T1') + '</td>';
+        t2Cell = '<td class="time-input pogo-edit" data-team-id="' + team.id + '" data-member-id="' + m.member_id + '" data-split="2" data-current="' + (t2 || 0) + '" style="cursor:pointer;font-weight:700">' + (t2 != null ? formatTime(t2) : '⏱️ T2') + '</td>';
       } else {
         t1Cell = '<td>' + (t1 != null ? formatTime(t1) : '—') + '</td>';
         t2Cell = '<td>' + (t2 != null ? formatTime(t2) : '—') + '</td>';
       }
 
       const targetDisplay = team.target_time != null ? formatWhole(team.target_time + (team.start_delay || 0)) : '—';
-      const resultCell = '<td style="font-weight:700;background:#e8f5e9">' + (avg != null ? formatTime(avg) : '—') + '</td>';
+      const resultCell = '<td class="result-cell" style="font-weight:700;background:#e8f5e9;color:#111">' + (avg != null ? formatTime(avg) : '—') + '</td>';
       const varianceCell = '<td>' + (indVariance != null ? ((indVariance >= 0 ? '+' : '') + formatTime(indVariance)) : '—') + '</td>';
       rows += '<tr>'
         + '<td class="name-cell">' + m.name + '</td>'
@@ -864,6 +864,17 @@ function enterPogoSplit2Inline(teamId, memberId, currentValue) {
     renderResults();
   });
 }
+
+document.addEventListener('click', (e) => {
+  const cell = e.target.closest('.pogo-edit');
+  if (!cell) return;
+  const teamId = Number(cell.dataset.teamId);
+  const memberId = Number(cell.dataset.memberId);
+  const split = cell.dataset.split;
+  const current = Number(cell.dataset.current || 0);
+  if (split === '1') enterPogoSplit1Inline(teamId, memberId, current);
+  else enterPogoSplit2Inline(teamId, memberId, current);
+});
 
 function renderRelayResultsInline(race) {
   const teams = race.relay_teams || [];
