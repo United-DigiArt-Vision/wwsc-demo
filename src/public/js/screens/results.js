@@ -819,13 +819,13 @@ function renderPogoResultsInline(race) {
         t2Cell = '<td>' + (t2 != null ? formatTime(t2) : '—') + '</td>';
       }
 
-      rows += '<tr><td class="name-cell">' + m.name + '</td><td>' + pb + '</td><td>' + formatWhole(team.start_delay || 0) + '</td><td>' + (expectedFinishSecs != null ? formatWhole(expectedFinishSecs) : '—') + '</td><td>' + formatWhole(team.target_time) + '</td>' + t1Cell + t2Cell + '<td style="font-weight:700;background:#e8f5e9">' + (avg != null ? formatTime(avg) : '—') + '</td><td>' + (indVariance != null ? ((indVariance >= 0 ? '+' : '') + formatTime(indVariance)) : '—') + '</td></tr>';
+      rows += '<tr><td class="name-cell">' + m.name + '</td><td>' + pb + '</td><td>' + formatWhole(team.start_delay || 0) + '</td><td>' + (expectedFinishSecs != null ? formatWhole(expectedFinishSecs) : '—') + '</td><td>' + formatWhole(team.target_time) + '</td><td>' + (team.target_time != null ? formatWhole(team.target_time + (team.start_delay || 0)) : '—') + '</td>' + t1Cell + t2Cell + '<td style="font-weight:700;background:#e8f5e9">' + (avg != null ? formatTime(avg) : '—') + '</td><td>' + (indVariance != null ? ((indVariance >= 0 ? '+' : '') + formatTime(indVariance)) : '—') + '</td></tr>';
     }
 
     // R16: No Team Total for Pogo — time entry happens per swimmer (T1/T2)
     const headerBg = team.place ? '#e8f5e9' : '#e0f2f1';
     html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + totalPB + ' • ' + targetCalc + '</span></span></div>' +
-      '<table class="spreadsheet-table" style="margin:0"><thead><tr><th style="text-align:left;min-width:140px">Swimmer</th><th>PB</th><th>Start</th><th>Exp. Finish</th><th>Total</th><th style="min-width:70px">T1</th><th style="min-width:70px">T2</th><th style="min-width:70px;background:#e8f5e9">Result</th><th>Variance</th></tr></thead><tbody>' + rows +
+      '<table class="spreadsheet-table" style="margin:0"><thead><tr><th style="text-align:left;min-width:140px">Swimmer</th><th>PB</th><th>Start</th><th>Exp. Finish</th><th>Total</th><th>Target</th><th style="min-width:70px">T1</th><th style="min-width:70px">T2</th><th style="min-width:70px;background:#e8f5e9">Result</th><th>Variance</th></tr></thead><tbody>' + rows +
       '</tbody></table></div>'; // R16: No Team Total footer for Pogo
   }
   return html;

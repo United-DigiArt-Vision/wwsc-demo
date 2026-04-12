@@ -22,9 +22,9 @@ function showNumpad(currentValue, onConfirm) {
         <div style="font-size:36px;font-weight:700;text-align:center;padding:16px;background:var(--bg);border-radius:var(--radius);margin-bottom:16px;min-height:60px">${displayValue(value)}<span style="font-size:18px;color:var(--text-secondary)">s</span></div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
           ${[1,2,3,4,5,6,7,8,9,'.',0,'⌫'].map(k => `
-            <button class="btn btn-outline" style="font-size:24px;min-height:60px" onclick="numpadKey('${k}')">${k}</button>
+            <button type="button" class="btn btn-outline" data-numpad-key="${k}" style="font-size:24px;min-height:60px">${k}</button>
           `).join('')}
-          <button class="btn btn-success" style="grid-column: span 3; font-size:24px;min-height:60px;margin-top:8px" onclick="numpadKey('✓')">OK ✓</button>
+          <button type="button" class="btn btn-success" data-numpad-key="✓" style="grid-column: span 3; font-size:24px;min-height:60px;margin-top:8px">OK ✓</button>
         </div>
       </div>
     `;
@@ -40,9 +40,19 @@ function showNumpad(currentValue, onConfirm) {
 
   document.addEventListener('keydown', keyHandler);
 
+  const clickHandler = (e) => {
+    const btn = e.target.closest('[data-numpad-key]');
+    if (!btn) return;
+    e.preventDefault();
+    const key = btn.getAttribute('data-numpad-key');
+    window.numpadKey(key);
+  };
+  overlay.addEventListener('click', clickHandler);
+
   const originalHideModal = window.hideModal;
   window.hideModal = () => {
     document.removeEventListener('keydown', keyHandler);
+    overlay.removeEventListener('click', clickHandler);
     window.hideModal = originalHideModal;
     delete window.numpadKey;
     originalHideModal();
