@@ -10,6 +10,20 @@
 
 ---
 
+## 2026-04-12 — docs: sync current state with latest versioning commit
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **Commit:** 71511ad
+- **Editor:** Balerion
+- **Changes:** Synced `version/CURRENT_STATE.md` to the absolute HEAD commit after versioning-documentation updates.
+
+## 2026-04-12 — docs: enforce consistent version changelog schema
+- **App Version (from package.json):** 2.8.0
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **Commit:** 96c1e94
+- **Editor:** Balerion
+- **Changes:** Standardized `version/CHANGELOG.md` schema with mandatory fields and strengthened `CLAUDE.md` consistency rules for CURRENT_STATE vs CHANGELOG.
+
 ## 2026-04-12 — docs: align versioning SSOT with V0014
 - **App Version (from package.json):** 2.8.0
 - **Branch:** dev/v2.8.0-bryan-feedback
