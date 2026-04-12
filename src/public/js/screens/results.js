@@ -819,7 +819,21 @@ function renderPogoResultsInline(race) {
         t2Cell = '<td>' + (t2 != null ? formatTime(t2) : '—') + '</td>';
       }
 
-      rows += '<tr><td class="name-cell">' + m.name + '</td><td>' + pb + '</td><td>' + formatWhole(team.start_delay || 0) + '</td><td>' + (expectedFinishSecs != null ? formatWhole(expectedFinishSecs) : '—') + '</td><td>' + formatWhole(team.target_time) + '</td><td>' + (team.target_time != null ? formatWhole(team.target_time + (team.start_delay || 0)) : '—') + '</td>' + t1Cell + t2Cell + '<td style="font-weight:700;background:#e8f5e9">' + (avg != null ? formatTime(avg) : '—') + '</td><td>' + (indVariance != null ? ((indVariance >= 0 ? '+' : '') + formatTime(indVariance)) : '—') + '</td></tr>';
+      const targetDisplay = team.target_time != null ? formatWhole(team.target_time + (team.start_delay || 0)) : '—';
+      const resultCell = '<td style="font-weight:700;background:#e8f5e9">' + (avg != null ? formatTime(avg) : '—') + '</td>';
+      const varianceCell = '<td>' + (indVariance != null ? ((indVariance >= 0 ? '+' : '') + formatTime(indVariance)) : '—') + '</td>';
+      rows += '<tr>'
+        + '<td class="name-cell">' + m.name + '</td>'
+        + '<td>' + pb + '</td>'
+        + '<td>' + formatWhole(team.start_delay || 0) + '</td>'
+        + '<td>' + (expectedFinishSecs != null ? formatWhole(expectedFinishSecs) : '—') + '</td>'
+        + '<td>' + formatWhole(team.target_time) + '</td>'
+        + '<td>' + targetDisplay + '</td>'
+        + t1Cell
+        + t2Cell
+        + resultCell
+        + varianceCell
+        + '</tr>';
     }
 
     // R16: No Team Total for Pogo — time entry happens per swimmer (T1/T2)
