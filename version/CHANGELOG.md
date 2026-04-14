@@ -11,6 +11,19 @@
 
 ---
 
+## 2026-04-14 — fix: Heat Builder print fits one page (v2.8.2)
+- **Timestamp:** 2026-04-14 13:45:00
+- **App Version (from package.json):** 2.8.2
+- **Branch:** main
+- **RecordedCommit:** PENDING
+- **Editor:** Claude Code
+- **Changes:**
+  - style.css: Overhauled @media print rules for one-page fit
+  - Root cause: 6 heats × ~175px = ~1050px exceeded A4 printable area (~1023px)
+  - Fix: @page margin 8mm, reduced cell padding (2px 4px), font 10px, card margin 4px, border 1px, line-height 1.2
+  - Result: total print height 819px — fits comfortably on A4 (1063px printable)
+  - Browser print-preview verified: all 6 heats on one page, readable B/W
+
 ## 2026-04-14 — feat: Heat Builder Print Button (v2.8.1)
 - **Timestamp:** 2026-04-14 12:00:00
 - **App Version (from package.json):** 2.8.1
