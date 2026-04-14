@@ -15,7 +15,7 @@
 - **Timestamp:** 2026-04-14 12:00:00
 - **App Version (from package.json):** 2.8.1
 - **Branch:** dev/v2.8.0-bryan-feedback
-- **RecordedCommit:** PENDING
+- **RecordedCommit:** c48c8d2
 - **Editor:** Claude Code
 - **Changes:**
   - Version bump 2.8.0 → 2.8.1 (package.json + index.html cache-busting)
