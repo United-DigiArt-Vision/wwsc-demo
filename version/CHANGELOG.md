@@ -15,7 +15,7 @@
 - **Timestamp:** 2026-04-14 13:45:00
 - **App Version (from package.json):** 2.8.2
 - **Branch:** main
-- **RecordedCommit:** PENDING
+- **RecordedCommit:** 5f0d6be
 - **Editor:** Claude Code
 - **Changes:**
   - style.css: Overhauled @media print rules for one-page fit
