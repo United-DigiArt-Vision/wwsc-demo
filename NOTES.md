@@ -23,6 +23,15 @@
    - Aktueller Verdacht: In `src/public/js/screens/results.js` wird pro Zeile dieselbe `team.variance` gerendert, statt einer schwimmerbezogenen Kennzahl.
    - Das kann fachlich korrekt als Team-Wert gemeint sein, ist dann aber UX-seitig irreführend; oder es ist ein echter Anzeige-Bug. Beides ist offen.
 
+### Update 2026-04-12 mittags — Aktueller Stand vor Claude-Code-Eskalation
+- Variance wurde lokal von Team-Variance auf individuelle Swimmer-Variance umgestellt.
+- `Exp. Finish` wurde ergänzt und verschoben; `Target` wurde ergänzt.
+- Mehrere lokale Fix-Versuche am Pogo-Numpad durchgeführt.
+- **Trotzdem weiterhin offen:**
+  1. Bereits eingetragene T1/T2-Werte lassen sich nachträglich nicht zuverlässig editieren (Numpad öffnet, reagiert aber nicht sauber).
+  2. Pogo-Tabellenlayout ist weiterhin visuell inkonsistent; insbesondere `Result` ist aus Dinos Sicht nicht sauber dargestellt.
+- Entscheidung: Keine weiteren Ad-hoc-Patches. Saubere Übergabe an Claude Code mit klarer Aufgabenbeschreibung.
+
 ### Update 2026-04-12 nachmittags — Neuer kritischer Pogo-Crash aus echtem Dino-Test
 Dino hat einen neuen schweren Acceptance-Bug gemeldet, der über die bisherigen Numpad-/Layout-Probleme hinausgeht:
 
