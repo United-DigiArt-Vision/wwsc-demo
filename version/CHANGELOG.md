@@ -11,11 +11,23 @@
 
 ---
 
+## 2026-04-14 — feat: Heat Builder Print Button (v2.8.1)
+- **Timestamp:** 2026-04-14 12:00:00
+- **App Version (from package.json):** 2.8.1
+- **Branch:** dev/v2.8.0-bryan-feedback
+- **RecordedCommit:** PENDING
+- **Editor:** Claude Code
+- **Changes:**
+  - Version bump 2.8.0 → 2.8.1 (package.json + index.html cache-busting)
+  - heat-builder.js: Added Print button using same window.print() pattern as Results page
+  - Button-/Pattern-Reuse only — no additional print styling needed
+  - Browser-verified: Print button visible, onclick=window.print(), no existing actions broken
+
 ## 2026-04-12 — fix: Breaker Report sorting by strongest variance first
 - **Timestamp:** 2026-04-12 19:25:00
 - **App Version (from package.json):** 2.8.0
 - **Branch:** dev/v2.8.0-bryan-feedback
-- **RecordedCommit:** PENDING
+- **RecordedCommit:** b70bbba
 - **Editor:** Claude Code
 - **Changes:**
   - server.js: Added post-query sort to /api/reports/breakers — sorts by date DESC, then variance DESC (strongest break first), then name alphabetically for deterministic tie-break

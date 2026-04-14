@@ -162,7 +162,7 @@ function drawHeatBuilder() {
     raceContent = renderIndividualContent();
   }
 
-  const headerWithResults = '<div class="toolbar" style="margin-bottom:16px"><h1 style="margin:0">Heat Builder</h1><div class="toolbar-spacer"></div><button class="btn btn-primary" onclick="navigate(\'results\')">🏆 Results →</button></div>';
+  const headerWithResults = '<div class="toolbar" style="margin-bottom:16px"><h1 style="margin:0">Heat Builder</h1><div class="toolbar-spacer"></div><button class="btn btn-outline" onclick="window.print()">🖨️ Print</button><button class="btn btn-primary" onclick="navigate(\'results\')">🏆 Results →</button></div>';
   
   el.innerHTML = headerWithResults + progressHtml + raceContent + goToResultsBtn;
 }
