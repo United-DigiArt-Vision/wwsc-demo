@@ -4,7 +4,7 @@
 **BaseBranch:** dev/v2.8.4-bryan-followup-special-races
 **BaseCommit:** c111df5 (local best-available v2.8.4 HEAD; Balerion reported 466685d4 — not accessible from this workspace)
 **TargetBranch:** dev/v2.8.5-bryan-rework-user-tested
-**RecordedCommit:** PENDING
+**RecordedCommit:** 6b30f1a
 **LastEditor:** Claude Code
 **Date:** 2026-04-15
 **Timestamp:** 2026-04-15 22:00:00

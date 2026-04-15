@@ -15,7 +15,7 @@
 - **Timestamp:** 2026-04-15 22:00:00
 - **App Version (from package.json):** 2.8.5
 - **Branch:** dev/v2.8.5-bryan-rework-user-tested
-- **RecordedCommit:** PENDING
+- **RecordedCommit:** 6b30f1a
 - **Editor:** Claude Code
 - **Changes (addressing Dino-live-test findings):**
   - R21-v2 (Medley swim-twice stroke — ACTUALLY FIXED): new explicit "Swim as:" Stroke-Picker in the swim-twice row. User must pick swimmer AND stroke before clicking. No hidden default to swimmer's historical stroke. Missing strokes get "(missing)" label. Pre-selects first missing stroke; freely overridable. hbAddSwimTwice reads the explicit picker value.
