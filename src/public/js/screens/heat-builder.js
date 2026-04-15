@@ -373,6 +373,14 @@ function renderRelayTeamsInHB(teams, race) {
     // R-15: Relay place display red + bold
     const teamHeader = team.team_name + (placeDisplay ? ' — <span style="color:#e53935;font-weight:700;font-size:18px">' + placeDisplay + '</span>' : '');
 
+    // R18 v2.8.3: Leftover team banner — prompts user to select swim-twice swimmer
+    // Banner is shown only while at least one medley stroke is still missing.
+    const missingStrokes = isMedley ? ['Back', 'Breast', 'Free'].filter(st => !members.find(m => (m.stroke || '').toLowerCase() === st.toLowerCase())) : [];
+    const isLeftoverTeam = isMedley && team.needs_swim_twice_completion === true && missingStrokes.length > 0;
+    const leftoverBanner = isLeftoverTeam
+      ? '<div style="background:#fff3e0;border-left:4px solid #e65100;padding:10px 14px;font-size:13px;color:#5d4037"><strong>⚠️ Leftover team — incomplete.</strong> Select a swimmer below to <strong>swim twice</strong> and complete missing stroke' + (missingStrokes.length > 1 ? 's' : '') + ': <strong>' + missingStrokes.join(', ') + '</strong>.</div>'
+      : '';
+
     let rows = '';
     for (const m of members) {
       const pbCol = getPBForRelayHB(m, race.race_type);
@@ -414,7 +422,7 @@ function renderRelayTeamsInHB(teams, race) {
         })
         .sort(function(a, b) { return a.name.localeCompare(b.name); })
         .map(function(m) { return '<option value="' + m.member_id + '">' + m.name + '</option>'; }).join('');
-      const addLabel = isMedley ? '➕ Add Swimmer' : '➕ Swim Twice';
+      const addLabel = (isMedley && isLeftoverTeam) ? '➕ Swim Twice' : (isMedley ? '➕ Add Swimmer' : '➕ Swim Twice');
       const colSpan = 1 + (showStroke ? 1 : 0) + (showSplits ? 1 : 0) + 1; // swimmer + optional stroke + optional split + PB
       swimTwiceRow = '<tr style="background:#fafafa; border-top: 2px dashed #ccc"><td>' + nextLeg + '</td><td colspan="' + colSpan + '"><div style="display:flex;align-items:center;gap:8px;padding:4px 0"><select id="hb-swim-twice-' + ti + '" class="form-control" style="max-width:240px;min-height:44px"><option value="">— Select swimmer —</option>' + memberOptions + '</select><button class="btn btn-accent" style="min-height:44px;white-space:nowrap" onclick="hbAddSwimTwice(' + ti + ')">' + addLabel + '</button></div></td></tr>';
     }
@@ -443,6 +451,7 @@ function renderRelayTeamsInHB(teams, race) {
             '<span style="flex-shrink:0">' + teamHeader + '</span>' +
             '<span style="display:flex;align-items:center;gap:12px;flex-shrink:0"><span style="background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px">' + startDelayDisplay + '</span><span style="font-weight:400;font-size:13px;color:rgba(255,255,255,0.9);white-space:nowrap">' + (totalDisplay ? totalDisplay : '') + (targetDisplay ? ' • ' + targetDisplay : '') + '</span></span>' +
             '</div>' +
+            leftoverBanner +
             '<table class="spreadsheet-table" style="margin:0">' +
             '<thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + strokeHeader + splitHeader + '<th>PB</th></tr></thead>' +
             '<tbody>' + rows + swimTwiceRow +

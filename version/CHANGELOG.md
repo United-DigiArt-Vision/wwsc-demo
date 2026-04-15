@@ -11,6 +11,21 @@
 
 ---
 
+## 2026-04-15 — feat: Medley Leftover Swim-Twice Flow (v2.8.3, R18)
+- **Timestamp:** 2026-04-15 08:00:00
+- **App Version (from package.json):** 2.8.3
+- **Branch:** dev/v2.8.3-medley-leftover-swim-twice
+- **RecordedCommit:** 8192cd9
+- **Editor:** Claude Code
+- **Changes:**
+  - server.js: Medley leftover handling — 1–2 Restschwimmer erzeugen jetzt ein partielles Team mit `needs_swim_twice_completion: true` statt verworfen zu werden
+  - heat-builder.js: Oranger Banner "⚠️ Leftover team — incomplete" mit fehlenden Strokes; Banner verschwindet sobald alle 3 Strokes besetzt sind
+  - heat-builder.js: "+ Swim Twice" Label für Leftover-Teams (klarer als "+ Add Swimmer")
+  - REQUIREMENTS.md R18 von 🟡 offen auf 🟢 Bryan-bestätigt
+  - USER-INTERACTION-TEST-SPEC.md UI-TC-158 aktualisiert + neue UI-TC-169 bis UI-TC-176 (Section G)
+  - PROGRESS.md Phase 8 aktualisiert
+  - Browser-verifiziert: 4 Y-swimmers → 1 Team + 1 Leftover-Team mit Banner → Swim-Twice 2× → Banner weg → Confirm → Persistenz mit Duplikat-member_ids
+
 ## 2026-04-14 — fix: Heat Builder print fits one page (v2.8.2)
 - **Timestamp:** 2026-04-14 13:45:00
 - **App Version (from package.json):** 2.8.2

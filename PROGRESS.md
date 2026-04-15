@@ -1,9 +1,9 @@
-# PROGRESS — WWSC Swimming App v2.8.0
+# PROGRESS — WWSC Swimming App v2.8.3
 
 ## 🎯 AKTUELLER STATUS
-Phase: 7 — Pogo Results Repair
-Schritt: Pogo Table Layout + Numpad Guard + Auto-Recalc gefixt und browser-verifiziert
-Blockiert: Nein — Pogo Results bereit für Dino Re-Test
+Phase: 8 — Medley Leftover Swim-Twice (R18 Bryan-bestätigt)
+Schritt: Server erstellt Leftover-Team für 1–2 Restschwimmer, UI zeigt Banner + Swim-Twice-Flow, browser-verifiziert
+Blockiert: Nein
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] Phase 0: Workspace & State Verifikation (`git fetch`, Hard Reset auf `origin/main` - Stand v2.7.4).
