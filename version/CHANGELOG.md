@@ -15,7 +15,7 @@
 - **Timestamp:** 2026-04-15 20:30:00
 - **App Version (from package.json):** 2.8.4
 - **Branch:** dev/v2.8.4-bryan-followup-special-races
-- **RecordedCommit:** PENDING
+- **RecordedCommit:** f5e4c3b
 - **Editor:** Claude Code
 - **Changes (6 Bryan corrections):**
   - Fix 1+2 (R21): Medley swim-twice stroke now editable + removable. New hbChangeSwimTwiceStroke / hbRemoveSwimTwice. hbAddSwimTwice prefers missing stroke instead of historical.

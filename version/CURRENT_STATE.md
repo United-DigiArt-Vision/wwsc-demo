@@ -4,7 +4,7 @@
 **BaseBranch:** main
 **BaseCommit:** 642e52d
 **TargetBranch:** dev/v2.8.4-bryan-followup-special-races
-**RecordedCommit:** PENDING
+**RecordedCommit:** f5e4c3b
 **LastEditor:** Claude Code
 **Date:** 2026-04-15
 **Timestamp:** 2026-04-15 20:30:00
