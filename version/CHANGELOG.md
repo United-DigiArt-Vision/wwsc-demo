@@ -15,7 +15,7 @@
 - **Timestamp:** 2026-04-15 08:00:00
 - **App Version (from package.json):** 2.8.3
 - **Branch:** dev/v2.8.3-medley-leftover-swim-twice
-- **RecordedCommit:** PENDING
+- **RecordedCommit:** 8192cd9
 - **Editor:** Claude Code
 - **Changes:**
   - server.js: Medley leftover handling — 1–2 Restschwimmer erzeugen jetzt ein partielles Team mit `needs_swim_twice_completion: true` statt verworfen zu werden
