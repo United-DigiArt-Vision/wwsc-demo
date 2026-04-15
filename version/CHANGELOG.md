@@ -11,6 +11,21 @@
 
 ---
 
+## 2026-04-15 — feat: v2.8.5 Rework after Dino live test (R21-v2, R24-v2, R25, R26)
+- **Timestamp:** 2026-04-15 22:00:00
+- **App Version (from package.json):** 2.8.5
+- **Branch:** dev/v2.8.5-bryan-rework-user-tested
+- **RecordedCommit:** PENDING
+- **Editor:** Claude Code
+- **Changes (addressing Dino-live-test findings):**
+  - R21-v2 (Medley swim-twice stroke — ACTUALLY FIXED): new explicit "Swim as:" Stroke-Picker in the swim-twice row. User must pick swimmer AND stroke before clicking. No hidden default to swimmer's historical stroke. Missing strokes get "(missing)" label. Pre-selects first missing stroke; freely overridable. hbAddSwimTwice reads the explicit picker value.
+  - R24-v2 (Results layout — ACTUALLY GROUPED): Brace Results now has 2-row header with group labels "Plan | Actual | Delta | Result". Column groups visually separated via background colors (grey for Plan, yellow for Tap, color-coded Variance) and 2px borders. Tap cell prominently styled as button-like interactive target.
+  - R25 (Print audit — ALL SURFACES): `.print-hide` class now applied across Heat Builder (swim-twice row, leftover banner, status cards, empty-state prompts), Results (Event Finalized/Completed banners), Breaker Report, Relays, Event Report. Operational text hidden; race data preserved.
+  - R26 (Meta-rule): user-facing revalidation as hard gate — code-only evidence no longer counts as done.
+  - REQUIREMENTS.md: R21-v2, R24-v2, R25, R26 added with user-flow acceptance criteria.
+  - USER-INTERACTION-TEST-SPEC.md: Section I added with UI-TC-187 to UI-TC-291 (105 new test cases across Medley swim-twice, correction/replacement, 25m Relay explicit, Results layout, Print audit, Ranking, regressions).
+  - Browser-verified end-to-end: Bryan (swam Back in Team 1) correctly assigned to Breast via explicit picker in Team 2; Remove/re-add cycle clean; Results table shows 2-row grouped header; no console errors.
+
 ## 2026-04-15 — feat: Bryan Follow-up Corrections (v2.8.4, R20+R21+R22+R23+R24)
 - **Timestamp:** 2026-04-15 20:30:00
 - **App Version (from package.json):** 2.8.4

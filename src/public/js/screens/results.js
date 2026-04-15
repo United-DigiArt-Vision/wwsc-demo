@@ -766,23 +766,57 @@ function renderBraceResultsInline(race) {
 
     let finishCell;
     if (!resFinalized) {
-      finishCell = '<td onclick="enterRelayTimeInline(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '⏱️ Tap') + '</td>';
+      // v2.8.5 Bryan fix B: Tap cell is now a prominent, visually interactive
+      // button-like target. The user should see at a glance "this is where I
+      // record the finish time".
+      finishCell = '<td class="tap-cell" onclick="enterRelayTimeInline(' + team.id + ', ' + (team.total_time || 0) + ')" style="cursor:pointer;font-weight:800;font-size:16px;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100;text-align:center;color:#0b3d91">' + (team.total_time != null ? formatTime(team.total_time) : '⏱️ Tap') + '</td>';
     } else {
-      finishCell = '<td style="font-weight:700">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
+      finishCell = '<td class="tap-cell" style="font-weight:800;font-size:16px;background:#fff8e1;text-align:center;color:#0b3d91">' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td>';
     }
 
     const varDisplay = team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—';
-    const varStyle = team.variance != null && Math.abs(team.variance) < 300 ? 'color:var(--success);font-weight:700' : '';
+    const varGood = team.variance != null && Math.abs(team.variance) < 300;
+    const varStyle = 'font-weight:700;text-align:center;' + (varGood ? 'color:var(--success)' : (team.variance != null ? 'color:#333' : 'color:#999'));
 
-    // v2.8.4 Bryan fix 5: Total next to PBs, Tap (Finish) next, Variance next.
-    // Start/Target are shown in the card header, not as separate columns, to
-    // keep the on-paper readability Bryan asked for.
-    rows += '<tr><td>' + team.team_number + '</td><td class="name-cell">' + names + '</td><td>' + pbs + '</td><td>' + formatWhole(totalPB) + '</td>' + finishCell + '<td style="' + varStyle + '">' + varDisplay + '</td><td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
+    // v2.8.5 Bryan fix B: Clean visual grouping.
+    //   "What they should do" column group (grey): PBs + Total (shared background)
+    //   "What they did" column (highlighted): Tap
+    //   "How did they do" column (variance color): Variance
+    //   "Result" column: Place with medal
+    // Each group is visually distinct via background shade + dividers so the
+    // row reads as a proper summary, not a generic table.
+    const grpStyle = 'background:#f5f5f5;text-align:center';
+    const pbsCell = '<td style="' + grpStyle + ';font-weight:600">' + pbs + '</td>';
+    const totalCellStr = '<td style="' + grpStyle + ';font-weight:800;border-right:2px solid #0b3d91">' + formatWhole(totalPB) + '</td>';
+    const varCellStr = '<td style="' + varStyle + ';border-left:2px solid #e65100">' + varDisplay + '</td>';
+    rows += '<tr><td style="text-align:center;font-weight:700">' + team.team_number + '</td><td class="name-cell">' + names + '</td>' + pbsCell + totalCellStr + finishCell + varCellStr + '<td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
   }
 
-  // v2.8.4 Bryan fix 5: compact column order Lane | Pair | PBs | Total | Tap | Variance | Place
+  // v2.8.5 Bryan fix B: headers emphasize the functional grouping so the row
+  // layout reads like a real summary. Group headers: "Plan" (PBs+Total),
+  // "Actual" (Tap), "Delta" (Variance), "Result" (Place).
   const headerInfo = '<span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | smallest variance wins</span>';
-  return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span>' + headerInfo + '</div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Lane</th><th style="text-align:left;min-width:180px">Pair</th><th>PBs</th><th>Total</th><th style="min-width:80px">Tap</th><th>Variance</th><th>Place</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  const tableHead =
+    '<thead>' +
+      '<tr style="background:#e0e0e0;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:0.5px">' +
+        '<th style="width:50px"></th>' +
+        '<th style="text-align:left"></th>' +
+        '<th colspan="2" style="text-align:center;border-right:2px solid #0b3d91">Plan</th>' +
+        '<th style="text-align:center;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100">Actual</th>' +
+        '<th style="text-align:center;border-left:2px solid #e65100">Delta</th>' +
+        '<th style="text-align:center">Result</th>' +
+      '</tr>' +
+      '<tr>' +
+        '<th style="width:50px">Lane</th>' +
+        '<th style="text-align:left;min-width:180px">Pair</th>' +
+        '<th>PBs</th>' +
+        '<th style="border-right:2px solid #0b3d91">Total</th>' +
+        '<th style="min-width:90px;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100">Tap</th>' +
+        '<th style="border-left:2px solid #e65100">Variance</th>' +
+        '<th>Place</th>' +
+      '</tr>' +
+    '</thead>';
+  return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span>' + headerInfo + '</div><table class="spreadsheet-table" style="margin:0">' + tableHead + '<tbody>' + rows + '</tbody></table></div>';
 }
 
 // R16: Pogo Results — columns: PB | Start | Total | T1 | T2 | Result (Avg) | Variance

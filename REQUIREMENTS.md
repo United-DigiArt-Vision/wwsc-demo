@@ -286,3 +286,88 @@ Anpassungen nach Kunden-Feedback (Bryan) zu v2.7.4.
 **Akzeptanzkriterium:**
 - Die Reihenfolge Total → Tap → Variance ist visuell direkt nebeneinander.
 - Print und Screen zeigen dieselbe Struktur, Print nutzt kleinere Font-Sizes gemäß R3.
+
+---
+
+## v2.8.5 Rework — Dino-live-Test-Findings nach v2.8.4
+
+Die v2.8.4-Runde wurde live von Dino durchgespielt. Zwei Requirements waren trotz Code-Änderungen im Live-Flow nicht zufriedenstellend. Diese Runde schärft die Acceptance-Kriterien und korrigiert die Umsetzung so, dass sie im tatsächlichen UI-Flow funktioniert.
+
+### R21-v2 (verschärft): Medley Duplicate-Swimmer Stroke Selection (v2.8.5)
+**Status:** 🟢 User-flow-korrigiert in v2.8.5
+**Dino-Live-Test-Befund (v2.8.4):** "Bryan already swam Free. The added Bryan still gets Free again. Dino could not actually change the stroke in the real flow."
+**Verschärfte fachliche Regel:**
+- Der User MUSS beim Hinzufügen eines Swim-Twice-Swimmers explizit sowohl den Swimmer ALS AUCH den Stroke auswählen, BEVOR die Zuweisung passiert.
+- Es darf KEIN automatischer Default auf den Historic-Stroke des Swimmers geben — weder sichtbar noch versteckt.
+- Das UI-Control für die Stroke-Auswahl MUSS für den User als interaktiv erkennbar sein (visible affordance), nicht als read-only Text.
+- Fehlende Strokes des Teams MÜSSEN im Picker gekennzeichnet werden (z.B. Label-Suffix "(missing)") damit der User sofort erkennt, was gebraucht wird.
+- Nach dem Add MUSS der Stroke weiterhin über ein Inline-Dropdown änderbar sein.
+**UI-Affordance-Anforderung:**
+- Swim-Twice-Row in Medley-Teams zeigt: Swimmer-Select → **`Swim as:` Label + Stroke-Select** → `+ Swim Twice` Button. In dieser Reihenfolge sichtbar.
+- Missing-Strokes im Picker werden mit Label "(missing)" markiert und stehen an bevorzugter Position.
+- Nach Add: Swim-Twice-Row zeigt bearbeitbares Dropdown + ✕ Remove Button.
+**Acceptance (user-flow):**
+- Scenario: Team 1 hat Bryan=Back, Ben=Breast, Andrew=Free. Team 2 (Leftover) hat David=Back. Missing in Team 2: Breast, Free.
+- User im Swim-Twice-Dropdown: wählt Bryan, ändert Stroke-Picker auf "Breast", klickt "+ Swim Twice".
+- **Expected:** Bryan erscheint in Team 2 als Leg 2 mit Stroke=Breast.
+- **Fail-Pattern (v2.8.4):** Bryan erscheint mit Stroke=Back oder dem Auto-Default — das MUSS in v2.8.5 unmöglich sein.
+
+### R24-v2 (verschärft): Brace Results Layout visually grouped (v2.8.5)
+**Status:** 🟢 Visually-corrected in v2.8.5
+**Dino-Live-Test-Befund (v2.8.4):** "The row still looks like a table hack instead of a clean readable summary."
+**Verschärfte fachliche Regel:**
+- Die Brace-Results-Zeile muss als echte Summary lesbar sein — nicht wie eine generische Tabellenzeile.
+- Logische Gruppen müssen visuell unterscheidbar sein:
+  1. **Plan** (was sollte passieren): PBs + Total
+  2. **Actual** (was ist passiert): Tap-Eingabefeld
+  3. **Delta** (wie weit weg): Variance
+  4. **Result** (wer hat gewonnen): Place
+- Diese Gruppen müssen durch:
+  - unterschiedliche Background-Farben für Gruppen-Zellen
+  - Gruppen-Header-Zeile oberhalb der Column-Header
+  - Trennungs-Borders zwischen den Gruppen
+  visuell getrennt sein.
+- Die Tap-Zelle muss deutlich als interaktiv erkennbar sein (gelber Hintergrund, Border, "⏱️ Tap" Placeholder wenn leer).
+**Acceptance:**
+- Header-Zeile 1 zeigt die Gruppenlabel "Plan | Actual | Delta | Result".
+- Header-Zeile 2 zeigt die echten Column-Header Lane | Pair | PBs | Total | Tap | Variance | Place.
+- PBs + Total haben grauen Background (`#f5f5f5`), Tap hat gelben Background (`#fff8e1`), Variance hat farbkodierten Text.
+- Browser-verifiziert mit echten Testdaten.
+
+### R25: Printout-Audit über alle Print-Surfaces (v2.8.5)
+**Status:** 🟢 Umgesetzt in v2.8.5
+**Bryan-Rückmeldung:** "Check ALL printouts for excessive information" — nicht nur eine View.
+**Fachliche Regel:**
+- Jede Print-fähige Seite der App muss im @media-print-Modus NUR race-relevante Daten zeigen.
+- Operational/Status/Helper/Prompt-Text MUSS im Print versteckt werden.
+- Print-Surfaces der App sind:
+  1. **Heat Builder** (`window.print()` in heat-builder.js) → individual heats OR relay teams
+  2. **Results** (results.js) → individual races OR relay results (Brace/Pogo/Medley/25m Team)
+  3. **Breaker Report** (breaker-report.js) → Breakers + Exceeders
+  4. **Relays** (relays.js, legacy standalone relay screen)
+  5. **Event Report** (separate HTML doc via `window.open` — bereits bereinigt)
+**Hide-Liste (pro Surface):**
+- Heat Builder: "What (Y) means" Card, "All N races ready" Card, "N/M races confirmed" Status, "Teams Confirmed / Results Calculated" Card, "Tap Generate Heats/Teams" Empty-State, Swim-Twice-Row (Select+Button), Leftover-Banner
+- Results: "Event Finalized" Banner, "Event Completed" Banner, all `.btn` elements, Readout/Print buttons, form controls
+- Breaker Report: `.btn` elements only (already clean)
+- Relays: `.btn` elements only
+**Technische Umsetzung:**
+- Neue CSS-Klasse `.print-hide` mit `display:none !important` in `@media print`.
+- Alle operational DOM-Nodes bekommen diese Klasse.
+**Acceptance:**
+- Printout jeder Surface enthält keines der oben gelisteten Helper-Elemente.
+- Printout behält Tabellendaten + Team/Race-Header + Start-Delay-Info.
+
+### R26: User-facing revalidation expectations (v2.8.5, Meta-Regel)
+**Status:** 🟢 Meta-Regel etabliert in v2.8.5
+**Kontext:** Die v2.8.4-Runde zeigte, dass Code-Änderungen + API-Checks nicht ausreichen um ein Requirement als "done" zu melden.
+**Regel für künftige Runden:**
+- Ein Fix gilt nur dann als abgeschlossen, wenn er durch echte End-User-Interaktion im gerenderten UI verifiziert wurde.
+- Mindestens diese Evidenzschichten sind notwendig:
+  1. Static code inspection (Baseline)
+  2. Runtime smoke test
+  3. User-interaction verification gegen konkrete Test-Cases
+  4. Print verification (falls Print betroffen)
+  5. Results/Ranking verification mit konkreten Szenario-Daten
+- Nicht mehr ausreichend: "CSS rule exists", "API returns payload", "I believe the flow is correct".
+- Erforderlich: konkrete Szenario-Execution mit Nachweis.

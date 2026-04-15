@@ -1,8 +1,8 @@
-# PROGRESS — WWSC Swimming App v2.8.4
+# PROGRESS — WWSC Swimming App v2.8.5
 
 ## 🎯 AKTUELLER STATUS
-Phase: 9 — Bryan Follow-up Corrections nach v2.8.3
-Schritt: Ranking umgestellt auf smallest variance, Medley swim-twice editierbar/entfernbar, 25m Relay explicit swim-twice, Print Cleanup, Results Layout kompakter — alle 6 Bryan-Korrekturen browser-verifiziert
+Phase: 10 — v2.8.5 Rework nach Dino-Live-Test von v2.8.4
+Schritt: Zwei Requirements (R21 Medley swim-twice stroke / R24 Results layout) waren in v2.8.4 im Live-Flow nicht zufriedenstellend. In v2.8.5 jetzt user-flow-korrigiert via explicit Stroke-Picker + klar gruppiertes Plan/Actual/Delta/Result Layout + Print-Audit-Erweiterung.
 Blockiert: Nein
 
 ## ✅ ERLEDIGT (mit Dateireferenz)

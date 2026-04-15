@@ -396,3 +396,149 @@ This sweep exists because prior proxy/API-based PASS claims were not reliable en
 - [ ] UI-TC-184: Print preview hides: "What (Y) means" card, "All X races ready!" card, "X/Y races confirmed" helper text, "Event Finalized" banner, "Event Completed" banner
 - [ ] UI-TC-185: Brace Results table columns in order: Lane | Pair | PBs | Total | Tap | Variance | Place (Start/Target live in the card header, not the table)
 - [ ] UI-TC-186: For 25m Brace, 50m Brace, Pogo, and Medley Relay: team with smallest |variance| gets place 1 (e.g. var +100 beats var -300 beats var +500). 25m Team Relay keeps fastest total_time wins.
+
+### I. v2.8.5 Rework after Dino live testing (UI-TC-187 to UI-TC-291)
+
+Per V0006 Vorgehensweise. Each test case lists: Test ID | Requirement ref | Setup | Steps | Expected visible behavior | Expected persistence | Pass/fail criterion.
+
+**Table legend:** IDs listed here, detailed prose steps documented in the matching paragraph below when the case is non-trivial.
+
+#### I.1 Medley swim-twice — explicit stroke picker flow (UI-TC-187 to UI-TC-213)
+Covers R21-v2 — Bryan-confirmed "swim twice" with explicit stroke control.
+
+- [ ] UI-TC-187: 4 Y-swimmers → generate Medley → Team 2 is Leftover with David=Back only; missing strokes = Breast + Free; swim-twice row renders **both** a Swimmer select AND a "Swim as:" Stroke select BEFORE anything is added.
+- [ ] UI-TC-188: The Stroke picker pre-selects the **first missing** stroke (Breast in UI-TC-187), not a random default.
+- [ ] UI-TC-189: Missing strokes in the picker are labeled with "(missing)" suffix (e.g. "Breast (missing)").
+- [ ] UI-TC-190: Non-missing strokes in the picker have NO "(missing)" suffix (e.g. "Back" without suffix when Back is already filled).
+- [ ] UI-TC-191: User changes Stroke picker from "Breast" to "Free" before clicking Swim Twice; the picker visually updates to show "Free" selected.
+- [ ] UI-TC-192: User picks Bryan + Stroke "Breast" + Swim Twice → Bryan appears in Team 2 as Leg 2 with stroke = **Breast** (not Bryan's historical Back).
+- [ ] UI-TC-193: User picks Bryan + Stroke "Free" + Swim Twice → Bryan appears with stroke = **Free** (even though Bryan's historical stroke is Back).
+- [ ] UI-TC-194: After add, the newly inserted row shows an **inline stroke dropdown** with the chosen stroke pre-selected.
+- [ ] UI-TC-195: After add, the newly inserted row shows a **"✕ Remove"** button.
+- [ ] UI-TC-196: Changing the inline stroke dropdown from "Breast" to "Back" updates the member's stroke on the next render and recalculates Team Total.
+- [ ] UI-TC-197: Clicking "✕ Remove" deletes only that swim-twice row and recalculates Team Total.
+- [ ] UI-TC-198: The ORIGINAL assignment of the same swimmer in another team (Bryan's Back in Team 1) does NOT show the inline stroke dropdown or Remove button — only the swim-twice copy does.
+- [ ] UI-TC-199: After Remove, the leftover banner reappears with the now-missing strokes correctly listed.
+- [ ] UI-TC-200: Swim-twice Swimmer picker lists all Y / Back / Breast / Free attendees, de-duplicated, alphabetically sorted.
+- [ ] UI-TC-201: Swim-twice Stroke picker lists exactly [Back, Breast, Free] in that order.
+- [ ] UI-TC-202: Swim-twice flow works when Team 2 has 2 members (e.g. David=Back, Andrew=Free) and needs only Breast — picker defaults to Breast (missing).
+- [ ] UI-TC-203: Swim-twice flow works when Team 2 has 1 member (David=Back) and needs Breast + Free — picker defaults to Breast, user can freely pick Free instead.
+- [ ] UI-TC-204: Add Bryan as Free → Remove → Add Bryan again as Breast → he lands as Breast (no hidden memory of the previous Free choice).
+- [ ] UI-TC-205: Add Bryan (from Team 1 where he swam Back) as Breast → Remove → Add Ben (from Team 1 where he swam Breast) as Free → Ben lands as Free (picker resets between adds).
+- [ ] UI-TC-206: Swim-twice dropdown for a complete Medley team (missingStrokes = []) still offers all three strokes in the Stroke picker (no "(missing)" labels) so user can still over-fill if needed.
+- [ ] UI-TC-207: Changing stroke on a swim-twice row re-renders the leftover banner; if the team becomes complete (all 3 strokes filled), the banner disappears.
+- [ ] UI-TC-208: Confirming Teams persists a swim-twice swimmer with the user-chosen stroke, not the swimmer's historical stroke.
+- [ ] UI-TC-209: After Confirm, reloading Heat Builder shows the persisted swim-twice row with the correct stroke.
+- [ ] UI-TC-210: Swim-twice flow is disabled (dropdown + button hidden) after teams are confirmed, per existing `!hbRelayConfirmed` rule.
+- [ ] UI-TC-211: Swim-twice flow does NOT autoselect a stroke if the user manually clears the picker back to empty between add and click — but the back-end fallback (first open stroke) keeps the operation safe.
+- [ ] UI-TC-212: Swim-twice flow correctly handles a swimmer whose `special_event_entry` is "Y" (no historical stroke) — the picker still works, the chosen stroke is applied.
+- [ ] UI-TC-213: Swim-twice flow correctly handles a swimmer whose historical stroke conflicts with the chosen stroke (e.g. Back historical, user picks Free) — chosen stroke wins, no side effect on Team 1.
+
+#### I.2 Medley correction / replacement flow (UI-TC-214 to UI-TC-224)
+Covers R21-v2 correction path.
+
+- [ ] UI-TC-214: Add Bryan as Breast → verify Remove button visible → click Remove → Bryan row disappears, leg_order of remaining rows re-numbered starting at 1.
+- [ ] UI-TC-215: After Remove, Team Total (PB sum) is recomputed correctly.
+- [ ] UI-TC-216: After Remove, leftover banner returns if strokes are still missing.
+- [ ] UI-TC-217: Add Bryan as Breast → Remove → Add Ben as Breast → Ben appears with Breast (no ghost of Bryan).
+- [ ] UI-TC-218: Add two swim-twice swimmers, Remove only the first → second stays, first disappears, leg_order renumbered.
+- [ ] UI-TC-219: Remove a non-swim-twice (original) team member → not possible via the Remove button (it doesn't render for originals).
+- [ ] UI-TC-220: Change stroke of a swim-twice row via inline dropdown → PBs column reflects the new stroke's PB value.
+- [ ] UI-TC-221: Change stroke to a stroke that's already filled by another member → both cells visually show the duplicate stroke (system does NOT auto-resolve); this is a dev-intentional user-responsibility behavior documented here.
+- [ ] UI-TC-222: Confirm Teams → Unconfirm / regenerate → swim-twice state is rebuilt from server, Remove buttons still work on the rebuilt state.
+- [ ] UI-TC-223: Remove + Add + Remove + Add cycle repeated 5 times → no memory leak, no UI lag, no state corruption.
+- [ ] UI-TC-224: Remove the LAST member of a leftover team → team still renders with 0 members and banner listing all 3 missing strokes.
+
+#### I.3 25m Team Relay explicit swim-twice flow (UI-TC-225 to UI-TC-239)
+Covers R22.
+
+- [ ] UI-TC-225: 11 present → 3 teams of 4+4+3; the 3-swimmer team shows an orange "⚠️ Team is undersized" banner listing "1 leg missing".
+- [ ] UI-TC-226: Undersized team's swim-twice row shows a Swimmer picker with all 11 present attendees.
+- [ ] UI-TC-227: Non-undersized teams (4-member teams) do NOT show the banner.
+- [ ] UI-TC-228: 10 present → 2 teams of 5+5 — no banner (5+5 is not classified as undersized since it's equal distribution).
+- [ ] UI-TC-229: 12 present → 3 teams of 4+4+4 — no banner, no swim-twice prompt.
+- [ ] UI-TC-230: 7 present → 2 teams of 4+3 — smaller team shows banner with "1 leg missing".
+- [ ] UI-TC-231: User explicitly picks a swimmer from the undersized team's dropdown → clicks Swim Twice → swimmer appears as leg 4, banner disappears.
+- [ ] UI-TC-232: Swim-twice dropdown for 25m Team Relay does NOT include a Stroke picker (only Medley has that — 25m Team Relay has no stroke dimension).
+- [ ] UI-TC-233: Undersized team swim-twice inserts swimmer without silently mutating other teams.
+- [ ] UI-TC-234: After swim-twice, team size = 4; banner is gone; Team Total recomputed.
+- [ ] UI-TC-235: Swim-twice choice is reversible — Remove returns the team to undersized + banner.
+- [ ] UI-TC-236: 25m Team Relay swim-twice swimmer in the persisted data has a duplicate `relay_team_member` row with correct leg_order.
+- [ ] UI-TC-237: Regenerate Teams → the banner is recomputed fresh, any prior swim-twice additions are discarded.
+- [ ] UI-TC-238: Shuffle button does not break the banner state.
+- [ ] UI-TC-239: Confirm Teams with undersized + swim-twice filled → Results screen shows the full 4-member team.
+
+#### I.4 Results layout — Brace (UI-TC-240 to UI-TC-256)
+Covers R24-v2.
+
+- [ ] UI-TC-240: Brace Results table has **2 header rows**: group header (Plan/Actual/Delta/Result) and column header (Lane/Pair/PBs/Total/Tap/Variance/Place).
+- [ ] UI-TC-241: "Plan" group spans 2 columns (PBs, Total) with grey background.
+- [ ] UI-TC-242: "Actual" group spans 1 column (Tap) with yellow background (`#fff8e1`).
+- [ ] UI-TC-243: "Delta" group spans 1 column (Variance).
+- [ ] UI-TC-244: "Result" group spans 1 column (Place).
+- [ ] UI-TC-245: Visual dividers (`border-right / border-left` 2px solid) between groups.
+- [ ] UI-TC-246: PBs cell has grey background + normal weight.
+- [ ] UI-TC-247: Total cell has grey background + bold weight.
+- [ ] UI-TC-248: Tap cell (before time entry) shows "⏱️ Tap" in blue bold on yellow background — clearly clickable.
+- [ ] UI-TC-249: Tap cell (after time entry) shows the finish time in bold on yellow background.
+- [ ] UI-TC-250: Variance cell shows colored text (green for close to target, default for others).
+- [ ] UI-TC-251: Place cell shows medal background (gold/silver/bronze) if place 1/2/3.
+- [ ] UI-TC-252: Lane column shows team number centered bold.
+- [ ] UI-TC-253: Pair column shows "Name1 + Name2" left-aligned.
+- [ ] UI-TC-254: Card header shows "Start: 2s | smallest variance wins" (no obsolete "fastest finish wins").
+- [ ] UI-TC-255: Resizing to mobile viewport keeps the table scrollable without breaking the group structure.
+- [ ] UI-TC-256: Finalized/completed events show the same grouped layout.
+
+#### I.5 Print audit — Heat Builder (UI-TC-257 to UI-TC-264)
+Covers R25.
+
+- [ ] UI-TC-257: Print preview of Heat Builder hides the "🖨️ Print" and "🏆 Results →" toolbar buttons.
+- [ ] UI-TC-258: Print preview hides the STANDARD/SPECIAL race tab bar (`.progress-tracker`).
+- [ ] UI-TC-259: Print preview hides the "What (Y) means" card (Medley only).
+- [ ] UI-TC-260: Print preview hides "All N races ready!" card.
+- [ ] UI-TC-261: Print preview hides "N/M races confirmed — confirm all to proceed to Results" helper.
+- [ ] UI-TC-262: Print preview hides the "Teams Confirmed / Results Calculated" status card.
+- [ ] UI-TC-263: Print preview hides the "Tap Generate Heats/Teams" empty-state prompt.
+- [ ] UI-TC-264: Print preview hides the swim-twice dropdown row AND the leftover banner (both are operational prompts).
+
+#### I.6 Print audit — Results (UI-TC-265 to UI-TC-270)
+Covers R25.
+
+- [ ] UI-TC-265: Print preview hides all toolbar buttons (Readout, Print, Save Rankings, Finalize Event, Complete Event).
+- [ ] UI-TC-266: Print preview hides the race-selector dropdown.
+- [ ] UI-TC-267: Print preview hides the "✓ Event Finalized" banner.
+- [ ] UI-TC-268: Print preview hides the "✅ Event Completed" banner.
+- [ ] UI-TC-269: Print preview keeps the table headers (including group headers Plan/Actual/Delta/Result) and data rows.
+- [ ] UI-TC-270: Print preview keeps the Breakers / Exceeders sections at the bottom (they are data, not operational).
+
+#### I.7 Print audit — Breaker Report + Relays + Event Report (UI-TC-271 to UI-TC-277)
+Covers R25.
+
+- [ ] UI-TC-271: Breaker Report print hides the "🖨️ Print" button.
+- [ ] UI-TC-272: Breaker Report print keeps the Breaker + Exceeder tables.
+- [ ] UI-TC-273: Relays (legacy screen) print hides all toolbar buttons.
+- [ ] UI-TC-274: Event Report (opened via `window.open` after Complete Event) contains no operational buttons (it is a standalone HTML doc already).
+- [ ] UI-TC-275: Event Report contains the Participants table, Races table, Record Breakers table only.
+- [ ] UI-TC-276: Print-page-break behavior: `.card { break-inside: avoid }` keeps each team/heat card together.
+- [ ] UI-TC-277: Printing an event with all relay types generates readable A4 output with no wasted space from helper elements.
+
+#### I.8 Ranking — smallest variance for Brace/Pogo/Medley (UI-TC-278 to UI-TC-287)
+Covers R20.
+
+- [ ] UI-TC-278: 25m Brace with 3 teams: variances +100, -300, +500 → places 1, 2, 3 (by |variance|).
+- [ ] UI-TC-279: 25m Brace tie: two teams with variance +200 → both place 1, next team place 3.
+- [ ] UI-TC-280: 25m Brace negative vs positive same |variance|: var -200 and var +200 tied at place 1.
+- [ ] UI-TC-281: 50m Brace ranking identical to 25m Brace logic.
+- [ ] UI-TC-282: Pogo ranking identical (pogo inherits `recalcPogoTeamIfNeeded` → same `rankRelayTeams` helper).
+- [ ] UI-TC-283: Medley Relay ranking identical.
+- [ ] UI-TC-284: 25m Team Relay keeps fastest total_time: team with total 3500 beats team with total 3600 (regardless of variance).
+- [ ] UI-TC-285: Teams with no entered time stay unranked (`place = NULL`).
+- [ ] UI-TC-286: Editing a time re-triggers the rank function and updates all places.
+- [ ] UI-TC-287: Clicking "📊 Calculate Results" on a Brace race produces the same ranking as the live auto-rank.
+
+#### I.9 Regression cases revalidated from v2.8.4 (UI-TC-288 to UI-TC-291)
+
+- [ ] UI-TC-288: Medley swim-twice Remove flow (R21-v2) — confirm the removed swimmer is really gone from the team.
+- [ ] UI-TC-289: 25m Team Relay banner (R22) appears on 4+4+3 scenario, not on 5+5 scenario.
+- [ ] UI-TC-290: Print-hide (R23/R25) is effective on all five print surfaces (Heat Builder, Results, Breaker Report, Relays, Event Report).
+- [ ] UI-TC-291: Smallest-variance ranking (R20) holds under edit/delete time scenarios.
