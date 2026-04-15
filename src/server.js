@@ -1391,16 +1391,20 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
         }
       }
 
-      // R18: Do NOT create incomplete teams. Leftover swimmers (< 3 for medley) are excluded.
+      // R18 (v2.8.3): Leftover handling — Bryan confirmed "swim twice" flow.
+      // Any leftover (1, 2, or 3+) gets placed into a partial team so the user
+      // can visibly select an already-assigned swimmer to swim twice and
+      // complete the team. The needs_swim_twice_completion flag tells the UI
+      // to prompt the user; needs_manual_entry keeps legacy styling paths.
       const leftovers = allPool.filter(s => !s.assigned);
-      if (leftovers.length >= 3) { // Only create a team if we have enough for a complete medley team
-        // Create a partial team so they are visible
+      if (leftovers.length >= 1) {
         const partialTeam = {
           team_number: numTeams + 1,
           team_name: TEAM_NAMES[numTeams] || `Team ${numTeams + 1}`,
           members: [],
           target_time: 0,
-          needs_manual_entry: true
+          needs_manual_entry: true,
+          needs_swim_twice_completion: leftovers.length < 3
         };
         leftovers.forEach(s => {
           const openStrokes = strokes.filter(st => !partialTeam.members.find(m => m.stroke === st));

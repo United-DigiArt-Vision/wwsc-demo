@@ -361,7 +361,7 @@ This sweep exists because prior proxy/API-based PASS claims were not reliable en
 - [ ] UI-TC-155: Pogo with missing participant scenario does not create malformed team row
 - [ ] UI-TC-156: N-flagged swimmer excluded from special-race team generation where applicable
 - [ ] UI-TC-157: Y-flagged swimmer included where applicable without leakage to N swimmers
-- [ ] UI-TC-158: No 1-member or 2-member invalid Medley team row is ever rendered
+- [ ] UI-TC-158: Medley with 1-2 leftover swimmers renders a partial team WITH leftover banner (v2.8.3 — supersedes older "never render" rule per Bryan's swim-twice confirmation)
 
 ### F. Cross-Screen Consistency & Reports (UI-TC-159 to UI-TC-168)
 - [ ] UI-TC-159: Heat Builder active races == Results active races
@@ -374,3 +374,13 @@ This sweep exists because prior proxy/API-based PASS claims were not reliable en
 - [ ] UI-TC-166: Browser refresh on Calendar page retains correct historical snapshot
 - [ ] UI-TC-167: No stale tab set survives config change + generation + refresh cycle
 - [ ] UI-TC-168: Final pre-delivery smoke run across Ordinary, 25m Brace, 50m Brace, Pogo, Medley passes without contradiction
+
+### G. R18 v2.8.3: Medley Leftover Swim-Twice Flow (UI-TC-169 to UI-TC-176)
+- [ ] UI-TC-169: 3 Y-swimmers → exactly 1 complete team, no leftover banner visible
+- [ ] UI-TC-170: 4 Y-swimmers → 1 complete team + 1 leftover team with orange "⚠️ Leftover team — incomplete" banner
+- [ ] UI-TC-171: 4 Y-swimmers → leftover team banner lists exactly 2 missing strokes (e.g. "Breast, Free")
+- [ ] UI-TC-172: 5 Y-swimmers → 1 complete team + 1 leftover team, banner lists exactly 1 missing stroke
+- [ ] UI-TC-173: Leftover team shows "➕ Swim Twice" button (not "Add Swimmer") while it is still incomplete
+- [ ] UI-TC-174: Clicking Swim Twice with a selected eligible swimmer adds them to the next open medley stroke, banner updates to show remaining missing strokes
+- [ ] UI-TC-175: When all 3 strokes are filled in a leftover team, the banner disappears automatically
+- [ ] UI-TC-176: After Confirm Teams, a swimmer who swam twice appears in both teams in the persisted data (`relay_team_member` duplicate member_id per BF-5)

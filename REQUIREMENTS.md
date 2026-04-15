@@ -191,22 +191,27 @@ Anpassungen nach Kunden-Feedback (Bryan) zu v2.7.4.
 - `Ordinary Swim` → `25m Freestyle` + `50m Freestyle` + `25m Team Relay` bleiben korrekt sichtbar.
 - Heat Builder, Results, Calendar und Reports folgen derselben Regel ohne stale Tabs / alte Race-Sets.
 
-### R18: Medley-Restlogik / Leftover-Handling (Acceptance Finding)
-**Status:** 🟡 Teilweise geklärt / fachliche Restfrage für Bryan offen
-**Kontext:** In Medley-Szenarien mit nicht glatt aufgehender Teilnehmerzahl war die Grundregel klar, aber ein fachlicher Sonderfall blieb offen: wie mit einem übrig gebliebenen, grundsätzlich gültigen Medley-Teilnehmer umzugehen ist.
+### R18: Medley-Restlogik / Leftover-Handling (Bryan-bestätigt v2.8.3)
+**Status:** 🟢 Fachfrage geklärt — Swim-Twice-Flow implementiert in v2.8.3
+**Bryan-Antwort (2026-04-15):** "In relation to medley relay can we have a system where we can select swimmers to swim twice if we have a left over swimmer?"
+**Kontext:** Bei Medley-Szenarien mit nicht glatt durch 3 teilbarer Teilnehmerzahl blieben bisher 1–2 gültige Medley-Teilnehmer ohne Team übrig. Sie wurden still verworfen. Bryan wünscht stattdessen einen UI-Flow, bei dem der Nutzer einen bereits zugewiesenen Schwimmer zum zweimaligen Schwimmen auswählen kann, damit das Leftover-Team vervollständigt wird.
 **Geklärter Stand:**
-- `N`-Schwimmer sind korrekt aus Medley ausgeschlossen.
-- Unvollständige bzw. fachlich ungültige Mini-Teams dürfen nicht stillschweigend als normale Medley-Teams gerendert werden.
-**Noch offene Fachfrage an Bryan:**
-- Wie soll mit einem übrig gebliebenen **gültigen** Medley-Teilnehmer umgegangen werden, wenn kein vollständiges Team mehr gebildet werden kann?
-**Anforderung:**
-- Die App darf keine fachlich ungültigen Medley-Teams erzeugen.
-- Leftover-Fälle müssen entweder korrekt behandelt oder explizit als nicht zugewiesen / nicht gerendert behandelt werden.
-- Die endgültige Business-Regel für den verbleibenden Einzelteilnehmer wird mit Bryan bestätigt.
+- `N`-Schwimmer sind weiterhin komplett aus Medley ausgeschlossen.
+- `Y` / `Back` / `Breast` / `Free` sind eligible Medley-Teilnehmer.
+- Leftovers (1 oder 2) werden jetzt in ein sichtbares partielles Team platziert, gekennzeichnet mit `needs_swim_twice_completion: true`.
+- Das UI zeigt einen orangen Hinweis-Banner "⚠️ Leftover team — incomplete" mit den fehlenden Strokes.
+- Ein Dropdown erlaubt die Auswahl eines beliebigen Medley-eligiblen Swimmers (inkl. solchen, die bereits in einem anderen Team sind) zum "➕ Swim Twice".
+- Bestehende `hbAddSwimTwice()` Logik wird wiederverwendet — der ausgewählte Swimmer wird in den nächstfreien Medley-Leg (Back → Breast → Free) eingefügt.
+- Wenn alle 3 Strokes gefüllt sind, verschwindet der Banner.
+- Beim Confirm wird das Team in der DB gespeichert. Duplikate Member-IDs pro Team sind erlaubt (BF-5).
 **Akzeptanzkriterium:**
-- Keine 1er-/2er-Pseudo-Medley-Teams.
-- `N`-Teilnehmer fließen nicht in Medley ein.
-- Der verbleibende offene Leftover-Fall ist dokumentiert und in der nächsten Bryan-Nachricht explizit zur Klärung enthalten.
+- 3 Y-Swimmers → 1 Team, kein Leftover-Team.
+- 4 Y-Swimmers → 1 Team (komplett) + 1 Leftover-Team (1 Swimmer, Banner sichtbar, 2 Strokes fehlen).
+- 5 Y-Swimmers → 1 Team (komplett) + 1 Leftover-Team (2 Swimmers, Banner sichtbar, 1 Stroke fehlt).
+- 6 Y-Swimmers → 2 komplette Teams, kein Leftover-Team.
+- User kann im Leftover-Team über das Dropdown einen Swimmer aus einem anderen Team auswählen → der erscheint in beiden Teams.
+- Banner verschwindet automatisch, sobald alle 3 Strokes besetzt sind.
+- Nach Confirm: Teams werden korrekt in DB persistiert inkl. Swim-Twice-Duplikaten.
 
 ### R19: Live-Platzierungslogik muss für Nutzer nachvollziehbar sein (Acceptance Finding)
 **Status:** 🟡 In Arbeit / mit R20 gekoppelt
