@@ -225,25 +225,64 @@ Anpassungen nach Kunden-Feedback (Bryan) zu v2.7.4.
 - Dieselbe Logik wird in Heat Builder, Results und Folgescreens konsistent dargestellt.
 - Alle verbleibenden fachlichen Unsicherheiten werden nicht versteckt, sondern dokumentiert.
 
-### R20: Platzierungslogik für Special Races (Brace / Medley / Pogo) — fachlich noch zu bestätigen
-**Status:** 🔴 Fachlich nicht endgültig geklärt / Bryan-Bestätigung erforderlich
-**Kontext:** Die Projektdokumentation enthält aktuell zwei konkurrierende Wahrheiten:
-1. **Legacy-Dokumentation:** Brace / Medley / teilweise Pogo nutzen `nearest-to-target` bzw. `abs(variance)`.
-2. **Neuere Acceptance-/Implementierungsrichtung:** Special Races werden aktuell eher wie `fastest finish` / `fastest total_time` behandelt.
-Dino hat im Acceptance-Test korrekt erkannt, dass diese Logik aktuell nicht aus der gesamten Doku eindeutig ableitbar ist.
-**Aktuelle Arbeitsannahme für die App / nächste Bryan-Nachricht:**
-- Wir lassen die aktuelle Implementierungsrichtung vorerst stehen.
-- In der nächsten Nachricht an Bryan benennen wir diese Logik ausdrücklich als **Annahme** und bitten um Bestätigung, ob das fachlich so gewollt ist.
-**Scope:**
-- 25m Brace
-- 50m Brace
-- Medley Relay
-- Pogo
-**Anforderung:**
-- Keine stillschweigende Fachentscheidung mehr an dieser Stelle.
-- Die aktive Logik muss bis zur Bryan-Klärung als vorläufige Arbeitsannahme dokumentiert bleiben.
-- Nach Bryan-Antwort muss R20 auf einen eindeutigen finalen Soll-Zustand aktualisiert werden.
-**Akzeptanzkriterium (vorläufig):**
-- Die aktuell im Produkt sichtbare Logik ist konsistent umgesetzt und im UI nicht widersprüchlich beschriftet.
-- Die offene Fachfrage wird in der nächsten Bryan-Nachricht explizit gestellt.
-- Nach Bryan-Antwort wird R20 entweder auf `fastest finish / total_time` ODER auf `nearest-to-target / abs(variance)` finalisiert und alle abhängigen Specs entsprechend harmonisiert.
+### R20: Platzierungslogik für Special Races — Bryan-bestätigt v2.8.4
+**Status:** 🟢 Fachlich geklärt — smallest absolute variance wins
+**Bryan-Antwort (v2.8.4 follow-up):** Für die Special Races `25m Brace`, `50m Brace`, `Pogo` und `Medley Relay` gewinnt **the team with the smallest variance** (kleinste Abweichung vom Target). Standard 25m Team Relay behält unverändert "fastest total_time wins".
+**Implementierung (v2.8.4):**
+- Neue Helper-Funktion `rankRelayTeams(raceId, raceType)` in `src/server.js` mit `SPECIAL_VARIANCE_RACES = ['25m_brace','50m_brace','pogo','medley_relay']`.
+- Score-Berechnung: Special Races nutzen `Math.abs(team.variance)`; Standard Relays nutzen `team.total_time`.
+- Drei Call-Sites vereinheitlicht: `PUT /api/relay-teams/:teamId/time`, `recalcPogoTeamIfNeeded`, `POST /api/races/:raceId/rank-relay`.
+- UI-Textanpassung: "fastest finish wins" → "smallest variance wins" in Results / Heat Builder / Relays Headers.
+**Akzeptanzkriterium:**
+- 25m Brace: Team mit kleinstem `|variance|` bekommt Platz 1.
+- 50m Brace, Pogo, Medley: gleiche Logik.
+- 25m Team Relay: unverändert fastest total_time wins.
+- Gleichstände (gleiche absolute Varianz) teilen denselben Platz.
+- Browser-verifiziert: Team 2 (var +100) = 1st, Team 3 (var -300) = 2nd, Team 1 (var +500) = 3rd.
+
+### R21: Medley Swim-Twice Stroke editable + replaceable (v2.8.4 Bryan-followup)
+**Status:** 🟢 Umgesetzt in v2.8.4
+**Bryan-Rückmeldung:** Der bei Swim-Twice ausgewählte Schwimmer muss (a) dem fehlenden Stroke zugewiesen werden können — nicht seinem historischen Stroke — und (b) wieder entfernt oder geändert werden können, falls die Auswahl falsch war.
+**Implementierung:**
+- `hbAddSwimTwice`: Bevorzugt die **im Team fehlenden Strokes** (Back → Breast → Free Priorität) statt historischen Swimmer-Stroke. Neues Mitglied erhält `is_swim_twice: true`.
+- Neues Stroke-Dropdown direkt in der Stroke-Zelle des Swim-Twice-Members (nur Medley, nur im HB, nur für Nicht-bestätigte Teams): `hbChangeSwimTwiceStroke(teamIndex, memberIndex, newStroke)`.
+- Neuer "✕ Remove" Button pro Swim-Twice-Row: `hbRemoveSwimTwice(teamIndex, memberIndex)`.
+- Detection: `m.is_swim_twice === true` ODER `duplicate innerhalb desselben Teams`. Originalzuweisungen in anderen Teams behalten ihre normale, unveränderliche Darstellung.
+**Akzeptanzkriterium:**
+- Stroke-Dropdown enthält Back / Breast / Free mit aktueller Auswahl selektiert.
+- Stroke-Änderung aktualisiert Target/Total live.
+- Remove entfernt den Swim-Twice-Row, Banner erscheint wieder mit neuen missing strokes.
+- Original-Team-Zuweisungen werden nicht fälschlich als entfernbar markiert.
+
+### R22: 25m Team Relay — explizite Swim-Twice-Auswahl (v2.8.4 Bryan-followup)
+**Status:** 🟢 Umgesetzt in v2.8.4
+**Bryan-Rückmeldung:** 25m Team Relay darf Teams nicht ohne explizite User-Auswahl automatisch durch Dopplung ausgleichen. Bei Ungleichheit muss ein expliziter Auswahl-Flow angeboten werden.
+**Implementierung:**
+- Server: bei `25m_relay` mit Team-Size < 4 wird `needs_swim_twice_completion: true` gesetzt.
+- Frontend: oranger Banner "⚠️ Team is undersized" mit Anzahl fehlender Legs.
+- Swim-Twice-Dropdown zeigt für 25m_relay alle anwesenden Event-Schwimmer (nicht nur das aktuelle Team).
+**Akzeptanzkriterium:**
+- 10 Swimmers → 2 Teams von 5+5 (keine Banner, da Teams gleich groß).
+- 11 Swimmers → 3 Teams von 4+4+3, kleinstes Team zeigt Banner.
+- 12 Swimmers → 3 Teams von 4+4+4 (keine Banner).
+- Kein stillschweigendes Auto-Dupeln.
+
+### R23: Print cleanup (v2.8.4 Bryan-followup)
+**Status:** 🟢 Umgesetzt in v2.8.4
+**Bryan-Rückmeldung:** Print-Views enthalten weiterhin überflüssigen Helper-Text wie "(Y) explanation" und "All 4 races ready".
+**Implementierung:**
+- Neue CSS-Klasse `.print-hide` mit `@media print { display:none !important }`.
+- Angewandt auf: "What (Y) means" Card (HB), "All X races ready!" Card (HB), "X/Y races confirmed" Status-Zeile (HB), "Event Finalized" Banner (Results), "Event Completed" Banner (Results).
+**Akzeptanzkriterium:**
+- Print-Preview enthält keines dieser Helper-Elemente.
+- Tabelleninhalt + kritische Kontextinfo (Team-Header, Race-Titel) bleibt erhalten.
+
+### R24: Results Layout kompakt (v2.8.4 Bryan-followup)
+**Status:** 🟢 Umgesetzt in v2.8.4
+**Bryan-Rückmeldung:** Results-Tabelle bei Brace soll `Total` direkt bei `PB`, `Tap` direkt daneben, `Variance` direkt daneben zeigen.
+**Implementierung:**
+- Brace-Results-Tabelle: neue Spaltenreihenfolge **Lane | Pair | PBs | Total | Tap | Variance | Place**.
+- Start und Target bleiben im Card-Header sichtbar (`Start: 2s | smallest variance wins`) statt als separate Spalten.
+**Akzeptanzkriterium:**
+- Die Reihenfolge Total → Tap → Variance ist visuell direkt nebeneinander.
+- Print und Screen zeigen dieselbe Struktur, Print nutzt kleinere Font-Sizes gemäß R3.

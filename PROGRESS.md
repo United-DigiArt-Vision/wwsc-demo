@@ -1,8 +1,8 @@
-# PROGRESS — WWSC Swimming App v2.8.3
+# PROGRESS — WWSC Swimming App v2.8.4
 
 ## 🎯 AKTUELLER STATUS
-Phase: 8 — Medley Leftover Swim-Twice (R18 Bryan-bestätigt)
-Schritt: Server erstellt Leftover-Team für 1–2 Restschwimmer, UI zeigt Banner + Swim-Twice-Flow, browser-verifiziert
+Phase: 9 — Bryan Follow-up Corrections nach v2.8.3
+Schritt: Ranking umgestellt auf smallest variance, Medley swim-twice editierbar/entfernbar, 25m Relay explicit swim-twice, Print Cleanup, Results Layout kompakter — alle 6 Bryan-Korrekturen browser-verifiziert
 Blockiert: Nein
 
 ## ✅ ERLEDIGT (mit Dateireferenz)

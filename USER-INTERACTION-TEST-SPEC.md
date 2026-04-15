@@ -384,3 +384,15 @@ This sweep exists because prior proxy/API-based PASS claims were not reliable en
 - [ ] UI-TC-174: Clicking Swim Twice with a selected eligible swimmer adds them to the next open medley stroke, banner updates to show remaining missing strokes
 - [ ] UI-TC-175: When all 3 strokes are filled in a leftover team, the banner disappears automatically
 - [ ] UI-TC-176: After Confirm Teams, a swimmer who swam twice appears in both teams in the persisted data (`relay_team_member` duplicate member_id per BF-5)
+
+### H. v2.8.4 Bryan Follow-up Corrections (UI-TC-177 to UI-TC-186)
+- [ ] UI-TC-177: Medley swim-twice row shows an EDITABLE stroke dropdown (Back/Breast/Free) — not a read-only label
+- [ ] UI-TC-178: Changing the stroke via the dropdown updates the team's Total and the banner's "missing strokes" list immediately
+- [ ] UI-TC-179: Medley swim-twice row shows a "✕ Remove" button that removes only the swim-twice assignment
+- [ ] UI-TC-180: Removing a swim-twice swimmer restores the leftover banner with the now-missing strokes
+- [ ] UI-TC-181: The ORIGINAL team assignment of a swimmer (in a different team) does NOT show the stroke-edit dropdown or remove button — only the swim-twice duplicate does
+- [ ] UI-TC-182: 25m Team Relay with 11 swimmers → teams of 4+4+3 and the 3-member team shows "⚠️ Team is undersized" banner + Swim Twice button
+- [ ] UI-TC-183: 25m Team Relay swim-twice dropdown lists ALL present attendees (not just the current team's members)
+- [ ] UI-TC-184: Print preview hides: "What (Y) means" card, "All X races ready!" card, "X/Y races confirmed" helper text, "Event Finalized" banner, "Event Completed" banner
+- [ ] UI-TC-185: Brace Results table columns in order: Lane | Pair | PBs | Total | Tap | Variance | Place (Start/Target live in the card header, not the table)
+- [ ] UI-TC-186: For 25m Brace, 50m Brace, Pogo, and Medley Relay: team with smallest |variance| gets place 1 (e.g. var +100 beats var -300 beats var +500). 25m Team Relay keeps fastest total_time wins.

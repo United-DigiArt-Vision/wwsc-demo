@@ -1,17 +1,17 @@
 # CURRENT_STATE
 
-**Version (from `package.json`):** 2.8.3
+**Version (from `package.json`):** 2.8.4
 **BaseBranch:** main
-**BaseCommit:** e1e99a1
-**TargetBranch:** dev/v2.8.3-medley-leftover-swim-twice
-**RecordedCommit:** 8192cd9
+**BaseCommit:** 642e52d
+**TargetBranch:** dev/v2.8.4-bryan-followup-special-races
+**RecordedCommit:** PENDING
 **LastEditor:** Claude Code
 **Date:** 2026-04-15
-**Timestamp:** 2026-04-15 08:00:00
+**Timestamp:** 2026-04-15 20:30:00
 **WorkingTreeStatus:** modified
 **ModifiedFiles:** version/CURRENT_STATE.md, version/CHANGELOG.md
 **Version SSOT:** `package.json`
-**Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.3`
+**Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.4`
 
 ## Rules
 - `package.json` is the only SSOT for semantic version numbers.

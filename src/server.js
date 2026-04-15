@@ -1211,8 +1211,12 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
       const swimmersWithPB = relayMembers.map(m => ({ ...m, pb: getRelayPB(m, race.race_type) }));
       const distributed = distributeRoundRobin(swimmersWithPB, numTeams);
 
+      // v2.8.4 Bryan fix 4: flag undersized 25m relay teams so the UI can
+      // explicitly prompt for a swim-twice selection instead of silently
+      // producing uneven teams.
       teams = distributed.map((teamMembers, ti) => {
         const targetTime = teamMembers.reduce((sum, m) => sum + (m.pb !== 9999 ? m.pb : 0), 0);
+        const undersized = teamMembers.length < teamSize;
         return {
           team_number: ti + 1,
           team_name: TEAM_NAMES[ti] || `Team ${ti + 1}`,
@@ -1225,7 +1229,8 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
             time_25m: m.time_25m, time_50m: m.time_50m, time_backstroke: m.time_backstroke, time_breaststroke: m.time_breaststroke, time_butterfly: m.time_butterfly
           })),
           target_time: targetTime > 0 ? targetTime : null,
-          needs_manual_entry: teamMembers.length < teamSize && teamMembers.length !== members.length
+          needs_manual_entry: undersized && teamMembers.length !== members.length,
+          needs_swim_twice_completion: undersized && teamMembers.length !== members.length
         };
       });
 
@@ -1526,6 +1531,32 @@ app.get('/api/races/:raceId/relay-teams', (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// R20 v2.8.4 — Bryan clarification: for special races winner = smallest |variance|.
+// Standard relays (25m_relay) keep fastest total_time wins.
+const SPECIAL_VARIANCE_RACES = ['25m_brace', '50m_brace', 'pogo', 'medley_relay'];
+function rankScore(team, raceType) {
+  if (SPECIAL_VARIANCE_RACES.includes(raceType)) {
+    // Smallest absolute variance wins. null → large fallback so unset teams sort last.
+    return team.variance != null ? Math.abs(team.variance) : 9999999;
+  }
+  // Standard relay: fastest total_time wins.
+  return team.total_time ?? 9999999;
+}
+function rankRelayTeams(raceId, raceType) {
+  const allTeams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(raceId);
+  if (allTeams.length === 0) return;
+  const scored = allTeams.map(t => ({ t, score: rankScore(t, raceType) }));
+  scored.sort((a, b) => a.score - b.score);
+  const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
+  let currentPlace = 0, prevScore = null;
+  scored.forEach((x, i) => {
+    if (prevScore === null || x.score !== prevScore) currentPlace = i + 1;
+    setPlace.run(currentPlace, x.t.id);
+    prevScore = x.score;
+  });
+  db.prepare('UPDATE relay_team SET place = NULL WHERE event_race_id = ? AND total_time IS NULL').run(raceId);
+}
+
 // PUT /api/relay-teams/:teamId/time
 app.put('/api/relay-teams/:teamId/time', (req, res) => {
   try {
@@ -1547,24 +1578,9 @@ app.put('/api/relay-teams/:teamId/time', (req, res) => {
 
     db.prepare('UPDATE relay_team SET total_time = ?, variance = ? WHERE id = ?').run(total_time, variance, req.params.teamId);
 
-    // R6: Auto-rank all teams in this race after each time entry (live placing)
-    const raceId = team.event_race_id;
-    const allTeams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(raceId);
-    if (allTeams.length > 0) {
-      // R20: Unified — ALL relay types: fastest total_time wins
-      let ranked = allTeams.sort((a, b) => (a.total_time ?? 9999) - (b.total_time ?? 9999));
-      const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
-      let currentPlace = 0, prevScore = null;
-      // R20: Unified — all use total_time as score
-      ranked.forEach((t, i) => {
-        let score = t.total_time ?? 9999;
-        if (prevScore === null || score !== prevScore) currentPlace = i + 1;
-        setPlace.run(currentPlace, t.id);
-        prevScore = score;
-      });
-      // Clear place for teams without times
-      db.prepare('UPDATE relay_team SET place = NULL WHERE event_race_id = ? AND total_time IS NULL').run(raceId);
-    }
+    // R6 + R20 v2.8.4: Live placing — special races rank by smallest |variance|,
+    // standard relays by fastest total_time.
+    rankRelayTeams(team.event_race_id, team.race_type);
 
     res.json({ ok: true, total_time, net_time, variance });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -1629,21 +1645,8 @@ function recalcPogoTeamIfNeeded(teamId) {
 
   db.prepare('UPDATE relay_team SET total_time = ?, variance = ? WHERE id = ?').run(totalAvg, variance, teamId);
 
-  // R6: Auto-rank all teams in this race (live placing)
-  const raceId = team.event_race_id;
-  const allTeams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(raceId);
-  if (allTeams.length > 0) {
-    let ranked = allTeams.sort((a, b) => (a.total_time ?? 9999) - (b.total_time ?? 9999));
-    const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
-    let currentPlace = 0, prevScore = null;
-    ranked.forEach((t, i) => {
-      let score = t.total_time ?? 9999;
-      if (prevScore === null || score !== prevScore) currentPlace = i + 1;
-      setPlace.run(currentPlace, t.id);
-      prevScore = score;
-    });
-    db.prepare('UPDATE relay_team SET place = NULL WHERE event_race_id = ? AND total_time IS NULL').run(raceId);
-  }
+  // R6 + R20 v2.8.4: Pogo is a special race → rank by smallest |variance|.
+  rankRelayTeams(team.event_race_id, team.race_type);
 }
 
 // POST /api/races/:raceId/rank-relay
@@ -1652,24 +1655,9 @@ app.post('/api/races/:raceId/rank-relay', (req, res) => {
     const race = db.prepare('SELECT * FROM event_race WHERE id = ?').get(req.params.raceId);
     if (!race) return res.status(404).json({ error: 'Race not found' });
 
-    const teams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(req.params.raceId);
-
-    // R20: Unified place logic — ALL relay types use fastest total_time wins
-    // This is the same intuitive logic as individual races:
-    // best effective performance (lowest finish time after handicap) = 1st
-    let ranked = teams.sort((a, b) => (a.total_time ?? 9999) - (b.total_time ?? 9999));
-
-    const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
-    const batch = db.transaction(() => {
-      let currentPlace = 0;
-      let prevScore = null;
-      ranked.forEach((t, i) => {
-        let score = t.total_time ?? 9999;
-        if (prevScore === null || score !== prevScore) currentPlace = i + 1;
-        setPlace.run(currentPlace, t.id);
-        prevScore = score;
-      });
-    });
+    // R20 v2.8.4 — Bryan clarification: special races (brace, pogo, medley) use
+    // smallest |variance| wins; standard relays use fastest total_time wins.
+    const batch = db.transaction(() => rankRelayTeams(req.params.raceId, race.race_type));
     batch();
 
     res.json({ ok: true });

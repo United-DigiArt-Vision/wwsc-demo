@@ -548,6 +548,8 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
   #app { display: block !important; }
   #content { padding: 4px !important; }
   .btn, .toolbar select, .quick-actions, .modal-overlay { display: none !important; }
+  /* v2.8.4 Bryan fix 3: hide operational/helper UI in print */
+  .print-hide { display: none !important; }
   .toolbar { margin-bottom: 4px !important; }
   h1 { font-size: 16px !important; margin: 0 0 4px 0 !important; }
   h2 { font-size: 13px !important; margin: 0 0 2px 0 !important; }

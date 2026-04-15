@@ -11,6 +11,20 @@
 
 ---
 
+## 2026-04-15 — feat: Bryan Follow-up Corrections (v2.8.4, R20+R21+R22+R23+R24)
+- **Timestamp:** 2026-04-15 20:30:00
+- **App Version (from package.json):** 2.8.4
+- **Branch:** dev/v2.8.4-bryan-followup-special-races
+- **RecordedCommit:** PENDING
+- **Editor:** Claude Code
+- **Changes (6 Bryan corrections):**
+  - Fix 1+2 (R21): Medley swim-twice stroke now editable + removable. New hbChangeSwimTwiceStroke / hbRemoveSwimTwice. hbAddSwimTwice prefers missing stroke instead of historical.
+  - Fix 3 (R23): Print cleanup — new `.print-hide` CSS class applied to "(Y) explanation", "All X races ready", "X/Y races confirmed", "Event Finalized/Completed" banners.
+  - Fix 4 (R22): 25m Team Relay undersized teams get `needs_swim_twice_completion: true` + orange banner + explicit swim-twice dropdown across all attendees.
+  - Fix 5 (R24): Brace Results table compacted to Lane | Pair | PBs | Total | Tap | Variance | Place. Start/Target moved into card header.
+  - Fix 6 (R20): Ranking for 25m brace, 50m brace, Pogo, Medley → smallest |variance| wins. 25m Team Relay unchanged. New rankRelayTeams helper used in 3 call sites. UI text "fastest finish wins" → "smallest variance wins".
+  - Browser-verified end-to-end: Medley 4-swimmer flow (banner + stroke-edit + remove), Brace ranking with +100/-300/+500 variances → 1st/2nd/3rd by |var|, 11-swimmer 25m Team Relay undersized banner, Brace Results new column order.
+
 ## 2026-04-15 — feat: Medley Leftover Swim-Twice Flow (v2.8.3, R18)
 - **Timestamp:** 2026-04-15 08:00:00
 - **App Version (from package.json):** 2.8.3

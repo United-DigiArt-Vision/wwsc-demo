@@ -150,9 +150,9 @@ function drawHeatBuilder() {
 
   let goToResultsBtn = '';
   if (allConfirmed) {
-    goToResultsBtn = '<div class="card" style="background:#e8f5e9;text-align:center;padding:16px;margin-top:12px"><strong style="color:var(--success)">All ' + hbRaces.length + ' races ready!</strong><br><button class="btn btn-accent btn-lg" onclick="navigate(\'results\')" style="margin-top:8px;font-size:18px;padding:14px 32px">Go to Results</button></div>';
+    goToResultsBtn = '<div class="card print-hide" style="background:#e8f5e9;text-align:center;padding:16px;margin-top:12px"><strong style="color:var(--success)">All ' + hbRaces.length + ' races ready!</strong><br><button class="btn btn-accent btn-lg" onclick="navigate(\'results\')" style="margin-top:8px;font-size:18px;padding:14px 32px">Go to Results</button></div>';
   } else {
-    goToResultsBtn = '<div style="text-align:center;margin-top:8px;color:#999;font-size:14px">' + confirmedCount + '/' + hbRaces.length + ' races confirmed — confirm all to proceed to Results</div>';
+    goToResultsBtn = '<div class="print-hide" style="text-align:center;margin-top:8px;color:#999;font-size:14px">' + confirmedCount + '/' + hbRaces.length + ' races confirmed — confirm all to proceed to Results</div>';
   }
 
   let raceContent = '';
@@ -272,10 +272,10 @@ function renderRelayContent() {
   }
 
   if (race.race_type === 'medley_relay') {
-    buttons += '<div class="card" style="background:#fff8e1;border-left:5px solid #e65100;padding:12px 16px;margin-top:12px">' +
+    buttons += '<div class="card print-hide" style="background:#fff8e1;border-left:5px solid #e65100;padding:12px 16px;margin-top:12px">' +
       '<strong style="color:#e65100">What (Y) means</strong><br>' +
       '<span style="color:#5d4037">(Y) means the swimmer was marked as <strong>Y</strong> in the Times Sheet, so the system automatically assigned a stroke to fill the team.</span><br>' +
-      '<span style="color:#5d4037">For Medley Relay, every team now starts at <strong>2</strong>. Results are ranked by <strong>nearest to target time</strong>. Equal variances share the same place.</span>' +
+      '<span style="color:#5d4037">For Medley Relay, every team now starts at <strong>2</strong>. Results are ranked by <strong>smallest variance</strong>. Equal variances share the same place.</span>' +
       '</div>';
   }
 
@@ -328,7 +328,7 @@ function renderBraceTeamsInHB(teams, race) {
     <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91">
       <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91;display:flex;justify-content:space-between;align-items:center">
         <span>${RACE_LABELS[race.race_type] || race.race_type}</span>
-        <span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | fastest finish wins</span>
+        <span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | smallest variance wins</span>
       </div>
       <table class="spreadsheet-table" style="margin:0">
         <thead>
@@ -373,25 +373,48 @@ function renderRelayTeamsInHB(teams, race) {
     // R-15: Relay place display red + bold
     const teamHeader = team.team_name + (placeDisplay ? ' — <span style="color:#e53935;font-weight:700;font-size:18px">' + placeDisplay + '</span>' : '');
 
-    // R18 v2.8.3: Leftover team banner — prompts user to select swim-twice swimmer
-    // Banner is shown only while at least one medley stroke is still missing.
+    // R18 v2.8.3 / v2.8.4 Bryan fix 4: Leftover team banner for Medley AND
+    // 25m Team Relay — prompts user to explicitly pick a swim-twice swimmer
+    // instead of relying on silent auto-filling.
     const missingStrokes = isMedley ? ['Back', 'Breast', 'Free'].filter(st => !members.find(m => (m.stroke || '').toLowerCase() === st.toLowerCase())) : [];
-    const isLeftoverTeam = isMedley && team.needs_swim_twice_completion === true && missingStrokes.length > 0;
-    const leftoverBanner = isLeftoverTeam
-      ? '<div style="background:#fff3e0;border-left:4px solid #e65100;padding:10px 14px;font-size:13px;color:#5d4037"><strong>⚠️ Leftover team — incomplete.</strong> Select a swimmer below to <strong>swim twice</strong> and complete missing stroke' + (missingStrokes.length > 1 ? 's' : '') + ': <strong>' + missingStrokes.join(', ') + '</strong>.</div>'
-      : '';
+    const isRelay25mUnder = is25mRelay && team.needs_swim_twice_completion === true && members.length < 4;
+    const isLeftoverTeam = (isMedley && team.needs_swim_twice_completion === true && missingStrokes.length > 0) || isRelay25mUnder;
+    let leftoverBanner = '';
+    if (isMedley && team.needs_swim_twice_completion === true && missingStrokes.length > 0) {
+      leftoverBanner = '<div style="background:#fff3e0;border-left:4px solid #e65100;padding:10px 14px;font-size:13px;color:#5d4037"><strong>⚠️ Leftover team — incomplete.</strong> Select a swimmer below to <strong>swim twice</strong> and complete missing stroke' + (missingStrokes.length > 1 ? 's' : '') + ': <strong>' + missingStrokes.join(', ') + '</strong>.</div>';
+    } else if (isRelay25mUnder) {
+      const missingLegs = 4 - members.length;
+      leftoverBanner = '<div style="background:#fff3e0;border-left:4px solid #e65100;padding:10px 14px;font-size:13px;color:#5d4037"><strong>⚠️ Team is undersized.</strong> ' + missingLegs + ' leg' + (missingLegs > 1 ? 's' : '') + ' missing — explicitly pick a swimmer from the dropdown below to <strong>swim twice</strong> and even out this team.</div>';
+    }
 
     let rows = '';
-    for (const m of members) {
+    for (let mi = 0; mi < members.length; mi++) {
+      const m = members[mi];
       const pbCol = getPBForRelayHB(m, race.race_type);
       const pbDisplay = formatWhole(pbCol);
       const strokeKey = isMedley ? (m.stroke || '').toLowerCase().substring(0, 4) : null;
       const rowStyle = isMedley ? ' style="background:' + (medleyColors[strokeKey] || '#fff') + '"' : '';
       const strokeLabel = m.stroke || '—';
-      const strokeDisplay = (isMedley && m.auto === true)
-        ? strokeLabel + ' <span style="color:#e65100;font-weight:700;font-size:13px">(Y)</span>'
-        : strokeLabel;
-      
+      // v2.8.4: Swim-twice members get editable stroke + remove button (Medley only).
+      // Only rows explicitly added via hbAddSwimTwice (is_swim_twice flag) OR
+      // a duplicate appearance of the same member within the SAME team get the edit UI.
+      // An original assignment in one team is never removable through this UI, even
+      // if the same swimmer also swims twice in a different team.
+      const duplicateInTeam = members.some((other, oi) => oi < mi && other.member_id === m.member_id);
+      const isSwimTwice = isMedley && !hbRelayConfirmed && (duplicateInTeam || m.is_swim_twice === true);
+      let strokeCellContent;
+      if (isMedley && isSwimTwice) {
+        // Editable stroke selector + remove button
+        const strokes = ['Back', 'Breast', 'Free'];
+        const opts = strokes.map(st => '<option value="' + st + '"' + (st === m.stroke ? ' selected' : '') + '>' + st + '</option>').join('');
+        strokeCellContent = '<select class="form-control" style="display:inline-block;width:auto;min-width:90px;padding:2px 6px;margin-right:6px" onchange="hbChangeSwimTwiceStroke(' + ti + ',' + mi + ',this.value)">' + opts + '</select>'
+          + '<button class="btn btn-outline" style="padding:2px 8px;font-size:12px;color:#c62828;border-color:#c62828" onclick="hbRemoveSwimTwice(' + ti + ',' + mi + ')" title="Remove this swim-twice assignment">✕ Remove</button>';
+      } else {
+        strokeCellContent = (isMedley && m.auto === true)
+          ? strokeLabel + ' <span style="color:#e65100;font-weight:700;font-size:13px">(Y)</span>'
+          : strokeLabel;
+      }
+
       // BF0404-04: Split column for 25m relay (shows after confirm)
       let splitCell = '';
       if (showSplits && hbRelayConfirmed) {
@@ -400,7 +423,7 @@ function renderRelayTeamsInHB(teams, race) {
         splitCell = '<td class="time-cell">—</td>';
       }
 
-      rows += '<tr' + rowStyle + '><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td>' + (showStroke ? '<td>' + strokeDisplay + '</td>' : '') + splitCell + '<td class="time-cell">' + pbDisplay + '</td></tr>';
+      rows += '<tr' + rowStyle + '><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td>' + (showStroke ? '<td>' + strokeCellContent + '</td>' : '') + splitCell + '<td class="time-cell">' + pbDisplay + '</td></tr>';
     }
 
     // R16: No Swim Twice for Pogo
@@ -411,6 +434,12 @@ function renderRelayTeamsInHB(teams, race) {
       if (isMedley) {
         optionPool = hbAttendance
           .filter(a => a.present && ['Y', 'Back', 'Breast', 'Free'].includes(a.special_event_entry))
+          .map(a => ({ member_id: a.member_id, name: a.name }));
+      } else if (is25mRelay) {
+        // v2.8.4 Bryan fix 4: 25m Team Relay — show ALL present attendees so user
+        // can explicitly pick any swimmer to swim twice (not just this team's members).
+        optionPool = hbAttendance
+          .filter(a => a.present)
           .map(a => ({ member_id: a.member_id, name: a.name }));
       }
       const seen = new Set();
@@ -462,7 +491,11 @@ function renderRelayTeamsInHB(teams, race) {
   return html;
 }
 
-// BF-5: Add swimmer to swim a second leg (Heat Builder version)
+// BF-5 + v2.8.4 Bryan fix 1/2: Add swimmer to swim a second leg.
+// New behavior (Medley): prefer the MISSING stroke in this team, not the
+// swimmer's historical stroke. User can still change it afterwards via the
+// inline stroke selector (hbChangeSwimTwiceStroke). Row is marked
+// is_swim_twice so the UI renders the edit + remove controls.
 function hbAddSwimTwice(teamIndex) {
   var select = document.getElementById('hb-swim-twice-' + teamIndex);
   if (!select || !select.value) { alert('Please select a swimmer first.'); return; }
@@ -481,12 +514,20 @@ function hbAddSwimTwice(teamIndex) {
     var openStrokes = ['Back', 'Breast', 'Free'].filter(function(st) {
       return !team.members.find(function(m) { return (m.stroke || '').toLowerCase() === st.toLowerCase(); });
     });
-    var entry = existing.special_event_entry || null;
-    if (entry === 'Back' || entry === 'Breast' || entry === 'Free') {
-      stroke = entry;
-    } else if (openStrokes.length > 0) {
+    // v2.8.4: Missing stroke in the team takes priority. Bryan's clarification —
+    // swim-twice is meant to fill the GAP, not repeat the swimmer's previous stroke.
+    if (openStrokes.length > 0) {
       stroke = openStrokes[0];
-      auto = entry === 'Y';
+      auto = false;
+    } else {
+      // Team is already medley-complete. Fall back to swimmer's preferred stroke.
+      var entry = existing.special_event_entry || null;
+      if (entry === 'Back' || entry === 'Breast' || entry === 'Free') {
+        stroke = entry;
+      } else {
+        stroke = existing.stroke || 'Free';
+        auto = entry === 'Y';
+      }
     }
   }
   var newMember = {
@@ -495,6 +536,7 @@ function hbAddSwimTwice(teamIndex) {
     leg_order: nextLeg,
     stroke: stroke,
     auto: auto,
+    is_swim_twice: true,
     time_25m: existing.time_25m,
     time_50m: existing.time_50m,
     time_backstroke: existing.time_backstroke,
@@ -505,6 +547,29 @@ function hbAddSwimTwice(teamIndex) {
 
   // v2.7.1: Recalculate target_time, start_delay, max_time after adding swimmer
   recalcRelayTeam(team, hbSelectedRace.race_type, hbRelayTeams);
+  renderHeatBuilder();
+}
+
+// v2.8.4 Bryan fix 1: Change stroke of a swim-twice member to the actual
+// stroke they need to fill. Recalculates team PB totals for medley.
+function hbChangeSwimTwiceStroke(teamIndex, memberIndex, newStroke) {
+  var team = hbRelayTeams[teamIndex];
+  if (!team || !team.members || !team.members[memberIndex]) return;
+  team.members[memberIndex].stroke = newStroke;
+  team.members[memberIndex].auto = false;
+  if (hbSelectedRace) recalcRelayTeam(team, hbSelectedRace.race_type, hbRelayTeams);
+  renderHeatBuilder();
+}
+
+// v2.8.4 Bryan fix 2: Remove a swim-twice assignment so the user can
+// correct a wrong selection.
+function hbRemoveSwimTwice(teamIndex, memberIndex) {
+  var team = hbRelayTeams[teamIndex];
+  if (!team || !team.members || !team.members[memberIndex]) return;
+  team.members.splice(memberIndex, 1);
+  // Re-number leg_order so legs stay 1..N
+  team.members.forEach(function(m, i) { m.leg_order = i + 1; });
+  if (hbSelectedRace) recalcRelayTeam(team, hbSelectedRace.race_type, hbRelayTeams);
   renderHeatBuilder();
 }
 

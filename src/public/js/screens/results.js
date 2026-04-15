@@ -135,8 +135,8 @@ function drawResults() {
       ` : ''}
     </div>
 
-    ${resFinalized ? '<div class="card" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — breakers recorded. PBs not auto-updated — update manually via Members → select swimmer → edit time.</strong></div>' : ''}
-    ${resCompleted ? '<div class="card" style="background:#e0e0e0;text-align:center;padding:12px"><strong>✅ Event Completed</strong></div>' : ''}
+    ${resFinalized ? '<div class="card print-hide" style="background:#e8f5e9;text-align:center;padding:12px"><strong style="color:var(--success)">✓ Event Finalized — breakers recorded. PBs not auto-updated — update manually via Members → select swimmer → edit time.</strong></div>' : ''}
+    ${resCompleted ? '<div class="card print-hide" style="background:#e0e0e0;text-align:center;padding:12px"><strong>✅ Event Completed</strong></div>' : ''}
 
     <div style="overflow-x:auto;margin-bottom:16px">
       ${currentRaceHasData
@@ -774,11 +774,15 @@ function renderBraceResultsInline(race) {
     const varDisplay = team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—';
     const varStyle = team.variance != null && Math.abs(team.variance) < 300 ? 'color:var(--success);font-weight:700' : '';
 
-    rows += '<tr><td>' + team.team_number + '</td><td class="name-cell">' + names + '</td><td>' + pbs + '</td><td>' + formatWhole(totalPB) + '</td><td>' + formatWhole(startDelay) + '</td><td>' + (targetCalc != null ? formatWhole(targetCalc) : '—') + '</td>' + finishCell + '<td style="' + varStyle + '">' + varDisplay + '</td><td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
+    // v2.8.4 Bryan fix 5: Total next to PBs, Tap (Finish) next, Variance next.
+    // Start/Target are shown in the card header, not as separate columns, to
+    // keep the on-paper readability Bryan asked for.
+    rows += '<tr><td>' + team.team_number + '</td><td class="name-cell">' + names + '</td><td>' + pbs + '</td><td>' + formatWhole(totalPB) + '</td>' + finishCell + '<td style="' + varStyle + '">' + varDisplay + '</td><td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
   }
 
-  // R7: Updated column order: PBs | Total | Start | Target (new) | Finish | Variance | Place
-  return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span><span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | fastest finish wins</span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Lane</th><th style="text-align:left;min-width:180px">Pair</th><th>PBs</th><th>Total</th><th>Start</th><th>Target</th><th style="min-width:80px">Finish</th><th>Variance</th><th>Place</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  // v2.8.4 Bryan fix 5: compact column order Lane | Pair | PBs | Total | Tap | Variance | Place
+  const headerInfo = '<span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | smallest variance wins</span>';
+  return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span>' + headerInfo + '</div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Lane</th><th style="text-align:left;min-width:180px">Pair</th><th>PBs</th><th>Total</th><th style="min-width:80px">Tap</th><th>Variance</th><th>Place</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 
 // R16: Pogo Results — columns: PB | Start | Total | T1 | T2 | Result (Avg) | Variance
