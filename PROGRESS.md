@@ -22,9 +22,9 @@ Blockiert: Nein
 - [x] Ergebnis dieser Runde: UI weiterhin instabil, daher Übergabe an Claude Code vorbereitet statt weitere unstrukturierte Patches.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Claude Code erhält jetzt einen präzisen Handoff zur sauberen Reparatur der Pogo Results UI.
-Datei lesen: `src/public/js/screens/results.js`, `src/public/js/components/numpad.js`, `PROGRESS.md`, `REQUIREMENTS.md`, `DESIGN-SPEC.md`, `USER-INTERACTION-TEST-SPEC.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`
-Kriterium fertig: Pogo-Tabelle ist visuell sauber (`Result` sichtbar/korrekt), bestehende T1/T2-Werte sind editierbar, und Dino bestätigt den Flow im Browser.
+Was: Claude Code soll auf Basis der neuesten Dino-Findings eine neue Korrekturrunde auf `v2.8.5` aufsetzen, die Readability-/Explainability-Probleme in Brace, Medley und Pogo behebt, dann die erweiterte `USER-INTERACTION-TEST-SPEC.md` inklusive Section K ausführt und eine konsolidierte Bryan-Freigabewahrheit liefert.
+Datei lesen: `PROGRESS.md`, `REQUIREMENTS.md`, `DESIGN-SPEC.md`, `USER-INTERACTION-TEST-SPEC.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, aktuelle Findings in `messages/2026-04-17-*.md`
+Kriterium fertig: Neue Version + neuer Branch + aktualisierte UI für die gesammelten Dino-Findings, dazu ein neues `USER-INTERACTION-TEST-PROTOCOL` mit mindestens allen Section-K-Cases sowie ein klares Verdict, ob keine user-facing Fehler mehr sichtbar sind.
 
 ## ⚠️ OFFENE PUNKTE / BLOCKER
 - **R20 (DOC-AMBIGUITY / TC-148):** Ranking-Logik für Special Races (Brace / Medley / Pogo) — App nutzt `fastest_total_time`, Legacy-Doku sagt `nearest-to-target`. Bryan-Bestätigung erforderlich.
@@ -34,6 +34,10 @@ Kriterium fertig: Pogo-Tabelle ist visuell sauber (`Result` sichtbar/korrekt), b
 - **Neuer kritischer Pogo-Crash-Bug:** Dino meldet jetzt zum zweiten Mal, dass sich der Browser-Tab / die App unter Pogo während echter Eingabe komplett schließt. Neues klares Repro: 7 Schwimmer gewählt → nur 1 Pogo-Team mit 4 generiert → T1 Schwimmer 1 → T2 Schwimmer 1 → T1 Schwimmer 1 korrigiert → T1 Schwimmer 2 → T2 Schwimmer 2 → Klick auf OK → Tab schließt sich komplett.
 - **Pogo Edit Flow:** Re-Edit von T1 hat diesmal funktioniert, aber der gesamte Flow ist weiterhin instabil wegen des Tab-Crashs.
 - **Release-Gate:** Keine Bryan-Auslieferung, bevor diese Acceptance-Bugs sauber behoben und live verifiziert sind.
+- **Neuer Dino-Testbefund (2026-04-17):** Auf der Results-Seite für `25m Brace Relay` wirkt die Eingabespalte für Result/Tap trotz Gruppierung weiterhin unklar bzw. "ohne richtigen Header". Das muss in der nächsten Claude-Runde als echte User-Readability-Aufgabe behandelt werden, nicht nur als Tabellenstruktur-Thema.
+- **Neuer Dino-Testbefund (2026-04-17):** Die Platzierungslogik bei `25m Brace Relay` ist fachlich korrekt nach Bryan-Regel (`smallest absolute variance wins`), wirkt aber UX-seitig potenziell missverständlich, weil die schnellste `Tap`-Zeit nicht gewinnt. Die UI muss deutlicher kommunizieren, dass `Variance` — nicht rohe `Tap` — die Platzierung bestimmt.
+- **Neuer Dino-Testbefund (2026-04-17):** Auf der Results-Seite für `Medley Relay` ist aktuell **keine sichtbare Variance-Darstellung** erkennbar. Das ist problematisch, weil Bryan ausdrücklich gesagt hat, dass bei `25m Brace`, `50m Brace`, `Pogo` **und `Medley Relay`** die kleinste Variance gewinnt. Wenn Variance die Ranking-Grundlage ist, muss sie im Medley-Results-UI auch sichtbar und nachvollziehbar sein — sonst ist die Platzierungslogik für den Nutzer nicht prüfbar.
+- **Neuer Dino-Testbefund (2026-04-17):** Auch auf der Results-Seite für `Pogo` ist aktuell **keine sichtbare Variance-Darstellung** vorhanden. Da Bryan `Pogo` ebenfalls explizit unter die Regel "smallest variance wins" gefasst hat, muss Variance in der Pogo-Results-Ansicht sichtbar und verständlich dargestellt werden. Sonst bleibt die Platzierungsgrundlage für den Nutzer intransparent.
 - **Architektur-Track (beschlossen):** Breakers / Exceedings / gemeinsame Report-Metriken müssen nach dieser Delivery in eine zentrale Datenlogik überführt werden. Das ist ausdrücklich beschlossen und darf nicht vergessen werden.
 
 ## 📊 FORTSCHRITT

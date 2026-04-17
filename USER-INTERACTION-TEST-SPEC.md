@@ -542,3 +542,143 @@ Covers R20.
 - [ ] UI-TC-289: 25m Team Relay banner (R22) appears on 4+4+3 scenario, not on 5+5 scenario.
 - [ ] UI-TC-290: Print-hide (R23/R25) is effective on all five print surfaces (Heat Builder, Results, Breaker Report, Relays, Event Report).
 - [ ] UI-TC-291: Smallest-variance ranking (R20) holds under edit/delete time scenarios.
+
+### J. v2.8.5 Release-Gate Execution Matrix (UI-TC-292 to UI-TC-336)
+
+This section is the authoritative release-gate matrix for the next Claude-run. It is not a loose checklist. It exists to force a consolidated user-truth for `v2.8.5` before any Bryan-facing delivery is prepared.
+
+Rules for Section J:
+- execute in the rendered app, not by code inspection only
+- no `same logic as`, no `covered by`, no API-only substitutes
+- every case must end in one of: `PASS`, `FAIL`, `OPEN`, `NOT TESTED`
+- if a case is blocked by another failure, mark that explicitly instead of silently skipping it
+
+#### J.1 Medley swim-twice release gate (UI-TC-292 to UI-TC-303)
+- [ ] UI-TC-292: 4 Y-swimmers → generate Medley → leftover team appears with explicit swimmer picker, explicit `Swim as:` picker, and visible `+ Swim Twice` button before any add action.
+- [ ] UI-TC-293: Choose Bryan (historical Back) + choose Breast before add → Bryan lands as Breast, not Back.
+- [ ] UI-TC-294: Choose Bryan (historical Back) + choose Free before add → Bryan lands as Free, not Back.
+- [ ] UI-TC-295: After add, inline stroke dropdown remains editable and changing it updates team total immediately.
+- [ ] UI-TC-296: Remove the swim-twice swimmer → row disappears, banner returns with correct missing strokes, no ghost row remains.
+- [ ] UI-TC-297: Remove then re-add a different swimmer to a different stroke → no stale prior state leaks into the new add.
+- [ ] UI-TC-298: Confirm teams after swim-twice assignment → persisted team still shows chosen stroke after reload.
+- [ ] UI-TC-299: Original team membership of the duplicated swimmer stays untouched and non-removable.
+- [ ] UI-TC-300: Team already complete → extra swim-twice add path is either clearly allowed or clearly blocked, but never ambiguous. Result must be documented explicitly.
+- [ ] UI-TC-301: Leftover with exactly one missing stroke defaults to that stroke and labels it `(missing)`.
+- [ ] UI-TC-302: Leftover with two missing strokes labels both correctly and does not silently pick the swimmer's historic stroke.
+- [ ] UI-TC-303: Full end-to-end Medley correction flow is understandable from a real user perspective with no hidden UI knowledge needed.
+
+#### J.2 Brace results readability release gate (UI-TC-304 to UI-TC-311)
+- [ ] UI-TC-304: Brace Results header shows both rows cleanly and the group labels are visually obvious at first glance.
+- [ ] UI-TC-305: PBs + Total are perceived as one "Plan" block, not two disconnected cells.
+- [ ] UI-TC-306: Tap field is visually the most obvious interactive input in the row.
+- [ ] UI-TC-307: Variance is visually separated from Tap and Total, not lost in the summary row.
+- [ ] UI-TC-308: Place/result area feels like the outcome block, not just another generic cell.
+- [ ] UI-TC-309: The row no longer looks like a "table hack" — document this explicitly from user-view, not developer-view.
+- [ ] UI-TC-310: Mobile or narrow viewport still preserves the semantic grouping without collapsing into confusion.
+- [ ] UI-TC-311: Finalized event view preserves the same grouped readability.
+
+#### J.3 Print-surface audit release gate (UI-TC-312 to UI-TC-321)
+- [ ] UI-TC-312: Heat Builder print preview hides all helper/status/operational elements from the R25 hide-list.
+- [ ] UI-TC-313: Heat Builder print preview still preserves race title, team/heat data, totals, and essential race context.
+- [ ] UI-TC-314: Results print preview hides all operational banners/buttons/dropdowns from the R25 hide-list.
+- [ ] UI-TC-315: Results print preview preserves the grouped summary table correctly.
+- [ ] UI-TC-316: Breaker Report print preview hides print buttons but preserves both report tables.
+- [ ] UI-TC-317: Relays print preview contains no leftover helper UI or operational chrome.
+- [ ] UI-TC-318: Event Report remains a clean standalone printable report without operational controls.
+- [ ] UI-TC-319: At least one crowded Heat Builder print scenario fits on page without obvious wasted helper-space.
+- [ ] UI-TC-320: At least one crowded Results print scenario remains readable and not overrun by spacing artifacts.
+- [ ] UI-TC-321: Any difference between CSS print-preview and real browser print behavior is documented as OPEN instead of assumed away.
+
+#### J.4 Ranking / ambiguity release gate (UI-TC-322 to UI-TC-328)
+- [ ] UI-TC-322: 25m Brace ranking in the UI matches `smallest absolute variance wins` with concrete entered times.
+- [ ] UI-TC-323: 50m Brace ranking in the UI matches `smallest absolute variance wins` with concrete entered times.
+- [ ] UI-TC-324: Pogo ranking in the UI matches the currently implemented rule with concrete entered times.
+- [ ] UI-TC-325: Medley Relay ranking in the UI matches the currently implemented rule with concrete entered times.
+- [ ] UI-TC-326: 25m Team Relay still ranks by fastest total time and is not accidentally affected by special-race variance logic.
+- [ ] UI-TC-327: Equal absolute variances produce a documented and user-visible tie behavior; no silent ranking jump.
+- [ ] UI-TC-328: Any remaining contradiction between legacy wording and current Bryan-confirmed wording is marked `OPEN / DOC-AMBIGUITY`, not flattened.
+
+#### J.5 Pogo release blocker matrix (UI-TC-329 to UI-TC-336)
+- [ ] UI-TC-329: Create a 7-swimmer Pogo setup and verify the generated team structure is stable and visually valid before any time entry.
+- [ ] UI-TC-330: Enter T1 and T2 for swimmer 1, then re-edit T1 for swimmer 1 → UI remains stable and editable.
+- [ ] UI-TC-331: Continue with swimmer 2 T1/T2 entry after the re-edit of swimmer 1 → no tab close, no crash, no lost state.
+- [ ] UI-TC-332: Click OK after the exact Dino repro path → browser tab must remain alive; if not, record as FAIL with exact step.
+- [ ] UI-TC-333: Existing T1/T2 values remain re-editable after initial entry.
+- [ ] UI-TC-334: `Result` column is visibly present, structurally aligned, and understandable in the Pogo results table.
+- [ ] UI-TC-335: Recalculating / saving after Pogo edits does not destabilize the table layout.
+- [ ] UI-TC-336: If any Pogo crash/layout/edit bug still exists, mark `v2.8.5` as release-blocked for Bryan.
+
+### K. Dino final acceptance findings — readability, transparency, and ranking explainability (UI-TC-337 to UI-TC-392)
+
+This section captures the latest Dino-led manual findings after the v2.8.5 round. The core theme is not only functional correctness, but whether Bryan can understand the UI without hidden rules.
+
+Rules for Section K:
+- user-perspective first
+- if the screen is technically structured but still confusing, that is NOT a PASS
+- special-race ranking must be visually explainable, not merely correct in code
+
+#### K.1 25m Brace results input/readability (UI-TC-337 to UI-TC-348)
+- [ ] UI-TC-337: On `Results — 25m Brace Relay`, the user can immediately identify where the live race result should be entered without needing prior project knowledge.
+- [ ] UI-TC-338: The `ACTUAL` group header reads clearly enough to imply that `Tap` is the entry column for the actual measured result.
+- [ ] UI-TC-339: The `Tap` column has a sufficiently explicit visible header and does not feel like a headerless or floating interaction zone.
+- [ ] UI-TC-340: The contrast and spacing around the `Tap` column make it feel intentionally grouped, not visually isolated.
+- [ ] UI-TC-341: The visual relationship `PBs → Total → Tap → Variance` is obvious at first glance.
+- [ ] UI-TC-342: After values are entered, the `Tap` column still reads as the actual input/result column and does not visually disappear into the table.
+- [ ] UI-TC-343: The user can distinguish between `Total` (planned/derived figure) and `Tap` (actual entered result) without ambiguity.
+- [ ] UI-TC-344: The user can distinguish between `Tap` and `Variance` without needing to infer hidden formulas.
+- [ ] UI-TC-345: The user can distinguish between `Variance` and `Place` without confusing one for the other.
+- [ ] UI-TC-346: The row remains understandable after rankings are calculated and medal/place colors appear.
+- [ ] UI-TC-347: The grouped header remains understandable on a moderate-width laptop viewport, not only full-screen desktop.
+- [ ] UI-TC-348: If the user's eye is naturally drawn first to `Tap`, the UI still clearly explains why `Tap` is not the winning metric for Brace.
+
+#### K.2 Brace ranking explainability (UI-TC-349 to UI-TC-360)
+- [ ] UI-TC-349: With concrete entered values, the UI makes it clear that `smallest variance wins` is the active ranking rule for Brace.
+- [ ] UI-TC-350: The phrase `smallest variance wins` is visible enough on-screen that Bryan would realistically notice it.
+- [ ] UI-TC-351: The visual emphasis of `Tap` does not overpower or contradict the ranking rule.
+- [ ] UI-TC-352: A user seeing a slower Tap ranked above a faster Tap can understand the reason from the visible UI alone.
+- [ ] UI-TC-353: The `Variance` value is visually prominent enough to justify the resulting `Place` order.
+- [ ] UI-TC-354: The `Place` styling feels connected to `Variance`, not misleadingly connected to `Tap`.
+- [ ] UI-TC-355: The UI does not accidentally imply that the fastest Tap is always best in Brace.
+- [ ] UI-TC-356: A first-time user can correctly explain why Lane 1 beat Lane 2 when Lane 2 has a faster Tap but a worse variance.
+- [ ] UI-TC-357: Equal-variance tie cases remain understandable from visible UI explanation alone.
+- [ ] UI-TC-358: The Brace results card/header/body together form one coherent explanation of the ranking logic.
+- [ ] UI-TC-359: If any user-facing ambiguity remains between Tap-speed intuition and variance-based ranking, it is documented as FAIL/OPEN, not rationalized away.
+- [ ] UI-TC-360: The final Brace screen is acceptable as something Bryan could trust without verbal explanation from us.
+
+#### K.3 Medley Relay variance visibility and ranking transparency (UI-TC-361 to UI-TC-372)
+- [ ] UI-TC-361: On `Results — Medley Relay`, the user can see a visible variance value or clearly equivalent variance indicator for each team.
+- [ ] UI-TC-362: If Medley ranking uses `smallest variance wins`, that rule is visibly communicated in the Medley results UI.
+- [ ] UI-TC-363: The Medley results screen exposes enough information for the user to understand why one team is ranked above another.
+- [ ] UI-TC-364: Team header information (`Start`, `Total`, `Target`) is visually connected to any variance/ranking outcome.
+- [ ] UI-TC-365: The red `Team Total` row does not hide or obscure the ranking basis.
+- [ ] UI-TC-366: If `Tap` is used as the interaction surface in Medley, the user can still distinguish input value from ranking metric.
+- [ ] UI-TC-367: A user can inspect Team 1 vs Team 2 and infer why one ranks above the other without hidden backend knowledge.
+- [ ] UI-TC-368: Missing visible variance on Medley is treated as FAIL if ranking is variance-based.
+- [ ] UI-TC-369: The Medley screen does not rely on the user remembering the Brace rule by analogy.
+- [ ] UI-TC-370: If the Medley UI uses a different visual pattern than Brace, that pattern is still self-explanatory.
+- [ ] UI-TC-371: The Medley ranking explanation remains understandable after values are entered and saved.
+- [ ] UI-TC-372: The final Medley screen is acceptable as a Bryan-facing explanation of a variance-based ranking model.
+
+#### K.4 Pogo variance visibility and ranking transparency (UI-TC-373 to UI-TC-384)
+- [ ] UI-TC-373: On `Results — Pogo`, the user can see a visible variance value or clearly equivalent variance indicator for each row/team.
+- [ ] UI-TC-374: If Pogo ranking uses `smallest variance wins`, that rule is visibly communicated on the screen.
+- [ ] UI-TC-375: The screen clearly distinguishes `Exp.F`, `Total`, `Tgt`, `Result`, and `Var.` from one another.
+- [ ] UI-TC-376: `Var.` is not left as a placeholder-only column when ranking depends on it.
+- [ ] UI-TC-377: The user can understand how `Result` relates to `Variance` in the Pogo table.
+- [ ] UI-TC-378: The user can understand how `T1` and `T2` feed into `Result` without losing sight of the ranking basis.
+- [ ] UI-TC-379: The screen does not visually over-emphasize raw taps while hiding the deciding metric.
+- [ ] UI-TC-380: If `Var.` is blank while rankings are shown or intended, that is treated as FAIL.
+- [ ] UI-TC-381: Pogo remains understandable after multiple re-edits and recalculation.
+- [ ] UI-TC-382: The user can compare swimmers/teams and explain the ranking outcome from visible values alone.
+- [ ] UI-TC-383: The final Pogo screen feels trustworthy for Bryan, not like a partially exposed internal calculation.
+- [ ] UI-TC-384: Any remaining disconnect between visible columns and actual ranking metric is documented explicitly.
+
+#### K.5 Cross-special-race consistency (UI-TC-385 to UI-TC-392)
+- [ ] UI-TC-385: Brace, Medley, and Pogo all communicate the ranking basis consistently when the basis is variance.
+- [ ] UI-TC-386: A user moving from Brace to Medley does not lose the ability to understand what determines `Place`.
+- [ ] UI-TC-387: A user moving from Brace to Pogo does not lose the ability to understand what determines `Place`.
+- [ ] UI-TC-388: `smallest variance wins` is not visually obvious in one special race and hidden in another.
+- [ ] UI-TC-389: If one special race shows visible variance and another does not, that inconsistency is treated as FAIL or OPEN.
+- [ ] UI-TC-390: The UI language for special-race ranking is consistent enough that Bryan would not think the ranking rule changes arbitrarily between races.
+- [ ] UI-TC-391: The app does not mix a variance-based rule with a fastest-result visual hierarchy in a way that confuses the user.
+- [ ] UI-TC-392: Final release judgment for the next round must explicitly state whether all special-race results are now both functionally correct and user-explainable.
