@@ -1472,6 +1472,17 @@ app.post('/api/races/:raceId/save-relay-teams', (req, res) => {
     if (!Array.isArray(teams)) return res.status(400).json({ error: 'teams array required' });
     const raceId = req.params.raceId;
 
+    // R27 (v2.8.7): Drop teams with zero members before persisting so that
+    // accidentally created manual teams do not pollute the database. Teams
+    // with at least one member are kept even if incomplete — they show as
+    // "not rankable" in Results so the user remains in control.
+    const teamsToPersist = teams.filter(t => Array.isArray(t && t.members) && t.members.length > 0);
+    // Renumber team_number so the persisted sequence stays 1..N after filtering.
+    teamsToPersist.forEach((t, i) => {
+      t.team_number = i + 1;
+      if (t.team_name && /^Team \d+$/.test(t.team_name)) t.team_name = 'Team ' + (i + 1);
+    });
+
     // Clear existing
     const existing = db.prepare('SELECT id FROM relay_team WHERE event_race_id = ?').all(raceId);
     const delMembers = db.prepare('DELETE FROM relay_team_member WHERE relay_team_id = ?');
@@ -1484,7 +1495,7 @@ app.post('/api/races/:raceId/save-relay-teams', (req, res) => {
       existing.forEach(t => delMembers.run(t.id));
       delTeams.run(raceId);
 
-      teams.forEach(team => {
+      teamsToPersist.forEach(team => {
         const r = insTeam.run(raceId, team.team_number, team.team_name, team.target_time || null, team.start_delay || 0, team.max_time || null);
         const teamId = r.lastInsertRowid;
         // BF-5: Allow duplicate member_id (swim twice for uneven teams)

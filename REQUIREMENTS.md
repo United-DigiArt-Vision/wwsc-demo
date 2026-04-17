@@ -371,3 +371,37 @@ Die v2.8.4-Runde wurde live von Dino durchgespielt. Zwei Requirements waren trot
   5. Results/Ranking verification mit konkreten Szenario-Daten
 - Nicht mehr ausreichend: "CSS rule exists", "API returns payload", "I believe the flow is correct".
 - Erforderlich: konkrete Szenario-Execution mit Nachweis.
+
+### R27: Manuelles Team-Management für team-basierte Races mit Add-Swimmer-Flow (neues Dino-Finding)
+**Status:** 🟡 Neu / für nächste Implementierungsrunde
+**Kontext:** In team-basierten Races ist die aktuelle Auto-Generierung zu starr. Wenn Teilnehmerzahlen nicht glatt aufgehen oder der User bewusst anders organisieren will, fehlt die notwendige Flexibilität. Insbesondere bei Flows, in denen das Produkt bereits vorsieht, dass Schwimmer manuell ergänzt/zugewiesen werden können, soll der User nicht nur bestehende Teams auffüllen, sondern auch zusätzliche Teams anlegen und versehentlich angelegte Teams wieder entfernen können.
+**Fachliche Regel / Scope:**
+- Diese Funktion gilt **nur** für team-basierte Races, bei denen manuelles Hinzufügen/Zuweisen von Schwimmern fachlich bereits erlaubt oder definiert ist.
+- Wenn ein Race-Typ keinen manuellen Add-Swimmer-Flow unterstützt, darf dort auch **kein** `+ Add Team` erscheinen.
+- `RecordedCommit`/Versioning-Regeln bleiben unberührt; dies ist eine reine Produkt-/UI-/Workflow-Erweiterung.
+**Anforderung:**
+1. In allen relevanten team-basierten Races gibt es im Heat Builder eine klar sichtbare Aktion **`+ Add Team`**.
+2. Beim Klick wird ein neues Team erzeugt und sofort sichtbar im aktuellen Screen dargestellt.
+3. Der User kann in ein neu angelegtes Team Schwimmer hinzufügen — nach derselben Bedienlogik wie bei bestehenden Teams, überall dort, wo manuelles Hinzufügen fachlich erlaubt ist.
+4. Die UI muss klar zeigen:
+   - welche Schwimmer bereits einem Team zugewiesen sind
+   - welche Schwimmer noch **unassigned** sind
+   - welche Teams **complete** bzw. **incomplete** sind
+5. Manuell hinzugefügte Teams müssen wieder entfernbar sein (z. B. **`Remove Team`** / **`Delete Team`**), damit versehentlich angelegte Teams rückgängig gemacht werden können.
+6. Beim Entfernen eines manuell angelegten Teams dürfen dessen Schwimmer nicht stillschweigend verschwinden; sie müssen sauber in den **unassigned**-Zustand zurückgeführt oder explizit auf freien Zustand zurückgesetzt werden.
+7. Die UI muss pro Team einen klaren Gültigkeits-/Vollständigkeitsstatus zeigen, z. B.:
+   - `complete`
+   - `incomplete`
+   - `needs 1 more swimmer`
+   - `not rankable`
+8. Wenn ein Race nur vollständige Teams werten/ranken darf, muss diese Regel sichtbar kommuniziert werden.
+9. Results/Heat-Builder-UI darf bei nur einem einzigen gültigen Team nicht kommentarlos eine normale Wettbewerbssituation suggerieren; unassigned / leftover Teilnehmer oder nicht-rankbare Teams müssen transparent erkennbar sein.
+**Akzeptanzkriterium:**
+- Für jeden relevanten Race-Typ erscheint **`+ Add Team`** sichtbar, für nicht relevante Race-Typen nicht.
+- Klick auf **`+ Add Team`** erzeugt ein neues leeres/unvollständiges Team ohne bestehende Teams zu beschädigen.
+- User kann Schwimmer in dieses Team hinzufügen und erkennt sofort Assigned vs Unassigned.
+- Ein versehentlich angelegtes leeres oder teilweise befülltes Team kann wieder entfernt werden.
+- Beim Entfernen landen dessen Schwimmer sauber wieder im freien/unassigned Pool.
+- Vollständige und unvollständige Teams sind visuell unterscheidbar.
+- Wenn nur ein gültiges Team existiert oder Restteilnehmer übrig bleiben, kommuniziert die UI diesen Zustand explizit statt nur z. B. stumpf `1st` zu zeigen.
+- Die Lösung wird browserseitig für alle betroffenen Race-Typen mit echten User-Flows verifiziert.

@@ -26,6 +26,94 @@ function isRelayRace(raceType) {
   return RELAY_RACE_TYPES.includes(raceType);
 }
 
+// R27 (v2.8.7): Manual team management (+ Add Team / Remove Team / Unassigned pool
+// / completeness / rankability) is enabled only for race types where manual
+// swimmer addition is already product-defined:
+//   - medley_relay: user can already swim-twice to complete leftover teams (R18, R21)
+//   - 25m_relay:    user already explicitly picks swim-twice swimmers for undersized teams (R22)
+// 25m_brace / 50m_brace use strict 2-person pair logic with auto odd-man-out
+// resolution (R2), no manual add-swimmer flow. pogo is strictly 4-per-team
+// with no swim-twice (R16). These are intentionally not eligible for R27.
+const R27_ELIGIBLE_RACES = ['25m_relay', 'medley_relay'];
+function isR27EligibleRace(raceType) {
+  return R27_ELIGIBLE_RACES.indexOf(raceType) !== -1;
+}
+
+function getRequiredLegs(raceType) {
+  if (raceType === 'medley_relay') return 3; // Back + Breast + Free
+  if (raceType === '25m_relay') return 4;
+  if (raceType === 'pogo') return 4;
+  if (raceType === '25m_brace' || raceType === '50m_brace') return 2;
+  return 0;
+}
+
+// Completeness metadata for a single team. Medley needs all three strokes;
+// 25m relay needs four legs. Result shape is intentionally explicit so
+// downstream UI can build clear banners/badges without re-computing.
+function getTeamCompleteness(team, raceType) {
+  var members = (team && team.members) || [];
+  var required = getRequiredLegs(raceType);
+  if (raceType === 'medley_relay') {
+    var present = new Set();
+    for (var i = 0; i < members.length; i++) {
+      var s = (members[i].stroke || '').toLowerCase();
+      if (s) present.add(s);
+    }
+    var missing = ['Back', 'Breast', 'Free'].filter(function(st) { return !present.has(st.toLowerCase()); });
+    var completeM = missing.length === 0;
+    return {
+      complete: completeM,
+      filled: members.length,
+      required: required,
+      missing: missing,
+      missingCount: missing.length,
+      label: completeM ? 'complete'
+        : (members.length === 0 ? 'empty — needs Back, Breast, Free'
+          : 'incomplete — needs ' + missing.join(', '))
+    };
+  }
+  var filled = members.length;
+  var missingCount = Math.max(0, required - filled);
+  var complete = filled >= required;
+  return {
+    complete: complete,
+    filled: filled,
+    required: required,
+    missing: [],
+    missingCount: missingCount,
+    label: complete ? 'complete'
+      : (filled === 0 ? 'empty — needs ' + required + ' swimmers'
+        : 'needs ' + missingCount + ' more swimmer' + (missingCount > 1 ? 's' : ''))
+  };
+}
+
+function countCompleteTeams(teams, raceType) {
+  return (teams || []).filter(function(t) { return getTeamCompleteness(t, raceType).complete; }).length;
+}
+
+// Unassigned pool: attendees of this event who are eligible for this race
+// and are not present in any team. Uses the same eligibility rules as the
+// existing swim-twice picker so UI stays consistent.
+function getUnassignedSwimmers(teams, raceType, attendance) {
+  var assigned = new Set();
+  (teams || []).forEach(function(t) {
+    (t.members || []).forEach(function(m) {
+      if (m.member_id != null) assigned.add(m.member_id);
+    });
+  });
+  var pool;
+  if (raceType === 'medley_relay') {
+    pool = (attendance || []).filter(function(a) {
+      return a.present && ['Y', 'Back', 'Breast', 'Free'].indexOf(a.special_event_entry) !== -1;
+    });
+  } else if (raceType === '25m_relay') {
+    pool = (attendance || []).filter(function(a) { return a.present; });
+  } else {
+    return [];
+  }
+  return pool.filter(function(a) { return !assigned.has(a.member_id); });
+}
+
 async function renderHeatBuilder(raceType) {
   const event = await API.getCurrentEvent();
   const el = document.getElementById('content');
@@ -279,6 +367,54 @@ function renderRelayContent() {
       '</div>';
   }
 
+  // R27 (v2.8.7): Manual team management UI (pre-confirm only, for eligible races).
+  // Shows ranking rule banner + unassigned swimmer pool + trailing "+ Add Team"
+  // action. Button/badge inside each team card is rendered by renderRelayTeamsInHB.
+  let r27Banner = '';
+  let r27UnassignedCard = '';
+  let r27AddTeamBtn = '';
+  if (isR27EligibleRace(race.race_type) && !hbRelayConfirmed) {
+    const totalTeams = (hbRelayTeams || []).length;
+    const completeTeams = countCompleteTeams(hbRelayTeams || [], race.race_type);
+    const incompleteTeams = totalTeams - completeTeams;
+    let bannerStyle = 'background:#e3f2fd;border-left:4px solid #1565c0;color:#0d47a1';
+    let bannerText = '<strong>ℹ️ Ranking rule:</strong> Only complete teams can be ranked. '
+      + '<strong>' + completeTeams + '/' + totalTeams + '</strong> team' + (totalTeams === 1 ? '' : 's') + ' complete'
+      + (incompleteTeams > 0 ? ' &middot; <strong>' + incompleteTeams + '</strong> incomplete team' + (incompleteTeams === 1 ? '' : 's') + ' will not receive a place.' : '.');
+    if (totalTeams > 0 && completeTeams === 0) {
+      bannerStyle = 'background:#fff3e0;border-left:4px solid #e65100;color:#5d4037';
+      bannerText = '<strong>⚠️ No complete teams yet.</strong> Add missing swimmers or remove empty teams — a race with zero complete teams cannot be ranked.';
+    } else if (totalTeams > 0 && completeTeams === 1) {
+      bannerStyle = 'background:#fff3e0;border-left:4px solid #e65100;color:#5d4037';
+      bannerText = '<strong>⚠️ Only 1 complete team.</strong> This race has no real competition — the single complete team would be shown as 1st with no opponents. Consider adding another team or leave this race unranked.';
+    }
+    r27Banner = '<div class="print-hide" style="padding:10px 14px;font-size:13px;margin-bottom:12px;' + bannerStyle + '">' + bannerText + '</div>';
+
+    const unassigned = getUnassignedSwimmers(hbRelayTeams || [], race.race_type, hbAttendance);
+    const pillBg = '#e8f5e9';
+    const pillColor = '#1b5e20';
+    let pills = '';
+    if (unassigned.length === 0) {
+      pills = '<span style="color:#2e7d32;font-weight:600">✓ All eligible swimmers assigned.</span>';
+    } else {
+      pills = unassigned.map(function(a) {
+        var tag = (race.race_type === 'medley_relay') ? ' <span style="color:#e65100;font-weight:700">(' + a.special_event_entry + ')</span>' : '';
+        return '<span style="display:inline-block;background:' + pillBg + ';color:' + pillColor + ';padding:4px 10px;border-radius:12px;font-size:13px;margin:2px 4px 2px 0;border:1px solid #a5d6a7">' + a.name + tag + '</span>';
+      }).join('');
+    }
+    r27UnassignedCard = '<div class="print-hide" style="background:#fff;border:1px solid #ddd;padding:10px 14px;margin-bottom:12px;border-radius:4px">'
+      + '<div style="font-weight:700;color:#333;margin-bottom:6px">Unassigned swimmers (' + unassigned.length + ')'
+      + (race.race_type === 'medley_relay' ? ' <span style="font-weight:400;color:#777;font-size:12px">— eligible: Y, Back, Breast, Free</span>' : ' <span style="font-weight:400;color:#777;font-size:12px">— eligible: all attendees</span>')
+      + '</div>'
+      + '<div>' + pills + '</div>'
+      + '</div>';
+
+    r27AddTeamBtn = '<div class="print-hide" style="text-align:center;margin-top:12px;margin-bottom:4px">'
+      + '<button class="btn btn-outline" style="padding:10px 20px;font-size:15px;border:2px dashed #0b3d91;color:#0b3d91;font-weight:700" onclick="hbAddTeam()">➕ Add Team</button>'
+      + '<div style="font-size:12px;color:#777;margin-top:4px">Create a new empty team — assign swimmers from the pool above using the per-team swimmer picker.</div>'
+      + '</div>';
+  }
+
   let content = '';
   if (hbRelayTeams && hbRelayTeams.length > 0) {
     const isBraceHB = ['25m_brace', '50m_brace'].includes(race.race_type);
@@ -287,7 +423,7 @@ function renderRelayContent() {
     content = '<div class="card print-hide"><p>Tap "Generate Teams" to create balanced relay teams.</p></div>';
   }
 
-  return buttons + '<div style="margin-bottom:16px">' + content + '</div>';
+  return buttons + r27Banner + r27UnassignedCard + '<div style="margin-bottom:16px">' + content + '</div>' + r27AddTeamBtn;
 }
 
 // v2.7.4: Brace in Heat Builder — compact lane-based layout (like Individual Heats)
@@ -371,7 +507,28 @@ function renderRelayTeamsInHB(teams, race) {
     const members = team.members || [];
     const placeDisplay = team.place ? ordinalRelay(team.place) : '';
     // R-15: Relay place display red + bold
-    const teamHeader = team.team_name + (placeDisplay ? ' — <span style="color:#e53935;font-weight:700;font-size:18px">' + placeDisplay + '</span>' : '');
+    // R27 (v2.8.7): Manual-team marker + completeness badge + remove button
+    // All R27 UI is pre-confirm only and only for eligible race types.
+    const r27Eligible = isR27EligibleRace(race.race_type);
+    const isManualTeam = team.is_manual === true;
+    let manualMarker = '';
+    if (r27Eligible && isManualTeam) {
+      manualMarker = ' <span style="background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600;vertical-align:middle" title="Manually added team (v2.8.7 R27)">manual</span>';
+    }
+    let completenessBadge = '';
+    if (r27Eligible) {
+      const comp = getTeamCompleteness(team, race.race_type);
+      let badgeBg, badgeFg, badgeIcon;
+      if (comp.complete) { badgeBg = '#c8e6c9'; badgeFg = '#1b5e20'; badgeIcon = '✓'; }
+      else if (comp.filled === 0) { badgeBg = '#e0e0e0'; badgeFg = '#616161'; badgeIcon = '🕳'; }
+      else { badgeBg = '#ffe0b2'; badgeFg = '#bf360c'; badgeIcon = '⚠️'; }
+      completenessBadge = ' <span class="print-hide" style="background:' + badgeBg + ';color:' + badgeFg + ';padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;vertical-align:middle" title="' + comp.filled + '/' + comp.required + ' filled">' + badgeIcon + ' ' + comp.label + '</span>';
+    }
+    let removeTeamBtn = '';
+    if (r27Eligible && isManualTeam && !hbRelayConfirmed) {
+      removeTeamBtn = ' <button class="btn btn-outline print-hide" style="padding:3px 10px;font-size:12px;color:#fff;border-color:rgba(255,255,255,0.7);background:transparent;font-weight:700;vertical-align:middle" onclick="hbRemoveTeam(' + ti + ')" title="Remove this manually added team">✕ Remove Team</button>';
+    }
+    const teamHeader = team.team_name + manualMarker + completenessBadge + removeTeamBtn + (placeDisplay ? ' — <span style="color:#e53935;font-weight:700;font-size:18px">' + placeDisplay + '</span>' : '');
 
     // R18 v2.8.3 / v2.8.4 Bryan fix 4: Leftover team banner for Medley AND
     // 25m Team Relay — prompts user to explicitly pick a swim-twice swimmer
@@ -579,6 +736,63 @@ function hbRemoveSwimTwice(teamIndex, memberIndex) {
   // Re-number leg_order so legs stay 1..N
   team.members.forEach(function(m, i) { m.leg_order = i + 1; });
   if (hbSelectedRace) recalcRelayTeam(team, hbSelectedRace.race_type, hbRelayTeams);
+  renderHeatBuilder();
+}
+
+// R27 (v2.8.7): Create a new empty team. Only enabled for eligible races
+// (medley_relay, 25m_relay) and only before confirm. The new team is marked
+// is_manual:true so it can be removed via the Remove-Team button. Swimmers
+// are not auto-assigned — user picks them via the existing per-team swimmer
+// picker (same UX as swim-twice completion).
+function hbAddTeam() {
+  if (!hbSelectedRace || !isR27EligibleRace(hbSelectedRace.race_type)) return;
+  if (hbRelayConfirmed) return;
+  if (!hbRelayTeams) hbRelayTeams = [];
+  var raceType = hbSelectedRace.race_type;
+  var nextNum = hbRelayTeams.reduce(function(mx, t) { return Math.max(mx, t.team_number || 0); }, 0) + 1;
+  var newTeam = {
+    team_number: nextNum,
+    team_name: 'Team ' + nextNum,
+    members: [],
+    target_time: null,
+    start_delay: raceType === 'medley_relay' ? 2 : 0,
+    max_time: null,
+    is_manual: true
+  };
+  hbRelayTeams.push(newTeam);
+  // Recalc consistent target/start_delay/max_time across all teams
+  if (hbRelayTeams.length > 0) {
+    recalcRelayTeam(hbRelayTeams[0], raceType, hbRelayTeams);
+  }
+  renderHeatBuilder();
+}
+
+// R27 (v2.8.7): Remove a manually added team. Swimmers are not silently
+// dropped — they simply no longer appear in any team's members list, which
+// causes them to re-appear in the unassigned pool (getUnassignedSwimmers
+// treats any eligible attendee who is not in a team as unassigned). Remaining
+// teams are renumbered for display consistency. Guarded so only is_manual
+// teams can be removed — never auto-generated ones.
+function hbRemoveTeam(teamIndex) {
+  if (!hbRelayTeams || !hbRelayTeams[teamIndex]) return;
+  if (hbRelayConfirmed) return;
+  var team = hbRelayTeams[teamIndex];
+  if (team.is_manual !== true) return;
+  var memberCount = (team.members || []).length;
+  var msg = memberCount > 0
+    ? 'Remove ' + (team.team_name || 'Team ' + team.team_number) + '? Its ' + memberCount + ' swimmer' + (memberCount > 1 ? 's' : '') + ' will return to the unassigned pool.'
+    : 'Remove empty ' + (team.team_name || 'Team ' + team.team_number) + '?';
+  if (!confirm(msg)) return;
+  hbRelayTeams.splice(teamIndex, 1);
+  // Renumber for display stability — only the default "Team N" names.
+  hbRelayTeams.forEach(function(t, i) {
+    t.team_number = i + 1;
+    if (t.team_name && /^Team \d+$/.test(t.team_name)) t.team_name = 'Team ' + (i + 1);
+  });
+  // Recalc max_time / start_delay so remaining teams stay consistent
+  if (hbRelayTeams.length > 0 && hbSelectedRace) {
+    recalcRelayTeam(hbRelayTeams[0], hbSelectedRace.race_type, hbRelayTeams);
+  }
   renderHeatBuilder();
 }
 

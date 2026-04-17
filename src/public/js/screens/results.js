@@ -960,7 +960,25 @@ function renderRelayResultsInline(race) {
     actionsHtml += '</div>';
   }
 
-  let html = actionsHtml;
+  // R27 (v2.8.7): Rankability banner for eligible races. Makes it visible
+  // when only one team (or zero teams) is complete, so Results doesn't
+  // silently imply a normal competition. Uses the same eligibility + counter
+  // helpers as the Heat Builder (global scope — heat-builder.js loads first).
+  let r27ResultsBanner = '';
+  if (typeof isR27EligibleRace === 'function' && isR27EligibleRace(race.race_type)) {
+    const totalTeamsR = teams.length;
+    const completeTeamsR = (typeof countCompleteTeams === 'function') ? countCompleteTeams(teams, race.race_type) : totalTeamsR;
+    const incompleteTeamsR = totalTeamsR - completeTeamsR;
+    if (completeTeamsR === 0) {
+      r27ResultsBanner = '<div class="print-hide" style="background:#fff3e0;border-left:4px solid #e65100;padding:10px 14px;margin-bottom:12px;color:#5d4037;font-size:13px"><strong>⚠️ No complete teams.</strong> Every team is missing swimmers — no team can receive a valid place. Return to Heat Builder to complete teams before ranking.</div>';
+    } else if (completeTeamsR === 1 && totalTeamsR >= 1) {
+      r27ResultsBanner = '<div class="print-hide" style="background:#fff3e0;border-left:4px solid #e65100;padding:10px 14px;margin-bottom:12px;color:#5d4037;font-size:13px"><strong>⚠️ Only 1 complete team — no real competition.</strong> A 1st place here does not reflect a contest against opponents. ' + (incompleteTeamsR > 0 ? (incompleteTeamsR + ' incomplete team' + (incompleteTeamsR === 1 ? '' : 's') + ' cannot be ranked.') : '') + '</div>';
+    } else if (incompleteTeamsR > 0) {
+      r27ResultsBanner = '<div class="print-hide" style="background:#e3f2fd;border-left:4px solid #1565c0;padding:10px 14px;margin-bottom:12px;color:#0d47a1;font-size:13px"><strong>ℹ️ Ranking rule:</strong> Only complete teams are ranked. <strong>' + completeTeamsR + '/' + totalTeamsR + '</strong> teams complete &middot; <strong>' + incompleteTeamsR + '</strong> incomplete team' + (incompleteTeamsR === 1 ? ' will not receive a place.' : 's will not receive a place.') + '</div>';
+    }
+  }
+
+  let html = actionsHtml + r27ResultsBanner;
   for (const team of teams) {
     const members = team.members || [];
     // BF2.6-15: RED + BOLD + LARGER place display for relay results
