@@ -11,6 +11,17 @@
 
 ---
 
+## 2026-04-17 — chore: v2.8.6 SSOT cleanup — sync package-lock + protocol final HEAD
+- **Timestamp:** 2026-04-17 17:50:00
+- **App Version (from package.json):** 2.8.6
+- **Branch:** dev/v2.8.6-dino-final-ux-fixes
+- **RecordedCommit:** 4ec1032
+- **Editor:** Claude Code
+- **Changes:**
+  - `package-lock.json` version bumped 2.7.0 → 2.8.6 (was stale after `npm rebuild better-sqlite3`; synced to match package.json).
+  - `USER-INTERACTION-TEST-PROTOCOL-v2.8.6.md`: "pending final SSOT commit" replaced with the real Feature commit `fe60a7c` + post-cleanup HEAD `7491f71`.
+  - `version/CURRENT_STATE.md`: RecordedCommit now `7491f71`, aligned with post-cleanup HEAD.
+
 ## 2026-04-17 — feat: v2.8.6 Dino final UX fixes (R24-v3 + ranking transparency)
 - **Timestamp:** 2026-04-17 16:45:00
 - **App Version (from package.json):** 2.8.6

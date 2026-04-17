@@ -4,12 +4,12 @@
 **BaseBranch:** dev/v2.8.5-bryan-rework-user-tested
 **BaseCommit:** bc0e92a
 **TargetBranch:** dev/v2.8.6-dino-final-ux-fixes
-**RecordedCommit:** fe60a7c
+**RecordedCommit:** 4ec1032
 **LastEditor:** Claude Code
 **Date:** 2026-04-17
-**Timestamp:** 2026-04-17 16:45:00
+**Timestamp:** 2026-04-17 17:50:00
 **WorkingTreeStatus:** modified
-**ModifiedFiles:** version/CURRENT_STATE.md, version/CHANGELOG.md
+**ModifiedFiles:** version/CURRENT_STATE.md, version/CHANGELOG.md, USER-INTERACTION-TEST-PROTOCOL-v2.8.6.md
 **Version SSOT:** `package.json`
 **Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.6`
 
