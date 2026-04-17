@@ -15,7 +15,7 @@
 - **Timestamp:** 2026-04-17 16:45:00
 - **App Version (from package.json):** 2.8.6
 - **Branch:** dev/v2.8.6-dino-final-ux-fixes
-- **RecordedCommit:** PENDING
+- **RecordedCommit:** fe60a7c
 - **Editor:** Claude Code
 - **Changes (4 Dino-live-test findings addressed via UI-only changes):**
   - A) 25m Brace Tap column: explicit "⏱️ Tap (finish)" header + "Actual (input)" group label; column min-width bumped; yellow Actual zone preserved.
