@@ -682,3 +682,81 @@ Rules for Section K:
 - [ ] UI-TC-390: The UI language for special-race ranking is consistent enough that Bryan would not think the ranking rule changes arbitrarily between races.
 - [ ] UI-TC-391: The app does not mix a variance-based rule with a fastest-result visual hierarchy in a way that confuses the user.
 - [ ] UI-TC-392: Final release judgment for the next round must explicitly state whether all special-race results are now both functionally correct and user-explainable.
+
+### Section L — R27 Manual Team Management (v2.8.7)
+
+Covers the new capability to manually add teams, add swimmers into those teams, and remove accidentally added teams, for team-based races where manual swimmer addition is already product-defined. Implementation scope: `medley_relay` and `25m_relay`. Explicitly out of scope: `25m_brace`, `50m_brace`, `pogo` (pair / strict-4 logic).
+
+#### L.1 Eligibility gating (UI-TC-393 to UI-TC-402)
+- [ ] UI-TC-393: On `Heat Builder — Medley Relay`, a `+ Add Team` action is visible pre-confirm.
+- [ ] UI-TC-394: On `Heat Builder — 25m Team Relay`, a `+ Add Team` action is visible pre-confirm.
+- [ ] UI-TC-395: On `Heat Builder — 25m Brace Relay`, no `+ Add Team` action is visible.
+- [ ] UI-TC-396: On `Heat Builder — 50m Brace Relay`, no `+ Add Team` action is visible.
+- [ ] UI-TC-397: On `Heat Builder — Pogo`, no `+ Add Team` action is visible.
+- [ ] UI-TC-398: On `Heat Builder — Individual Races` (25m, 50m, 75m, strokes), no `+ Add Team` action is visible.
+- [ ] UI-TC-399: Post-confirm for Medley, the `+ Add Team` action is not visible.
+- [ ] UI-TC-400: Post-confirm for 25m Team Relay, the `+ Add Team` action is not visible.
+- [ ] UI-TC-401: The ineligibility of Brace/Pogo is intentional and is documented in the on-screen or spec UX, not an accidental gap.
+- [ ] UI-TC-402: If a new race type is added in the future, the same eligibility gate must be applied explicitly — no silent inheritance of the R27 surface.
+
+#### L.2 Add-team flow (UI-TC-403 to UI-TC-410)
+- [ ] UI-TC-403: Clicking `+ Add Team` creates a visible new team with no members (empty state).
+- [ ] UI-TC-404: The new team is labelled as manually created (e.g. `manual` marker) so it is visually distinguishable from auto-generated teams.
+- [ ] UI-TC-405: The new team's completeness status is shown as `empty` (with explicit missing pieces for Medley: Back, Breast, Free).
+- [ ] UI-TC-406: Adding a new empty team does not damage or drop any existing auto-generated team.
+- [ ] UI-TC-407: The trailing `+ Add Team` button remains visible after each new team creation, so further teams can be added.
+- [ ] UI-TC-408: The team number of the new team is the next integer after the previous last team.
+- [ ] UI-TC-409: Adding a team is instant (no page reload) and the `Unassigned swimmers` / ranking-rule banner reflect the new count immediately.
+- [ ] UI-TC-410: The per-team swimmer picker inside a manual team follows the same pattern as in existing teams (Select swimmer + Swim as: for Medley, Select swimmer for 25m Team Relay).
+
+#### L.3 Assign swimmers into manual team (UI-TC-411 to UI-TC-417)
+- [ ] UI-TC-411: For Medley, the swimmer picker inside the manual team lists all Y/Back/Breast/Free attendees.
+- [ ] UI-TC-412: For Medley, the `Swim as:` stroke picker inside the manual team highlights still-missing strokes with `(missing)`.
+- [ ] UI-TC-413: For 25m Team Relay, the swimmer picker inside the manual team lists all present attendees.
+- [ ] UI-TC-414: Clicking `+ Add Swimmer` / `+ Swim Twice` in a manual team adds the selected swimmer as a new leg with the explicitly chosen stroke (Medley) or next leg number (25m Team Relay).
+- [ ] UI-TC-415: After each add, the team's completeness status updates (e.g. `needs 2 more swimmers`, `needs Free`, `complete`).
+- [ ] UI-TC-416: After each add, the `Unassigned swimmers` count updates to reflect the new assignment (the added swimmer is removed from the pool, unless they already existed in another team as a swim-twice duplicate).
+- [ ] UI-TC-417: When a manual Medley team reaches Back+Breast+Free, its badge becomes `✓ complete` and the ranking-rule banner updates accordingly.
+
+#### L.4 Remove-team flow (UI-TC-418 to UI-TC-425)
+- [ ] UI-TC-418: A manually added team shows a `✕ Remove Team` control in its header.
+- [ ] UI-TC-419: An auto-generated team does NOT show a `✕ Remove Team` control (only `is_manual` teams are removable).
+- [ ] UI-TC-420: Clicking `✕ Remove Team` prompts the user for confirmation before removing.
+- [ ] UI-TC-421: On confirm, the team is removed from the visible team list.
+- [ ] UI-TC-422: Swimmers that were only in the removed team are silently restored to the `Unassigned swimmers` pool, not lost.
+- [ ] UI-TC-423: Swimmers that were also swim-twice-duplicated into another team remain there after the manual team is removed (no double-removal).
+- [ ] UI-TC-424: Remaining team numbers are renumbered sequentially (Team 1..N) for display consistency.
+- [ ] UI-TC-425: Post-confirm, the `✕ Remove Team` control is no longer visible — post-confirm team lifecycle goes through Re-Shuffle, as in the existing workflow.
+
+#### L.5 Unassigned pool transparency (UI-TC-426 to UI-TC-430)
+- [ ] UI-TC-426: An `Unassigned swimmers` card is visible pre-confirm for Medley + 25m Team Relay.
+- [ ] UI-TC-427: The card shows the count and a per-swimmer pill list when unassigned > 0.
+- [ ] UI-TC-428: The card shows `✓ All eligible swimmers assigned.` when unassigned = 0.
+- [ ] UI-TC-429: For Medley, each pill shows the swimmer's special_event_entry tag (Y / Back / Breast / Free) so eligibility is visible at a glance.
+- [ ] UI-TC-430: For 25m Team Relay, the card eligibility hint reads `eligible: all attendees` so the user understands the pool scope.
+
+#### L.6 Completeness and rankability (UI-TC-431 to UI-TC-438)
+- [ ] UI-TC-431: Each team header carries a completeness badge showing `✓ complete`, `⚠️ needs N more swimmers`, or `🕳 empty` with the specific missing legs/strokes.
+- [ ] UI-TC-432: For Medley, the badge lists the missing strokes by name (e.g. `needs Breast, Free`).
+- [ ] UI-TC-433: For 25m Team Relay, the badge says `needs N more swimmer(s)` with the correct integer.
+- [ ] UI-TC-434: The Ranking-rule banner pre-confirm counts complete vs incomplete teams accurately in real time.
+- [ ] UI-TC-435: If 0 teams are complete, the banner switches to an orange warning (`⚠️ No complete teams yet — …`) instead of the neutral blue info.
+- [ ] UI-TC-436: If exactly 1 team is complete, the banner switches to an orange warning explicitly stating `⚠️ Only 1 complete team — no real competition`.
+- [ ] UI-TC-437: If 2+ teams are complete (with optional incomplete teams alongside), the banner is the neutral blue variant with the `X/Y complete · N incomplete` summary.
+- [ ] UI-TC-438: Confirming teams with 1 empty manual team + N filled teams results in DB persisting only the N filled teams (empty-team filter).
+
+#### L.7 Results-page rankability (UI-TC-439 to UI-TC-444)
+- [ ] UI-TC-439: On `Results — Medley Relay`, if all teams are complete, no R27 warning banner is shown.
+- [ ] UI-TC-440: On `Results — Medley Relay`, if exactly 1 team is complete (+ incomplete teams), an `⚠️ Only 1 complete team — no real competition` banner is visible above the teams.
+- [ ] UI-TC-441: On `Results — Medley Relay`, if 0 teams are complete, an `⚠️ No complete teams` banner is visible.
+- [ ] UI-TC-442: On `Results — 25m Team Relay`, the same banner logic applies for eligible races.
+- [ ] UI-TC-443: On `Results — 25m Brace Relay`, `50m Brace Relay`, and `Pogo`, no R27 Results banner is shown (those races do not participate in R27).
+- [ ] UI-TC-444: The Results banner does not silently imply a normal competition when the actual team count is insufficient — it explicitly names the situation.
+
+#### L.8 Regression guardrails (UI-TC-445 to UI-TC-450)
+- [ ] UI-TC-445: The existing swim-twice flow for Medley leftover teams continues to work unchanged (R18, R21).
+- [ ] UI-TC-446: The existing swim-twice flow for 25m Team Relay undersized teams continues to work unchanged (R22).
+- [ ] UI-TC-447: Brace Results layout with the grouped 2-row header (R24-v2) remains intact and is not disturbed by R27 changes.
+- [ ] UI-TC-448: Ranking transparency features for Brace/Medley/Pogo (v2.8.6 final UX) remain intact after the v2.8.7 R27 additions.
+- [ ] UI-TC-449: No new console errors or warnings appear on Heat Builder or Results after exercising the R27 add/remove/confirm cycle.
+- [ ] UI-TC-450: Print surfaces (Heat Builder print, Results print) continue to hide operational UI including the new R27 banner, pool card, Add/Remove buttons, and completeness badges via the `.print-hide` class.

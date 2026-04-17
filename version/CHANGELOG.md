@@ -11,6 +11,47 @@
 
 ---
 
+## 2026-04-17 — feat: v2.8.7 R27 manual team management for eligible relay races
+- **Timestamp:** 2026-04-17 22:15:00
+- **App Version (from package.json):** 2.8.7
+- **Branch:** dev/v2.8.7-manual-team-management
+- **RecordedCommit:** e2fd553
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.7-manual-team-management`
+- **Editor:** Claude Code
+- **Changes (R27 only — no ranking-logic or schema changes):**
+  - `src/public/js/screens/heat-builder.js`: New R27 UI for pre-confirm eligible races (medley_relay, 25m_relay).
+    - New helpers: `R27_ELIGIBLE_RACES`, `isR27EligibleRace`, `getRequiredLegs`, `getTeamCompleteness`, `countCompleteTeams`, `getUnassignedSwimmers`.
+    - `renderRelayContent`: ranking-rule banner (blue info / orange at 0 or 1 complete), unassigned-swimmers card with pills, trailing `➕ Add Team` button.
+    - `renderRelayTeamsInHB`: per-team `manual` pill badge, `✓ complete` / `⚠️ needs N more` / `🕳 empty` completeness badge, `✕ Remove Team` control (is_manual only).
+    - `hbAddTeam()`: creates new empty team with `is_manual:true`; re-runs `recalcRelayTeam` for start-delay/max-time consistency.
+    - `hbRemoveTeam(teamIndex)`: guarded to `is_manual` teams only; confirm() prompt; swimmers return to unassigned pool; remaining teams renumbered 1..N.
+  - `src/public/js/screens/results.js`: New R27 rankability banner in `renderRelayResultsInline` for eligible races. 0 complete → orange "No complete teams". 1 complete → orange "Only 1 complete team — no real competition." ≥2 complete + incomplete → blue "X/Y teams complete".
+  - `src/server.js`: `POST /api/races/:raceId/save-relay-teams` drops teams with 0 members before persisting; renumbers team_number after filtering. Partially filled manual teams still persist and render as not-rankable for the user.
+  - `REQUIREMENTS.md`: R27 delivered (was authored by Balerion as part of the handoff).
+  - `USER-INTERACTION-TEST-SPEC.md`: Section L added (UI-TC-393..UI-TC-450, 58 cases across L.1 Eligibility gating, L.2 Add-team flow, L.3 Assign swimmers, L.4 Remove-team flow, L.5 Unassigned pool, L.6 Completeness/rankability, L.7 Results rankability, L.8 Regression guardrails).
+  - `USER-INTERACTION-TEST-PROTOCOL-v2.8.7.md`: new protocol with 58 PASS / 0 FAIL / 0 OPEN / 0 NOT TESTED, browser-evidence per test case.
+  - Browser-verified on Chromium (preview server, port 3000) end-to-end:
+    * Medley (9 Y-swimmers): Add Team → empty manual Team 4 with pill/badge/Remove; add swimmer flow works; remove brings swimmer back to pool.
+    * 25m Team Relay (23 swimmers): same flow; `needs 3 more swimmers` label rendered correctly.
+    * Brace / Pogo: no R27 UI (gated correctly).
+    * Post-confirm: all R27 surfaces hidden.
+    * Empty-team filter: 1 empty + 3 filled teams → DB persists 3.
+    * Results "Only 1 complete team — no real competition." banner rendered correctly on 1 complete + 2 incomplete Medley teams.
+    * 0 console errors.
+
+## 2026-04-17 — chore: v2.8.7 version bump (first commit on branch)
+- **Timestamp:** 2026-04-17 21:45:00
+- **App Version (from package.json):** 2.8.7
+- **Branch:** dev/v2.8.7-manual-team-management
+- **RecordedCommit:** 7b6bc9d
+- **Editor:** Claude Code
+- **Changes (V0014 first-commit rule — version bump only):**
+  - `package.json`: 2.8.6 → 2.8.7
+  - `package-lock.json`: 2.8.6 → 2.8.7
+  - `src/public/index.html`: cache-bust `?v=2.8.6` → `?v=2.8.7` (17 tags)
+
+---
+
 ## 2026-04-17 — chore: v2.8.6 SSOT cleanup (no delivery change)
 - **Timestamp:** 2026-04-17 21:30:00
 - **App Version (from package.json):** 2.8.6

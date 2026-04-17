@@ -1,8 +1,8 @@
-# PROGRESS — WWSC Swimming App v2.8.6
+# PROGRESS — WWSC Swimming App v2.8.7
 
 ## 🎯 AKTUELLER STATUS
-Phase: 11 — v2.8.6 Final UX Fixes nach Dino Manual Testing
-Schritt: 4 finale UX-Findings addressiert (Brace Tap affordance, Brace ranking explainability, Medley variance visibility, Pogo variance visibility). Section K (UI-TC-337-392): 56 PASS / 0 FAIL / 0 OPEN. Cross-special-race ranking transparency konsistent.
+Phase: 12 — v2.8.7 R27 Manual Team Management für eligible relay races
+Schritt: R27 implementiert (medley_relay + 25m_relay eligible; brace + pogo intentionally out of scope). Neue UI im Heat Builder (+ Add Team / ✕ Remove Team / Unassigned swimmer pool / completeness badges / rankability banner) und neuer Rankability-Banner im Results-Screen für eligible races. Empty-Team-Filter im Save-Endpoint. Section L (UI-TC-393-450): 58 PASS / 0 FAIL / 0 OPEN. Keine Regressionen gegenüber v2.8.6.
 Blockiert: Nein
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
@@ -22,9 +22,9 @@ Blockiert: Nein
 - [x] Ergebnis dieser Runde: UI weiterhin instabil, daher Übergabe an Claude Code vorbereitet statt weitere unstrukturierte Patches.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Claude Code soll auf Basis der neuesten Dino-Findings eine neue Korrekturrunde auf `v2.8.5` aufsetzen, die Readability-/Explainability-Probleme in Brace, Medley und Pogo behebt, dann die erweiterte `USER-INTERACTION-TEST-SPEC.md` inklusive Section K ausführt und eine konsolidierte Bryan-Freigabewahrheit liefert.
-Datei lesen: `PROGRESS.md`, `REQUIREMENTS.md`, `DESIGN-SPEC.md`, `USER-INTERACTION-TEST-SPEC.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, aktuelle Findings in `messages/2026-04-17-*.md`
-Kriterium fertig: Neue Version + neuer Branch + aktualisierte UI für die gesammelten Dino-Findings, dazu ein neues `USER-INTERACTION-TEST-PROTOCOL` mit mindestens allen Section-K-Cases sowie ein klares Verdict, ob keine user-facing Fehler mehr sichtbar sind.
+Was: Dino-live-Abnahme von v2.8.7 im Browser gegen Section L — insbesondere der Add-Team / Remove-Team / Unassigned-Pool / Rankability-Banner Flow in Medley und 25m Team Relay. Erst danach ggf. eine Bryan-Nachricht aufsetzen, die R27 als neuen Produkt-Wunsch vorstellt.
+Datei lesen: `PROGRESS.md`, `REQUIREMENTS.md` (R27), `USER-INTERACTION-TEST-SPEC.md` (Section L), `USER-INTERACTION-TEST-PROTOCOL-v2.8.7.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, aktuelle Findings in `messages/2026-04-17-*.md`
+Kriterium fertig: Dino bestätigt live im Browser: (a) `+ Add Team` nur bei Medley + 25m Team Relay, (b) Remove Team entfernt Team inkl. Swimmer-Rückführung in Pool, (c) Rankability-Banner escaliert bei 0/1 complete, (d) post-confirm keine R27-Surface mehr, (e) Brace + Pogo bleiben unberührt.
 
 ## ⚠️ OFFENE PUNKTE / BLOCKER
 - **R20 (DOC-AMBIGUITY / TC-148):** Ranking-Logik für Special Races (Brace / Medley / Pogo) — App nutzt `fastest_total_time`, Legacy-Doku sagt `nearest-to-target`. Bryan-Bestätigung erforderlich.
@@ -41,8 +41,11 @@ Kriterium fertig: Neue Version + neuer Branch + aktualisierte UI für die gesamm
 - **Architektur-Track (beschlossen):** Breakers / Exceedings / gemeinsame Report-Metriken müssen nach dieser Delivery in eine zentrale Datenlogik überführt werden. Das ist ausdrücklich beschlossen und darf nicht vergessen werden.
 
 ## 📊 FORTSCHRITT
-Gesamt: 8.5/10 Schritte
+Gesamt: 9/10 Schritte
 Unit Tests: legacy vorhanden / nicht Fokus dieser Runde
 Integration Tests: legacy vorhanden / teilweise überholt
-UI Tests: 168 spezifiziert / 160 PASS / 0 FAIL / 1 TEST-BUG / 1 DOC-AMBIGUITY + neuer Acceptance-Befund offen
-Console Errors: unbekannt für den neuen Pogo-Befund — morgen explizit prüfen
+UI Tests: 450 spezifiziert (Section A–L)
+  - Section K (v2.8.6): 56 PASS / 0 FAIL / 0 OPEN
+  - Section L (v2.8.7): 58 PASS / 0 FAIL / 0 OPEN
+  - Ältere Sections: zuletzt ausführlich in v2.8.5 / v2.8.6 ausgeführt
+Console Errors: 0 in v2.8.7 add/remove/confirm cycle (preview_console_logs level=error → "No console logs.")
