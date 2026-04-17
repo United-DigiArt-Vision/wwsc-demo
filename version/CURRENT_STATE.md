@@ -4,7 +4,7 @@
 **BaseBranch:** dev/v2.8.5-bryan-rework-user-tested
 **BaseCommit:** bc0e92a
 **TargetBranch:** dev/v2.8.6-dino-final-ux-fixes
-**HEAD:** 019ebdb
+**HEAD:** b82202d
 **RecordedCommit:** fe60a7c
 **LastEditor:** Claude Code
 **Date:** 2026-04-17

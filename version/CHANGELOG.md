@@ -16,7 +16,7 @@
 - **App Version (from package.json):** 2.8.6
 - **Branch:** dev/v2.8.6-dino-final-ux-fixes
 - **RecordedCommit:** fe60a7c
-- **HEAD after this entry:** 019ebdb
+- **HEAD after this entry:** b82202d
 - **Editor:** Claude Code
 - **Convention:** `RecordedCommit` = substantive delivery commit (the feature commit). Housekeeping / docs / lockfile commits on top do NOT shift `RecordedCommit`; they are tracked via `HEAD` instead.
 - **Changes (all housekeeping, no delivery impact):**
