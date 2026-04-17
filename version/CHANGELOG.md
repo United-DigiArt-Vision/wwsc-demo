@@ -12,17 +12,17 @@
 ---
 
 ## 2026-04-17 — chore: v2.8.6 SSOT cleanup (no delivery change)
-- **Timestamp:** 2026-04-17 18:15:00
+- **Timestamp:** 2026-04-17 21:30:00
 - **App Version (from package.json):** 2.8.6
 - **Branch:** dev/v2.8.6-dino-final-ux-fixes
 - **RecordedCommit:** fe60a7c
-- **HEAD after this entry:** b82202d
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.6-dino-final-ux-fixes`
 - **Editor:** Claude Code
-- **Convention:** `RecordedCommit` = substantive delivery commit (the feature commit). Housekeeping / docs / lockfile commits on top do NOT shift `RecordedCommit`; they are tracked via `HEAD` instead.
+- **Convention:** `RecordedCommit` = substantive delivery commit (the feature commit). Static HEAD hashes are NOT stored in versioned artifacts; resolve the current branch tip dynamically via `git rev-parse`.
 - **Changes (all housekeeping, no delivery impact):**
-  - `package-lock.json` version bumped 2.7.0 → 2.8.6 (was stale after `npm rebuild better-sqlite3`; synced to match package.json). Commit: `7491f71`.
-  - `USER-INTERACTION-TEST-PROTOCOL-v2.8.6.md`: header reworked to show HEAD + RecordedCommit + housekeeping-commit chain explicitly.
-  - `version/CURRENT_STATE.md`: adopts the single convention above; now references HEAD + RecordedCommit separately with the clean working-tree state.
+  - `package-lock.json` version bumped 2.7.0 → 2.8.6 (was stale after `npm rebuild better-sqlite3`; synced to match package.json).
+  - `USER-INTERACTION-TEST-PROTOCOL-v2.8.6.md`: header reworked to reference RecordedCommit only; current branch tip resolved dynamically.
+  - `version/CURRENT_STATE.md`: static HEAD value removed; adopts dynamic `git rev-parse` resolution.
 
 ## 2026-04-17 — feat: v2.8.6 Dino final UX fixes (R24-v3 + ranking transparency)
 - **Timestamp:** 2026-04-17 16:45:00
