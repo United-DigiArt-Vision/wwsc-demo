@@ -1,8 +1,8 @@
-# PROGRESS — WWSC Swimming App v2.8.5
+# PROGRESS — WWSC Swimming App v2.8.6
 
 ## 🎯 AKTUELLER STATUS
-Phase: 10 — v2.8.5 Rework nach Dino-Live-Test von v2.8.4
-Schritt: Zwei Requirements (R21 Medley swim-twice stroke / R24 Results layout) waren in v2.8.4 im Live-Flow nicht zufriedenstellend. In v2.8.5 jetzt user-flow-korrigiert via explicit Stroke-Picker + klar gruppiertes Plan/Actual/Delta/Result Layout + Print-Audit-Erweiterung.
+Phase: 11 — v2.8.6 Final UX Fixes nach Dino Manual Testing
+Schritt: 4 finale UX-Findings addressiert (Brace Tap affordance, Brace ranking explainability, Medley variance visibility, Pogo variance visibility). Section K (UI-TC-337-392): 56 PASS / 0 FAIL / 0 OPEN. Cross-special-race ranking transparency konsistent.
 Blockiert: Nein
 
 ## ✅ ERLEDIGT (mit Dateireferenz)

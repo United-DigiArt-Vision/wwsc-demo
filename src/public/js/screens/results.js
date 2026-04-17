@@ -776,47 +776,47 @@ function renderBraceResultsInline(race) {
 
     const varDisplay = team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—';
     const varGood = team.variance != null && Math.abs(team.variance) < 300;
-    const varStyle = 'font-weight:700;text-align:center;' + (varGood ? 'color:var(--success)' : (team.variance != null ? 'color:#333' : 'color:#999'));
+    const varStyle = 'font-weight:800;text-align:center;font-size:15px;' + (varGood ? 'color:var(--success)' : (team.variance != null ? 'color:#333' : 'color:#999'));
 
-    // v2.8.5 Bryan fix B: Clean visual grouping.
-    //   "What they should do" column group (grey): PBs + Total (shared background)
-    //   "What they did" column (highlighted): Tap
-    //   "How did they do" column (variance color): Variance
-    //   "Result" column: Place with medal
-    // Each group is visually distinct via background shade + dividers so the
-    // row reads as a proper summary, not a generic table.
+    // v2.8.6 fixes A+B: stronger Tap affordance + Variance prominence matches Place.
+    // PBs + Total grouped in grey "Plan" zone (what should happen).
+    // Tap = yellow "Actual" zone with clear button-like border (what the user enters).
+    // Variance = strong prominence matching Place (why the team ranks where it does).
+    // Place = medal styling.
     const grpStyle = 'background:#f5f5f5;text-align:center';
     const pbsCell = '<td style="' + grpStyle + ';font-weight:600">' + pbs + '</td>';
     const totalCellStr = '<td style="' + grpStyle + ';font-weight:800;border-right:2px solid #0b3d91">' + formatWhole(totalPB) + '</td>';
-    const varCellStr = '<td style="' + varStyle + ';border-left:2px solid #e65100">' + varDisplay + '</td>';
+    // v2.8.6 fix B: Variance cell visually tied to Place. Both sit in the "Delta/Result" half with matching colored border.
+    const varCellStr = '<td style="' + varStyle + ';background:#fff3e0;border-left:2px solid #e65100;border-right:1px dashed #e65100">' + varDisplay + '</td>';
     rows += '<tr><td style="text-align:center;font-weight:700">' + team.team_number + '</td><td class="name-cell">' + names + '</td>' + pbsCell + totalCellStr + finishCell + varCellStr + '<td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
   }
 
-  // v2.8.5 Bryan fix B: headers emphasize the functional grouping so the row
-  // layout reads like a real summary. Group headers: "Plan" (PBs+Total),
-  // "Actual" (Tap), "Delta" (Variance), "Result" (Place).
-  const headerInfo = '<span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s | smallest variance wins</span>';
+  // v2.8.6 fix A: Tap column header is now explicitly "⏱️ Tap (finish)" so there
+  // is no ambiguity about what the user should enter there.
+  // v2.8.6 fix B: ranking-rule banner sits DIRECTLY above the table — Bryan
+  // always sees "Place is decided by smallest Variance — NOT by fastest Tap".
+  const rankingBanner = '<div style="background:#fff3e0;border-top:1px solid #e65100;border-bottom:1px solid #e65100;padding:10px 16px;font-size:13px;color:#5d4037;text-align:center"><strong style="color:#e65100">🏁 How Place is decided:</strong> <strong>smallest absolute Variance wins</strong> — the team closest to its Target, not the team with the fastest Tap.</div>';
+  const headerInfo = '<span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s</span>';
   const tableHead =
     '<thead>' +
       '<tr style="background:#e0e0e0;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:0.5px">' +
         '<th style="width:50px"></th>' +
         '<th style="text-align:left"></th>' +
-        '<th colspan="2" style="text-align:center;border-right:2px solid #0b3d91">Plan</th>' +
-        '<th style="text-align:center;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100">Actual</th>' +
-        '<th style="text-align:center;border-left:2px solid #e65100">Delta</th>' +
-        '<th style="text-align:center">Result</th>' +
+        '<th colspan="2" style="text-align:center;border-right:2px solid #0b3d91">Plan (target)</th>' +
+        '<th style="text-align:center;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100">Actual (input)</th>' +
+        '<th colspan="2" style="text-align:center;background:#fff3e0;border-left:2px solid #e65100">↓ Variance decides Place ↓</th>' +
       '</tr>' +
       '<tr>' +
         '<th style="width:50px">Lane</th>' +
         '<th style="text-align:left;min-width:180px">Pair</th>' +
         '<th>PBs</th>' +
         '<th style="border-right:2px solid #0b3d91">Total</th>' +
-        '<th style="min-width:90px;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100">Tap</th>' +
-        '<th style="border-left:2px solid #e65100">Variance</th>' +
-        '<th>Place</th>' +
+        '<th style="min-width:110px;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100">⏱️ Tap (finish)</th>' +
+        '<th style="background:#fff3e0;border-left:2px solid #e65100;font-weight:800">Variance</th>' +
+        '<th style="background:#fff3e0">Place</th>' +
       '</tr>' +
     '</thead>';
-  return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span>' + headerInfo + '</div><table class="spreadsheet-table" style="margin:0">' + tableHead + '<tbody>' + rows + '</tbody></table></div>';
+  return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span>' + headerInfo + '</div>' + rankingBanner + '<table class="spreadsheet-table" style="margin:0">' + tableHead + '<tbody>' + rows + '</tbody></table></div>';
 }
 
 // R16: Pogo Results — columns: PB | Start | Total | T1 | T2 | Result (Avg) | Variance
@@ -860,7 +860,12 @@ function renderPogoResultsInline(race) {
 
       const targetDisplay = team.target_time != null ? formatWhole(team.target_time + (team.start_delay || 0)) : '—';
       const resultCell = '<td class="result-cell" style="font-weight:700;background:#e8f5e9;color:#111">' + (avg != null ? formatTime(avg) : '—') + '</td>';
-      const varianceCell = '<td>' + (indVariance != null ? ((indVariance >= 0 ? '+' : '') + formatTime(indVariance)) : '—') + '</td>';
+      // v2.8.6 fix D: per-swimmer variance color-coded for visibility.
+      let varColorMem = '#999';
+      if (indVariance != null) {
+        varColorMem = Math.abs(indVariance) < 300 ? '#2e7d32' : '#e65100';
+      }
+      const varianceCell = '<td style="background:#fff3e0;font-weight:700;color:' + varColorMem + ';text-align:center">' + (indVariance != null ? ((indVariance >= 0 ? '+' : '') + formatTime(indVariance)) : '—') + '</td>';
       rows += '<tr>'
         + '<td class="name-cell">' + m.name + '</td>'
         + '<td>' + pb + '</td>'
@@ -875,10 +880,26 @@ function renderPogoResultsInline(race) {
         + '</tr>';
     }
 
-    // R16: No Team Total for Pogo — time entry happens per swimmer (T1/T2)
+    // v2.8.6 fix D: Pogo team-level Variance + Place row at bottom so the
+    // ranking basis is visually obvious. This is NOT the "Team Total"
+    // forbidden by R16 — it is the ranking transparency row Bryan asked for.
+    const teamVarianceCs = team.variance;
+    const teamVarDisp = teamVarianceCs != null ? ((teamVarianceCs >= 0 ? '+' : '') + formatTime(teamVarianceCs)) : '—';
+    const teamVarColor = teamVarianceCs != null && Math.abs(teamVarianceCs) < 300 ? '#2e7d32' : (teamVarianceCs != null ? '#e65100' : '#999');
+    let teamRankingRow = '';
+    if (teamVarianceCs != null || team.place != null) {
+      const placeText = team.place ? ordinal(team.place) : '—';
+      const placeBg = team.place === 1 ? '#FFD700' : team.place === 2 ? '#C0C0C0' : team.place === 3 ? '#CD7F32' : '#fff';
+      const placeFg = team.place === 3 ? '#fff' : '#333';
+      teamRankingRow = '<tr style="background:#fff3e0;border-top:2px solid #e65100"><td colspan="9" style="text-align:right;padding:10px 14px;font-size:13px;color:#5d4037"><strong>Team Variance from Target</strong> (decides ranking): <strong style="color:' + teamVarColor + ';font-size:16px">' + teamVarDisp + '</strong></td><td style="background:' + placeBg + ';color:' + placeFg + ';font-weight:800;font-size:16px;text-align:center">' + placeText + '</td></tr>';
+    }
+
+    // v2.8.6 fix D: Ranking-rule banner on each Pogo team card
+    const pogoRankingBanner = '<div style="background:#fff3e0;border-top:1px solid #e65100;padding:8px 14px;font-size:12px;color:#5d4037;text-align:center"><strong style="color:#e65100">🏁 Ranking basis:</strong> smallest absolute <strong>Variance from Target</strong> wins (not the fastest average).</div>';
+
     const headerBg = team.place ? '#e8f5e9' : '#e0f2f1';
-    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + totalPB + ' • ' + targetCalc + '</span></span></div>' +
-      '<div style="overflow-x:auto"><table class="spreadsheet-table" style="margin:0;font-size:12px;width:100%"><thead><tr style="white-space:nowrap"><th style="text-align:left;min-width:90px">Swimmer</th><th style="min-width:30px">PB</th><th style="min-width:36px">Start</th><th style="min-width:42px">Exp.F</th><th style="min-width:36px">Total</th><th style="min-width:36px">Tgt</th><th style="min-width:50px">T1</th><th style="min-width:50px">T2</th><th style="min-width:52px;background:#2e7d32;color:#fff;font-weight:800;text-shadow:none">Result</th><th style="min-width:48px">Var.</th></tr></thead><tbody>' + rows +
+    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + totalPB + ' • ' + targetCalc + '</span></span></div>' + pogoRankingBanner +
+      '<div style="overflow-x:auto"><table class="spreadsheet-table" style="margin:0;font-size:12px;width:100%"><thead><tr style="white-space:nowrap"><th style="text-align:left;min-width:90px">Swimmer</th><th style="min-width:30px">PB</th><th style="min-width:36px">Start</th><th style="min-width:42px">Exp.F</th><th style="min-width:36px">Total</th><th style="min-width:36px">Tgt</th><th style="min-width:50px">T1</th><th style="min-width:50px">T2</th><th style="min-width:52px;background:#2e7d32;color:#fff;font-weight:800;text-shadow:none">Result</th><th style="min-width:60px;background:#fff3e0;color:#e65100;font-weight:800">Var.</th></tr></thead><tbody>' + rows + teamRankingRow +
       '</tbody></table></div></div>'; // R16: No Team Total footer for Pogo
   }
   return html;
@@ -1006,9 +1027,31 @@ function renderRelayResultsInline(race) {
     const totalRowStyle = 'background:#c62828;color:white;font-weight:700;font-size:16px';
     const splitHeader = showSplits ? '<th>Result</th>' : '';
     const pogoHeaders = showPogoTimes ? '<th style="min-width:70px">T1</th><th style="min-width:70px">T2</th><th style="min-width:70px;background:#e8f5e9">Avg</th>' : '';
-    // R8: Variance moved to right side of Team Total row
-    const varCell = team.variance != null ? '<td style="' + totalRowStyle + ';text-align:right;padding:8px 16px">' + (team.variance >= 0 ? '+' : '') + formatTime(team.variance) + '</td>' : '<td style="' + totalRowStyle + '">—</td>';
-    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + (totalPBDisplay ? totalPBDisplay + ' ' : '') + (targetCalcDisplay ? '• ' + targetCalcDisplay : '') + '</span></span></div><table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + (showStroke ? '<th>Stroke</th>' : '') + '<th>PB</th>' + splitHeader + pogoHeaders + '</tr></thead><tbody>' + rows + '<tr style="' + totalRowStyle + '"><td></td><td colspan="' + (colCount - 3) + '" style="text-align:right">Team Total</td>' + totalTimeCell + varCell + '</tr></tbody></table></div>';
+
+    // v2.8.6 fix C: Medley — expose Variance + Place prominently so ranking basis is transparent.
+    // New dedicated "Ranking" row below Team Total shows "Variance: ±X.XX" in a labelled orange
+    // bar with the Place medal. No more unlabeled number at the row-end.
+    const varOnly = team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—';
+    const varColor = team.variance != null && Math.abs(team.variance) < 300 ? '#2e7d32' : (team.variance != null ? '#e65100' : '#999');
+    // Team Total row: clean label+value, no mystery trailing cell
+    const teamTotalRow = '<tr style="' + totalRowStyle + '"><td></td><td colspan="' + (colCount - 2) + '" style="text-align:right;padding:8px 16px">Team Total</td>' + totalTimeCell + '</tr>';
+    // Variance / Place row — only shown once a time is entered OR ranking exists
+    let rankingRow = '';
+    if (team.variance != null || team.place != null) {
+      const placeText = team.place ? ordinal(team.place) : '—';
+      const placeBg = team.place === 1 ? '#FFD700' : team.place === 2 ? '#C0C0C0' : team.place === 3 ? '#CD7F32' : '#fff';
+      const placeFg = team.place === 3 ? '#fff' : '#333';
+      rankingRow = '<tr style="background:#fff3e0;border-top:2px solid #e65100"><td colspan="' + (colCount - 1) + '" style="text-align:right;padding:10px 16px;font-size:14px;color:#5d4037"><strong>Variance from Target</strong> (decides ranking): <strong style="color:' + varColor + ';font-size:16px">' + varOnly + '</strong></td><td style="background:' + placeBg + ';color:' + placeFg + ';font-weight:800;font-size:16px;text-align:center">' + placeText + '</td></tr>';
+    }
+
+    // v2.8.6 fix C: per-card ranking-rule banner for Medley + Pogo so the user
+    // always sees the ranking basis in transparency.
+    let rankingBanner = '';
+    if (isMedley || isPogo) {
+      rankingBanner = '<div style="background:#fff3e0;border-top:1px solid #e65100;padding:8px 14px;font-size:12px;color:#5d4037;text-align:center"><strong style="color:#e65100">🏁 Ranking basis:</strong> smallest absolute <strong>Variance from Target</strong> wins (not the fastest Total Time).</div>';
+    }
+
+    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + (totalPBDisplay ? totalPBDisplay + ' ' : '') + (targetCalcDisplay ? '• ' + targetCalcDisplay : '') + '</span></span></div>' + rankingBanner + '<table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + (showStroke ? '<th>Stroke</th>' : '') + '<th>PB</th>' + splitHeader + pogoHeaders + '</tr></thead><tbody>' + rows + teamTotalRow + rankingRow + '</tbody></table></div>';
   }
 
   return html;

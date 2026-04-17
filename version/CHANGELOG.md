@@ -11,6 +11,21 @@
 
 ---
 
+## 2026-04-17 — feat: v2.8.6 Dino final UX fixes (R24-v3 + ranking transparency)
+- **Timestamp:** 2026-04-17 16:45:00
+- **App Version (from package.json):** 2.8.6
+- **Branch:** dev/v2.8.6-dino-final-ux-fixes
+- **RecordedCommit:** PENDING
+- **Editor:** Claude Code
+- **Changes (4 Dino-live-test findings addressed via UI-only changes):**
+  - A) 25m Brace Tap column: explicit "⏱️ Tap (finish)" header + "Actual (input)" group label; column min-width bumped; yellow Actual zone preserved.
+  - B) 25m Brace ranking explainability: new prominent orange banner directly above the table "🏁 How Place is decided: smallest absolute Variance wins — the team closest to its Target, not the team with the fastest Tap." Group header "↓ Variance decides Place ↓" spans Variance+Place. Variance cell promoted to font-size 15px + weight 800 + bg #fff3e0. Place cell shares #fff3e0 zone.
+  - C) Medley Relay variance visibility: per-team "🏁 Ranking basis" banner; new "Variance from Target (decides ranking): ±X.XX [place]" row under each Medley team table with color-coded variance + medal Place cell. Team Total row cleaned up to label+value only.
+  - D) Pogo variance visibility: per-team ranking banner; Var. column header orange + bold; per-member Var. cells color-coded (green/orange); new "Team Variance from Target (decides ranking): ±X.XX [place]" row at bottom of each Pogo team table.
+  - No ranking-logic changes — smallest variance wins rule unchanged for Brace/Medley/Pogo; 25m Team Relay still fastest total_time.
+  - USER-INTERACTION-TEST-PROTOCOL-v2.8.6.md: Section K (UI-TC-337..TC-392) executed, 56 PASS / 0 FAIL / 0 OPEN / 0 NOT TESTED.
+  - Browser-verified: Brace Dino scenario (Tap 33.90/var -2.10 = 1st; Tap 33.70/var -3.30 = 4th) rendered with banner + prominent Variance. Medley + Pogo ranking-transparency rows visible with explicit labels.
+
 ## 2026-04-15 — feat: v2.8.5 Rework after Dino live test (R21-v2, R24-v2, R25, R26)
 - **Timestamp:** 2026-04-15 22:00:00
 - **App Version (from package.json):** 2.8.5
