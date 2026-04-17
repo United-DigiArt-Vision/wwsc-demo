@@ -3,9 +3,10 @@
 **Project path:** `/Users/dino/Library/CloudStorage/Dropbox/Dino-Balerion-Claude-Code/Projekte/0004_swimming-app/code`
 **Branch:** `dev/v2.8.6-dino-final-ux-fixes`
 **Version:** 2.8.6
-**Feature commit:** `fe60a7c`
-**RecordedCommit:** `fe60a7c`
-**HEAD (after SSOT + lockfile cleanup):** `7491f71`
+**HEAD:** `019ebdb`
+**RecordedCommit:** `fe60a7c` (feat: Dino final UX fixes — the substantive v2.8.6 delivery commit)
+**Commits on top of RecordedCommit (housekeeping only):** `eb307c4` (first SSOT finalize) → `7491f71` (lockfile sync) → `6961b30` (SSOT cleanup)
+**Working tree:** clean
 **Base branch:** `dev/v2.8.5-bryan-rework-user-tested` @ `bc0e92a` (includes v2.8.5 protocol + notes sync)
 **Datum:** 2026-04-17
 **Ausführender:** Claude Code (Agentic UI Tester)
