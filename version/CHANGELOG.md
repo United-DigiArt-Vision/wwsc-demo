@@ -11,7 +11,22 @@
 
 ---
 
-## 2026-04-18 — fix: v2.8.8 R28 follow-up (Team group header over Lane+Pair)
+## 2026-04-18 — fix: v2.8.8 R28 iteration 3 (flat single-row header)
+- **Timestamp:** 2026-04-18 11:00:00
+- **App Version (from package.json):** 2.8.8
+- **Branch:** dev/v2.8.8-header-completeness-audit
+- **RecordedCommit:** 474d063
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.8-header-completeness-audit`
+- **Editor:** Claude Code
+- **Why a third iteration was needed:** Dino live-rejected iteration 2 (Team group header). He read the row-1 labels `Team / Plan (target) / Actual (input) / ↓ Variance decides Place ↓` as explanatory sentences, not as discrete column titles. In particular the `↓ Variance decides Place ↓` phrase read like a help text, so the Variance and Place columns below it still felt untitled from a user perspective.
+- **Changes:**
+  - `src/public/js/screens/results.js` (`renderBraceResultsInline` tableHead): drop the group row entirely. Final header is a single row with one discrete title per column: `Lane | Pair | PBs | Total | ⏱️ Tap (finish) | Variance | Place`. No empty zones, no asymmetric groups, no labels that can be misread as sentences.
+  - R24-v2 grouped layout (`Plan / Actual / Variance decides Place`) is dropped. The R26 ranking banner above the table continues to state "How Place is decided: smallest absolute Variance wins", so the ranking basis remains explicit.
+  - `version/CURRENT_STATE.md`: RecordedCommit pointer moved `d103c44` → `474d063`.
+- **Browser re-verified on the Preview server (v2.8.8):** single header row with 7 discrete labels (verified via DOM inspection + screenshot). 0 console errors. R26 banner intact.
+- **Scope unchanged:** same `renderBraceResultsInline` tableHead, covers both 25m_brace and 50m_brace. No ranking/schema/API/print changes.
+
+## 2026-04-18 — fix: v2.8.8 R28 follow-up (Team group header over Lane+Pair) — superseded by iteration 3
 - **Timestamp:** 2026-04-18 10:30:00
 - **App Version (from package.json):** 2.8.8
 - **Branch:** dev/v2.8.8-header-completeness-audit

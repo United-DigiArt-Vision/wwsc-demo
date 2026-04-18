@@ -776,11 +776,11 @@ Covers the fix for Dino's v2.8.7 live finding that the Brace Results table still
 #### M.2 Post-fix header completeness (UI-TC-457 to UI-TC-464)
 - [ ] UI-TC-457: On `Results — 25m Brace Relay` post-fix, every cell in the top header row carries a non-empty, meaningful label (Lane, Pair, Plan (target), Actual (input), Variance decides Place).
 - [ ] UI-TC-458: On `Results — 50m Brace Relay` post-fix, the same full-header structure is rendered.
-- [ ] UI-TC-459: The Lane + Pair columns are grouped under a `Team` header in row 1 (`colspan="2"`) and present as proper sub-headers in row 2 — both rows carry a label in every cell.
-- [ ] UI-TC-460: `Plan (target)` correctly spans PBs + Total via `colspan="2"`.
-- [ ] UI-TC-461: `Actual (input)` correctly stands alone over the Tap column.
-- [ ] UI-TC-462: `↓ Variance decides Place ↓` correctly spans Variance + Place via `colspan="2"`.
-- [ ] UI-TC-463: Neither row reads as "untitled" from a normal-user perspective — no empty cells in either row.
+- [ ] UI-TC-459: The Brace results thead is a single flat row — every column (Lane, Pair, PBs, Total, Tap, Variance, Place) carries its own discrete title, no group row. The grouped structure introduced in R24-v2 is dropped here because group labels were repeatedly misread as explanatory sentences by the user.
+- [ ] UI-TC-460: There is no Plan (target) / Actual (input) / Variance decides Place group row — the R26 ranking banner directly above the table carries the ranking-basis information in plain language instead.
+- [ ] UI-TC-461: Tap column retains its visual prominence (yellow background, orange borders) as a discrete column rather than under a group label.
+- [ ] UI-TC-462: Variance column retains orange background + font-weight 800 as a discrete column title.
+- [ ] UI-TC-463: No column reads as "untitled" from a normal-user perspective — every column has its own title of equal prominence.
 - [ ] UI-TC-464: The ranking-rule banner from R26 ("How Place is decided: smallest absolute Variance wins") remains directly above the table and is not disturbed by the header fix.
 
 #### M.3 Per-race header audit (UI-TC-465 to UI-TC-470)
