@@ -11,6 +11,26 @@
 
 ---
 
+## 2026-04-18 — feat: v2.8.8 iteration 7 (Pogo Heat Builder — mirror Pogo Results columns)
+- **Timestamp:** 2026-04-18 13:15:00
+- **App Version (from package.json):** 2.8.8
+- **Branch:** dev/v2.8.8-header-completeness-audit
+- **RecordedCommit:** 497f78d
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.8-header-completeness-audit`
+- **Editor:** Claude Code
+- **Why iteration 7 was needed:** Dino asked for the Pogo Heat Builder to expose the same plan columns the Pogo Results screen already shows, minus the result-entry fields (T1 / T2 / Result / Variance). Before: `Leg | Swimmer | PB`. The team-level Start Delay, expected-finish per swimmer, PB-sum, and Target were only encoded in the card header text. Aligning Heat Builder with Results gives the user the full plan up front in the same shape they will see during time entry.
+- **Changes (Pogo Heat Builder display-only — no ranking logic, data model, or API change):**
+  - `src/public/js/screens/heat-builder.js` (`renderRelayTeamsInHB`):
+    * Row template appends four extra `<td>` cells when `isPogo`: `Start` (team.start_delay), `Exp.F` (member_pb + start_delay), `Total` (team.target_time), `Target` (team.target_time + team.start_delay).
+    * Thead template appends `Start / Exp.F / Total / Target` headers only for Pogo.
+  - Medley / 25m Team Relay / Brace / individual-race headers and rows unchanged.
+- **Scope:** Pogo only — other relay race types continue to render as before.
+- **Browser-verified on the Preview (Pogo generate teams, 4 swimmers):**
+  * Header: `Leg | Swimmer | PB | Start | Exp.F | Total | Target` — 7 discrete titles.
+  * Team 1: Bryan (PB 13, Exp.F 15), Ben (14, 16), Felicia (16, 18), Andrew (16, 18) — all rows show team Total 59 and Target 61 with per-team Start Delay 2s.
+  * Team header text still shows "Start Delay: 2s • Total: 59 • Target: 61".
+  * 0 console errors.
+
 ## 2026-04-18 — feat: v2.8.8 iteration 6 (Brace Results — add Target column)
 - **Timestamp:** 2026-04-18 12:45:00
 - **App Version (from package.json):** 2.8.8

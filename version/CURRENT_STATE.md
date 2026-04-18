@@ -6,17 +6,17 @@
 **TargetBranch:** dev/v2.8.8-header-completeness-audit
 **Branch:** dev/v2.8.8-header-completeness-audit
 **Current branch tip:** dynamic — run `git rev-parse --short HEAD` on branch `dev/v2.8.8-header-completeness-audit`
-**RecordedCommit:** 0368840
+**RecordedCommit:** 497f78d
 **LastEditor:** Claude Code
 **Date:** 2026-04-18
-**Timestamp:** 2026-04-18 12:45:00
+**Timestamp:** 2026-04-18 13:15:00
 **WorkingTreeStatus:** clean (at the closing SSOT commit)
 **ModifiedFiles:** —
 **Version SSOT:** `package.json`
 **Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.8`
 
 ## Definition used across all v2.8.8 artifacts
-- **RecordedCommit** = the substantive delivery commit for v2.8.8 after all Dino re-test rounds. For v2.8.8: `0368840` (feat: v2.8.8 iteration 6 — add Target column to Brace Results per Dino ask; R7-consistent). Prior iterations: `3de4265` (rowspan — empty cells moved into row 2); `d103c44` (Team group header — group row read as explanatory text); `474d063` (flat single-row but Tap/Variance/Place titles rendered white-on-pale-yellow and were effectively invisible); `bea39db` (flat + uniform contrast — header completeness correct); `ddabb81` ((Y) marker fix — reflects current attendance, not stale auto flag).
+- **RecordedCommit** = the substantive delivery commit for v2.8.8 after all Dino re-test rounds. For v2.8.8: `497f78d` (feat: v2.8.8 iteration 7 — Pogo Heat Builder mirrors Pogo Results columns minus result fields). Prior iterations: `3de4265` (rowspan — empty cells moved into row 2); `d103c44` (Team group header — group row read as explanatory text); `474d063` (flat single-row but Tap/Variance/Place titles rendered white-on-pale-yellow and were effectively invisible); `bea39db` (flat + uniform contrast — header completeness correct); `ddabb81` ((Y) marker fix — reflects current attendance, not stale auto flag); `0368840` (Brace Results — add Target column per Dino ask; R7-consistent).
 - **Current branch tip (HEAD)** is intentionally NOT stored as a static value in versioned artifacts, because any commit that writes a HEAD value changes HEAD. Resolve it dynamically with `git rev-parse --short HEAD` on the branch `dev/v2.8.8-header-completeness-audit`.
 
 ## Rules
