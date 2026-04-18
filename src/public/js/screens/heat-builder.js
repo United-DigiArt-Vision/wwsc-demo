@@ -588,7 +588,23 @@ function renderRelayTeamsInHB(teams, race) {
         splitCell = '<td class="time-cell">—</td>';
       }
 
-      rows += '<tr' + rowStyle + '><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td>' + (showStroke ? '<td>' + strokeCellContent + '</td>' : '') + splitCell + '<td class="time-cell">' + pbDisplay + '</td></tr>';
+      // R28 iteration 7 (Dino): Pogo Heat Builder mirrors the Pogo Results
+      // columns minus the result-entry columns (T1/T2/Result/Variance). This
+      // exposes the plan in the same shape the user will see under Results,
+      // so what was a PB-only row now also shows Start, Exp.F, Total, Target.
+      let pogoPlanCells = '';
+      if (isPogo) {
+        const startDelay = team.start_delay || 0;
+        const expectedFinish = pbCol != null ? pbCol + startDelay : null;
+        const totalTeam = team.target_time;
+        const targetTeam = totalTeam != null ? totalTeam + startDelay : null;
+        pogoPlanCells =
+          '<td class="time-cell">' + formatWhole(startDelay) + '</td>' +
+          '<td class="time-cell">' + (expectedFinish != null ? formatWhole(expectedFinish) : '—') + '</td>' +
+          '<td class="time-cell">' + (totalTeam != null ? formatWhole(totalTeam) : '—') + '</td>' +
+          '<td class="time-cell">' + (targetTeam != null ? formatWhole(targetTeam) : '—') + '</td>';
+      }
+      rows += '<tr' + rowStyle + '><td>' + m.leg_order + '</td><td class="name-cell">' + m.name + '</td>' + (showStroke ? '<td>' + strokeCellContent + '</td>' : '') + splitCell + '<td class="time-cell">' + pbDisplay + '</td>' + pogoPlanCells + '</tr>';
     }
 
     // R16: No Swim Twice for Pogo
@@ -661,7 +677,7 @@ function renderRelayTeamsInHB(teams, race) {
             '</div>' +
             leftoverBanner +
             '<table class="spreadsheet-table" style="margin:0">' +
-            '<thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + strokeHeader + splitHeader + '<th>PB</th></tr></thead>' +
+            '<thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + strokeHeader + splitHeader + '<th>PB</th>' + (isPogo ? '<th>Start</th><th>Exp.F</th><th>Total</th><th>Target</th>' : '') + '</tr></thead>' +
             '<tbody>' + rows + swimTwiceRow +
             (isPogo ? '' : '<tr style="background:#f5f5f5;font-weight:700;border-top:2px solid ' + teamColor + '"><td></td><td colspan="' + totalColSpan + '">Team Total</td>' + totalTimeCell + '</tr>') +
             '</tbody></table></div>';
