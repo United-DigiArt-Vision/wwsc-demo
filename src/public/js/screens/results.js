@@ -808,6 +808,13 @@ function renderBraceResultsInline(race) {
   // The ranking-rule banner directly above the table (R26) continues to
   // communicate the Variance-wins rule, so the drop does not leave ranking
   // logic opaque to the user.
+  // R28 iteration 4: the header row must stay uniform so every column title
+  // is readable. Previous iteration kept the yellow/orange Tap/Variance/Place
+  // backgrounds in the <th> cells, and the spreadsheet-table stylesheet
+  // renders header text white — which made "⏱️ Tap (finish) / Variance /
+  // Place" disappear (white text on pale yellow). Accent colors stay in the
+  // data cells below to keep the visual grouping intact; only the header
+  // row is normalised back to the default green header background.
   const tableHead =
     '<thead>' +
       '<tr>' +
@@ -815,9 +822,9 @@ function renderBraceResultsInline(race) {
         '<th style="text-align:left;min-width:180px">Pair</th>' +
         '<th>PBs</th>' +
         '<th>Total</th>' +
-        '<th style="min-width:110px;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100">⏱️ Tap (finish)</th>' +
-        '<th style="background:#fff3e0;border-left:2px solid #e65100;font-weight:800">Variance</th>' +
-        '<th style="background:#fff3e0">Place</th>' +
+        '<th style="min-width:110px">⏱️ Tap (finish)</th>' +
+        '<th style="font-weight:800">Variance</th>' +
+        '<th>Place</th>' +
       '</tr>' +
     '</thead>';
   return actionsHtml + '<div class="card" style="margin-bottom:16px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center"><span>' + (RACE_LABELS[race.race_type] || race.race_type) + '</span>' + headerInfo + '</div>' + rankingBanner + '<table class="spreadsheet-table" style="margin:0">' + tableHead + '<tbody>' + rows + '</tbody></table></div>';
