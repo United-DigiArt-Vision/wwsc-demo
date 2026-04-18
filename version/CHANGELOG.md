@@ -11,6 +11,26 @@
 
 ---
 
+## 2026-04-18 — feat: v2.8.8 iteration 6 (Brace Results — add Target column)
+- **Timestamp:** 2026-04-18 12:45:00
+- **App Version (from package.json):** 2.8.8
+- **Branch:** dev/v2.8.8-header-completeness-audit
+- **RecordedCommit:** 0368840
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.8-header-completeness-audit`
+- **Editor:** Claude Code
+- **Why iteration 6 was needed:** Dino asked whether the Brace Results table should expose a Target column right of Total. Fachlich yes — Target = Total + Start Delay is exactly the value the Variance column measures Tap against. Without a visible Target, the user has to add "+ 2s" in their head to audit the ranking math from the table alone. This is also the shape R7 (Bryan's original spec) already defined.
+- **Changes (Brace Results display-only — no ranking logic, data model or API change):**
+  - `src/public/js/screens/results.js` (`renderBraceResultsInline` tableHead + row template):
+    * Header row now has 8 columns: `Lane | Pair | PBs | Total | Target | ⏱️ Tap (finish) | Variance | Place`.
+    * Row template renders `formatWhole(target_time + start_delay)` for the Target cell. The right border of the "Plan" zone moved from the Total cell onto the new Target cell so the Plan/Actual visual divider still lands in the same place.
+  - Target values are derived from existing `team.target_time` + `team.start_delay` — already computed server-side, no new field.
+- **Scope:** same `renderBraceResultsInline` code path, covers both `25m_brace` and `50m_brace`. No other race type touched.
+- **Browser-verified on the Preview (50m Brace):**
+  * 8-column header renders cleanly: `Lane | Pair | PBs | Total | Target | ⏱️ Tap (finish) | Variance | Place`.
+  * Target cells render correctly: Total 81 → Target 83 (Start=2s), 82→84, 83→85.
+  * 25m Brace shares the same code path → identical rendering.
+  * 0 console errors.
+
 ## 2026-04-18 — fix: v2.8.8 iteration 5 ((Y) marker reflects current attendance, not stale auto flag)
 - **Timestamp:** 2026-04-18 12:15:00
 - **App Version (from package.json):** 2.8.8
