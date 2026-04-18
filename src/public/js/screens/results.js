@@ -785,10 +785,16 @@ function renderBraceResultsInline(race) {
     // Place = medal styling.
     const grpStyle = 'background:#f5f5f5;text-align:center';
     const pbsCell = '<td style="' + grpStyle + ';font-weight:600">' + pbs + '</td>';
-    const totalCellStr = '<td style="' + grpStyle + ';font-weight:800;border-right:2px solid #0b3d91">' + formatWhole(totalPB) + '</td>';
+    const totalCellStr = '<td style="' + grpStyle + ';font-weight:800">' + formatWhole(totalPB) + '</td>';
+    // R28 iteration 6 (Dino finding): explicit Target column right of Total,
+    // consistent with R7 (Bryan's original spec). Target = Total + Start Delay.
+    // Variance is Tap - Target, so showing Target in-table makes the ranking
+    // math auditable from visible values alone — no need for the reader to
+    // add "+ 2s" in their head.
+    const targetCellStr = '<td style="' + grpStyle + ';font-weight:800;border-right:2px solid #0b3d91">' + (targetCalc != null ? formatWhole(targetCalc) : '—') + '</td>';
     // v2.8.6 fix B: Variance cell visually tied to Place. Both sit in the "Delta/Result" half with matching colored border.
     const varCellStr = '<td style="' + varStyle + ';background:#fff3e0;border-left:2px solid #e65100;border-right:1px dashed #e65100">' + varDisplay + '</td>';
-    rows += '<tr><td style="text-align:center;font-weight:700">' + team.team_number + '</td><td class="name-cell">' + names + '</td>' + pbsCell + totalCellStr + finishCell + varCellStr + '<td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
+    rows += '<tr><td style="text-align:center;font-weight:700">' + team.team_number + '</td><td class="name-cell">' + names + '</td>' + pbsCell + totalCellStr + targetCellStr + finishCell + varCellStr + '<td style="' + placeStyle + '">' + placeDisplay + '</td></tr>';
   }
 
   // v2.8.6 fix A: Tap column header is now explicitly "⏱️ Tap (finish)" so there
@@ -822,6 +828,7 @@ function renderBraceResultsInline(race) {
         '<th style="text-align:left;min-width:180px">Pair</th>' +
         '<th>PBs</th>' +
         '<th>Total</th>' +
+        '<th>Target</th>' +
         '<th style="min-width:110px">⏱️ Tap (finish)</th>' +
         '<th style="font-weight:800">Variance</th>' +
         '<th>Place</th>' +
