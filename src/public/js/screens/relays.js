@@ -229,8 +229,11 @@ function renderRelayTable(teams, race) {
         : '';
       lastStroke = isMedley ? strokeKey : lastStroke;
       const strokeLabel = isMedley ? (strokeKey ? strokeKey[0].toUpperCase() + strokeKey.slice(1) : '—') : (m.stroke || '—');
-      // Show what the user chose: if auto-assigned (user picked Y), show "Back (Y)" etc.
-      const isAuto = m.auto === true;
+      // R28 iteration 5: (Y) marker reflects the CURRENT special_event_entry
+      // from attendance (join in GET /relay-teams), not the stale auto flag
+      // captured at generate time. A swimmer with Back/Breast/Free explicitly
+      // picked by the user shows plain stroke — no (Y).
+      const isAuto = m.special_event_entry === 'Y';
       const strokeDisplay = (isMedley && isAuto) ? strokeLabel + ' <span style="color:#e65100;font-weight:700;font-size:13px">(Y)</span>' : strokeLabel;
 
       // Split time cell

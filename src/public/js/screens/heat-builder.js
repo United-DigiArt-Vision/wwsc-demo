@@ -567,7 +567,15 @@ function renderRelayTeamsInHB(teams, race) {
         strokeCellContent = '<select class="form-control" style="display:inline-block;width:auto;min-width:90px;padding:2px 6px;margin-right:6px" onchange="hbChangeSwimTwiceStroke(' + ti + ',' + mi + ',this.value)">' + opts + '</select>'
           + '<button class="btn btn-outline" style="padding:2px 8px;font-size:12px;color:#c62828;border-color:#c62828" onclick="hbRemoveSwimTwice(' + ti + ',' + mi + ')" title="Remove this swim-twice assignment">✕ Remove</button>';
       } else {
-        strokeCellContent = (isMedley && m.auto === true)
+        // R28 iteration 5 bugfix: the (Y) marker must reflect the CURRENT
+        // attendance entry, not the stale auto flag that was captured when
+        // the teams were generated. If a user changed Glenne from 'Y' to
+        // 'Back' in the Times Sheet, the Heat Builder must show plain "Back"
+        // — no (Y) — because the stroke is now an explicit user choice,
+        // not a system-picked wildcard assignment.
+        const attendee = hbAttendance && hbAttendance.find(a => a.member_id === m.member_id);
+        const isCurrentWildcard = isMedley && attendee && attendee.special_event_entry === 'Y';
+        strokeCellContent = isCurrentWildcard
           ? strokeLabel + ' <span style="color:#e65100;font-weight:700;font-size:13px">(Y)</span>'
           : strokeLabel;
       }

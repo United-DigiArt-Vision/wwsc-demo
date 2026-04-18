@@ -1009,7 +1009,11 @@ function renderRelayResultsInline(race) {
       const pbCol = getRelayPBForResults(m, race.race_type);
       const pbDisplay = formatWhole(pbCol);
       const splitDisplay = m.split_time != null ? formatTime(m.split_time) : '—';
-      const strokeDisplay = (isMedley && m.auto === true)
+      // R28 iteration 5: (Y) marker reflects the CURRENT special_event_entry
+      // (joined from attendance by GET /relay-teams), not the stale auto flag.
+      // Stroke shown with (Y) only if the user explicitly picked 'Y' for that
+      // swimmer; a later change to a concrete stroke clears the marker.
+      const strokeDisplay = (isMedley && m.special_event_entry === 'Y')
         ? (m.stroke || '—') + ' <span style="color:#e65100;font-weight:700;font-size:13px">(Y)</span>'
         : (m.stroke || '—');
 
