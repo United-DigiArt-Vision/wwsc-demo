@@ -405,3 +405,30 @@ Die v2.8.4-Runde wurde live von Dino durchgespielt. Zwei Requirements waren trot
 - Vollständige und unvollständige Teams sind visuell unterscheidbar.
 - Wenn nur ein gültiges Team existiert oder Restteilnehmer übrig bleiben, kommuniziert die UI diesen Zustand explizit statt nur z. B. stumpf `1st` zu zeigen.
 - Die Lösung wird browserseitig für alle betroffenen Race-Typen mit echten User-Flows verifiziert.
+
+### R28: Vollständige und symmetrische Tabellen-Header in Results / team-basierten Races (neues Dino-Finding)
+**Status:** 🟡 Neu / für nächste Implementierungsrunde
+**Kontext:** Dino sieht in der aktuellen Live-UI weiterhin Tabellenbereiche, die für normale Nutzer wie fehlende oder schlecht zugeordnete Spaltentitel wirken. Besonders in `Brace Relay`-Results fehlt im linken Bereich visuell ein sauberer Ober-Header, wodurch einzelne Spalten wie `Lane` / `Pair` im Vergleich zu den restlichen Gruppen unausgewogen oder „untitled“ erscheinen. Das Problem ist nicht nur potenziell auf Brace beschränkt; Claude soll die aktuelle Version zuerst **aus User-Sicht prüfen**, dann die Korrektur implementieren und anschließend erneut **aus User-Sicht** verifizieren, ob die Header-Struktur in allen relevanten Races vollständig, symmetrisch und verständlich ist.
+**Fachliche Regel / Scope:**
+- Dies ist ein **UX-/Readability-Requirement**, kein Ranking- oder Berechnungs-Requirement.
+- Claude muss zuerst die aktuelle UI im Browser durchklicken und echte User-Screens prüfen, bevor er eine Korrektur implementiert.
+- Die Prüfung gilt mindestens für alle Race-Typen mit tabellarischer Results- oder Relay-Darstellung, insbesondere Brace, Medley, Pogo, 25m Team Relay und weitere vergleichbare Race-Tables.
+- Wenn ein Race bereits korrekt ist, darf es nicht unnötig umgebaut werden; Ziel ist **vollständige Header-Klarheit**, nicht kosmetischer Aktionismus.
+**Anforderung:**
+1. Jede tabellarische Results-/Relay-Darstellung muss eine vollständige, visuell konsistente Header-Hierarchie haben.
+2. Es darf keinen Tabellenbereich geben, der für normale Nutzer wie eine leere, vergessene oder unbeschriftete Header-Zone wirkt.
+3. Wenn Gruppenheader verwendet werden (z. B. `Plan`, `Actual`, `Variance / Place`), müssen auch die übrigen Spalten entweder:
+   - sauber in diese Hierarchie eingebunden sein, oder
+   - eindeutig als eigenständige Header über beide Ebenen erkennbar sein.
+4. Claude muss die **aktuelle fehlerhafte Wahrnehmung erst selbst im Browser verifizieren**, bevor er den Fix implementiert.
+5. Danach muss Claude die betroffenen Tabellen so korrigieren, dass die Header-Struktur für einen normalen Nutzer ohne Erklärung plausibel lesbar ist.
+6. Claude muss sich anschließend durch alle relevanten Race-Screens durchklicken und prüfen, ob irgendwo weitere fehlende/uneinheitliche Spaltentitel oder asymmetrische Header-Strukturen existieren; falls ja, müssen diese in derselben Runde mit korrigiert werden.
+7. Am Ende muss eine vollständige V0006-konforme User-Interaction-Test-Runde nachweisen, dass die Header-Strukturen aus User-Sicht verständlich und vollständig sind.
+**Akzeptanzkriterium:**
+- Auf `Results — 25m Brace Relay` und `Results — 50m Brace Relay` gibt es keine visuell „kopfzeilenlosen" oder unausgewogenen Tabellenbereiche mehr.
+- Linke Bereiche wie `Lane` / `Pair` wirken nicht mehr wie eine leere Oberzeile oder vergessene Header-Zone.
+- Gruppierte Header sind symmetrisch und für normale Nutzer plausibel lesbar.
+- Claude hat vor der Korrektur die alte UI tatsächlich im Browser verifiziert und diesen Befund dokumentiert.
+- Claude hat nach der Korrektur die neue UI erneut im Browser verifiziert und dokumentiert.
+- Claude hat relevante weitere Race-Typen durchgeklickt und fehlende/uneinheitliche Header bei Bedarf mitkorrigiert.
+- Das finale Testprotokoll belegt die User-Sicht, nicht nur Code- oder DOM-Annahmen.

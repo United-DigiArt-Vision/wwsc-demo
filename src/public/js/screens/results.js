@@ -797,18 +797,20 @@ function renderBraceResultsInline(race) {
   // always sees "Place is decided by smallest Variance — NOT by fastest Tap".
   const rankingBanner = '<div style="background:#fff3e0;border-top:1px solid #e65100;border-bottom:1px solid #e65100;padding:10px 16px;font-size:13px;color:#5d4037;text-align:center"><strong style="color:#e65100">🏁 How Place is decided:</strong> <strong>smallest absolute Variance wins</strong> — the team closest to its Target, not the team with the fastest Tap.</div>';
   const headerInfo = '<span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s</span>';
+  // R28 (v2.8.8): complete the grouped header so Lane + Pair are not left
+  // under empty cells. They are identity columns (no group), so we hoist them
+  // via rowspan="2" into the top row. Every top-row cell now carries a
+  // meaningful label — the left side no longer reads as an "untitled" zone.
   const tableHead =
     '<thead>' +
       '<tr style="background:#e0e0e0;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:0.5px">' +
-        '<th style="width:50px"></th>' +
-        '<th style="text-align:left"></th>' +
+        '<th rowspan="2" style="width:50px;vertical-align:middle;border-right:1px solid #c0c0c0">Lane</th>' +
+        '<th rowspan="2" style="text-align:left;min-width:180px;vertical-align:middle;border-right:2px solid #0b3d91">Pair</th>' +
         '<th colspan="2" style="text-align:center;border-right:2px solid #0b3d91">Plan (target)</th>' +
         '<th style="text-align:center;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100">Actual (input)</th>' +
         '<th colspan="2" style="text-align:center;background:#fff3e0;border-left:2px solid #e65100">↓ Variance decides Place ↓</th>' +
       '</tr>' +
       '<tr>' +
-        '<th style="width:50px">Lane</th>' +
-        '<th style="text-align:left;min-width:180px">Pair</th>' +
         '<th>PBs</th>' +
         '<th style="border-right:2px solid #0b3d91">Total</th>' +
         '<th style="min-width:110px;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100">⏱️ Tap (finish)</th>' +
