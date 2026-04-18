@@ -797,27 +797,24 @@ function renderBraceResultsInline(race) {
   // always sees "Place is decided by smallest Variance — NOT by fastest Tap".
   const rankingBanner = '<div style="background:#fff3e0;border-top:1px solid #e65100;border-bottom:1px solid #e65100;padding:10px 16px;font-size:13px;color:#5d4037;text-align:center"><strong style="color:#e65100">🏁 How Place is decided:</strong> <strong>smallest absolute Variance wins</strong> — the team closest to its Target, not the team with the fastest Tap.</div>';
   const headerInfo = '<span style="font-weight:400;font-size:13px;opacity:0.8">Start: 2s</span>';
-  // R28 (v2.8.8 follow-up): full 2-row symmetric header. Dino's feedback on
-  // the first iteration showed that rowspan="2" on Lane/Pair only moved the
-  // empty zone from the top row into the bottom row — the sub-header row
-  // then felt as if two columns had no title. The correct fix is a proper
-  // 2-row grouping: a "Team" group header spans Lane + Pair in row 1, so
-  // every sub-column (Lane, Pair, PBs, Total, Tap, Variance, Place) now has
-  // its own title in row 2 AND every group cell in row 1 has a meaningful
-  // label (Team / Plan (target) / Actual (input) / ↓ Variance decides Place ↓).
+  // R28 (v2.8.8 iteration 3): flat single-row header. Dino rejected both the
+  // rowspan variant (empty cells moved into row 2) AND the Team-group variant
+  // (user read "Team" as a group label, not as a column title — still felt
+  // like Lane/Pair had no column title of their own). The simplest header
+  // that gives every column its own explicit, prominent title is a flat
+  // single-row header. R24-v2 grouping (Plan/Actual/Variance decides Place)
+  // is dropped here because it was the source of the asymmetric/empty-zone
+  // perception; it can return later as Bryan-driven work if he re-requests.
+  // The ranking-rule banner directly above the table (R26) continues to
+  // communicate the Variance-wins rule, so the drop does not leave ranking
+  // logic opaque to the user.
   const tableHead =
     '<thead>' +
-      '<tr style="background:#e0e0e0;color:#555;font-size:11px;text-transform:uppercase;letter-spacing:0.5px">' +
-        '<th colspan="2" style="text-align:center;border-right:2px solid #0b3d91">Team</th>' +
-        '<th colspan="2" style="text-align:center;border-right:2px solid #0b3d91">Plan (target)</th>' +
-        '<th style="text-align:center;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100">Actual (input)</th>' +
-        '<th colspan="2" style="text-align:center;background:#fff3e0;border-left:2px solid #e65100">↓ Variance decides Place ↓</th>' +
-      '</tr>' +
       '<tr>' +
         '<th style="width:50px">Lane</th>' +
-        '<th style="text-align:left;min-width:180px;border-right:2px solid #0b3d91">Pair</th>' +
+        '<th style="text-align:left;min-width:180px">Pair</th>' +
         '<th>PBs</th>' +
-        '<th style="border-right:2px solid #0b3d91">Total</th>' +
+        '<th>Total</th>' +
         '<th style="min-width:110px;background:#fff8e1;border-left:2px solid #e65100;border-right:2px solid #e65100">⏱️ Tap (finish)</th>' +
         '<th style="background:#fff3e0;border-left:2px solid #e65100;font-weight:800">Variance</th>' +
         '<th style="background:#fff3e0">Place</th>' +
