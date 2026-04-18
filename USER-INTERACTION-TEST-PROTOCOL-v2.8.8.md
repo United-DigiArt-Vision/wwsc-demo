@@ -4,7 +4,8 @@
 **Branch:** `dev/v2.8.8-header-completeness-audit`
 **Version:** 2.8.8
 **Current branch tip:** dynamic — run `git rev-parse --short HEAD` on branch `dev/v2.8.8-header-completeness-audit`
-**RecordedCommit:** `3de4265` (feat: v2.8.8 R28 Brace Results header completeness — the substantive v2.8.8 delivery commit)
+**RecordedCommit:** `d103c44` (fix: v2.8.8 R28 follow-up — use Team group header for Lane+Pair — the substantive v2.8.8 delivery commit after Dino re-test)
+**Prior iteration:** `3de4265` (rowspan=2 approach — superseded after Dino feedback; see Addendum at the bottom of this protocol)
 **Working tree:** clean (modulo this protocol + SSOT sync commit that closes the delivery)
 **Base branch:** `dev/v2.8.7-manual-team-management` @ `b065b19`
 **Datum:** 2026-04-18
@@ -47,37 +48,40 @@ Header Row 2 (column headers):
 
 ---
 
-## 2. What I changed
+## 2. What I changed (final — after Dino re-test)
 
-Single code change in `src/public/js/screens/results.js`, inside the `tableHead` template used by both 25m Brace and 50m Brace (they share the code path `renderBraceResultsInline`):
+Single code change in `src/public/js/screens/results.js`, inside the `tableHead` template used by both 25m Brace and 50m Brace (they share the code path `renderBraceResultsInline`).
 
-- Drop the two empty `<th>` cells in the top row.
-- Promote `Lane` and `Pair` into the top row with `rowspan="2"` and `vertical-align:middle`, so every top-row cell now carries a meaningful non-empty label.
-- Remove the corresponding Lane and Pair cells from the second row.
-- Group-headers (Plan, Actual, Variance decides Place) remain unchanged.
+**Final header shape (symmetric 2-row grouping):**
+- Row 1 groups: `Team {cs=2}` | `Plan (target) {cs=2}` | `Actual (input)` | `↓ Variance decides Place ↓ {cs=2}`
+- Row 2 columns: `Lane` | `Pair` | `PBs` | `Total` | `⏱️ Tap (finish)` | `Variance` | `Place`
+
+This gives every sub-column in row 2 its own title AND every group cell in row 1 a meaningful label. No empty cells in either row.
+
+See the Addendum at the end of this protocol for the superseded first attempt (rowspan="2" approach) and why it was insufficient.
 
 Ranking logic, database, API, print rules, and every other file were left untouched.
 
 ---
 
-## 3. What I observed AFTER fixing (live post-fix reproduction)
+## 3. What I observed AFTER fixing (live post-fix reproduction — final iteration)
 
-**DOM inspection of Brace Results tableHead (post-fix):**
+**DOM inspection of Brace Results tableHead (final post-fix):**
 ```
 Header Row 1:
-  Lane {rowspan=2} | Pair {rowspan=2} | Plan (target) {colspan=2} | Actual (input) | ↓ Variance decides Place ↓ {colspan=2}
+  Team {colspan=2} | Plan (target) {colspan=2} | Actual (input) | ↓ Variance decides Place ↓ {colspan=2}
 
 Header Row 2:
-  PBs | Total | ⏱️ Tap (finish) | Variance | Place
+  Lane | Pair | PBs | Total | ⏱️ Tap (finish) | Variance | Place
 ```
 
-All top-row cells have non-empty text. Lane + Pair span the full header height. The hierarchy reads as intentional — identity columns on the left, grouped metric columns on the right.
+All cells in both rows have non-empty text. Symmetric structure: 4 groups in row 1 over 7 concrete columns in row 2.
 
 Verified on BOTH:
 - `Results — 25m Brace Relay` (race id 676)
 - `Results — 50m Brace Relay` (race id 677)
 
-Post-fix screenshot: the green header band now reads `LANE | PAIR | PLAN (TARGET) | ACT...` from left to right, with no empty zone.
+Final post-fix screenshot: green header band row 1 reads `TEAM | PLAN (TARGET) | ACT... | ↓ VARIANCE...`, row 2 reads `Lane | Pair | PBs | Total | ⏱️ Tap | Variance | Place`. Zero empty zones in either row.
 
 ---
 
@@ -110,16 +114,16 @@ Post-fix screenshot: the green header band now reads `LANE | PAIR | PLAN (TARGET
 | UI-TC-455 | PASS | Pre-fix screenshot captured in the session log (25m Brace Results with blank green band left of `PLAN (TARGET)`) |
 | UI-TC-456 | PASS | DOM inspection: exactly 2 `<th>` cells with text==='' in pre-fix state; 0 in post-fix state |
 
-### M.2 Post-fix header completeness (UI-TC-457 to UI-TC-464)
+### M.2 Post-fix header completeness (UI-TC-457 to UI-TC-464) — final iteration
 | Test ID | Status | Evidence |
 |---|---|---|
-| UI-TC-457 | PASS | Post-fix 25m Brace row 1 cells all carry labels: Lane / Pair / Plan (target) / Actual (input) / ↓ Variance decides Place ↓ |
+| UI-TC-457 | PASS | Post-fix 25m Brace: row 1 cells all carry labels (Team / Plan (target) / Actual (input) / ↓ Variance decides Place ↓); row 2 cells all carry labels (Lane / Pair / PBs / Total / ⏱️ Tap (finish) / Variance / Place). Zero empty cells in either row. |
 | UI-TC-458 | PASS | 50m Brace post-fix DOM inspection matches exactly — same shape |
-| UI-TC-459 | PASS | Lane and Pair `<th>` have `rowspan="2"` per inspection output |
+| UI-TC-459 | PASS | Lane and Pair are now proper sub-columns in row 2 under the "Team" group in row 1 (no `rowspan` — the rowspan approach was superseded after Dino feedback; see Addendum) |
 | UI-TC-460 | PASS | Plan (target) has `colspan="2"` covering PBs + Total |
 | UI-TC-461 | PASS | Actual (input) stands alone (colspan=1) over the single Tap column |
 | UI-TC-462 | PASS | Variance-decides-Place has `colspan="2"` covering Variance + Place |
-| UI-TC-463 | PASS | Post-fix screenshot shows no empty band; left side reads as `LANE | PAIR` directly in the green band |
+| UI-TC-463 | PASS | Post-fix screenshot shows no empty band in either row; both rows have every cell labelled |
 | UI-TC-464 | PASS | Ranking-rule banner from R26 ("How Place is decided: smallest absolute Variance wins") still renders directly above the table, unchanged |
 
 ### M.3 Per-race header audit (UI-TC-465 to UI-TC-470)
@@ -177,3 +181,15 @@ Begründung:
 Bryan-facing delivery der v2.8.8 bleibt abhängig von Dino's live Browser-Abnahme.
 
 — Claude Code, 2026-04-18
+
+---
+
+## Addendum — First iteration (superseded)
+
+My first iteration of this R28 fix used `rowspan="2"` on Lane + Pair to move them into the top row. Dino immediately re-tested the rendered UI and reported that the fix was insufficient: with Lane + Pair in the top row, the two cells in the bottom row below them rendered blank — so the sub-header row then read as if two columns had no titles, which is exactly the symmetric problem of what I was trying to solve.
+
+That first iteration was committed as `3de4265` and has since been superseded by `d103c44`, which replaces the rowspan approach with a symmetric 2-row grouping that places a `Team` group over Lane + Pair. In the final structure every cell in both rows carries a meaningful label, regardless of vertical alignment or row-height differences.
+
+This follow-up is itself V0006-traceable: Dino reported the defect on the rendered UI, DOM inspection confirmed the issue, the replacement fix was implemented, DOM re-inspection confirmed the symmetric final shape, and a fresh screenshot was captured. 0 console errors remained after the final iteration.
+
+— Claude Code, 2026-04-18 (follow-up)

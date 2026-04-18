@@ -11,7 +11,26 @@
 
 ---
 
-## 2026-04-18 — feat: v2.8.8 R28 Brace Results header completeness
+## 2026-04-18 — fix: v2.8.8 R28 follow-up (Team group header over Lane+Pair)
+- **Timestamp:** 2026-04-18 10:30:00
+- **App Version (from package.json):** 2.8.8
+- **Branch:** dev/v2.8.8-header-completeness-audit
+- **RecordedCommit:** d103c44
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.8-header-completeness-audit`
+- **Editor:** Claude Code
+- **Why a follow-up was needed:** Dino live-re-tested the first R28 iteration (`3de4265`, rowspan="2" on Lane+Pair) and reported the fix was not enough: promoting Lane + Pair into the top row left the two cells in the bottom row below them empty, so the sub-header row then read as if two columns had no title. The asymmetric "untitled zone" had simply moved from the top row into the bottom row.
+- **Changes:**
+  - `src/public/js/screens/results.js` (`renderBraceResultsInline` tableHead): replace the rowspan="2" approach with a symmetric 2-row grouping.
+    - Row 1 (groups): `Team {cs=2}` | `Plan (target) {cs=2}` | `Actual (input)` | `↓ Variance decides Place ↓ {cs=2}`
+    - Row 2 (columns): `Lane` | `Pair` | `PBs` | `Total` | `⏱️ Tap (finish)` | `Variance` | `Place`
+    - Every cell in both rows now carries a non-empty meaningful label.
+  - `USER-INTERACTION-TEST-SPEC.md` Section M: UI-TC-459 and UI-TC-463 updated to describe the final Team-group structure (no rowspan).
+  - `USER-INTERACTION-TEST-PROTOCOL-v2.8.8.md`: M.2 row updated, Addendum added documenting the superseded first iteration and why it was replaced.
+  - `version/CURRENT_STATE.md`: RecordedCommit pointer moved from `3de4265` to `d103c44`.
+- **Browser re-verified:** post-follow-up DOM inspection confirms 0 empty cells in either row; screenshot shows full symmetric header on 25m Brace. 50m Brace uses the same code path. 0 console errors.
+- **Scope unchanged:** same 25m_brace + 50m_brace tableHead. No other surface changed. No ranking/schema/API changes.
+
+## 2026-04-18 — feat: v2.8.8 R28 Brace Results header completeness (superseded by follow-up fix)
 - **Timestamp:** 2026-04-18 09:45:00
 - **App Version (from package.json):** 2.8.8
 - **Branch:** dev/v2.8.8-header-completeness-audit

@@ -776,11 +776,11 @@ Covers the fix for Dino's v2.8.7 live finding that the Brace Results table still
 #### M.2 Post-fix header completeness (UI-TC-457 to UI-TC-464)
 - [ ] UI-TC-457: On `Results — 25m Brace Relay` post-fix, every cell in the top header row carries a non-empty, meaningful label (Lane, Pair, Plan (target), Actual (input), Variance decides Place).
 - [ ] UI-TC-458: On `Results — 50m Brace Relay` post-fix, the same full-header structure is rendered.
-- [ ] UI-TC-459: Lane and Pair headers are present via `rowspan="2"` so they visually span the full header height instead of sitting under an empty cell.
+- [ ] UI-TC-459: The Lane + Pair columns are grouped under a `Team` header in row 1 (`colspan="2"`) and present as proper sub-headers in row 2 — both rows carry a label in every cell.
 - [ ] UI-TC-460: `Plan (target)` correctly spans PBs + Total via `colspan="2"`.
 - [ ] UI-TC-461: `Actual (input)` correctly stands alone over the Tap column.
 - [ ] UI-TC-462: `↓ Variance decides Place ↓` correctly spans Variance + Place via `colspan="2"`.
-- [ ] UI-TC-463: The left-hand Lane/Pair area no longer reads as a "forgotten" header zone from a normal-user perspective.
+- [ ] UI-TC-463: Neither row reads as "untitled" from a normal-user perspective — no empty cells in either row.
 - [ ] UI-TC-464: The ranking-rule banner from R26 ("How Place is decided: smallest absolute Variance wins") remains directly above the table and is not disturbed by the header fix.
 
 #### M.3 Per-race header audit (UI-TC-465 to UI-TC-470)
