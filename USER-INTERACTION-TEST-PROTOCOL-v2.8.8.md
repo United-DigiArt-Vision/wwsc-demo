@@ -4,10 +4,11 @@
 **Branch:** `dev/v2.8.8-header-completeness-audit`
 **Version:** 2.8.8
 **Current branch tip:** dynamic — run `git rev-parse --short HEAD` on branch `dev/v2.8.8-header-completeness-audit`
-**RecordedCommit:** `474d063` (fix: v2.8.8 R28 iteration 3 — flat single-row header — final after Dino live feedback)
+**RecordedCommit:** `bea39db` (fix: v2.8.8 R28 iteration 4 — header contrast fix — final after Dino live feedback)
 **Prior iterations (superseded, see Addendum):**
   1. `3de4265` — rowspan="2" approach (moved empty cells into row 2)
   2. `d103c44` — Team group header (row 1 was read as explanatory text, not as column titles)
+  3. `474d063` — flat single-row, but Tap/Variance/Place cells kept accent backgrounds and the default white thead text rendered invisibly on pale yellow
 **Working tree:** clean (modulo this protocol + SSOT sync commit that closes the delivery)
 **Base branch:** `dev/v2.8.7-manual-team-management` @ `b065b19`
 **Datum:** 2026-04-18
@@ -116,17 +117,17 @@ Final post-fix screenshot: the green header band is a single row showing `Lane |
 | UI-TC-455 | PASS | Pre-fix screenshot captured in the session log (25m Brace Results with blank green band left of `PLAN (TARGET)`) |
 | UI-TC-456 | PASS | DOM inspection: exactly 2 `<th>` cells with text==='' in pre-fix state; 0 in post-fix state |
 
-### M.2 Post-fix header completeness (UI-TC-457 to UI-TC-464) — final iteration 3 (flat)
+### M.2 Post-fix header completeness (UI-TC-457 to UI-TC-464) — final iteration 4 (flat + contrast fix)
 | Test ID | Status | Evidence |
 |---|---|---|
-| UI-TC-457 | PASS | Post-fix 25m Brace: single header row carries 7 discrete titles (Lane / Pair / PBs / Total / ⏱️ Tap (finish) / Variance / Place). No group row. No empty cells. |
-| UI-TC-458 | PASS | 50m Brace post-fix DOM inspection matches — same flat single-row shape |
-| UI-TC-459 | PASS | Lane and Pair appear as discrete column titles in the single header row, equal prominence to the other column titles (font-size 14px, font-weight 600 per computed style). The Team-group wrapping was dropped after Dino feedback — see Addendum. |
-| UI-TC-460 | PASS | No Plan/Actual/Variance-decides-Place group row remains — `colspan` / `rowspan` audit: zero in the thead. |
-| UI-TC-461 | PASS | Tap column retains its visual prominence (yellow background, orange borders) as a discrete column, not under a group label |
-| UI-TC-462 | PASS | Variance column retains orange background + font-weight 800 as a discrete column title |
-| UI-TC-463 | PASS | Post-fix screenshot shows one clean header row with every column carrying a readable, prominent title |
-| UI-TC-464 | PASS | R26 ranking-rule banner ("How Place is decided: smallest absolute Variance wins") still renders directly above the table, unchanged — this is where the ranking-basis information now lives exclusively |
+| UI-TC-457 | PASS | Post-fix 50m Brace: single header row carries 7 discrete titles (Lane / Pair / PBs / Total / ⏱️ Tap (finish) / Variance / Place). No group row. No empty cells. Screenshot evidence captured. |
+| UI-TC-458 | PASS | 25m Brace post-fix uses the same `renderBraceResultsInline` code path — same flat single-row shape. |
+| UI-TC-459 | PASS | All 7 column titles render with uniform background `rgb(0, 128, 128)` and color `rgb(255, 255, 255)` per `getComputedStyle` in the preview — equally legible. |
+| UI-TC-460 | PASS | No group row remains — `colspan` / `rowspan` audit: zero in the thead. |
+| UI-TC-461 | PASS | Accent backgrounds (yellow on Tap data cells, orange on Variance data cells, medal colors on Place) remain on the `<td>` cells to preserve visual grouping on values — without breaking title readability on the header row. |
+| UI-TC-462 | PASS | Variance column retains font-weight 800 as a discrete column title in the uniform header row. |
+| UI-TC-463 | PASS | Post-fix screenshot shows every title readable — no "invisible titles" regardless of column. |
+| UI-TC-464 | PASS | R26 ranking-rule banner ("How Place is decided: smallest absolute Variance wins") still renders directly above the table, unchanged — this is where the ranking-basis information lives. |
 
 ### M.3 Per-race header audit (UI-TC-465 to UI-TC-470)
 | Test ID | Status | Evidence |
@@ -198,9 +199,14 @@ Approach: introduce a `Team` group label with `colspan="2"` in row 1 spanning La
 
 Why it failed: Dino read the row-1 labels `Team / Plan (target) / Actual (input) / ↓ Variance decides Place ↓` as explanatory sentences, not as column titles. In particular the `↓ Variance decides Place ↓` phrase read like help text, so the Variance and Place columns still felt untitled from a user perspective. DOM completeness was not the same as perceived completeness.
 
-### Iteration 3 (final) — `474d063` — flat single-row header
-Approach: drop the group row entirely. Row 1 alone carries `Lane | Pair | PBs | Total | ⏱️ Tap (finish) | Variance | Place` — seven discrete titles, one per column. R24-v2 grouped layout is dropped here; the R26 ranking banner directly above the table continues to state the variance rule explicitly.
+### Iteration 3 — `474d063` — flat single-row header
+Approach: drop the group row entirely. Row 1 alone carries `Lane | Pair | PBs | Total | ⏱️ Tap (finish) | Variance | Place` — seven discrete titles, one per column. R24-v2 grouped layout dropped.
+
+Why it failed: the Tap (finish), Variance and Place `<th>` cells kept their yellow/orange accent backgrounds (`#fff8e1` / `#fff3e0`). The spreadsheet-table stylesheet renders header text white. Result: those three titles were in the DOM but rendered as white-on-pale-yellow — effectively invisible. Dino correctly read it as "the three columns right of Total have no header".
+
+### Iteration 4 (final) — `bea39db` — header contrast fix
+Approach: keep the flat single-row layout from iteration 3, but drop the pale accent backgrounds from the header cells. Result: the header row is now uniform teal (rgb(0,128,128)) with white titles across all seven columns. The yellow/orange accents stay in the `<td>` data cells below so the visual grouping on the values is preserved, but the titles are fully legible.
 
 Each iteration was V0006-traceable: Dino reported the defect on the rendered UI, DOM inspection confirmed the issue, the replacement fix was implemented, DOM re-inspection + screenshot confirmed the new shape. The sequence is recorded in git and in this protocol so the decision trail is readable.
 
-— Claude Code, 2026-04-18 (iteration 3)
+— Claude Code, 2026-04-18 (iteration 4)

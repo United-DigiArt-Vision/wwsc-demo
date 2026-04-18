@@ -11,7 +11,21 @@
 
 ---
 
-## 2026-04-18 — fix: v2.8.8 R28 iteration 3 (flat single-row header)
+## 2026-04-18 — fix: v2.8.8 R28 iteration 4 (header contrast fix — titles legible)
+- **Timestamp:** 2026-04-18 11:30:00
+- **App Version (from package.json):** 2.8.8
+- **Branch:** dev/v2.8.8-header-completeness-audit
+- **RecordedCommit:** bea39db
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.8-header-completeness-audit`
+- **Editor:** Claude Code
+- **Why iteration 4 was needed:** In iteration 3 the header row went flat (single row), but the Tap (finish) / Variance / Place `<th>` cells kept their yellow/orange accent backgrounds (`#fff8e1` / `#fff3e0`). The spreadsheet-table stylesheet renders `<thead>` text in white. Result: those three titles rendered as white-on-pale-yellow and were effectively invisible — Dino correctly perceived "keinen titel" on those columns.
+- **Changes:**
+  - `src/public/js/screens/results.js` (`renderBraceResultsInline` tableHead): drop the pale accent backgrounds from the `<th>` cells. Header row is now uniform teal (rgb(0,128,128)) with white titles across all seven columns (`Lane | Pair | PBs | Total | ⏱️ Tap (finish) | Variance | Place`). The accent colors (yellow for Tap, orange for Variance, place-medal colors for Place) stay in the `<td>` data cells — the visual grouping on the values is preserved where it matters, without breaking title readability.
+  - `version/CURRENT_STATE.md`: RecordedCommit pointer moved `474d063` → `bea39db`.
+- **Browser re-verified on the Preview server (v2.8.8):** `getComputedStyle` on every header cell returned `background: rgb(0, 128, 128)` and `color: rgb(255, 255, 255)` — uniform contrast across all 7 titles. Screenshot taken as evidence. 0 console errors.
+- **Scope unchanged:** same `renderBraceResultsInline` tableHead, covers both 25m_brace and 50m_brace. No ranking/schema/API/print changes.
+
+## 2026-04-18 — fix: v2.8.8 R28 iteration 3 (flat single-row header) — superseded by iteration 4
 - **Timestamp:** 2026-04-18 11:00:00
 - **App Version (from package.json):** 2.8.8
 - **Branch:** dev/v2.8.8-header-completeness-audit

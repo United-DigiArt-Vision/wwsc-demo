@@ -6,17 +6,17 @@
 **TargetBranch:** dev/v2.8.8-header-completeness-audit
 **Branch:** dev/v2.8.8-header-completeness-audit
 **Current branch tip:** dynamic — run `git rev-parse --short HEAD` on branch `dev/v2.8.8-header-completeness-audit`
-**RecordedCommit:** 474d063
+**RecordedCommit:** bea39db
 **LastEditor:** Claude Code
 **Date:** 2026-04-18
-**Timestamp:** 2026-04-18 11:00:00
+**Timestamp:** 2026-04-18 11:30:00
 **WorkingTreeStatus:** clean (at the closing SSOT commit)
 **ModifiedFiles:** —
 **Version SSOT:** `package.json`
 **Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.8`
 
 ## Definition used across all v2.8.8 artifacts
-- **RecordedCommit** = the substantive delivery commit for v2.8.8 after the Dino re-test rounds. For v2.8.8: `474d063` (fix: v2.8.8 R28 iteration 3 — flat single-row header). Superseded iterations: `3de4265` (rowspan — empty cells moved into row 2) and `d103c44` (Team group header — group row was read as explanatory text, not as discrete column titles).
+- **RecordedCommit** = the substantive delivery commit for v2.8.8 after all Dino re-test rounds. For v2.8.8: `bea39db` (fix: v2.8.8 R28 iteration 4 — header contrast fix; header row uniform teal + white, every title legible). Superseded iterations: `3de4265` (rowspan — empty cells moved into row 2); `d103c44` (Team group header — group row read as explanatory text); `474d063` (flat single-row but Tap/Variance/Place titles rendered white-on-pale-yellow and were effectively invisible).
 - **Current branch tip (HEAD)** is intentionally NOT stored as a static value in versioned artifacts, because any commit that writes a HEAD value changes HEAD. Resolve it dynamically with `git rev-parse --short HEAD` on the branch `dev/v2.8.8-header-completeness-audit`.
 
 ## Rules
