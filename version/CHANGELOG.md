@@ -11,6 +11,24 @@
 
 ---
 
+## 2026-04-18 — fix: v2.8.8 iteration 5 ((Y) marker reflects current attendance, not stale auto flag)
+- **Timestamp:** 2026-04-18 12:15:00
+- **App Version (from package.json):** 2.8.8
+- **Branch:** dev/v2.8.8-header-completeness-audit
+- **RecordedCommit:** ddabb81
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.8-header-completeness-audit`
+- **Editor:** Claude Code
+- **Why iteration 5 was needed:** Dino found Glenne Murray rendered as `Back (Y)` in the Medley Heat Builder, even though her Times Sheet entry was explicitly `Back`. Root cause: the client rendered `(Y)` based on `m.auto === true`, a flag captured at team-generation time. The server's leftover-team branch (`server.js:1417`) forces `auto: true` on every leftover swimmer, regardless of whether they were a real wildcard (`special_event_entry='Y'`) or just a Backstroker who didn't fit into a complete team. Once that stale flag is on the client, later Times Sheet edits don't clear it, so the UI keeps showing `(Y)` on a swimmer who is no longer a wildcard.
+- **Changes (3 client-side files, consistent fix — no server / schema / API changes):**
+  - `src/public/js/screens/heat-builder.js`: look up the attendee in `hbAttendance` by `member_id` and show `(Y)` only if `attendee.special_event_entry === 'Y'`.
+  - `src/public/js/screens/results.js`: use `m.special_event_entry === 'Y'` (already joined into the `/relay-teams` payload by `GET /api/races/:raceId/relay-teams` via the attendance JOIN at `server.js:1517`).
+  - `src/public/js/screens/relays.js`: same change for the legacy relay screen.
+- **Race-type audit:** `(Y)` rendering exists only for Medley (Brace / 25m Team Relay / Pogo have no stroke column). Grep across all screens confirmed the three Medley stroke-cell code paths were the only call-sites; all three now read from the current attendance entry.
+- **Browser-verified on the Preview:**
+  1. 7 Medley-eligible swimmers, all with explicit Back/Breast/Free in the Times Sheet. All 7 stroke cells rendered plain (`Back` / `Breast` / `Free`) — zero `(Y)` markers.
+  2. Then set Glenne Murray to `special_event_entry='Y'` and re-shuffle. Glenne's cell correctly rendered `Back (Y)`; the other 6 stroke cells remained unmarked. Screenshot captured.
+- **Scope:** same branch as v2.8.8 R28 work. Version number stays 2.8.8. No ranking/schema/API changes.
+
 ## 2026-04-18 — fix: v2.8.8 R28 iteration 4 (header contrast fix — titles legible)
 - **Timestamp:** 2026-04-18 11:30:00
 - **App Version (from package.json):** 2.8.8
