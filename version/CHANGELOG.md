@@ -11,6 +11,20 @@
 
 ---
 
+## 2026-04-18 — release: v2.8.8 live deployment on Render
+- **Timestamp:** 2026-04-18 18:45:48
+- **App Version (from package.json):** 2.8.8
+- **Branch:** main
+- **RecordedCommit:** 497f78d
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `main`
+- **Editor:** Balerion
+- **Changes:**
+  - `main` in `~/wwsc-demo` was fast-forwarded from live base `642e52d` (`v2.8.3`) to the Dropbox-delivered v2.8.8 branch tip and prepared for GitHub push / Render auto-deploy.
+  - Release basis for all future Bryan follow-up on this version is now `package.json=2.8.8` + `RecordedCommit=497f78d` + live repo `main`.
+  - Cumulative live delivery now includes the v2.8.4–v2.8.8 workstream: Bryan follow-up corrections (R21–R26), v2.8.5 rework + user-tested UI corrections, v2.8.6 final UX/transparency fixes, v2.8.7 manual team management for eligible relays, and v2.8.8 final special-race/results readability fixes.
+  - `STABLE.md`, `CLAUDE.md`, and `PROGRESS.md` were updated to reflect that v2.8.8 is now the active live baseline awaiting Bryan feedback.
+  - Bryan-facing continuity artifacts recorded locally in `messages/2026-04-18-outgoing-to-bryan-v288-live.md` and `messages/2026-04-18-current-state-after-v288-live.md`.
+
 ## 2026-04-18 — feat: v2.8.8 iteration 7 (Pogo Heat Builder — mirror Pogo Results columns)
 - **Timestamp:** 2026-04-18 13:15:00
 - **App Version (from package.json):** 2.8.8

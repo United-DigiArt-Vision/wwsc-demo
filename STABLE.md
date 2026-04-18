@@ -1,34 +1,31 @@
 # STABLE — WWSC Swimming App
 
 ## Current Stable Version
-- **Version:** v2.7.0
-- **Tag:** v2.7.0
-- **Commit:** 51074c5
-- **Branch:** dev/v2.6.0-bryan-feedback-r2
-- **Date:** 2026-04-04
+- **Version:** v2.8.8
+- **Tag:** v2.8.8
+- **Branch:** main
+- **Current main tip:** dynamic — run `git rev-parse --short HEAD`
+- **RecordedCommit:** 497f78d
+- **Date:** 2026-04-18
 
-## What's in v2.7.0
-Complete implementation of Bryan's feedback from 04.04.2026 (26 items).
+## What's in v2.8.8
+This live release rolls the verified v2.8.4 → v2.8.8 workstream into the real Render deployment.
 
-### Key fixes:
-- Relay PBs now show actual values (was showing "—")
-- Start time displayed prominently in all relays (⏱️ Start: XX s)
-- Add Swimmer dropdown lists ALL medley swimmers (not just team)
-- Stroke counter in Timesheet for team balancing
-- Gold/Silver/Bronze medal row highlights
-- Exceeding Report matches Breakers Report format
-- Event Complete navigates to Calendar (not Timesheet)
-- Event Report includes breakers data
-- All member times in whole seconds
-- "N" swimmers excluded from medley relay generation
-- Medley teams start at 2s delay, nearest-to-target wins, equal placement for equal variance
-- Tab navigation across all sheets
-- Relay results RED+BOLD
-- Slow swimmers removed from relay pages
+### Key delivered improvements
+- Bryan follow-up corrections for Medley/25m relay behavior, print cleanup, results layout, and special-race ranking clarity (R21–R26)
+- Reworked user-tested UI corrections from the v2.8.5 round
+- v2.8.6 final UX/transparency fixes across Brace, Medley, and Pogo result surfaces
+- v2.8.7 manual team management for eligible relay races
+- v2.8.8 readability/consistency fixes, including final Brace/Pogo result-table improvements and Heat Builder parity updates
+
+### Continuation rule
+- Future Bryan work must continue from `main` / `origin/main` / `package.json=2.8.8`.
+- Use `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, and `messages/2026-04-18-current-state-after-v288-live.md` as the continuity baseline.
 
 ## Recovery
 ```bash
-git checkout v2.7.0
-rm -f data/wwsc.db
-PORT=3002 node server.js
+git fetch --all --prune
+git checkout main
+git reset --hard origin/main
+PORT=3002 npm run dev
 ```

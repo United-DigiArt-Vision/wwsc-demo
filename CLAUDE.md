@@ -6,7 +6,7 @@ Gilt für alle Projekte. Enthält die verbindliche Vorgehensweise für Tests, Qu
 
 ## Projektübersicht
 Die WWSC Swimming App ist ein Event-Management-System für Schwimmvereine zur Verwaltung von Wettkämpfen, Mitgliedern und Handicap-Berechnungen. Das System automatisiert die Erstellung von Heats, die Zeiterfassung (Relays) und die Ergebnisberechnung basierend auf Personal Best (PB) Zeiten.
-Kunde: Bryan Hesketh. Status: v2.7.0 live auf Render, wartet auf Kundenfeedback.
+Kunde: Bryan Hesketh. Status: v2.8.8 live auf Render, wartet auf Bryans Feedback zur aktuellen Live-Version.
 
 ## Technologie-Stack
 - **Backend:** Node.js (Express.js)

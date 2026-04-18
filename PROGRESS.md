@@ -1,8 +1,8 @@
 # PROGRESS — WWSC Swimming App v2.8.8
 
 ## 🎯 AKTUELLER STATUS
-Phase: 13 — v2.8.8 R28 Brace Results Header Completeness (V0006-konform)
-Schritt: Dinos v2.8.7 Live-Befund reproduziert — Brace Results hatte über Lane + Pair zwei leere Group-Header-Zellen, linke Tabellenseite wirkte "untitled". Fix in `renderBraceResultsInline` tableHead: Lane + Pair via rowspan=2 in die obere Header-Zeile, leere Zellen entfernt. Per-Race-Audit (Medley, 25m Team Relay, Pogo, Heat Builder) zeigt: Gruppierte Header existieren ausschließlich in Brace Results — alle anderen Screens nutzen flat theads und bleiben bewusst unverändert. Section M (UI-TC-451-476): 26 PASS / 0 FAIL / 0 OPEN. Keine Regressionen gegenüber v2.8.7 (R24-v2, R26, R27 alle intakt).
+Phase: 14 — v2.8.8 live auf Render / wartet auf Bryan-Feedback
+Schritt: Dropbox-SSOT `dev/v2.8.8-header-completeness-audit` wurde in das echte Repo `~/wwsc-demo` übernommen, auf `main` gebracht und für Render-Deploy ausgerollt. Live-Release-Basis dieser Version: `RecordedCommit = 497f78d` (substantiver v2.8.8 Delivery-Commit), Delivery-Branch-Tip vor dem Transfer: `e34335e`, Live-Branch jetzt `main`.
 Blockiert: Nein
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
@@ -22,9 +22,9 @@ Blockiert: Nein
 - [x] Ergebnis dieser Runde: UI weiterhin instabil, daher Übergabe an Claude Code vorbereitet statt weitere unstrukturierte Patches.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Dino-live-Abnahme von v2.8.8 im Browser gegen Section M — Brace Results Header-Zeile zeigt Lane + Pair direkt statt leerer Zellen, Gruppenheader (Plan (target) / Actual (input) / Variance decides Place) bleiben bestehen, keine Regressionen in R26/R27.
-Datei lesen: `PROGRESS.md`, `REQUIREMENTS.md` (R28), `USER-INTERACTION-TEST-SPEC.md` (Section M), `USER-INTERACTION-TEST-PROTOCOL-v2.8.8.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, Finding in `messages/2026-04-18-0906-Balerion-To-Claude-v288-*.md`
-Kriterium fertig: Dino bestätigt live im Browser: (a) über Lane + Pair sind keine leeren grünen Zellen mehr, (b) das linke Drittel der Brace-Ergebnistabelle wirkt als Identity-Zone intentional, (c) R26-Banner + R27 Manual Team Management unverändert, (d) 50m Brace zeigt dieselbe reparierte Struktur.
+Was: Auf Bryans Live-Rückmeldung zu `v2.8.8` warten und dann exakt auf dieser Release-Basis weiterarbeiten.
+Datei lesen: `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `STABLE.md`, `messages/2026-04-18-outgoing-to-bryan-v288-live.md`, `messages/2026-04-18-current-state-after-v288-live.md` sowie die nächste eingehende Bryan-Nachricht.
+Kriterium fertig: Bryans nächste Rückmeldung ist dokumentiert, gegen `main` / `origin/main` / `v2.8.8` eingeordnet und der nächste Arbeitsblock wird auf exakt dieser dokumentierten Basis gestartet.
 
 ## ⚠️ OFFENE PUNKTE / BLOCKER
 - **R20 (DOC-AMBIGUITY / TC-148):** Ranking-Logik für Special Races (Brace / Medley / Pogo) — App nutzt `fastest_total_time`, Legacy-Doku sagt `nearest-to-target`. Bryan-Bestätigung erforderlich.
