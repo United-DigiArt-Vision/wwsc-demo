@@ -760,3 +760,41 @@ Covers the new capability to manually add teams, add swimmers into those teams, 
 - [ ] UI-TC-448: Ranking transparency features for Brace/Medley/Pogo (v2.8.6 final UX) remain intact after the v2.8.7 R27 additions.
 - [ ] UI-TC-449: No new console errors or warnings appear on Heat Builder or Results after exercising the R27 add/remove/confirm cycle.
 - [ ] UI-TC-450: Print surfaces (Heat Builder print, Results print) continue to hide operational UI including the new R27 banner, pool card, Add/Remove buttons, and completeness badges via the `.print-hide` class.
+
+### Section M — R28 Header completeness audit (v2.8.8)
+
+Covers the fix for Dino's v2.8.7 live finding that the Brace Results table still looks visually "untitled" on the left side because the group-header row has empty cells over Lane and Pair. Scope of the audit is every relay/result table with a multi-row or grouped header. Scope of the fix is the Brace Results tableHead (only place where grouped headers exist today).
+
+#### M.1 Pre-fix perception reproduction (UI-TC-451 to UI-TC-456)
+- [ ] UI-TC-451: On `Results — 25m Brace Relay` pre-fix, the group-header row has empty (no-text) cells directly above the `Lane` and `Pair` columns.
+- [ ] UI-TC-452: On `Results — 50m Brace Relay` pre-fix, the same empty zone exists (shared tableHead code).
+- [ ] UI-TC-453: The empty zone visually suggests a missing or forgotten title to a normal user reading the table top-down.
+- [ ] UI-TC-454: The absence of a label over Lane/Pair makes the grouped-header hierarchy (`Plan (target)` / `Actual (input)` / `Variance decides Place`) feel asymmetric.
+- [ ] UI-TC-455: The pre-fix screenshot of 25m Brace must be captured into the v2.8.8 protocol as evidence of the reproduction before any code change.
+- [ ] UI-TC-456: The corresponding DOM inspection pre-fix must show exactly two `<th>` cells with `text === ''` in the top header row.
+
+#### M.2 Post-fix header completeness (UI-TC-457 to UI-TC-464)
+- [ ] UI-TC-457: On `Results — 25m Brace Relay` post-fix, every cell in the top header row carries a non-empty, meaningful label (Lane, Pair, Plan (target), Actual (input), Variance decides Place).
+- [ ] UI-TC-458: On `Results — 50m Brace Relay` post-fix, the same full-header structure is rendered.
+- [ ] UI-TC-459: Lane and Pair headers are present via `rowspan="2"` so they visually span the full header height instead of sitting under an empty cell.
+- [ ] UI-TC-460: `Plan (target)` correctly spans PBs + Total via `colspan="2"`.
+- [ ] UI-TC-461: `Actual (input)` correctly stands alone over the Tap column.
+- [ ] UI-TC-462: `↓ Variance decides Place ↓` correctly spans Variance + Place via `colspan="2"`.
+- [ ] UI-TC-463: The left-hand Lane/Pair area no longer reads as a "forgotten" header zone from a normal-user perspective.
+- [ ] UI-TC-464: The ranking-rule banner from R26 ("How Place is decided: smallest absolute Variance wins") remains directly above the table and is not disturbed by the header fix.
+
+#### M.3 Per-race header audit (UI-TC-465 to UI-TC-470)
+- [ ] UI-TC-465: `Results — Medley Relay` uses a single-row thead per team card (Leg / Swimmer / Stroke / PB). No grouped headers, no empty zones. Left unchanged.
+- [ ] UI-TC-466: `Results — 25m Team Relay` uses a single-row thead. No grouped headers, no empty zones. Left unchanged.
+- [ ] UI-TC-467: `Results — Pogo` uses a single-row thead (Swimmer | PB | Start | Exp.F | Total | Tgt | T1 | T2 | Result | Var.). No grouped headers, no empty zones. Left unchanged.
+- [ ] UI-TC-468: `Heat Builder — Brace` uses a flat thead (Lane | Pair | PBs | Total | Start Delay | Target | Variance | Place). No grouped headers. Left unchanged.
+- [ ] UI-TC-469: `Heat Builder — Medley / 25m Team Relay / Pogo` use flat theads. No grouped headers. Left unchanged.
+- [ ] UI-TC-470: Final per-race audit summary: grouped-header problem existed ONLY in Brace Results and is fixed there. All other surfaces are already header-complete from a user perspective.
+
+#### M.4 Regression guardrails (UI-TC-471 to UI-TC-476)
+- [ ] UI-TC-471: R24-v2 grouped structure (Plan / Actual / Variance decides Place) is preserved after the rowspan fix.
+- [ ] UI-TC-472: R26 ranking banners on Brace + Medley + Pogo remain visible and untouched.
+- [ ] UI-TC-473: R27 manual team management surfaces (Add Team / Remove Team / Unassigned pool / Ranking-rule banner / Completeness badges) remain functional in Heat Builder.
+- [ ] UI-TC-474: Print @media rules still hide operational UI via `.print-hide`; the fixed thead inherits spreadsheet-table print styling with no new regression.
+- [ ] UI-TC-475: No new console errors after exercising the Brace Results + Heat Builder flows.
+- [ ] UI-TC-476: Brace table rendering remains correct on a normal-width viewport (no broken colspan/rowspan alignment, no orphan borders).

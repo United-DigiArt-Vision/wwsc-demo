@@ -1,8 +1,8 @@
-# PROGRESS — WWSC Swimming App v2.8.7
+# PROGRESS — WWSC Swimming App v2.8.8
 
 ## 🎯 AKTUELLER STATUS
-Phase: 12 — v2.8.7 R27 Manual Team Management für eligible relay races
-Schritt: R27 implementiert (medley_relay + 25m_relay eligible; brace + pogo intentionally out of scope). Neue UI im Heat Builder (+ Add Team / ✕ Remove Team / Unassigned swimmer pool / completeness badges / rankability banner) und neuer Rankability-Banner im Results-Screen für eligible races. Empty-Team-Filter im Save-Endpoint. Section L (UI-TC-393-450): 58 PASS / 0 FAIL / 0 OPEN. Keine Regressionen gegenüber v2.8.6.
+Phase: 13 — v2.8.8 R28 Brace Results Header Completeness (V0006-konform)
+Schritt: Dinos v2.8.7 Live-Befund reproduziert — Brace Results hatte über Lane + Pair zwei leere Group-Header-Zellen, linke Tabellenseite wirkte "untitled". Fix in `renderBraceResultsInline` tableHead: Lane + Pair via rowspan=2 in die obere Header-Zeile, leere Zellen entfernt. Per-Race-Audit (Medley, 25m Team Relay, Pogo, Heat Builder) zeigt: Gruppierte Header existieren ausschließlich in Brace Results — alle anderen Screens nutzen flat theads und bleiben bewusst unverändert. Section M (UI-TC-451-476): 26 PASS / 0 FAIL / 0 OPEN. Keine Regressionen gegenüber v2.8.7 (R24-v2, R26, R27 alle intakt).
 Blockiert: Nein
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
@@ -22,9 +22,9 @@ Blockiert: Nein
 - [x] Ergebnis dieser Runde: UI weiterhin instabil, daher Übergabe an Claude Code vorbereitet statt weitere unstrukturierte Patches.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Dino-live-Abnahme von v2.8.7 im Browser gegen Section L — insbesondere der Add-Team / Remove-Team / Unassigned-Pool / Rankability-Banner Flow in Medley und 25m Team Relay. Erst danach ggf. eine Bryan-Nachricht aufsetzen, die R27 als neuen Produkt-Wunsch vorstellt.
-Datei lesen: `PROGRESS.md`, `REQUIREMENTS.md` (R27), `USER-INTERACTION-TEST-SPEC.md` (Section L), `USER-INTERACTION-TEST-PROTOCOL-v2.8.7.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, aktuelle Findings in `messages/2026-04-17-*.md`
-Kriterium fertig: Dino bestätigt live im Browser: (a) `+ Add Team` nur bei Medley + 25m Team Relay, (b) Remove Team entfernt Team inkl. Swimmer-Rückführung in Pool, (c) Rankability-Banner escaliert bei 0/1 complete, (d) post-confirm keine R27-Surface mehr, (e) Brace + Pogo bleiben unberührt.
+Was: Dino-live-Abnahme von v2.8.8 im Browser gegen Section M — Brace Results Header-Zeile zeigt Lane + Pair direkt statt leerer Zellen, Gruppenheader (Plan (target) / Actual (input) / Variance decides Place) bleiben bestehen, keine Regressionen in R26/R27.
+Datei lesen: `PROGRESS.md`, `REQUIREMENTS.md` (R28), `USER-INTERACTION-TEST-SPEC.md` (Section M), `USER-INTERACTION-TEST-PROTOCOL-v2.8.8.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, Finding in `messages/2026-04-18-0906-Balerion-To-Claude-v288-*.md`
+Kriterium fertig: Dino bestätigt live im Browser: (a) über Lane + Pair sind keine leeren grünen Zellen mehr, (b) das linke Drittel der Brace-Ergebnistabelle wirkt als Identity-Zone intentional, (c) R26-Banner + R27 Manual Team Management unverändert, (d) 50m Brace zeigt dieselbe reparierte Struktur.
 
 ## ⚠️ OFFENE PUNKTE / BLOCKER
 - **R20 (DOC-AMBIGUITY / TC-148):** Ranking-Logik für Special Races (Brace / Medley / Pogo) — App nutzt `fastest_total_time`, Legacy-Doku sagt `nearest-to-target`. Bryan-Bestätigung erforderlich.
@@ -44,8 +44,9 @@ Kriterium fertig: Dino bestätigt live im Browser: (a) `+ Add Team` nur bei Medl
 Gesamt: 9/10 Schritte
 Unit Tests: legacy vorhanden / nicht Fokus dieser Runde
 Integration Tests: legacy vorhanden / teilweise überholt
-UI Tests: 450 spezifiziert (Section A–L)
+UI Tests: 476 spezifiziert (Section A–M)
   - Section K (v2.8.6): 56 PASS / 0 FAIL / 0 OPEN
   - Section L (v2.8.7): 58 PASS / 0 FAIL / 0 OPEN
+  - Section M (v2.8.8): 26 PASS / 0 FAIL / 0 OPEN
   - Ältere Sections: zuletzt ausführlich in v2.8.5 / v2.8.6 ausgeführt
-Console Errors: 0 in v2.8.7 add/remove/confirm cycle (preview_console_logs level=error → "No console logs.")
+Console Errors: 0 in v2.8.8 pre-fix+post-fix cycle (preview_console_logs level=error → "No console logs.")

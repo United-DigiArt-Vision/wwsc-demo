@@ -1,23 +1,23 @@
 # CURRENT_STATE
 
-**Version (from `package.json`):** 2.8.7
-**BaseBranch:** dev/v2.8.6-dino-final-ux-fixes
-**BaseCommit:** 8e05014
-**TargetBranch:** dev/v2.8.7-manual-team-management
-**Branch:** dev/v2.8.7-manual-team-management
-**Current branch tip:** dynamic — run `git rev-parse --short HEAD` on branch `dev/v2.8.7-manual-team-management`
-**RecordedCommit:** e2fd553
+**Version (from `package.json`):** 2.8.8
+**BaseBranch:** dev/v2.8.7-manual-team-management
+**BaseCommit:** b065b19
+**TargetBranch:** dev/v2.8.8-header-completeness-audit
+**Branch:** dev/v2.8.8-header-completeness-audit
+**Current branch tip:** dynamic — run `git rev-parse --short HEAD` on branch `dev/v2.8.8-header-completeness-audit`
+**RecordedCommit:** 3de4265
 **LastEditor:** Claude Code
-**Date:** 2026-04-17
-**Timestamp:** 2026-04-17 22:15:00
+**Date:** 2026-04-18
+**Timestamp:** 2026-04-18 09:45:00
 **WorkingTreeStatus:** clean (at the closing SSOT commit)
 **ModifiedFiles:** —
 **Version SSOT:** `package.json`
-**Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.7`
+**Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.8`
 
-## Definition used across all v2.8.7 artifacts
-- **RecordedCommit** = the substantive delivery commit that introduced the v2.8.7 feature work. For v2.8.7: `e2fd553` (feat: v2.8.7 R27 manual team management for eligible relay races).
-- **Current branch tip (HEAD)** is intentionally NOT stored as a static value in versioned artifacts, because any commit that writes a HEAD value changes HEAD. Resolve it dynamically with `git rev-parse --short HEAD` on the branch `dev/v2.8.7-manual-team-management`.
+## Definition used across all v2.8.8 artifacts
+- **RecordedCommit** = the substantive delivery commit that introduced the v2.8.8 feature work. For v2.8.8: `3de4265` (feat: v2.8.8 R28 Brace Results header completeness).
+- **Current branch tip (HEAD)** is intentionally NOT stored as a static value in versioned artifacts, because any commit that writes a HEAD value changes HEAD. Resolve it dynamically with `git rev-parse --short HEAD` on the branch `dev/v2.8.8-header-completeness-audit`.
 
 ## Rules
 - `package.json` is the only SSOT for semantic version numbers.

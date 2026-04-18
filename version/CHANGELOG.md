@@ -11,6 +11,38 @@
 
 ---
 
+## 2026-04-18 — feat: v2.8.8 R28 Brace Results header completeness
+- **Timestamp:** 2026-04-18 09:45:00
+- **App Version (from package.json):** 2.8.8
+- **Branch:** dev/v2.8.8-header-completeness-audit
+- **RecordedCommit:** 3de4265
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.8-header-completeness-audit`
+- **Editor:** Claude Code
+- **Changes (R28 — UX/readability only, no ranking or schema changes):**
+  - `src/public/js/screens/results.js` (`renderBraceResultsInline` tableHead): Lane and Pair are no longer sitting under two empty `<th>` cells. They are hoisted into the top header row via `rowspan="2"` with `vertical-align:middle`. The two empty cells are removed and the second row now only lists the columns that belong to the group headers (PBs, Total, Tap, Variance, Place). Every top-row cell now carries a non-empty, meaningful label — the left side of the table no longer reads as a forgotten/untitled zone.
+  - `REQUIREMENTS.md`: R28 added (authored by Balerion in the handoff) — delivered as implementation baseline.
+  - `USER-INTERACTION-TEST-SPEC.md`: new Section M (UI-TC-451..UI-TC-476, 26 cases across pre-fix perception, post-fix completeness, per-race audit, regression guardrails).
+  - `USER-INTERACTION-TEST-PROTOCOL-v2.8.8.md`: new protocol; 26 PASS / 0 FAIL / 0 OPEN / 0 NOT TESTED; V0006-conform (pre-fix reproduction in the rendered UI → fix → post-fix re-verification in the rendered UI).
+  - **Per-race audit conclusion:** grouped-header-over-empty-cells existed ONLY in Brace Results tableHead. Medley / 25m Team Relay / Pogo / individual heats use flat single-row theads and are left unchanged. Heat Builder uses flat theads everywhere, also unchanged.
+  - Browser-verified on Chromium port 3000:
+    * Pre-fix: DOM inspection returned 2 `<th>` cells with empty text over Lane + Pair for 25m Brace; 50m Brace shares the same code path and same failure shape.
+    * Post-fix: all top-row cells carry non-empty labels; Lane/Pair rowspan="2"; Plan (target) colspan="2"; Actual (input) colspan="1"; ↓ Variance decides Place ↓ colspan="2".
+    * R26 banner + group structure intact. R27 Heat Builder surfaces (Add/Remove Team / Unassigned pool / Ranking-rule banner) intact.
+    * 0 console errors.
+
+## 2026-04-18 — chore: v2.8.8 version bump (first commit on branch)
+- **Timestamp:** 2026-04-18 09:10:00
+- **App Version (from package.json):** 2.8.8
+- **Branch:** dev/v2.8.8-header-completeness-audit
+- **RecordedCommit:** 871b340
+- **Editor:** Claude Code
+- **Changes (V0014 first-commit rule — version bump only):**
+  - `package.json`: 2.8.7 → 2.8.8
+  - `package-lock.json`: 2.8.7 → 2.8.8
+  - `src/public/index.html`: cache-bust `?v=2.8.7` → `?v=2.8.8` (17 tags)
+
+---
+
 ## 2026-04-17 — feat: v2.8.7 R27 manual team management for eligible relay races
 - **Timestamp:** 2026-04-17 22:15:00
 - **App Version (from package.json):** 2.8.7
