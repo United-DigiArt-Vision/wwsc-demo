@@ -2,8 +2,8 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: 14 — Bryan 2026-04-21 Relay-Korrekturen auf Basis von v2.8.8
-Schritt: v2.8.9 ist auf `dev/v2.8.9-bryan-relay-randomness` **vollständig implementiert und browser-verifiziert**. Alle drei Bryan-Punkte gelöst: (1) Brace behält Standard 25m Relay (event-setup.js), (2) Shuffle-Button leitet `forceReshuffle` bis zum Server durch (api.js + heat-builder.js), (3) Brace-Pairing in server.js nutzt jetzt dieselbe Rotation wie `distributeRoundRobin`, sodass wiederholte Shuffles sichtbar verschiedene Paarungen und Totals liefern. RecordedCommit: `004d70f`. Browser-Evidenz im Preview (8 Shuffle-Runden mit sichtbar verschiedenen Paaren/Totals, 0 Console Errors, 25m Team Relay Shuffle grün, Medley bewusst unverändert). Delivery bereit für Balerion-Handoff → Render-Auto-Deploy.
-Blockiert: Nein
+Schritt: v2.8.9 ist auf `dev/v2.8.9-bryan-relay-randomness` **vollständig implementiert und browser-verifiziert** (RecordedCommit `004d70f`, SSOT-Sync `e4152ba`). Bryan-Antwort-Nachricht ist **am 2026-04-21 ~21:52 durch Dino an Bryan gesendet** — Datei `messages/2026-04-21-outgoing-to-bryan-v289-response.md` dokumentiert den genau gesendeten Text. Die Nachricht wurde parallel zum Balerion-Deployment versendet; der Text kündigt v2.8.9 ausdrücklich als upcoming an ("Once v2.8.9 is live…"), damit keine Verwirrung entsteht, falls Bryan zwischen Lesen und Retest die Live-Site noch auf v2.8.8 findet. Dino hat vor dem Senden zusätzlich einen Absatz zur Komplexität der App + zum commercial commitment eingefügt, die Anrede/Grußformel personalisiert und die Live-URL https://wwsc-demo.onrender.com/ inline eingefügt.
+Blockiert: Nein — offene Seite ist Balerion-Deployment (v2.8.9 live auf Render) und danach Bryans Retest-Antwort.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] Phase 0: Workspace & State Verifikation (`git fetch`, Hard Reset auf `origin/main` - Stand v2.7.4).
@@ -22,9 +22,14 @@ Blockiert: Nein
 - [x] Ergebnis dieser Runde: UI weiterhin instabil, daher Übergabe an Claude Code vorbereitet statt weitere unstrukturierte Patches.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Balerion-Handoff — Branch `dev/v2.8.9-bryan-relay-randomness` (tip nach SSOT-Sync-Commit) in `~/wwsc-demo` übernehmen, in `main` mergen, Render-Auto-Deploy abwarten, Live-`/api/version` auf `2.8.9` verifizieren, dann die drei Bryan-Punkte am Live-System smoketesten. Danach: Bryan-Antwort aus `messages/2026-04-21-outgoing-to-bryan-v289-response.md` durch Dino senden lassen.
+Was: Balerion-Handoff — Branch `dev/v2.8.9-bryan-relay-randomness` (tip `e4152ba` nach SSOT-Sync-Commit) in `~/wwsc-demo` übernehmen, in `main` mergen, Render-Auto-Deploy abwarten, Live-`/api/version` auf `2.8.9` verifizieren, dann die drei Bryan-Punkte am Live-System smoketesten. Bryan-Antwort ist bereits gesendet (2026-04-21 ~21:52) — ab Deploy ist Bryan frei, die drei Punkte live zu retesten und zu antworten.
 Datei lesen: `messages/2026-04-21-Claude-To-Balerion-v289-Bryan-Relay-Randomness.md`, `messages/2026-04-21-outgoing-to-bryan-v289-response.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `USER-INTERACTION-TEST-PROTOCOL-v2.8.9.md`, `STABLE.md`.
-Kriterium fertig: v2.8.9 live auf Render. Bryan hat Antwort von Dino erhalten. Bryan's Live-Retest der drei Punkte kann starten.
+Kriterium fertig: v2.8.9 live auf Render + Bryan's Retest-Antwort im `messages/` Ordner dokumentiert.
+
+## 📬 BRYAN KOMMUNIKATION (v2.8.9 cycle)
+- **Inbound (Bryan → Dino, 2026-04-21):** Drei Issues (Brace ohne Standard Relay, Shuffle-Button wirkt inert, Brace-Paarungen sehen nicht random aus) + Meta-Feedback zu Pace und Pointscore-Timeline.
+- **Outbound (Dino → Bryan, 2026-04-21 ~21:52):** gesendet. Inhalt + Personalisierungen in `messages/2026-04-21-outgoing-to-bryan-v289-response.md`. Kern: v2.8.8 Recap, v2.8.9 Delivery auf die drei Punkte, ehrliche Einordnung zur App-Komplexität + commercial commitment, Retest-Bitte nach Deploy.
+- **Erwartung:** Bryan's Retest-Antwort nach v2.8.9 Deploy. Yes/No pro Punkt + zusätzliche Beobachtungen.
 
 ## ⚠️ OFFENE PUNKTE / BLOCKER
 - **Bryan 2026-04-21, Punkt 1:** ✅ GELÖST in v2.8.9 (commit `6069347`, `event-setup.js`). Browser-verifiziert: 50m Brace + 25m Freestyle + 25m Team Relay alle im Heat Builder sichtbar.
