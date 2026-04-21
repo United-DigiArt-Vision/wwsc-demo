@@ -1261,6 +1261,16 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
       const swimmersWithPB = relayMembers.map(m => ({ ...m, pb: m[pbCol] || 9999 }));
       swimmersWithPB.sort((a, b) => a.pb - b.pb);
 
+      // Bryan 2026-04-21: Apply the same forceReshuffle rotation the round-robin
+      // distribution uses, so repeated Brace shuffles produce visibly different
+      // pairings while keeping the fastest+slowest balancing intent.
+      if (forceReshuffle && swimmersWithPB.length > 1) {
+        const offset = 1 + Math.floor(Math.random() * (swimmersWithPB.length - 1));
+        const rotated = swimmersWithPB.slice(offset).concat(swimmersWithPB.slice(0, offset));
+        if (Math.random() < 0.5) rotated.reverse();
+        swimmersWithPB.splice(0, swimmersWithPB.length, ...rotated);
+      }
+
       // Pair fastest with slowest for balance
       const pairs = [];
       const pool = [...swimmersWithPB];
