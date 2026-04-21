@@ -6,18 +6,17 @@
 **TargetBranch:** dev/v2.8.9-bryan-relay-randomness
 **Branch:** dev/v2.8.9-bryan-relay-randomness
 **Current branch tip:** dynamic — run `git rev-parse --short HEAD` on branch `dev/v2.8.9-bryan-relay-randomness`
-**RecordedCommit:** fc8d1a1
-**LastEditor:** Balerion
+**RecordedCommit:** 004d70f
+**LastEditor:** Claude Code
 **Date:** 2026-04-21
-**Timestamp:** 2026-04-21 20:58:00
-**WorkingTreeStatus:** modified (Bryan 2026-04-21 relay corrections in progress)
-**ModifiedFiles:** `src/public/js/api.js`, `src/public/js/screens/event-setup.js`, `src/public/js/screens/heat-builder.js`, `src/server.js`, `PROGRESS.md`
+**Timestamp:** 2026-04-21 21:15:00
+**WorkingTreeStatus:** clean (v2.8.9 delivery ready, awaiting Balerion deployment)
 **Version SSOT:** `package.json`
 **Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.9`
 
 ## Definition used across current v2.8.9 working artifacts
-- **RecordedCommit** = the last fully documented anchor before the in-progress Bryan 2026-04-21 relay corrections. For this branch that anchor is the mandatory first commit `fc8d1a1` (`chore: version bump to v2.8.9`).
-- **Scope of current working tree** = implement Bryan's newly reported relay corrections on top of `origin/main@70fed2e`: (1) Brace weeks still include the standard relay, (2) Shuffle in Brace/Relay must produce a visibly fresh assignment.
+- **RecordedCommit** = the substantive delivery anchor for v2.8.9. All three Bryan 2026-04-21 relay corrections are included by commit `004d70f` (`fix: v2.8.9 Brace forceReshuffle — complete Bryan 2026-04-21 point 3`) and its predecessor `6069347` (`fix: keep standard relay on brace weeks and force relay reshuffle`).
+- **Scope of delivery** = Bryan 2026-04-21 relay corrections: (1) Brace weeks include the standard 25m relay (event-setup.js), (2) Shuffle forwards `forceReshuffle: true` end-to-end (api.js, heat-builder.js, server.js), (3) Brace pairing applies the same rotation the round-robin distribution uses so repeat shuffles produce visibly different pairings/totals (server.js).
 - **Current branch tip (HEAD)** is intentionally NOT stored as a static value in versioned artifacts, because any commit that writes a HEAD value changes HEAD. Resolve it dynamically with `git rev-parse --short HEAD` on the branch `dev/v2.8.9-bryan-relay-randomness`.
 
 ## Rules

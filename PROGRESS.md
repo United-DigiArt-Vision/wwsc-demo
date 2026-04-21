@@ -2,7 +2,7 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: 14 — Bryan 2026-04-21 Relay-Korrekturen auf Basis von v2.8.8
-Schritt: Neuer Arbeitsbranch `dev/v2.8.9-bryan-relay-randomness` von `origin/main` erstellt, Version auf `2.8.9` gebumpt. Erste Bryan-Korrektur bereits implementiert: Brace-Wochen behalten jetzt den Standard-Relay (`25m_relay`) zusätzlich zum Brace-Relay. Zweite Korrektur im Code vorbereitet: Shuffle sendet jetzt einen expliziten `forceReshuffle`-Pfad bis in den Relay-Generator, damit Brace-/Relay-Shuffles nicht nur dieselbe balancierte Verteilung reproduzieren.
+Schritt: v2.8.9 ist auf `dev/v2.8.9-bryan-relay-randomness` **vollständig implementiert und browser-verifiziert**. Alle drei Bryan-Punkte gelöst: (1) Brace behält Standard 25m Relay (event-setup.js), (2) Shuffle-Button leitet `forceReshuffle` bis zum Server durch (api.js + heat-builder.js), (3) Brace-Pairing in server.js nutzt jetzt dieselbe Rotation wie `distributeRoundRobin`, sodass wiederholte Shuffles sichtbar verschiedene Paarungen und Totals liefern. RecordedCommit: `004d70f`. Browser-Evidenz im Preview (8 Shuffle-Runden mit sichtbar verschiedenen Paaren/Totals, 0 Console Errors, 25m Team Relay Shuffle grün, Medley bewusst unverändert). Delivery bereit für Balerion-Handoff → Render-Auto-Deploy.
 Blockiert: Nein
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
@@ -22,13 +22,14 @@ Blockiert: Nein
 - [x] Ergebnis dieser Runde: UI weiterhin instabil, daher Übergabe an Claude Code vorbereitet statt weitere unstrukturierte Patches.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Live-/Browser-Prüfung der neuen Bryan-Korrekturen in v2.8.9. Konkret: (1) Event Setup mit `25m Brace` oder `50m Brace` erzeugt zusätzlich weiterhin `25m Relay`, (2) ein wiederholter Shuffle im Brace Relay erzeugt sichtbar andere Pairings/Teamverteilungen, (3) keine Regression für Ordinary Swim/Pogo.
-Datei lesen: `PROGRESS.md`, `docs/PRD.md`, `src/public/js/screens/event-setup.js`, `src/server.js`, `src/public/js/screens/heat-builder.js`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`
-Kriterium fertig: Browser-/UI-Evidenz zeigt, dass Brace nicht mehr den Standard-Relay verdrängt und dass Shuffle im Brace/Relay-Build eine frische Verteilung liefert, die aus User-Sicht als echter Shuffle wahrnehmbar ist.
+Was: Balerion-Handoff — Branch `dev/v2.8.9-bryan-relay-randomness` (tip nach SSOT-Sync-Commit) in `~/wwsc-demo` übernehmen, in `main` mergen, Render-Auto-Deploy abwarten, Live-`/api/version` auf `2.8.9` verifizieren, dann die drei Bryan-Punkte am Live-System smoketesten. Danach: Bryan-Antwort aus `messages/2026-04-21-outgoing-to-bryan-v289-response.md` durch Dino senden lassen.
+Datei lesen: `messages/2026-04-21-Claude-To-Balerion-v289-Bryan-Relay-Randomness.md`, `messages/2026-04-21-outgoing-to-bryan-v289-response.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `USER-INTERACTION-TEST-PROTOCOL-v2.8.9.md`, `STABLE.md`.
+Kriterium fertig: v2.8.9 live auf Render. Bryan hat Antwort von Dino erhalten. Bryan's Live-Retest der drei Punkte kann starten.
 
 ## ⚠️ OFFENE PUNKTE / BLOCKER
-- **Bryan 2026-04-21, Punkt 1:** Erwartung ist jetzt klar: Brace findet zusätzlich zum Standard Relay statt. Diese neue Kundenwahrheit überschreibt ältere lokale Annahmen/Doku, wo Brace den Relay verdrängt hat.
-- **Bryan 2026-04-21, Punkt 2:** Shuffle wirkt für ihn nicht funktional bzw. nicht random genug. Implementierung wurde angepasst, braucht jetzt echte UI-Evidenz.
+- **Bryan 2026-04-21, Punkt 1:** ✅ GELÖST in v2.8.9 (commit `6069347`, `event-setup.js`). Browser-verifiziert: 50m Brace + 25m Freestyle + 25m Team Relay alle im Heat Builder sichtbar.
+- **Bryan 2026-04-21, Punkt 2:** ✅ GELÖST in v2.8.9 (commits `6069347` + `004d70f`, `heat-builder.js` + `api.js` + `server.js`). Shuffle sendet `forceReshuffle: true`, Server reagiert mit Rotation der Input-Liste vor der Team-Bildung.
+- **Bryan 2026-04-21, Punkt 3:** ✅ GELÖST in v2.8.9 (commit `004d70f`, `server.js` Brace-Zweig). Browser-verifiziert: 8 aufeinander folgende Shuffles zeigen klar unterschiedliche Pairings und Totals (Bereich 65–97 bei 7-Schwimmer-Brace).
 - **R20 (DOC-AMBIGUITY / TC-148):** Ranking-Logik für Special Races (Brace / Medley / Pogo) — App nutzt `fastest_total_time`, Legacy-Doku sagt `nearest-to-target`. Bryan-Bestätigung erforderlich.
 - **R18:** Medley-Leftover für einzelnen gültigen Teilnehmer — Fachfrage an Bryan offen.
 - **Pogo Edit Bug:** Bereits eingetragene T1/T2 Werte lassen sich weiterhin nicht zuverlässig erneut bearbeiten; Numpad-Fenster öffnet, reagiert aber nicht sauber auf Eingaben.

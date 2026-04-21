@@ -11,6 +11,46 @@
 
 ---
 
+## 2026-04-21 — fix: v2.8.9 Bryan 2026-04-21 relay corrections (complete delivery)
+- **Timestamp:** 2026-04-21 21:15:00
+- **App Version (from package.json):** 2.8.9
+- **Branch:** dev/v2.8.9-bryan-relay-randomness
+- **RecordedCommit:** 004d70f
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.9-bryan-relay-randomness`
+- **Editor:** Claude Code (Brace forceReshuffle fix) + Balerion (event-setup + shuffle wiring)
+- **Bryan inbound (via Dino) on 2026-04-21:**
+  1. When a Brace standard is selected, the weekly standard `25m Freestyle` relay must still be generated (not replaced).
+  2. Shuffle button on Brace Relay does not change team assignments.
+  3. Brace Relay team generation does not look random — pair totals appear systematic.
+- **Changes applied across this delivery (two commits combined):**
+  - `src/public/js/screens/event-setup.js` (commit 6069347, Balerion):
+    * `buildRaceTypes()` for `25m_brace` now produces `25m_brace` + `50m` + `25m_relay` (previously `25m_brace` replaced both the 25m individual AND the 25m relay).
+    * `buildRaceTypes()` for `50m_brace` now produces `25m` + `50m_brace` + `25m_relay` (previously the standard relay was dropped).
+    * Pogo behavior unchanged — Pogo continues to replace the standard 25m relay by design (R16).
+  - `src/public/js/api.js` (commit 6069347, Balerion):
+    * `API.generateRelayTeams(raceId, options)` now forwards an options body to `/api/races/:raceId/generate-relay-teams`.
+  - `src/public/js/screens/heat-builder.js` (commit 6069347, Balerion):
+    * Shuffle button now calls `generateHBRelayTeams({ shuffle: true, forceReshuffle: true })`.
+    * `reshuffleHBRelayTeams()` also passes `forceReshuffle: true`.
+  - `src/server.js` (commit 6069347, Balerion + commit 004d70f, Claude Code):
+    * `distributeRoundRobin(swimmers, numTeams, options)` accepts `forceReshuffle` and, when set, rotates the PB-sorted array by a random non-zero offset and randomly reverses it before snake-distributing. Keeps the balance intent, changes the pairing/team composition visibly across shuffles.
+    * `POST /api/races/:raceId/generate-relay-teams` reads `forceReshuffle` from the request body and passes it down to `distributeRoundRobin` for Pogo and 25m Relay.
+    * **(004d70f)** The Brace pairing branch (`25m_brace`/`50m_brace`) previously had its own fastest+slowest loop on a deterministically PB-sorted list and ignored `forceReshuffle`. It now applies the same rotation + optional reverse right after the PB sort, before the fastest+slowest pair loop.
+- **Browser verification on v2.8.9 Preview (port 3000):**
+  - Event Setup: Standard=50m Brace + Special=Medley Relay → Heat Builder shows `25m Freestyle`, `50m Brace Relay`, `25m Team Relay`, `Medley Relay` — four distinct races, Brace no longer suppresses the standard 25m relay. (Issue 1 verified.)
+  - Brace Relay `Generate Teams` → pairs: Bryan+Glenne(81), Ben+Diane(81), Felicia+David(82), Andrew+David(83). After 8 consecutive `Shuffle` clicks, pairings and totals changed visibly (observed totals included 65/87/87/82, 83/86/82/81, 97/76/72/82, 92/88/70/82). Some shuffles coincided (finite rotation × reverse space) but distinct outcomes dominate. (Issues 2 and 3 verified.)
+  - 25m Team Relay shuffle: initial `Bryan+Andrew+David / Ben+Felicia+Glenne+Diane` → Shuffle 1 `Andrew+Diane+Bryan / David+Glenne+Ben+Felicia` → Shuffle 2 `Glenne+Felicia+Ben / David+Andrew+Bryan+Diane`. (Regression grün.)
+  - Medley Relay shuffle: `Andrew(Back)+Ben(Breast)+Bryan(Free) / David(Back)+Diane(Breast)+Felicia(Free) / Glenne(Back)` unchanged across shuffles — expected, Medley is deliberately out of v2.8.9 scope (no Bryan feedback). (Keine Regression, bewusste Nicht-Änderung.)
+  - `preview_console_logs` level=error after full flow: `No console logs.` — 0 console errors.
+- **Scope non-goals (explicitly deferred):**
+  - Medley Relay randomness (no Bryan feedback).
+  - Pogo edit flow crash + T1/T2 re-edit stability (separate Pogo stability session).
+  - Pointscore module.
+  - R18 Medley-Leftover policy clarification, R20 ranking-rule documentation clarification.
+- **Test artifacts updated:**
+  - New: `USER-INTERACTION-TEST-PROTOCOL-v2.8.9.md` (Section N: relay duplication, Brace shuffle randomness, regression checks).
+- **Delivery state:** Branch `dev/v2.8.9-bryan-relay-randomness` ready for Balerion to transfer into `~/wwsc-demo`, merge into `main`, and push for Render auto-deploy. `package.json=2.8.9`, cache-bust `?v=2.8.9` already in place (commit `fc8d1a1`).
+
 ## 2026-04-21 — chore: v2.8.9 version bump (first commit on branch)
 - **Timestamp:** 2026-04-21 20:58:00
 - **App Version (from package.json):** 2.8.9

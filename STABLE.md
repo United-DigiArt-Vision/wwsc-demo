@@ -1,12 +1,19 @@
 # STABLE — WWSC Swimming App
 
-## Current Stable Version
+## Current Stable (Live) Version
 - **Version:** v2.8.8
 - **Tag:** v2.8.8
 - **Branch:** main
 - **Current main tip:** dynamic — run `git rev-parse --short HEAD`
 - **RecordedCommit:** 497f78d
 - **Date:** 2026-04-18
+
+## In-flight (prepared, awaiting Balerion deployment)
+- **Version:** v2.8.9
+- **Branch:** `dev/v2.8.9-bryan-relay-randomness`
+- **RecordedCommit:** `004d70f`
+- **Date:** 2026-04-21
+- **Scope:** Bryan 2026-04-21 relay corrections — (1) Brace weeks also run the standard 25m relay, (2) Shuffle button wired end-to-end, (3) Brace pairings visibly change on repeat shuffles. Browser-verified on Preview.
 
 ## What's in v2.8.8
 This live release rolls the verified v2.8.4 → v2.8.8 workstream into the real Render deployment.
