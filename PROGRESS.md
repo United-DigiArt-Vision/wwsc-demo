@@ -1,8 +1,8 @@
-# PROGRESS — WWSC Swimming App v2.8.8
+# PROGRESS — WWSC Swimming App v2.8.9
 
 ## 🎯 AKTUELLER STATUS
-Phase: 14 — v2.8.8 live auf Render / wartet auf Bryan-Feedback
-Schritt: Dropbox-SSOT `dev/v2.8.8-header-completeness-audit` wurde in das echte Repo `~/wwsc-demo` übernommen, auf `main` gebracht und für Render-Deploy ausgerollt. Live-Release-Basis dieser Version: `RecordedCommit = 497f78d` (substantiver v2.8.8 Delivery-Commit), Delivery-Branch-Tip vor dem Transfer: `e34335e`, Live-Branch jetzt `main`.
+Phase: 14 — Bryan 2026-04-21 Relay-Korrekturen auf Basis von v2.8.8
+Schritt: Neuer Arbeitsbranch `dev/v2.8.9-bryan-relay-randomness` von `origin/main` erstellt, Version auf `2.8.9` gebumpt. Erste Bryan-Korrektur bereits implementiert: Brace-Wochen behalten jetzt den Standard-Relay (`25m_relay`) zusätzlich zum Brace-Relay. Zweite Korrektur im Code vorbereitet: Shuffle sendet jetzt einen expliziten `forceReshuffle`-Pfad bis in den Relay-Generator, damit Brace-/Relay-Shuffles nicht nur dieselbe balancierte Verteilung reproduzieren.
 Blockiert: Nein
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
@@ -22,11 +22,13 @@ Blockiert: Nein
 - [x] Ergebnis dieser Runde: UI weiterhin instabil, daher Übergabe an Claude Code vorbereitet statt weitere unstrukturierte Patches.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Auf Bryans Live-Rückmeldung zu `v2.8.8` warten und dann exakt auf dieser Release-Basis weiterarbeiten.
-Datei lesen: `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `STABLE.md`, `messages/2026-04-18-outgoing-to-bryan-v288-live.md`, `messages/2026-04-18-current-state-after-v288-live.md` sowie die nächste eingehende Bryan-Nachricht.
-Kriterium fertig: Bryans nächste Rückmeldung ist dokumentiert, gegen `main` / `origin/main` / `v2.8.8` eingeordnet und der nächste Arbeitsblock wird auf exakt dieser dokumentierten Basis gestartet.
+Was: Live-/Browser-Prüfung der neuen Bryan-Korrekturen in v2.8.9. Konkret: (1) Event Setup mit `25m Brace` oder `50m Brace` erzeugt zusätzlich weiterhin `25m Relay`, (2) ein wiederholter Shuffle im Brace Relay erzeugt sichtbar andere Pairings/Teamverteilungen, (3) keine Regression für Ordinary Swim/Pogo.
+Datei lesen: `PROGRESS.md`, `docs/PRD.md`, `src/public/js/screens/event-setup.js`, `src/server.js`, `src/public/js/screens/heat-builder.js`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`
+Kriterium fertig: Browser-/UI-Evidenz zeigt, dass Brace nicht mehr den Standard-Relay verdrängt und dass Shuffle im Brace/Relay-Build eine frische Verteilung liefert, die aus User-Sicht als echter Shuffle wahrnehmbar ist.
 
 ## ⚠️ OFFENE PUNKTE / BLOCKER
+- **Bryan 2026-04-21, Punkt 1:** Erwartung ist jetzt klar: Brace findet zusätzlich zum Standard Relay statt. Diese neue Kundenwahrheit überschreibt ältere lokale Annahmen/Doku, wo Brace den Relay verdrängt hat.
+- **Bryan 2026-04-21, Punkt 2:** Shuffle wirkt für ihn nicht funktional bzw. nicht random genug. Implementierung wurde angepasst, braucht jetzt echte UI-Evidenz.
 - **R20 (DOC-AMBIGUITY / TC-148):** Ranking-Logik für Special Races (Brace / Medley / Pogo) — App nutzt `fastest_total_time`, Legacy-Doku sagt `nearest-to-target`. Bryan-Bestätigung erforderlich.
 - **R18:** Medley-Leftover für einzelnen gültigen Teilnehmer — Fachfrage an Bryan offen.
 - **Pogo Edit Bug:** Bereits eingetragene T1/T2 Werte lassen sich weiterhin nicht zuverlässig erneut bearbeiten; Numpad-Fenster öffnet, reagiert aber nicht sauber auf Eingaben.
@@ -41,7 +43,7 @@ Kriterium fertig: Bryans nächste Rückmeldung ist dokumentiert, gegen `main` / 
 - **Architektur-Track (beschlossen):** Breakers / Exceedings / gemeinsame Report-Metriken müssen nach dieser Delivery in eine zentrale Datenlogik überführt werden. Das ist ausdrücklich beschlossen und darf nicht vergessen werden.
 
 ## 📊 FORTSCHRITT
-Gesamt: 9/10 Schritte
+Gesamt: 9.2/10 Schritte
 Unit Tests: legacy vorhanden / nicht Fokus dieser Runde
 Integration Tests: legacy vorhanden / teilweise überholt
 UI Tests: 476 spezifiziert (Section A–M)

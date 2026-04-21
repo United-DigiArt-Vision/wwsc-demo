@@ -342,7 +342,7 @@ function renderRelayContent() {
   if (!hbRelayConfirmed) {
     buttons += '<button class="btn btn-primary" onclick="generateHBRelayTeams()">' + tooltip('Creates balanced relay teams from present swimmers.') + ' Generate Teams</button>';
     if (hbRelayTeams && hbRelayTeams.length > 0) {
-      buttons += ' <button class="btn btn-accent" onclick="generateHBRelayTeams()">' + tooltip('Re-randomize the team assignments.') + ' Shuffle</button>';
+      buttons += ' <button class="btn btn-accent" onclick="generateHBRelayTeams({ shuffle: true, forceReshuffle: true })">' + tooltip('Re-randomize the team assignments with a fresh shuffle.') + ' Shuffle</button>';
       buttons += ' <button class="btn btn-success" onclick="confirmHBRelayTeams()">' + tooltip('Lock these teams.') + ' Confirm Teams</button>';
     }
   } else {
@@ -893,8 +893,8 @@ async function loadSavedHeats(raceId) {
 
 // ═══ Relay Actions (in Heat Builder) ═══
 
-async function generateHBRelayTeams() {
-  const result = await API.generateRelayTeams(hbSelectedRace.id);
+async function generateHBRelayTeams(options) {
+  const result = await API.generateRelayTeams(hbSelectedRace.id, options || {});
   if (result.error) { alert('Error: ' + result.error); return; }
   if (result.warning) alert(result.warning);
   hbRelayTeams = result.teams;
@@ -920,7 +920,7 @@ async function reshuffleHBRelayTeams() {
   hbRelayRanked = false;
   hbRelayTeams = null;
   hbSelectedRace.status = 'setup';
-  await generateHBRelayTeams();
+  await generateHBRelayTeams({ shuffle: true, forceReshuffle: true });
 }
 
 function enterHBRelayTeamTime(teamId, currentValue) {

@@ -1,24 +1,24 @@
 # CURRENT_STATE
 
-**Version (from `package.json`):** 2.8.8
+**Version (from `package.json`):** 2.8.9
 **BaseBranch:** main
-**BaseCommit:** 642e52d
-**TargetBranch:** dev/v2.8.8-header-completeness-audit
-**Branch:** main
-**Current branch tip:** dynamic — run `git rev-parse --short HEAD` on branch `main`
-**RecordedCommit:** 497f78d
+**BaseCommit:** 70fed2e
+**TargetBranch:** dev/v2.8.9-bryan-relay-randomness
+**Branch:** dev/v2.8.9-bryan-relay-randomness
+**Current branch tip:** dynamic — run `git rev-parse --short HEAD` on branch `dev/v2.8.9-bryan-relay-randomness`
+**RecordedCommit:** fc8d1a1
 **LastEditor:** Balerion
-**Date:** 2026-04-18
-**Timestamp:** 2026-04-18 18:45:48
-**WorkingTreeStatus:** clean (at the v2.8.8 live-release sync commit)
-**ModifiedFiles:** —
+**Date:** 2026-04-21
+**Timestamp:** 2026-04-21 20:58:00
+**WorkingTreeStatus:** modified (Bryan 2026-04-21 relay corrections in progress)
+**ModifiedFiles:** `src/public/js/api.js`, `src/public/js/screens/event-setup.js`, `src/public/js/screens/heat-builder.js`, `src/server.js`, `PROGRESS.md`
 **Version SSOT:** `package.json`
-**Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.8`
+**Release Anchors:** `STABLE.md`, Git Tag, `/api/version`, `src/public/index.html?v=2.8.9`
 
-## Definition used across all v2.8.8 artifacts
-- **RecordedCommit** = the substantive delivery commit for v2.8.8 after all Dino re-test rounds. For v2.8.8: `497f78d` (feat: v2.8.8 iteration 7 — Pogo Heat Builder mirrors Pogo Results columns minus result fields). Prior iterations: `3de4265` (rowspan — empty cells moved into row 2); `d103c44` (Team group header — group row read as explanatory text); `474d063` (flat single-row but Tap/Variance/Place titles rendered white-on-pale-yellow and were effectively invisible); `bea39db` (flat + uniform contrast — header completeness correct); `ddabb81` ((Y) marker fix — reflects current attendance, not stale auto flag); `0368840` (Brace Results — add Target column per Dino ask; R7-consistent).
-- **Live release transfer** = fast-forward from `main@642e52d` to the delivered v2.8.8 branch tip, then push `main` to GitHub for Render auto-deploy.
-- **Current branch tip (HEAD)** is intentionally NOT stored as a static value in versioned artifacts, because any commit that writes a HEAD value changes HEAD. Resolve it dynamically with `git rev-parse --short HEAD` on the branch `main`.
+## Definition used across current v2.8.9 working artifacts
+- **RecordedCommit** = the last fully documented anchor before the in-progress Bryan 2026-04-21 relay corrections. For this branch that anchor is the mandatory first commit `fc8d1a1` (`chore: version bump to v2.8.9`).
+- **Scope of current working tree** = implement Bryan's newly reported relay corrections on top of `origin/main@70fed2e`: (1) Brace weeks still include the standard relay, (2) Shuffle in Brace/Relay must produce a visibly fresh assignment.
+- **Current branch tip (HEAD)** is intentionally NOT stored as a static value in versioned artifacts, because any commit that writes a HEAD value changes HEAD. Resolve it dynamically with `git rev-parse --short HEAD` on the branch `dev/v2.8.9-bryan-relay-randomness`.
 
 ## Rules
 - `package.json` is the only SSOT for semantic version numbers.

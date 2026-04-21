@@ -1140,9 +1140,22 @@ function getRelayPB(member, raceType) {
 }
 
 // Helper: distribute swimmers round-robin into N teams for balanced teams
-function distributeRoundRobin(swimmers, numTeams) {
-  // Sort by PB (fastest first)
+function distributeRoundRobin(swimmers, numTeams, options = {}) {
+  const forceReshuffle = options.forceReshuffle === true;
+  // Sort by PB (fastest first) so baseline balance stays intact.
   swimmers.sort((a, b) => a.pb - b.pb);
+
+  // Bryan 2026-04-21: Shuffle must produce a visibly different brace/relay
+  // distribution. We keep the snake-balancing concept, but optionally rotate
+  // and reverse the sorted order before distributing so repeated shuffles are
+  // still balanced while changing pairings/teams in a user-visible way.
+  if (forceReshuffle && swimmers.length > 1) {
+    const offset = 1 + Math.floor(Math.random() * (swimmers.length - 1));
+    const rotated = swimmers.slice(offset).concat(swimmers.slice(0, offset));
+    if (Math.random() < 0.5) rotated.reverse();
+    swimmers.splice(0, swimmers.length, ...rotated);
+  }
+
   const teams = Array.from({ length: numTeams }, () => []);
   // Snake distribution for balance: 0,1,2,2,1,0,0,1,2...
   swimmers.forEach((s, i) => {
@@ -1158,6 +1171,7 @@ function distributeRoundRobin(swimmers, numTeams) {
 app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
   try {
     const race = db.prepare('SELECT * FROM event_race WHERE id = ?').get(req.params.raceId);
+    const forceReshuffle = req.body && req.body.forceReshuffle === true;
     if (!race) return res.status(404).json({ error: 'Race not found' });
     if (!RELAY_TYPES.includes(race.race_type)) return res.status(400).json({ error: 'Not a relay race type' });
 
@@ -1182,7 +1196,7 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
       const swimmersWithPB = relayMembers.map(m => ({ ...m, pb: m.time_25m || 9999 }));
       swimmersWithPB.sort((a, b) => a.pb - b.pb);
       const numTeams = Math.floor(swimmersWithPB.length / 4);
-      const distributed = distributeRoundRobin(swimmersWithPB.slice(0, numTeams * 4), numTeams);
+      const distributed = distributeRoundRobin(swimmersWithPB.slice(0, numTeams * 4), numTeams, { forceReshuffle });
 
       teams = distributed.map((teamMembers, ti) => {
         const targetTime = teamMembers.reduce((sum, m) => sum + (m.pb !== 9999 ? m.pb : 0), 0);
@@ -1209,7 +1223,7 @@ app.post('/api/races/:raceId/generate-relay-teams', (req, res) => {
       if (relayMembers.length < 2) return res.json({ teams: [], warning: 'Need at least 2 swimmers' });
 
       const swimmersWithPB = relayMembers.map(m => ({ ...m, pb: getRelayPB(m, race.race_type) }));
-      const distributed = distributeRoundRobin(swimmersWithPB, numTeams);
+      const distributed = distributeRoundRobin(swimmersWithPB, numTeams, { forceReshuffle });
 
       // v2.8.4 Bryan fix 4: flag undersized 25m relay teams so the UI can
       // explicitly prompt for a swim-twice selection instead of silently

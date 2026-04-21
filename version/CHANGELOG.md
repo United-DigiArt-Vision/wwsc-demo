@@ -11,6 +11,18 @@
 
 ---
 
+## 2026-04-21 — chore: v2.8.9 version bump (first commit on branch)
+- **Timestamp:** 2026-04-21 20:58:00
+- **App Version (from package.json):** 2.8.9
+- **Branch:** dev/v2.8.9-bryan-relay-randomness
+- **RecordedCommit:** fc8d1a1
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.9-bryan-relay-randomness`
+- **Editor:** Balerion
+- **Changes (V0014 first-commit rule — version bump only):**
+  - `package.json`: version `2.8.8` → `2.8.9`
+  - `src/public/index.html`: cache-bust `?v=2.8.8` → `?v=2.8.9`
+  - New branch created from `origin/main@70fed2e` to implement Bryan's 2026-04-21 relay corrections.
+
 ## 2026-04-18 — release: v2.8.8 live deployment on Render
 - **Timestamp:** 2026-04-18 18:45:48
 - **App Version (from package.json):** 2.8.8

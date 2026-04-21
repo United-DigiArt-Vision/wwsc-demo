@@ -387,19 +387,21 @@ function buildRaceTypes() {
   const types = [];
   const std = eventConfig.standard_event;
 
-  // R17: Distance exclusivity — only ONE variant per distance (25m OR 50m)
-  // If Brace/Pogo is selected, it REPLACES the individual race for that distance
+  // Bryan 2026-04-21: Brace weeks still include the standard relay.
+  // Distance exclusivity applies to the individual race variant, not to the
+  // weekly standard 25m relay. Pogo remains the only mode that replaces the
+  // normal relay.
   if (std === '25m_brace') {
-    // 25m Brace replaces both 25m individual AND 25m relay
     types.push('25m_brace');
-    types.push('50m'); // 50m individual stays
+    types.push('50m');
+    types.push('25m_relay');
   } else if (std === '50m_brace') {
-    // 50m Brace replaces 50m individual
-    types.push('25m'); // 25m individual stays
+    types.push('25m');
     types.push('50m_brace');
+    types.push('25m_relay');
   } else if (std === 'pogo') {
     // Pogo replaces 25m relay
-    types.push('25m', '50m'); // Both individuals stay
+    types.push('25m', '50m');
     types.push('pogo');
   } else {
     // Ordinary Swim: 25m + 50m individual + 25m relay
