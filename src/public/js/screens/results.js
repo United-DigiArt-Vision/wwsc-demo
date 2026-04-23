@@ -634,8 +634,19 @@ async function doCompleteEvent() {
   );
 }
 
-async function showSeasonReport() {
-  const report = await API.getEventReport(resEvent.id);
+async function showSeasonReport(eventIdArg) {
+  // v2.8.10 Bryan fix D: when opened from Calendar (openEventReportFromCalendar)
+  // the caller now passes the eventId directly. The previous implementation relied
+  // on calendar.js setting `window.resEvent = { id: ... }`, which did not reach
+  // this function because `resEvent` here is a file-scope `let` (not a window
+  // property), so `resEvent.id` stayed null and the call crashed with
+  // "Cannot read properties of null (reading 'id')".
+  const eventId = eventIdArg != null ? eventIdArg : (resEvent ? resEvent.id : null);
+  if (eventId == null) {
+    alert('No event selected for report.');
+    return;
+  }
+  const report = await API.getEventReport(eventId);
   if (report.error) {
     alert('Error: ' + report.error);
     return;

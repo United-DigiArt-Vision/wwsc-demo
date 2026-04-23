@@ -241,17 +241,15 @@ async function renderCalendar() {
 // R15: Open Event Report from Calendar (uses same logic as showSeasonReport but with arbitrary eventId)
 async function openEventReportFromCalendar(eventId) {
   try {
-    const report = await (await fetch('/api/events/' + eventId + '/report')).json();
-    if (report.error) { alert('Error: ' + report.error); return; }
-    // Reuse showSeasonReport rendering if resEvent is set, otherwise build inline
-    // For simplicity, we call the same report-generation logic
-    if (typeof showSeasonReport === 'function') {
-      // Temporarily set resEvent for the report function
-      const origEvent = window.resEvent;
-      window.resEvent = { id: eventId };
-      await showSeasonReport();
-      window.resEvent = origEvent;
+    // v2.8.10 Bryan fix D: pass eventId directly. The old window.resEvent hack
+    // did not reach showSeasonReport because `resEvent` in results.js is a
+    // file-scope let, not a window property — so the function read null.id
+    // and crashed. showSeasonReport now accepts an optional eventIdArg.
+    if (typeof showSeasonReport !== 'function') {
+      alert('Report view is not available.');
+      return;
     }
+    await showSeasonReport(eventId);
   } catch (e) {
     alert('Error loading report: ' + e.message);
   }
