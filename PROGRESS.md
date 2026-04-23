@@ -1,9 +1,9 @@
-# PROGRESS — WWSC Swimming App v2.8.9
+# PROGRESS — WWSC Swimming App v2.8.10 (in planning)
 
 ## 🎯 AKTUELLER STATUS
-Phase: 14 — Bryan 2026-04-21 Relay-Korrekturen auf Basis von v2.8.8
-Schritt: v2.8.9 ist auf `dev/v2.8.9-bryan-relay-randomness` **vollständig implementiert und browser-verifiziert** (RecordedCommit `004d70f`, SSOT-Sync `e4152ba`). Bryan-Antwort-Nachricht ist **am 2026-04-21 ~21:52 durch Dino an Bryan gesendet** — Datei `messages/2026-04-21-outgoing-to-bryan-v289-response.md` dokumentiert den genau gesendeten Text. Die Nachricht wurde parallel zum Balerion-Deployment versendet; der Text kündigt v2.8.9 ausdrücklich als upcoming an ("Once v2.8.9 is live…"), damit keine Verwirrung entsteht, falls Bryan zwischen Lesen und Retest die Live-Site noch auf v2.8.8 findet. Dino hat vor dem Senden zusätzlich einen Absatz zur Komplexität der App + zum commercial commitment eingefügt, die Anrede/Grußformel personalisiert und die Live-URL https://wwsc-demo.onrender.com/ inline eingefügt.
-Blockiert: Nein — offene Seite ist Balerion-Deployment (v2.8.9 live auf Render) und danach Bryans Retest-Antwort.
+Phase: 15 — Bryan 2026-04-23 v2.8.9 Retest Response → v2.8.10 Scoping
+Schritt: Bryan hat am 2026-04-23 auf v2.8.9 geantwortet (Inbound: `messages/2026-04-23-Bryan-inbound-v289-retest-feedback.md`). **v2.8.9 Issue-Bilanz:** Point 1 (Brace + Standard Relay) ✅ bestätigt gelöst. Point 3 (Shuffle-Randomness) ✅ bestätigt. Point 2 (initial Generate wirkt nicht random) — UX-Erwartungs-Mismatch, nicht Bug (Initial Generate ist per Design balanced). **Neue Themen von Bryan:** (A) Hinweis "shuffle only works after confirm the heats" — zu verifizieren, (B) 25m Team Relay Swimmer-Dropdown bei unvollständigen Teams zeigt ALLE Schwimmer statt nur Team-Schwimmer — Bryan widerruft damit v2.8.4 Bryan fix 4, (C) Event Report nach Save nicht deskriptiv genug — Scope-Erweiterung, (D) "View Event Report" crasht mit `Cannot read properties of null (reading 'id')` — Bug isoliert auf `results.js:7` (`let resEvent = null` ist file-scope, `window.resEvent` aus `calendar.js:251` setzt andere Variable, `showSeasonReport` liest weiterhin file-scope null). v2.8.10 Branch noch NICHT gestartet — wartet auf Dinos Scope-Entscheidung.
+Blockiert: Warten auf Dinos Scope-Decision (was geht in v2.8.10, was wird deferred).
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] Phase 0: Workspace & State Verifikation (`git fetch`, Hard Reset auf `origin/main` - Stand v2.7.4).
@@ -29,7 +29,22 @@ Kriterium fertig: v2.8.9 live auf Render + Bryan's Retest-Antwort im `messages/`
 ## 📬 BRYAN KOMMUNIKATION (v2.8.9 cycle)
 - **Inbound (Bryan → Dino, 2026-04-21):** Drei Issues (Brace ohne Standard Relay, Shuffle-Button wirkt inert, Brace-Paarungen sehen nicht random aus) + Meta-Feedback zu Pace und Pointscore-Timeline.
 - **Outbound (Dino → Bryan, 2026-04-21 ~21:52):** gesendet. Inhalt + Personalisierungen in `messages/2026-04-21-outgoing-to-bryan-v289-response.md`. Kern: v2.8.8 Recap, v2.8.9 Delivery auf die drei Punkte, ehrliche Einordnung zur App-Komplexität + commercial commitment, Retest-Bitte nach Deploy.
-- **Erwartung:** Bryan's Retest-Antwort nach v2.8.9 Deploy. Yes/No pro Punkt + zusätzliche Beobachtungen.
+- **Inbound Retest (Bryan → Dino, 2026-04-23):** gesendet + dokumentiert in `messages/2026-04-23-Bryan-inbound-v289-retest-feedback.md`. Bilanz: 2× closed (Issues 1+3), 1× UX-Erwartungs-Mismatch (Issue 2), 1× Hinweis zu verifizieren (pre-Confirm Shuffle), 1× Regression 25m Team Relay, 1× Report-Crash, 1× Scope-Erweiterung Report-Inhalt.
+
+## 🎯 BRYAN 2026-04-23 ISSUE-KATALOG (für v2.8.10 Scoping)
+
+| # | Bryan Observation | Typ | Aufwand | Empfehlung |
+|---|-------------------|-----|---------|------------|
+| A | "shuffle only works after confirm the heats" | Live-Bug zu verifizieren | S | Live-Repro mit Screenshot → ggf. Fix Button-Binding |
+| B | 25m Team Relay swim-twice Dropdown zeigt alle Schwimmer (nicht nur Team) | Design-Rollback Bryan | XS | Widerruf von v2.8.4 Bryan fix 4 — `heat-builder.js:619-625`: `optionPool = members` statt `hbAttendance.filter(present)` |
+| C | Event Report nach Save nicht descriptiv genug | Scope-Erweiterung | M–L | Scope-Rückfrage an Bryan: welche Felder? PBs? Variance? Record Breakers? Attendance? Then implementieren |
+| D | "View Event Report" crash "null reading id" | Bug isoliert | XS | `results.js:637`: `showSeasonReport(eventIdArg)` annehmen, oder `calendar.js:251` auf die file-scope Variable zugreifen. Einfachste Variante: `showSeasonReport` mit optionalem eventId-Parameter ausstatten |
+| E | Issue 2 (Initial Generate wirkt nicht random) | UX-Design-Entscheidung | XS–S | 3 Optionen: (a) Label "Generate Balanced Teams", (b) Generate immer random, (c) Erst-Generate wendet Rotation an. Empfehlung: (c) — minimal invasiv, kein Balance-Verlust |
+
+## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
+Was: Dino entscheidet Scope für v2.8.10 (vermutlich A, B, D, E — C separat aufgrund Scope-Rückfrage). Dann: Branch `dev/v2.8.10-bryan-retest-followup` von `origin/main` (v2.8.9 Basis), Issues bearbeiten, Preview-Verifikation, Handoff an Balerion.
+Datei lesen: `messages/2026-04-23-Bryan-inbound-v289-retest-feedback.md`, `src/public/js/screens/calendar.js:240-258`, `src/public/js/screens/results.js:637-685`, `src/public/js/screens/heat-builder.js:612-652`, `src/server.js:1261-1275`.
+Kriterium fertig: v2.8.10 live auf Render + Bryan hat die 4 adressierten Punkte retested + Scope-Rückfrage zu Issue C (Event Report Inhalt) gestellt.
 
 ## ⚠️ OFFENE PUNKTE / BLOCKER
 - **Bryan 2026-04-21, Punkt 1:** ✅ GELÖST in v2.8.9 (commit `6069347`, `event-setup.js`). Browser-verifiziert: 50m Brace + 25m Freestyle + 25m Team Relay alle im Heat Builder sichtbar.
