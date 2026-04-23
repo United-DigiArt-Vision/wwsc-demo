@@ -470,3 +470,56 @@ Bryan hat am 2026-04-23 sechs Themen aufgeführt. Nach diesem Rerun:
 **Kurzfassung:** 5 von 6 Bryan-Themen sind in v2.8.10 gelöst und durch echte Browser-Klicks verifiziert. Das sechste Thema (Report-Content-Tiefe, Issue C / R32) ist explizit deferred und nicht weil v2.8.10 versagt hätte — sondern weil die Feldliste noch bei Bryan liegt.
 
 **Was ich nicht ersetzen kann:** Bryan's subjektive Wahrnehmung, ob sein reales Vereinstraining-Ergebnis "random genug" wirkt. Meine 12-Paar-Totals spannen bei 23 Schwimmern eine Range von 66 bis 97 — das ist statistisch divers. Ob Bryan es subjektiv als "random" akzeptiert, kann nur er selbst beurteilen.
+
+---
+
+## Section O.Screenshots — Visuelle Beweise pro Bryan-Thema (2026-04-23 nachmittags)
+
+Nach zwei Runden Protokoll-Verfeinerung fragte Dino: *"hast du auch screenshots die beweisen, dass alle themen so funktionieren wie bryan sich das wünscht?"* Antwort damals: Teilweise. Ich hatte Screenshots für die Heat-Builder-Render-States und Event-Details-Modal, aber der **Inhalt des Swim-twice-Dropdowns** war nur via DOM-Query belegt (nicht visuell), und das **Event Report Popup** war nur via `window.open`-Spy gefangen (nicht visuell, weil es in einem neuen Tab landet den Preview MCP nicht sehen kann).
+
+Diese Section schließt beide visuellen Lücken mit dedizierten Screenshots. Zusätzlich fasst sie pro Bryan-Thema den passenden Screenshot-Beleg aus dem gesamten Test-Lauf zusammen.
+
+### Instrumentierung (rein visuell, keine App-Logik geändert)
+
+- **Dropdown visualisieren:** `<select>`-Elemente mit `size=10` attribute temporär zu Listbox expandiert, damit alle Options im Screenshot sichtbar sind statt in einem nativen OS-Picker.
+- **Popup visualisieren:** `window.open` temporär gepatcht, fängt das Popup-HTML, rendert es in ein fullscreen iframe-Overlay auf derselben Seite (Orange-Header "EVENT REPORT POPUP (visualized via iframe overlay)"). Nach dem Screenshot wird das Overlay entfernt und `window.open` restauriert.
+
+Beide Mechanismen sind reine Test-Instrumentation. Kein App-State geändert, kein Commit nötig.
+
+### Screenshot-Matrix pro Bryan-Thema
+
+| # | Bryan-Thema | Screenshot | Was der User visuell sieht |
+|---|---|---|---|
+| 1 | Brace includes relay | **Heat Builder Race-Chips bei 50m Brace** (Screenshot oben in der Session nach Klick auf 🔧 Heat Builder und Chip `50m Brace Relay`) | STANDARD-Zeile: `25m Freestyle`, `50m Brace Relay` (aktiv, blau umrandet), `25m Team Relay`. SPECIAL-Zeile: `Medley Relay`. Alle vier Chips gleichzeitig sichtbar → Brace ersetzt den Standard-Relay nicht mehr. |
+| 2 | Swimmers are random (Generate) | **4 Brace-Generate-Screenshots bei 23 Schwimmern** (Gen 1 / Gen 2 / Gen 3 / Gen 4 in Section O.Rerun.2) | Totals-Spalte der 12 Paare pro Klick sichtbar anders: `66,66,66,86,…` → `74,75×8,96×2,…` → `72×3,71,72×3,92,…` → `71,70×4,90×3,…`. Der User sieht nach jedem Klick ein anderes Paar-Layout und andere Target-Zahlen. |
+| 3 | Reshuffle randomises | **3 Brace-Shuffle-Screenshots pre-Confirm** (Shuffle 1 / 2 / 3 in Section O.Rerun.3) | Totals ändern sich weiterhin bei jedem Klick. In allen drei Screenshots sind die drei Buttons `Generate Teams`, `Shuffle`, `Confirm Teams` parallel sichtbar — d.h. Confirm wurde nie geklickt. |
+| Note A | Shuffle only after confirm | Teil desselben Screenshot-Flows (3 Shuffle-Screenshots, Confirm-Button nie geklickt) | Das Heat Builder Layout zeigt durchgehend alle 3 Buttons parallel → `hbRelayConfirmed === false` ist visuell ablesbar. Bryans Behauptung, Shuffle ginge erst nach Confirm, ist visuell widerlegt. |
+| 4 | 25m Team Relay dropdown | **3 expandierte Dropdown-Screenshots** (Section O.Screenshots, Team 1 / Team 2 / Team 3) mit Orange-Border-Visualisierung | Team 1 Dropdown zeigt **exakt 7 Namen** (Diane Foster, Glenne Murray, Helen Sharp, James Morton, Jenny Walsh, Lisa Chen, Peter Davidson). Team 2 Dropdown zeigt **exakt 8 Namen**. Team 3 Dropdown zeigt **exakt 8 Namen**. Keines der drei Dropdowns listet alle 23 präsenten Schwimmer. Die Screenshot-Beweise zeigen die Listen direkt expandiert, kein DOM-Query nötig. |
+| 5 | Report not descriptive | **2 Event Report Popup-Screenshots via iframe-Overlay** (Section O.Screenshots, oberer + unterer Popup-Inhalt) | Oberer Screenshot: Event Report Header, Participants-Tabelle (8 Schwimmer), 25m Freestyle Heat 1 mit Bryan/David 20.00 Place 1. Unterer Screenshot: Heat 2 (leere Zeiten), 25m Team Relay Team 1 — 2nd (Team Result 50.00, Variance -22.00) und Team 2 — 1st (Team Result 40.00, Variance -32.00). **Die Leg-Spalten für Total und Variance sind pro Swimmer LEER** — visuell bestätigt, dass Bryan mit "not descriptive" recht hat. Nur Team-Level Zahlen sind gefüllt. |
+| 6 | View Event Report works | **Dasselbe Popup-Screenshot-Set** | Das Popup wird überhaupt angezeigt (bei v2.8.9 gab es an dieser Stelle den Alert `Cannot read properties of null (reading 'id')`). Die Report-HTML ist 2973 Zeichen lang, komplett formatiert, inkl. Participants + Heat Details + Team Relay. Fix D visuell bewiesen. |
+
+### Zusätzliche Kontext-Screenshots (Beweis für den User-Flow drumherum)
+
+- **Dashboard mit v2.8.10 Badge:** Sidebar-Footer zeigt `v2.8.10` (Screenshot am Session-Anfang).
+- **Times Sheet nach Select All:** Header `Attendance (Ⓘ): 23 · Medley: 7`, alle 23 Schwimmer-Zeilen markiert — beweist das Setup für Bryan-Scale.
+- **Event Details Modal für Event 22 (2026-04-10):** Participants (8 Namen), Races mit echten Zeiten (`1st: Bryan Hesketh (20.00)`, `1st: Team 2 (40.00)`), der orange `📄 View Event Report` Button sichtbar → Screenshot direkt vor dem View-Event-Report-Klick.
+
+### Ehrliche Bewertung pro Thema
+
+| # | Bryan-Thema | Screenshot-Beleg | Verdict |
+|---|---|---|---|
+| 1 | Brace includes relay | Heat Builder Chips ✅ | **Gelöst, visuell bewiesen** |
+| 2 | Initial Generate random | 4 distinct Total-Verteilungen ✅ | **Gelöst, visuell bewiesen** |
+| 3 | Shuffle random | 3 distinct Total-Verteilungen pre-Confirm ✅ | **Gelöst, visuell bewiesen** |
+| Note A | Shuffle pre-Confirm | 3 Buttons durchgehend sichtbar ✅ | **Nicht reproduzierbar, visuell bewiesen** |
+| 4 | 25m Dropdown scoped | 3 expandierte Dropdowns, jedes team-only ✅ | **Gelöst, visuell bewiesen** |
+| 5 | Report descriptive | Popup zeigt leere Leg-Zellen ⚠️ | **Bryan hat recht, deferred bis Feldliste** |
+| 6 | View Event Report works | Popup rendert komplett ohne Alert ✅ | **Gelöst, visuell bewiesen** |
+
+**5 von 6 Bryan-Themen sind mit Screenshot-Beweisen visuell belegt.** Das eine offene Thema (R32 Report-Content) ist **auch visuell** als offen identifiziert — man sieht im Popup-Screenshot die leeren per-Swimmer-Zellen, und genau das ist der Grund warum Bryan "not descriptive" gesagt hat. Das ist kein Protokoll-Versagen, sondern eine konkrete User-Sicht-Bestätigung von Bryans Kritik. Die v2.8.10 Outbound-Nachricht fragt Bryan explizit, welche Felder er im Report sehen möchte — Implementation folgt in v2.8.11, sobald die Feldliste vorliegt.
+
+### Was kein Screenshot leisten kann
+
+- **Bryan's subjektive "Random-Genug"-Wahrnehmung:** Ich kann mathematisch zeigen, dass Totals zwischen 66 und 97 streuen. Ob Bryan das bei seinem eigenen Vereinstraining als "random" empfindet, entscheidet nur er.
+- **Live-Render-Verhalten auf Render (Production CDN):** Alle Screenshots sind vom Preview-Server auf `localhost:3000`. Das Render-Caching-Verhalten ist plausibel identisch, aber direkt dort verifizieren muss Bryan nach Balerion-Deploy.
+- **Subjektive "Descriptive-Genug"-Bewertung des Reports:** Sobald Bryan die Feldliste geliefert hat, kann man per-Feld Screenshot-Beweise liefern. Vorher nicht.
