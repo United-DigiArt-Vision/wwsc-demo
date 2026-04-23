@@ -9,11 +9,18 @@
 - **Date:** 2026-04-18
 
 ## In-flight (prepared, awaiting Balerion deployment)
+- **Version:** v2.8.10
+- **Branch:** `dev/v2.8.10-bryan-retest-followup`
+- **RecordedCommit:** `4015f9c`
+- **Date:** 2026-04-23
+- **Scope:** Bryan 2026-04-23 retest follow-up — (B) 25m Team Relay swim-twice dropdown restricted to this team only, (D) View Event Report null-ref crash fixed, (E) Initial Generate Teams randomises per click (no more identical baseline). Issue A verified as non-reproducible. Issue C (Event Report content extension) deferred pending Bryan field clarification. Browser-verified on Preview.
+
+## Previously in-flight (now live on Render since 2026-04-22/23)
 - **Version:** v2.8.9
-- **Branch:** `dev/v2.8.9-bryan-relay-randomness`
+- **Branch merged:** `dev/v2.8.9-bryan-relay-randomness`
 - **RecordedCommit:** `004d70f`
-- **Date:** 2026-04-21
-- **Scope:** Bryan 2026-04-21 relay corrections — (1) Brace weeks also run the standard 25m relay, (2) Shuffle button wired end-to-end, (3) Brace pairings visibly change on repeat shuffles. Browser-verified on Preview.
+- **Date delivered:** 2026-04-21
+- **Scope:** Bryan 2026-04-21 relay corrections. Bryan retest (2026-04-23) confirms points 1 and 3 as correct; point 2 (initial Generate randomness) carried forward into v2.8.10 as Fix E.
 
 ## What's in v2.8.8
 This live release rolls the verified v2.8.4 → v2.8.8 workstream into the real Render deployment.

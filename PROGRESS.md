@@ -1,9 +1,9 @@
-# PROGRESS — WWSC Swimming App v2.8.10 (in planning)
+# PROGRESS — WWSC Swimming App v2.8.10
 
 ## 🎯 AKTUELLER STATUS
-Phase: 15 — Bryan 2026-04-23 v2.8.9 Retest Response → v2.8.10 Scoping
-Schritt: Bryan hat am 2026-04-23 auf v2.8.9 geantwortet (Inbound: `messages/2026-04-23-Bryan-inbound-v289-retest-feedback.md`). **v2.8.9 Issue-Bilanz:** Point 1 (Brace + Standard Relay) ✅ bestätigt gelöst. Point 3 (Shuffle-Randomness) ✅ bestätigt. Point 2 (initial Generate wirkt nicht random) — UX-Erwartungs-Mismatch, nicht Bug (Initial Generate ist per Design balanced). **Neue Themen von Bryan:** (A) Hinweis "shuffle only works after confirm the heats" — zu verifizieren, (B) 25m Team Relay Swimmer-Dropdown bei unvollständigen Teams zeigt ALLE Schwimmer statt nur Team-Schwimmer — Bryan widerruft damit v2.8.4 Bryan fix 4, (C) Event Report nach Save nicht deskriptiv genug — Scope-Erweiterung, (D) "View Event Report" crasht mit `Cannot read properties of null (reading 'id')` — Bug isoliert auf `results.js:7` (`let resEvent = null` ist file-scope, `window.resEvent` aus `calendar.js:251` setzt andere Variable, `showSeasonReport` liest weiterhin file-scope null). v2.8.10 Branch noch NICHT gestartet — wartet auf Dinos Scope-Entscheidung.
-Blockiert: Warten auf Dinos Scope-Decision (was geht in v2.8.10, was wird deferred).
+Phase: 15 — Bryan 2026-04-23 v2.8.9 Retest-Follow-up → v2.8.10 Delivery
+Schritt: v2.8.10 ist auf `dev/v2.8.10-bryan-retest-followup` **vollständig implementiert und browser-verifiziert** (RecordedCommit `4015f9c`, Version-Bump `1a04e9b`). Bryans Retest-Bilanz: 2 v2.8.9-Punkte bestätigt gelöst (Brace+Relay, Shuffle-Randomness). 4 weitere Themen in v2.8.10 adressiert: (B) 25m Team Relay Swim-Twice-Dropdown zeigt jetzt nur Team-Members (v2.8.4 Bryan fix 4 widerrufen), (D) View Event Report Null-Ref-Crash behoben durch optionalen `eventIdArg` in `showSeasonReport`, (E) Initial Generate Teams wendet jetzt auch Random-Rotation an — jeder Click liefert frische Paarungen. Issue A ("shuffle only works after confirm") war in v2.8.10 nicht reproduzierbar — vermutlich Bryan-Cache-Artefakt in v2.8.9. Issue C (Event Report Inhalt) bewusst deferred bis Bryan die gewünschten Felder nennt. Delivery bereit für Balerion-Handoff → Render-Auto-Deploy.
+Blockiert: Nein — offene Seite ist Balerion-Deployment und danach Bryans nächster Retest + Scope-Rückfrage zu Issue C.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] Phase 0: Workspace & State Verifikation (`git fetch`, Hard Reset auf `origin/main` - Stand v2.7.4).
@@ -26,25 +26,26 @@ Was: Balerion-Handoff — Branch `dev/v2.8.9-bryan-relay-randomness` (tip `e4152
 Datei lesen: `messages/2026-04-21-Claude-To-Balerion-v289-Bryan-Relay-Randomness.md`, `messages/2026-04-21-outgoing-to-bryan-v289-response.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `USER-INTERACTION-TEST-PROTOCOL-v2.8.9.md`, `STABLE.md`.
 Kriterium fertig: v2.8.9 live auf Render + Bryan's Retest-Antwort im `messages/` Ordner dokumentiert.
 
-## 📬 BRYAN KOMMUNIKATION (v2.8.9 cycle)
-- **Inbound (Bryan → Dino, 2026-04-21):** Drei Issues (Brace ohne Standard Relay, Shuffle-Button wirkt inert, Brace-Paarungen sehen nicht random aus) + Meta-Feedback zu Pace und Pointscore-Timeline.
-- **Outbound (Dino → Bryan, 2026-04-21 ~21:52):** gesendet. Inhalt + Personalisierungen in `messages/2026-04-21-outgoing-to-bryan-v289-response.md`. Kern: v2.8.8 Recap, v2.8.9 Delivery auf die drei Punkte, ehrliche Einordnung zur App-Komplexität + commercial commitment, Retest-Bitte nach Deploy.
-- **Inbound Retest (Bryan → Dino, 2026-04-23):** gesendet + dokumentiert in `messages/2026-04-23-Bryan-inbound-v289-retest-feedback.md`. Bilanz: 2× closed (Issues 1+3), 1× UX-Erwartungs-Mismatch (Issue 2), 1× Hinweis zu verifizieren (pre-Confirm Shuffle), 1× Regression 25m Team Relay, 1× Report-Crash, 1× Scope-Erweiterung Report-Inhalt.
+## 📬 BRYAN KOMMUNIKATION
+- **v2.8.9 Inbound (2026-04-21):** 3 Issues + Meta-Feedback (Pace, Pointscore).
+- **v2.8.9 Outbound (2026-04-21 ~21:52):** gesendet. `messages/2026-04-21-outgoing-to-bryan-v289-response.md`.
+- **v2.8.9 Retest Inbound (2026-04-23):** `messages/2026-04-23-Bryan-inbound-v289-retest-feedback.md`. 2 bestätigt, 5 neue Themen.
+- **v2.8.10 Outbound:** Draft liegt in `messages/` und wird nach Balerion-Deploy durch Dino gesendet.
 
-## 🎯 BRYAN 2026-04-23 ISSUE-KATALOG (für v2.8.10 Scoping)
+## 🎯 BRYAN 2026-04-23 ISSUE-KATALOG & STATUS (v2.8.10)
 
-| # | Bryan Observation | Typ | Aufwand | Empfehlung |
-|---|-------------------|-----|---------|------------|
-| A | "shuffle only works after confirm the heats" | Live-Bug zu verifizieren | S | Live-Repro mit Screenshot → ggf. Fix Button-Binding |
-| B | 25m Team Relay swim-twice Dropdown zeigt alle Schwimmer (nicht nur Team) | Design-Rollback Bryan | XS | Widerruf von v2.8.4 Bryan fix 4 — `heat-builder.js:619-625`: `optionPool = members` statt `hbAttendance.filter(present)` |
-| C | Event Report nach Save nicht descriptiv genug | Scope-Erweiterung | M–L | Scope-Rückfrage an Bryan: welche Felder? PBs? Variance? Record Breakers? Attendance? Then implementieren |
-| D | "View Event Report" crash "null reading id" | Bug isoliert | XS | `results.js:637`: `showSeasonReport(eventIdArg)` annehmen, oder `calendar.js:251` auf die file-scope Variable zugreifen. Einfachste Variante: `showSeasonReport` mit optionalem eventId-Parameter ausstatten |
-| E | Issue 2 (Initial Generate wirkt nicht random) | UX-Design-Entscheidung | XS–S | 3 Optionen: (a) Label "Generate Balanced Teams", (b) Generate immer random, (c) Erst-Generate wendet Rotation an. Empfehlung: (c) — minimal invasiv, kein Balance-Verlust |
+| # | Bryan Observation | Status | Commit |
+|---|-------------------|--------|--------|
+| A | "shuffle only works after confirm the heats" | ✅ Nicht reproduzierbar in v2.8.10 — Bryan's Beobachtung vermutlich Cache-Artefakt, Fix E reduziert die Wahrnehmung weiter | — (verifiziert, kein Code-Change) |
+| B | 25m Team Relay swim-twice Dropdown zeigt alle Schwimmer | ✅ Gelöst — `heat-builder.js:619-625` auf `optionPool = members` zurückgesetzt, v2.8.4 Bryan fix 4 widerrufen | `4015f9c` |
+| C | Event Report nach Save nicht descriptiv genug | ⏸ Deferred — wartet auf Bryan field-level Scope-Klärung | — (out of scope) |
+| D | "View Event Report" crash "null reading id" | ✅ Gelöst — `showSeasonReport(eventIdArg)` nimmt optionalen eventId, `openEventReportFromCalendar` übergibt direkt | `4015f9c` |
+| E | Initial Generate wirkt nicht random | ✅ Gelöst — `heat-builder.js:343` Generate-Button sendet jetzt auch `forceReshuffle: true`, jeder Click erzeugt neue Paarung | `4015f9c` |
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Dino entscheidet Scope für v2.8.10 (vermutlich A, B, D, E — C separat aufgrund Scope-Rückfrage). Dann: Branch `dev/v2.8.10-bryan-retest-followup` von `origin/main` (v2.8.9 Basis), Issues bearbeiten, Preview-Verifikation, Handoff an Balerion.
-Datei lesen: `messages/2026-04-23-Bryan-inbound-v289-retest-feedback.md`, `src/public/js/screens/calendar.js:240-258`, `src/public/js/screens/results.js:637-685`, `src/public/js/screens/heat-builder.js:612-652`, `src/server.js:1261-1275`.
-Kriterium fertig: v2.8.10 live auf Render + Bryan hat die 4 adressierten Punkte retested + Scope-Rückfrage zu Issue C (Event Report Inhalt) gestellt.
+Was: Balerion-Handoff — Branch `dev/v2.8.10-bryan-retest-followup` (tip nach SSOT-Sync) in `~/wwsc-demo` übernehmen, in `main` mergen, Render-Auto-Deploy abwarten, Live-`/api/version` auf `2.8.10` prüfen, dann die 4 v2.8.10-Punkte (B/D/E + A-Verifikation) am Live-System smoketesten. Danach: Bryan-Response-Draft (messages/2026-04-23-outgoing-to-bryan-v2810-response.md) durch Dino senden lassen.
+Datei lesen: `messages/2026-04-23-Claude-To-Balerion-v2810-Bryan-Retest-Followup.md`, `messages/2026-04-23-outgoing-to-bryan-v2810-response.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `USER-INTERACTION-TEST-PROTOCOL-v2.8.10.md`, `STABLE.md`.
+Kriterium fertig: v2.8.10 live auf Render + Bryan-Response gesendet + Bryan's nächste Antwort auf Issue C (Event Report Inhalt) im `messages/` Ordner dokumentiert.
 
 ## ⚠️ OFFENE PUNKTE / BLOCKER
 - **Bryan 2026-04-21, Punkt 1:** ✅ GELÖST in v2.8.9 (commit `6069347`, `event-setup.js`). Browser-verifiziert: 50m Brace + 25m Freestyle + 25m Team Relay alle im Heat Builder sichtbar.
