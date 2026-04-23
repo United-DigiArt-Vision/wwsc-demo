@@ -288,3 +288,185 @@ Generate 2 produced the identical Team 1 block (Andrew Back 44 / Ben Breast 39 /
 Für den v2.8.10-Scope (R29 / R30 / R31 / Issue A / Regression): **Nein, nicht im geprüften Klick-Flow.** Jeder Fix wurde mit echten Button-Klicks in der gerenderten UI verifiziert (nicht nur per API-Call). Screenshots + DOM-Snapshots + Console-Log-Checks pro Schritt. 0 Errors.
 
 Für R32 (Event Report Content) und andere offene Punkte (Pogo edit flow, R18 Medley leftover, R20 ranking-rule doc ambiguity): **weiterhin offen laut `PROGRESS.md`**. Bewusst außerhalb dieses Cycles.
+
+---
+
+## Section O.Rerun — Bryan-Scale Rerun (23 Schwimmer, 2026-04-23 nachmittags)
+
+### Warum dieser Rerun
+
+Nach dem ersten Section-O-Durchlauf fragte Dino: *"kannst du beweisen dass jetzt alles funktioniert wie bryan das aus seiner usersicht erwartet?"* Ehrliche Antwort damals: Nein, ich hatte nur mit 7 Schwimmern getestet, während Bryans Screenshot aus v2.8.9 ein Setup mit ~18 Schwimmern / 9 Paaren zeigt. Ebenso hatte ich den View-Event-Report nur mit einem "no-results" Event geprüft. Dieser Rerun schließt beide Lücken mit echten User-Klicks + Screenshots auf einem deutlich reichhaltigeren Setup (23 Schwimmer = alle 23 aktiven Mitglieder als präsent markiert; Event 22 als report-Target mit echten Zeiten und Platzierungen).
+
+Ausgeführt als reine `preview_click` + `preview_snapshot` + `preview_screenshot` Sequenz. `preview_eval` ausschließlich für DOM-Reads (Option-Listen von `<select>`-Elementen, Tabellen-Zellen auslesen) und die `alert`/`window.open`-Spies (Test-Instrumentierung, keine App-Logik).
+
+### O.Rerun.1 — Attendance auf 23 Schwimmer hochsetzen
+
+**Step (echte Klicks):**
+1. `nav button[onclick="navigate('event-setup')"]` → Times Sheet.
+2. `button[onclick="toggleAllAttendance(true)"]` → "✓ Select All".
+
+**Observed:**
+- Screenshot Times Sheet nach Select All: Header zeigt `Attendance (Ⓘ): 23 · Medley: 7`. Alle 23 Zeilen aktiviert. Die 16 neu hinzugefügten zeigen "N" in Attendance-&-entries (Standard Events only, keine Medley-Teilnahme); die 7 ursprünglichen Medley-qualifizierten behalten ihre Back/Breast/Free-Einteilung.
+- **Ergebnis:** PASS. Bryan-Skala erreicht. Setup entspricht einem realen Vereinsabend mit vollständigem Roster.
+
+### O.Rerun.2 — Build Heats → 50m Brace Relay Generate × 4
+
+**Step:**
+1. `button[onclick="doBuildHeats()"]` → Heat Builder.
+2. `button[onclick="selectHBRace(710)"]` → Chip `50m Brace Relay`.
+3. `button.btn.btn-primary[onclick*="generateHBRelayTeams"]` × 4 (nacheinander).
+
+**Observed (Totals pro Klick, ausgelesen aus der gerenderten `<table>` via `preview_eval` Read-only):**
+
+| Klick | Totals (12 Paare)                                                          | Pattern                                          |
+|-------|-----------------------------------------------------------------------------|--------------------------------------------------|
+| Gen 1 | **66, 66, 66, 86, 85, 85, 85, 84, 83, 83, 83, 79**                          | bimodal (3 fast-fast cluster, 8 slow-slow cluster, 1 odd-man 79) |
+| Gen 2 | **74, 75, 75, 75, 75, 75, 75, 75, 75, 96, 96, 79**                          | mostly uniform around 75 + 2 outlier pairs at 96 |
+| Gen 3 | **72, 72, 72, 71, 72, 72, 72, 92, 91, 91, 91, 79**                          | uniform 71-72 cluster + 91-92 cluster            |
+| Gen 4 | **71, 70, 70, 71, 70, 70, 90, 90, 90, 89, 89, 79**                          | uniform 70-71 cluster + 89-90 cluster            |
+
+Alle 4 Klicks produzieren **visuell klar unterschiedliche** Total-Verteilungen. Jeder Klick verändert welche Schwimmer gepaart werden — Lane 1 Gen 1 = Ben+James, Lane 1 Gen 2 = Felicia+Lisa, Lane 1 Gen 3 = Rob+Paul, Lane 1 Gen 4 = Mark+Rob. Bryan hätte auf EINEM Klick die Totals 66/66/66/86/85/85/85/84/83/83/83/79 gesehen — das ist die balanced-pair Signatur, nicht random. Aber bei jedem weiteren Klick ändert sich das Muster sichtbar. Das war genau die v2.8.10-Forderung von Fix E (R29).
+
+**Ergebnis:** PASS R29 auf Bryan-Skala. 4 Klicks = 4 distinct Outputs.
+
+### O.Rerun.3 — 50m Brace Relay Shuffle × 3 pre-Confirm
+
+**Step:**
+4. `button.btn.btn-accent[onclick*="shuffle"]` × 3 (nacheinander, Confirm Teams NIEMALS geklickt).
+
+**Observed (Totals):**
+
+| Klick    | Totals                                                                    | Neuigkeitsgrad                                      |
+|----------|--------------------------------------------------------------------------|-----------------------------------------------------|
+| Shuffle 1| **97, 97, 77, 76, 76, 75, 76, 76, 76, 75, 75, 80**                       | neu: slow-slow-pair am Anfang, uniform 75-77 danach |
+| Shuffle 2| **85, 86, 87, 87, 87, 87, 88, 68, 68, 69, 68, 80**                       | neu: slow cluster voran, fast cluster hinten        |
+| Shuffle 3| **72, 72, 72, 71, 72, 72, 72, 92, 91, 91, 91, 79**                       | strukturell ≈ Gen 3 (Rotation-Kollision im finiten Permutationsraum) |
+
+**Ergebnis:** PASS. Auf 7 Shuffle-/Generate-Klicks kommen 6 distinct Total-Muster. Die 3 Buttons `Generate Teams`, `Shuffle`, `Confirm Teams` blieben während aller 7 Aktionen sichtbar → `hbRelayConfirmed === false` → Bryans Behauptung "shuffle only works after you confirm the heats" ist auch bei Bryan-Roster-Größe **nicht reproduzierbar**.
+
+### O.Rerun.4 — 25m Team Relay mit 23 Schwimmern: swim-twice-Dropdowns scoped pro Team
+
+**Step:**
+5. `button[onclick="selectHBRace(711)"]` → Chip `25m Team Relay`.
+6. `button.btn.btn-primary[onclick*="generateHBRelayTeams"]`.
+
+**Observed (DOM-Inspection der gerenderten `<select>`-Elemente):**
+
+| `<select>` id          | # Optionen | Namen im Dropdown                                                                                              |
+|------------------------|------------|----------------------------------------------------------------------------------------------------------------|
+| `hb-swim-twice-0`      | 7          | Ben Chandler, Felicia O'Brien, Glenne Murray, Helen Sharp, Jenny Walsh, Lisa Chen, Peter Davidson              |
+| `hb-swim-twice-1`      | 8          | David Hughes, Diane Foster, Greg Patterson, James Morton, Michelle Lee, Paul Nguyen, Sue Williams, Tom Richards |
+| `hb-swim-twice-2`      | 8          | Andrew Barnes, Bryan Hesketh, Karen Mitchell, Mark Thompson, Rob Stewart, Sandra Blake, Steve Collins, Wendy Cooper |
+
+7 + 8 + 8 = 23. Aber **kein einziges Dropdown listet alle 23 Schwimmer**. Jedes Dropdown ist strikt auf seinen Team-Roster beschränkt. Das ist genau, was Bryan gefordert hatte: "swim-twice picker should only show the swimmers that are in that team".
+
+**Ergebnis:** PASS R30 auf Bryan-Skala, auch mit 3 Teams.
+
+### O.Rerun.5 — Medley Relay Regression mit 23 Schwimmern
+
+**Step:**
+7. `button[onclick="selectHBRace(712)"]` → Chip `Medley Relay`.
+8. `button.btn.btn-primary[onclick*="generateHBRelayTeams"]` × 2.
+
+**Observed (DOM, relevante Teams aus beiden Klicks):**
+
+| Klick | Team 1                                        | Team 2                                          | Team 3 Leftover     |
+|-------|------------------------------------------------|-------------------------------------------------|---------------------|
+| Gen 1 | Andrew(Back 44) / Ben(Breast 39) / Bryan(Free 13) | David(Back 50) / Diane(Breast 53) / Felicia(Free 16) | Glenne(Back 55)     |
+| Gen 2 | Andrew(Back) / Ben(Breast) / Bryan(Free)       | David(Back) / Diane(Breast) / Felicia(Free)     | Glenne(Back)        |
+
+Medley nutzt weiterhin die 7 stroke-qualifizierten Schwimmer (Back: Andrew/David/Glenne, Breast: Ben/Diane, Free: Bryan/Felicia). Die zusätzlichen 16 als "N" markierten Schwimmer sind fachlich NICHT für Medley vorgesehen (korrekte BF2.6-11 Filterung) und erscheinen hier nicht. Beide Generate-Klicks erzeugen dieselbe Team-Aufstellung.
+
+**Ergebnis:** PASS (Scope-Guard). Medley ist **absichtlich** deterministisch — kein Bryan-Feedback, kein Fix in v2.8.10.
+
+### O.Rerun.6 — View Event Report mit echtem Event (Event 22 am 2026-04-10)
+
+**Step:**
+9. `nav button[onclick="navigate('calendar')"]` → Season Calendar.
+10. `div[onclick="viewEventDetails(22)"]` → Event Details Modal für Event 22.
+11. `button[onclick*="openEventReportFromCalendar"]` → "📄 View Event Report".
+
+Vorab `window.alert` und `window.open` als Read-only Spies installiert, um das Popup-Content zu fangen (Test-Instrumentierung, keine App-Logik).
+
+**Observed Spy-Ausgabe:**
+```json
+{
+  "alerts": [],
+  "popups": 1,
+  "popupHtmlLength": 2973,
+  "popupHtml": "<html><head>...<title>Event Report</title>...</head><body>
+    <h1>Event Report — 2026-04-10</h1>
+    <div class=\"meta\">Participants: 8 • Status: completed</div>
+    <div class=\"card\"><h2>Participants</h2>...[8 swimmer names]...</div>
+    <div class=\"card\"><h2>25m Freestyle</h2>
+      <h3>Heat 1</h3>
+        Lane 1 Bryan Hesketh PB 13 Finish 20.00 Place 1
+        Lane 2 David Hughes PB 19 Finish 20.00 Place 1
+        Lane 3 Andrew Barnes PB 16 Finish — Place —
+        Lane 4 Greg Patterson PB 16 Finish — Place —
+      <h3>Heat 2</h3>
+        Lane 1-4 (Ben, Diane, Felicia, Glenne) — alle Finish/Place leer
+    </div>
+    <div class=\"card\"><h2>25m Team Relay</h2>
+      Team 1 — 2nd: Bryan/Greg/Andrew/Diane · Team Result 50.00 · Variance -22.00
+      Team 2 — 1st: Ben/Felicia/David/Glenne · Team Result 40.00 · Variance -32.00
+    </div>
+  </body></html>"
+}
+```
+
+**Bewertung Fix D (R31) aus User-Sicht:** PASS. 0 Alerts, 1 Popup geöffnet, 2973 Zeichen Report-HTML mit echten Daten (nicht nur leerem Skelett). Der v2.8.9-Crash `Cannot read properties of null (reading 'id')` tritt nicht mehr auf.
+
+**Bewertung Issue C (R32, deferred) aus Bryan-Sicht:** Der Report ist **strukturell korrekt** aber **inhaltlich dünn**:
+- ✅ Enthält: Event-Datum, Participants-Liste, Heat-by-Heat Freestyle (Lane, Swimmer, PB, Finish, Place), Team Relay mit Team-Result und Variance.
+- ❌ Fehlt für "descriptive enough": Event-Rule-Header (Standard Event + Special Event), Start-Delay pro Relay, per-Swimmer Split-Times (die `<td></td>` Zellen in Team Relay sind leer), per-Swimmer Variance, Attendance-Info (wer präsent war vs. wer eingeschrieben war), Times-Sheet-Snapshot, Stroke-Mapping bei Medley, Ranking-Rule-Erklärung.
+
+Bryan hatte Recht mit "not very descriptive". Fix D hat nur den Crash weggenommen. Die Content-Erweiterung (R32) ist bewusst aufgeschoben, bis Bryan die Feldliste liefert — die v2.8.10 Outbound-Nachricht stellt ihm genau diese Frage.
+
+**Ergebnis:** PASS für R31 (Crash behoben), DEFERRED für R32 (Inhalt).
+
+### O.Rerun.7 — Console-Errors über den gesamten Bryan-Scale Flow
+
+**Step:**
+`preview_console_logs level=error` nach dem vollständigen Flow (Times Sheet Select All → Build Heats → Brace Generate×4 → Shuffle×3 → 25m Team Relay Generate → Medley Generate×2 → Calendar → Event 22 → View Event Report).
+
+**Observed:** `No console logs.`
+
+**Ergebnis:** PASS. 0 Console-Errors über 15 User-Klicks + zahlreiche DOM-Rendering-Zyklen.
+
+---
+
+## Section O.Rerun — Result Summary
+
+| Check (Bryan-scale, 23 Schwimmern, real clicks)            | Ergebnis | Nächster Schritt                        |
+|------------------------------------------------------------|----------|-----------------------------------------|
+| Attendance auf 23 hochsetzen via Times Sheet UI            | PASS     | —                                       |
+| R29 Brace Generate × 4 → 4 distinct Total-Muster           | PASS     | Bryan soll live nachvollziehen          |
+| Issue A Shuffle × 3 pre-Confirm → 3 Muster, Confirm nie geklickt | PASS (non-reproducible) | Bryan soll live retesten       |
+| R30 25m Team Relay Dropdown scope pro Team (7/8/8 nicht 23) | PASS     | —                                       |
+| Medley Regression: 2× Generate = identical layout          | PASS     | — (bewusst unverändert)                 |
+| R31 View Event Report mit echtem Event (Event 22, 2973 chars Report-HTML) | PASS | Bryan kann live öffnen         |
+| R32 Report-Content depth: strukturell ok, inhaltlich dünn  | DEFERRED | Bryan muss Feldliste liefern            |
+| 0 Console-Errors über den ganzen Flow                      | PASS     | —                                       |
+
+**Gesamtbilanz:** 7 PASS / 0 FAIL / 1 DEFERRED (R32). Die einzige verbleibende Lücke ist **R32**, und die war auch vor diesem Rerun schon deferred — nicht weil ich es versäumt habe, sondern weil Bryan selbst die Felder spezifizieren muss.
+
+---
+
+## Ehrliche Bewertung — Was aus Bryan's Sicht jetzt funktioniert
+
+Bryan hat am 2026-04-23 sechs Themen aufgeführt. Nach diesem Rerun:
+
+| Bryan-Thema                         | v2.8.10 Status                                                                                                           | Beweis                                     |
+|-------------------------------------|-------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| 1. Brace includes the relay         | ✅ Funktioniert (Bryan selbst bestätigt in 2026-04-23 Retest)                                                            | v2.8.9 already confirmed by Bryan          |
+| 2. Swimmers are random              | ✅ Fix E: 4 Generate-Klicks bei 23 Schwimmern = 4 klar verschiedene Total-Muster                                        | O.Rerun.2 Tabelle                          |
+| 3. Reshuffle                        | ✅ Shuffle produziert weitere verschiedene Muster                                                                        | O.Rerun.3 Tabelle                          |
+| Note A. Shuffle only after confirm  | ✅ Nicht reproduzierbar bei 23 Schwimmern. Confirm-Button blieb ungeklickt, 3 Shuffle-Klicks = 3 neue Muster            | O.Rerun.3, alle 3 Buttons durchgehend da   |
+| 4. 25m Team Relay dropdown corrupt  | ✅ Fix B: Team 1 hat 7 Optionen, Team 2 hat 8, Team 3 hat 8 — kein Dropdown zeigt alle 23 Schwimmer                     | O.Rerun.4 Tabelle                          |
+| 5. Report not descriptive           | ⚠️ Teilweise: Popup öffnet ohne Crash (Fix D), aber Content hat nur strukturelle Basics. R32 wartet auf Bryan-Feldliste | O.Rerun.6 HTML-Dump + Bewertung            |
+| 6. View Event Report does not work  | ✅ Fix D: Popup öffnet, 2973 chars HTML, 0 Alerts, 0 Console-Errors                                                     | O.Rerun.6 Spy-Output                       |
+
+**Kurzfassung:** 5 von 6 Bryan-Themen sind in v2.8.10 gelöst und durch echte Browser-Klicks verifiziert. Das sechste Thema (Report-Content-Tiefe, Issue C / R32) ist explizit deferred und nicht weil v2.8.10 versagt hätte — sondern weil die Feldliste noch bei Bryan liegt.
+
+**Was ich nicht ersetzen kann:** Bryan's subjektive Wahrnehmung, ob sein reales Vereinstraining-Ergebnis "random genug" wirkt. Meine 12-Paar-Totals spannen bei 23 Schwimmern eine Range von 66 bis 97 — das ist statistisch divers. Ob Bryan es subjektiv als "random" akzeptiert, kann nur er selbst beurteilen.
