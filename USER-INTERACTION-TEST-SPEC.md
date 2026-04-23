@@ -798,3 +798,38 @@ Covers the fix for Dino's v2.8.7 live finding that the Brace Results table still
 - [ ] UI-TC-474: Print @media rules still hide operational UI via `.print-hide`; the fixed thead inherits spreadsheet-table print styling with no new regression.
 - [ ] UI-TC-475: No new console errors after exercising the Brace Results + Heat Builder flows.
 - [ ] UI-TC-476: Brace table rendering remains correct on a normal-width viewport (no broken colspan/rowspan alignment, no orphan borders).
+
+### Section O — Bryan 2026-04-23 v2.8.9 Retest Follow-up (v2.8.10)
+
+Covers Bryan's 2026-04-23 retest response to the v2.8.9 live release: closed Points 1 (Brace+Relay coexistence) and 3 (Shuffle randomness), plus five new topics — A (pre-Confirm Shuffle note to verify), B (25m Team Relay dropdown shows all swimmers regression), C (Event Report content scope extension, deferred), D (View Event Report null-id crash), E (initial Generate Teams looks non-random). v2.8.10 scope: A + B + D + E. Issue C deferred pending Bryan field-level clarification. Requirements in REQUIREMENTS.md: R29 (Fix E), R30 (Fix B), R31 (Fix D), R32 (Issue C deferred).
+
+#### O.1 R29 — Initial Generate Teams randomises on every click (UI-TC-477 to UI-TC-481)
+- [ ] UI-TC-477: On Heat Builder → `50m Brace Relay` with 7 present swimmers, clicking `Generate Teams` once renders a balanced pair table (4 lanes with totals clustered close to the balanced baseline, fastest+slowest paired).
+- [ ] UI-TC-478: Clicking `Generate Teams` a second time renders a visibly different pair set: at least some swimmers are paired with different partners than in the first click, and at least some totals differ from the first click.
+- [ ] UI-TC-479: Clicking `Generate Teams` a third and fourth time continues to produce visibly varying pair sets. Over 4 clicks the user sees at least 3 distinct pair configurations in the rendered Heat Builder table (acknowledged finite rotation × reverse space for small rosters may cause occasional collisions).
+- [ ] UI-TC-480: The Shuffle button beside Generate Teams continues to work as an explicit re-randomise action — pressing Shuffle after a Generate produces another visibly different pair set.
+- [ ] UI-TC-481: Balance intent is preserved: Brace pairs are still fastest+slowest-style; 25m Team Relay keeps snake distribution. Totals vary but each pair stays plausible (no team of the slowest 3 swimmers, no pair with two fastest).
+
+#### O.2 Issue A verification — pre-Confirm Shuffle works without clicking Confirm Teams (UI-TC-482)
+- [ ] UI-TC-482: Starting from a fresh Generate click on 50m Brace Relay, the user clicks Shuffle TWICE in a row WITHOUT ever clicking Confirm Teams. Both shuffle-clicks render a visibly different pair set in the Heat Builder table. The three buttons (`Generate Teams`, `Shuffle`, `Confirm Teams`) remain visible across all shuffle actions, confirming the UI is still in unconfirmed state. Bryan's 2026-04-23 note "shuffle only works after you confirm the heats" is therefore NOT reproducible in v2.8.10.
+
+#### O.3 R30 — 25m Team Relay swim-twice-picker restricted to team members (UI-TC-483 to UI-TC-485)
+- [ ] UI-TC-483: On Heat Builder → `25m Team Relay` with 7 present swimmers, the generator produces 2 teams; one of them is undersized (3 members) and displays a Swim-twice dropdown `— Select swimmer —` on the missing leg.
+- [ ] UI-TC-484: The dropdown on the 3-member team contains EXACTLY those three swimmers' names (alphabetical). It does NOT contain the four members of the other team, and it does NOT contain all 7 present swimmers.
+- [ ] UI-TC-485: If a second team is also undersized, its dropdown also shows only its own members. Each team's dropdown is fully scoped to that team's roster. The previous v2.8.4 Bryan fix 4 behaviour (all present attendees) is reversed for 25m Team Relay only; Medley Relay's wider swim-twice pool (drawn from `hbAttendance`) is untouched.
+
+#### O.4 R31 — View Event Report popup opens without JS crash (UI-TC-486 to UI-TC-488)
+- [ ] UI-TC-486: On Season Calendar → click a completed event tile → the Event Details modal opens with Participants, Races, Record Breakers summary sections and a prominent `📄 View Event Report` button.
+- [ ] UI-TC-487: Clicking `📄 View Event Report` triggers a new browser popup containing the full Event Report HTML (title `Event Report`, meta line, Participants table, one card per race, optional Record Breakers table). No browser alert appears.
+- [ ] UI-TC-488: Specifically, the pre-v2.8.10 alert `Cannot read properties of null (reading 'id')` does NOT appear. 0 console errors after the click. The report loads for any completed event id.
+
+#### O.5 R31 Regression — Results-screen "Season Report" path still works (UI-TC-489)
+- [ ] UI-TC-489: Navigating through Results → selecting an event → triggering `showSeasonReport()` without a direct eventId argument continues to work because the function falls back to the file-scope `resEvent.id`. No behaviour change for the original Results-screen report export.
+
+#### O.6 Regression — Medley Relay generation remains deterministic (UI-TC-490)
+- [ ] UI-TC-490: On Heat Builder → `Medley Relay` with 7 present swimmers, clicking `Generate Teams` twice renders the SAME team layout both times (Team 1: Andrew(Back)/Ben(Breast)/Bryan(Free), Team 2: David+Diane+Felicia, Team 3 leftover). Medley is deliberately outside v2.8.10 randomness scope (no Bryan complaint, different stroke-bucket assignment logic) — unchanged behaviour is the expected result.
+
+#### O.7 Cache-bust and version sync (UI-TC-491 to UI-TC-493)
+- [ ] UI-TC-491: `package.json` reports `"version": "2.8.10"`. `src/public/index.html` cache-bust parameters on all script/link tags read `?v=2.8.10`. Both are covered by the first commit on the v2.8.10 branch (`1a04e9b chore: version bump to v2.8.10`).
+- [ ] UI-TC-492: After a Node server restart, `/api/version` returns `{ "version": "2.8.10", "build": "<ISO-timestamp>" }`. Sidebar version badge renders `v2.8.10` on every screen.
+- [ ] UI-TC-493: Live `/api/version` will report `2.8.10` after Balerion has deployed to Render — this live-system check is the post-deploy smoke test and is NOT asserted by this protocol directly.

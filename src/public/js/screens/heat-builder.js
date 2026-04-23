@@ -340,7 +340,7 @@ function renderRelayContent() {
   buttons += '<h2 style="margin:0">' + raceLabel + '</h2><div class="toolbar-spacer"></div>';
 
   if (!hbRelayConfirmed) {
-    buttons += '<button class="btn btn-primary" onclick="generateHBRelayTeams()">' + tooltip('Creates balanced relay teams from present swimmers.') + ' Generate Teams</button>';
+    buttons += '<button class="btn btn-primary" onclick="generateHBRelayTeams({ forceReshuffle: true })">' + tooltip('Creates balanced relay teams from present swimmers. Each click produces a fresh randomised pairing.') + ' Generate Teams</button>';
     if (hbRelayTeams && hbRelayTeams.length > 0) {
       buttons += ' <button class="btn btn-accent" onclick="generateHBRelayTeams({ shuffle: true, forceReshuffle: true })">' + tooltip('Re-randomize the team assignments with a fresh shuffle.') + ' Shuffle</button>';
       buttons += ' <button class="btn btn-success" onclick="confirmHBRelayTeams()">' + tooltip('Lock these teams.') + ' Confirm Teams</button>';
@@ -617,11 +617,11 @@ function renderRelayTeamsInHB(teams, race) {
           .filter(a => a.present && ['Y', 'Back', 'Breast', 'Free'].includes(a.special_event_entry))
           .map(a => ({ member_id: a.member_id, name: a.name }));
       } else if (is25mRelay) {
-        // v2.8.4 Bryan fix 4: 25m Team Relay — show ALL present attendees so user
-        // can explicitly pick any swimmer to swim twice (not just this team's members).
-        optionPool = hbAttendance
-          .filter(a => a.present)
-          .map(a => ({ member_id: a.member_id, name: a.name }));
+        // v2.8.10 Bryan reversal: restrict 25m Team Relay swim-twice picker to
+        // swimmers already in THIS team. v2.8.4 fix 4 widened it to all present
+        // attendees, but Bryan's 2026-04-23 retest explicitly corrects that —
+        // he wants to pick a swim-twice from the existing team roster only.
+        optionPool = members;
       }
       const seen = new Set();
       const memberOptions = optionPool

@@ -11,6 +11,40 @@
 
 ---
 
+## 2026-04-23 — fix: v2.8.10 Bryan 2026-04-23 retest follow-up (complete delivery)
+- **Timestamp:** 2026-04-23 07:45:00
+- **App Version (from package.json):** 2.8.10
+- **Branch:** dev/v2.8.10-bryan-retest-followup
+- **RecordedCommit:** 4015f9c
+- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.10-bryan-retest-followup`
+- **Editor:** Claude Code
+- **Bryan retest inbound (2026-04-23):** 2 points closed against v2.8.9 (Brace+Relay coexist, Shuffle randomness). Remaining feedback reclassified as:
+  - **A** — note "shuffle only works after you confirm the heats" (to verify)
+  - **B** — 25m Team Relay swim-twice dropdown shows ALL swimmers, not only this team's (regression / preference reversal)
+  - **C** — Event Report content after save is not descriptive enough (scope extension, field list needs Bryan clarification — deferred)
+  - **D** — "View Event Report" button crashes with `Cannot read properties of null (reading 'id')` (bug)
+  - **E** — Initial "Generate Teams" output looks too balanced = "not random" to Bryan (UX-design decision)
+  - Dino scope decision 2026-04-23: bundle A + B + D + E into v2.8.10; C deferred until Bryan clarifies required fields.
+- **Changes in commit 4015f9c (client-side only, no server / schema / API changes):**
+  - `src/public/js/screens/heat-builder.js`:
+    * Line 343: `Generate Teams` button onclick now passes `{ forceReshuffle: true }`. Each click produces a balanced-but-randomised pairing instead of the identical fastest+slowest baseline every time (Fix E). Shuffle button (line 345) unchanged — still an explicit re-randomise affordance.
+    * Lines 619-625: 25m Team Relay swim-twice dropdown optionPool restored to `members` (this team only). Reverses v2.8.4 Bryan fix 4 which had widened the pool to all present attendees (Fix B). Medley keeps its wider `hbAttendance`-based pool (different relay rules).
+  - `src/public/js/screens/results.js` line 637: `showSeasonReport(eventIdArg)` now accepts an optional eventId and prefers it over the file-scope `resEvent.id`. Falls back to `resEvent.id` only when no argument is given. If neither is available, alerts and returns cleanly. Root cause of the previous crash: file-scope `let resEvent = null` is NOT a window property, so `window.resEvent = { id }` in calendar.js did not reach the function (Fix D).
+  - `src/public/js/screens/calendar.js` lines 242-258: `openEventReportFromCalendar(eventId)` now calls `showSeasonReport(eventId)` directly and no longer sets/restores `window.resEvent`. Removes the redundant duplicate `fetch('/api/events/:id/report')` the old code made — `showSeasonReport` already fetches internally via `API.getEventReport` (Fix D).
+- **Browser verification on v2.8.10 Preview (port 3000):**
+  - **Fix E:** 5 consecutive Generate Teams clicks on 50m Brace Relay (7 swimmers) produced 5 distinct pair sets. Total ranges across rounds: `71/71/93/80`, `97/76/72/82`, `77/77/80/81`, `65/87/87/82`, `83/86/82/81` — clearly different pairings and totals, not the identical balanced baseline.
+  - **Issue A:** pre-Confirm Shuffle tested in Preview. 1 Generate + 3 Shuffle, all with `hbRelayConfirmed: false`, all produced different pair memberships. NOT reproducible. Likely explanation on Bryan's side: stale browser cache holding v2.8.9's first-Generate-output and later Shuffles happening to rotate to the same swimmers (finite rotation-× reverse space, especially for 7 swimmers on Brace). v2.8.10 Fix E further reduces the chance Bryan will observe any "same output twice" perception because Initial Generate is itself randomised now.
+  - **Fix B:** 25m Team Relay with 7 present swimmers → 2 teams (undersized). Team 1 swim-twice dropdown shows exactly 3 names (Ben, David, Glenne). Team 2 dropdown shows exactly 4 names (Andrew, Bryan, Diane, Felicia). Previously the dropdown would have shown all 7 present attendees.
+  - **Fix D:** `openEventReportFromCalendar(33)` against a completed event runs without exception and returns a 2549-char report HTML into the mocked `window.open`. Previously crashed with `Cannot read properties of null (reading 'id')` before producing any output.
+  - **Regression:** Medley Relay generation unchanged across 2 Generate-with-forceReshuffle clicks — same three-team layout with Glenne(Back) as the leftover. Expected (Medley has its own stroke-bucket grouping, not `distributeRoundRobin`, so `forceReshuffle` has no effect path — deliberate scope guard).
+  - `preview_console_logs` level=error after full flow: `No console logs.` — 0 console errors.
+- **Scope non-goals (deferred):**
+  - **Issue C** (Event Report content not descriptive enough) — explicit Dino decision. Bryan needs to list the fields he wants to see in the report before coding. Dino will capture this on the next Bryan back-and-forth.
+  - Medley Relay randomness, Pogo edit flow crash, Pogo T1/T2 stability, R18 Medley-Leftover policy, R20 ranking-rule doc clarification — all continue as previously documented.
+- **Test artifacts updated:**
+  - New: `USER-INTERACTION-TEST-PROTOCOL-v2.8.10.md` (Section O: Bryan 2026-04-23 retest follow-up coverage).
+- **Delivery state:** Branch `dev/v2.8.10-bryan-retest-followup` ready for Balerion to transfer into `~/wwsc-demo`, merge into `main`, and push for Render auto-deploy. `package.json=2.8.10`, cache-bust `?v=2.8.10` already in place (commit `1a04e9b`).
+
 ## 2026-04-21 — fix: v2.8.9 Bryan 2026-04-21 relay corrections (complete delivery)
 - **Timestamp:** 2026-04-21 21:15:00
 - **App Version (from package.json):** 2.8.9

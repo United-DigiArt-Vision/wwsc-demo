@@ -432,3 +432,71 @@ Die v2.8.4-Runde wurde live von Dino durchgespielt. Zwei Requirements waren trot
 - Claude hat nach der Korrektur die neue UI erneut im Browser verifiziert und dokumentiert.
 - Claude hat relevante weitere Race-Typen durchgeklickt und fehlende/uneinheitliche Header bei Bedarf mitkorrigiert.
 - Das finale Testprotokoll belegt die User-Sicht, nicht nur Code- oder DOM-Annahmen.
+
+### R29: Initial "Generate Teams" produziert randomisierte balancierte Pairings bei jedem Klick (v2.8.10 Bryan 2026-04-23 Retest)
+**Status:** 🟢 Umgesetzt in v2.8.10 (commit `4015f9c`, browser-verifiziert am 2026-04-23)
+**Kontext:** Bryan hat beim v2.8.9 Retest beobachtet, dass der initiale Klick auf "Generate Teams" im Heat Builder immer die gleiche balancierte Paarung erzeugt (fastest + slowest), und damit die Totals jedes Mal nahezu identisch aussehen. Seine Aussage: "Swimmers are random - Incorrect". Aus Bryans User-Sicht verhält sich die App dann so, als ob sie trotz Klick nichts Neues rechnet. Die Shuffle-Taste hat er selbst als "correct" bestätigt — aber er erwartet, dass **bereits der erste Generate-Klick** eine random wirkende Paarung produziert.
+**Fachliche Regel / Scope:**
+- Gilt für alle Race-Typen, bei denen Relay-Teams aus einem Schwimmer-Pool erzeugt werden (Brace 25m/50m, 25m Team Relay, Pogo). Medley Relay bleibt bewusst außerhalb (eigene Stroke-Bucket-Logik, keine Bryan-Beschwerde).
+- Die fachliche Balance-Logik bleibt erhalten: Brace bleibt fastest+slowest gepaart, 25m Team Relay bleibt snake-distribution. Nur die Eingangsliste wird vor der Paar-/Teambildung rotiert + optional reversiert, sodass die Paarungen pro Klick sichtbar anders werden.
+**Anforderung:**
+1. Der `Generate Teams`-Button schickt bei jedem Klick `forceReshuffle: true` zum Server.
+2. Der Server wendet die Rotation auf die PB-sortierte Eingabeliste an, bevor die fachliche Paar-/Teambildung läuft.
+3. Nach drei Klicks auf Generate Teams sieht der User mindestens zwei sichtbar verschiedene Paar-Konstellationen (bei 7 Schwimmern finite Rotations × Reverse Space ≈ 12 Permutationen, deshalb nicht zwingend drei Unterschiede).
+4. Die Totals der Paare variieren sichtbar (nicht immer alle in einem engen 80-82-Band).
+5. Shuffle-Button funktioniert unverändert parallel als explizite Re-Randomise-Aktion.
+**Akzeptanzkriterium:**
+- UI-Browser-Beweis: drei aufeinanderfolgende Klicks auf `Generate Teams` im 50m Brace Relay mit 7 Schwimmern erzeugen in der gerenderten Tabelle mindestens zwei verschiedene Paar-Sets.
+- Die Totals-Spalte zeigt pro Klick unterschiedliche Werte (gedeckte Spanne 65-97 in der v2.8.10-Verifikation).
+- Balance-Heuristik (Brace fastest+slowest, 25m Team Relay snake) bleibt mathematisch korrekt.
+- 0 Console-Errors während des Flows.
+- Medley Relay produziert weiterhin deterministische Teams (Scope-Guard).
+
+### R30: 25m Team Relay — Swim-twice-Picker zeigt nur Schwimmer des aktuellen Teams (v2.8.10 Bryan 2026-04-23 Retest)
+**Status:** 🟢 Umgesetzt in v2.8.10 (commit `4015f9c`, browser-verifiziert am 2026-04-23). **Revertiert v2.8.4 Bryan fix 4 explizit.**
+**Kontext:** Bryan hat beim v2.8.9 Retest festgestellt, dass in der 25m Team Relay Heat-Builder-Ansicht ein unvollständiges Team bei seinem Swim-twice-Dropdown ALLE präsenten Schwimmer zeigt, nicht nur die Mitglieder dieses Teams. Seine Aussage: "You have corrupted the selection when a team is missing a swimmer. It now displays all swimmers not just swimmers in that team." In v2.8.4 (Bryan fix 4) hatten wir den Pool bewusst geweitet, weil er damals wollte, dass er jeden Schwimmer als Swim-twice-Kandidaten auswählen kann. Beim Retest hat er diese Entscheidung explizit korrigiert: er möchte für 25m Team Relay nur die Team-Roster-Mitglieder als Auswahl.
+**Fachliche Regel / Scope:**
+- Gilt ausschließlich für `race_type === '25m_relay'`.
+- Medley Relay behält den weiteren Pool aus `hbAttendance` (stroke-basierte Pool-Logik, keine Bryan-Beschwerde).
+- Andere Race-Typen unverändert.
+**Anforderung:**
+1. Wenn ein 25m Team Relay Team als undersized markiert ist und der Swim-twice-Dropdown angezeigt wird, enthalten die Optionen ausschließlich die aktuellen Mitglieder genau dieses Teams.
+2. Die Optionen sind alphabetisch sortiert wie bisher.
+3. Die Implementation erfolgt clientseitig, keine Schema- oder API-Änderung.
+**Akzeptanzkriterium:**
+- UI-Browser-Beweis bei 7 Schwimmern, zwei Teams (Team 1 mit 3 Mitgliedern undersized, Team 2 mit 4 Mitgliedern): Dropdown in Team 1 zeigt genau die 3 Team-1-Namen, Dropdown in Team 2 zeigt genau die 4 Team-2-Namen.
+- Kein Dropdown enthält alle 7 präsenten Schwimmer gleichzeitig.
+- Medley swim-twice-Dropdown bleibt unverändert weit (scope-guard, per Code-Audit bestätigt).
+- 0 Console-Errors.
+
+### R31: Calendar — "View Event Report" öffnet das Report-Popup ohne JS-Crash (v2.8.10 Bryan 2026-04-23 Retest)
+**Status:** 🟢 Umgesetzt in v2.8.10 (commit `4015f9c`, browser-verifiziert am 2026-04-23)
+**Kontext:** Bryan hat beim v2.8.9 Retest auf "📄 View Event Report" in der Event-Details-Modal geklickt und eine Browser-Alert-Fehlermeldung erhalten: `Cannot read properties of null (reading 'id')`. Screenshot-Beleg in der Inbound-Nachricht. Root cause: `let resEvent = null;` am Anfang von `src/public/js/screens/results.js` ist ein file-scope `let`, KEINE window-Property. `src/public/js/screens/calendar.js` setzte vor dem Aufruf `window.resEvent = { id: eventId }` und rief dann `showSeasonReport()` ohne Argument — die Funktion las die file-scope-`resEvent` (weiterhin `null`) und crashte auf `resEvent.id`.
+**Fachliche Regel / Scope:**
+- Gilt für die Funktion `showSeasonReport` in `src/public/js/screens/results.js` und ihren einzigen Cross-File-Caller in `src/public/js/screens/calendar.js` (`openEventReportFromCalendar`).
+- Der bestehende Aufruf aus dem Results-Screen (`showSeasonReport()` ohne Argument, mit bereits gesetztem file-scope `resEvent`) muss weiter funktionieren.
+**Anforderung:**
+1. `showSeasonReport(eventIdArg)` akzeptiert einen optionalen `eventIdArg` und bevorzugt diesen vor `resEvent.id`.
+2. Wenn weder `eventIdArg` noch `resEvent.id` gesetzt sind, alertet die Funktion `No event selected for report.` und kehrt sauber zurück, statt auf null.id zu crashen.
+3. `openEventReportFromCalendar(eventId)` übergibt `eventId` direkt an `showSeasonReport`. Der vorherige `window.resEvent`-Hack wird entfernt.
+4. Der redundante zweite Fetch `/api/events/:id/report` in `openEventReportFromCalendar` wird entfernt — `showSeasonReport` fetcht intern schon via `API.getEventReport`.
+**Akzeptanzkriterium:**
+- UI-Browser-Beweis: Klick auf "View Event Report" im Event-Details-Modal für ein beliebiges completed Event öffnet ein Popup mit formatiertem Event-Report-HTML (min. ~2500 Zeichen, enthält Titel "Event Report" und Styles).
+- Kein Browser-Alert mit der Meldung `Cannot read properties of null (reading 'id')`.
+- 0 Console-Errors.
+- Der alte Aufrufpfad aus dem Results-Screen funktioniert unverändert (Fallback über `resEvent.id`).
+
+### R32: Event Report Content Scope — Feldliste mit Bryan klären (deferred)
+**Status:** 🕳 Deferred — Bryan-Antwort steht aus. Keine Code-Umsetzung in v2.8.10.
+**Kontext:** Bryan hat beim v2.8.9 Retest erklärt: "The report after saving is not very descriptive. Need all the information exactly the same as what is recorded in the event we need to review any results." Der aktuelle Report enthält Event-Header, Participants, Per-Race Sections, Record Breakers. Bryan möchte mehr — er hat aber nicht spezifiziert, welche Felder ihm fehlen.
+**Fachliche Regel / Scope:**
+- Keine Code-Umsetzung bis Bryan die konkrete Feldliste liefert.
+- Die v2.8.10 Bryan-Antwort (`messages/2026-04-23-outgoing-to-bryan-v2810-response.md`) stellt die konkreten Fragen: Per Race welche Spalten, Heat-by-Heat oder konsolidiert, Times-Sheet Snapshot, Attendance-Detail, sonstige Felder.
+**Anforderung:**
+1. Dino erhält von Bryan eine klare Feldliste (z.B. als Bullet-Liste oder Tabellen-Skizze).
+2. Danach erstellt Claude ein konkretes R32.1/R32.2/... Sub-Requirements-Set mit akzeptanzfähigen Kriterien pro Feld.
+3. Implementation erfolgt in einem separaten Release (mindestens v2.8.11 oder v2.9.0, je nach Scope-Umfang).
+**Akzeptanzkriterium (vorläufig):**
+- Bryan-Antwort-Draft v2.8.10 enthält die konkrete Feld-Frage-Liste.
+- Sobald Bryan geantwortet hat, wird R32 in handhabbare Sub-Requirements aufgeteilt.
+- Kein Code-Change in v2.8.10 für diese Anforderung — nur Dokumentation des Scope-Gaps.

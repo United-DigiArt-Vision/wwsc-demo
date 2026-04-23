@@ -1,9 +1,9 @@
-# PROGRESS — WWSC Swimming App v2.8.9
+# PROGRESS — WWSC Swimming App v2.8.10
 
 ## 🎯 AKTUELLER STATUS
-Phase: 14 — Bryan 2026-04-21 Relay-Korrekturen auf Basis von v2.8.8
-Schritt: v2.8.9 ist auf `dev/v2.8.9-bryan-relay-randomness` **vollständig implementiert und browser-verifiziert**. Alle drei Bryan-Punkte gelöst: (1) Brace behält Standard 25m Relay (event-setup.js), (2) Shuffle-Button leitet `forceReshuffle` bis zum Server durch (api.js + heat-builder.js), (3) Brace-Pairing in server.js nutzt jetzt dieselbe Rotation wie `distributeRoundRobin`, sodass wiederholte Shuffles sichtbar verschiedene Paarungen und Totals liefern. RecordedCommit: `004d70f`. Browser-Evidenz im Preview (8 Shuffle-Runden mit sichtbar verschiedenen Paaren/Totals, 0 Console Errors, 25m Team Relay Shuffle grün, Medley bewusst unverändert). Delivery bereit für Balerion-Handoff → Render-Auto-Deploy.
-Blockiert: Nein
+Phase: 15 — Bryan 2026-04-23 v2.8.9 Retest-Follow-up → v2.8.10 Delivery
+Schritt: v2.8.10 ist auf `dev/v2.8.10-bryan-retest-followup` **vollständig implementiert und browser-verifiziert** (RecordedCommit `4015f9c`, Version-Bump `1a04e9b`). Bryans Retest-Bilanz: 2 v2.8.9-Punkte bestätigt gelöst (Brace+Relay, Shuffle-Randomness). 4 weitere Themen in v2.8.10 adressiert: (B) 25m Team Relay Swim-Twice-Dropdown zeigt jetzt nur Team-Members (v2.8.4 Bryan fix 4 widerrufen), (D) View Event Report Null-Ref-Crash behoben durch optionalen `eventIdArg` in `showSeasonReport`, (E) Initial Generate Teams wendet jetzt auch Random-Rotation an — jeder Click liefert frische Paarungen. Issue A ("shuffle only works after confirm") war in v2.8.10 nicht reproduzierbar — vermutlich Bryan-Cache-Artefakt in v2.8.9. Issue C (Event Report Inhalt) bewusst deferred bis Bryan die gewünschten Felder nennt. Delivery bereit für Balerion-Handoff → Render-Auto-Deploy.
+Blockiert: Nein — offene Seite ist Balerion-Deployment und danach Bryans nächster Retest + Scope-Rückfrage zu Issue C.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] Phase 0: Workspace & State Verifikation (`git fetch`, Hard Reset auf `origin/main` - Stand v2.7.4).
@@ -22,9 +22,30 @@ Blockiert: Nein
 - [x] Ergebnis dieser Runde: UI weiterhin instabil, daher Übergabe an Claude Code vorbereitet statt weitere unstrukturierte Patches.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Balerion-Handoff — Branch `dev/v2.8.9-bryan-relay-randomness` (tip nach SSOT-Sync-Commit) in `~/wwsc-demo` übernehmen, in `main` mergen, Render-Auto-Deploy abwarten, Live-`/api/version` auf `2.8.9` verifizieren, dann die drei Bryan-Punkte am Live-System smoketesten. Danach: Bryan-Antwort aus `messages/2026-04-21-outgoing-to-bryan-v289-response.md` durch Dino senden lassen.
+Was: Balerion-Handoff — Branch `dev/v2.8.9-bryan-relay-randomness` (tip `e4152ba` nach SSOT-Sync-Commit) in `~/wwsc-demo` übernehmen, in `main` mergen, Render-Auto-Deploy abwarten, Live-`/api/version` auf `2.8.9` verifizieren, dann die drei Bryan-Punkte am Live-System smoketesten. Bryan-Antwort ist bereits gesendet (2026-04-21 ~21:52) — ab Deploy ist Bryan frei, die drei Punkte live zu retesten und zu antworten.
 Datei lesen: `messages/2026-04-21-Claude-To-Balerion-v289-Bryan-Relay-Randomness.md`, `messages/2026-04-21-outgoing-to-bryan-v289-response.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `USER-INTERACTION-TEST-PROTOCOL-v2.8.9.md`, `STABLE.md`.
-Kriterium fertig: v2.8.9 live auf Render. Bryan hat Antwort von Dino erhalten. Bryan's Live-Retest der drei Punkte kann starten.
+Kriterium fertig: v2.8.9 live auf Render + Bryan's Retest-Antwort im `messages/` Ordner dokumentiert.
+
+## 📬 BRYAN KOMMUNIKATION
+- **v2.8.9 Inbound (2026-04-21):** 3 Issues + Meta-Feedback (Pace, Pointscore).
+- **v2.8.9 Outbound (2026-04-21 ~21:52):** gesendet. `messages/2026-04-21-outgoing-to-bryan-v289-response.md`.
+- **v2.8.9 Retest Inbound (2026-04-23):** `messages/2026-04-23-Bryan-inbound-v289-retest-feedback.md`. 2 bestätigt, 5 neue Themen.
+- **v2.8.10 Outbound:** Draft liegt in `messages/` und wird nach Balerion-Deploy durch Dino gesendet.
+
+## 🎯 BRYAN 2026-04-23 ISSUE-KATALOG & STATUS (v2.8.10)
+
+| # | Bryan Observation | Status | Commit |
+|---|-------------------|--------|--------|
+| A | "shuffle only works after confirm the heats" | ✅ Nicht reproduzierbar in v2.8.10 — Bryan's Beobachtung vermutlich Cache-Artefakt, Fix E reduziert die Wahrnehmung weiter | — (verifiziert, kein Code-Change) |
+| B | 25m Team Relay swim-twice Dropdown zeigt alle Schwimmer | ✅ Gelöst — `heat-builder.js:619-625` auf `optionPool = members` zurückgesetzt, v2.8.4 Bryan fix 4 widerrufen | `4015f9c` |
+| C | Event Report nach Save nicht descriptiv genug | ⏸ Deferred — wartet auf Bryan field-level Scope-Klärung | — (out of scope) |
+| D | "View Event Report" crash "null reading id" | ✅ Gelöst — `showSeasonReport(eventIdArg)` nimmt optionalen eventId, `openEventReportFromCalendar` übergibt direkt | `4015f9c` |
+| E | Initial Generate wirkt nicht random | ✅ Gelöst — `heat-builder.js:343` Generate-Button sendet jetzt auch `forceReshuffle: true`, jeder Click erzeugt neue Paarung | `4015f9c` |
+
+## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
+Was: Balerion-Handoff — Branch `dev/v2.8.10-bryan-retest-followup` (tip nach SSOT-Sync) in `~/wwsc-demo` übernehmen, in `main` mergen, Render-Auto-Deploy abwarten, Live-`/api/version` auf `2.8.10` prüfen, dann die 4 v2.8.10-Punkte (B/D/E + A-Verifikation) am Live-System smoketesten. Danach: Bryan-Response-Draft (messages/2026-04-23-outgoing-to-bryan-v2810-response.md) durch Dino senden lassen.
+Datei lesen: `messages/2026-04-23-Claude-To-Balerion-v2810-Bryan-Retest-Followup.md`, `messages/2026-04-23-outgoing-to-bryan-v2810-response.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `USER-INTERACTION-TEST-PROTOCOL-v2.8.10.md`, `STABLE.md`.
+Kriterium fertig: v2.8.10 live auf Render + Bryan-Response gesendet + Bryan's nächste Antwort auf Issue C (Event Report Inhalt) im `messages/` Ordner dokumentiert.
 
 ## ⚠️ OFFENE PUNKTE / BLOCKER
 - **Bryan 2026-04-21, Punkt 1:** ✅ GELÖST in v2.8.9 (commit `6069347`, `event-setup.js`). Browser-verifiziert: 50m Brace + 25m Freestyle + 25m Team Relay alle im Heat Builder sichtbar.
