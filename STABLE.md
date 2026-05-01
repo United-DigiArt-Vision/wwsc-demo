@@ -4,7 +4,7 @@
 - **Version:** v2.8.11
 - **Tag:** v2.8.11
 - **Branch:** main
-- **Current main tip:** 0dcad22 (`merge: v2.8.11 Bryan polish pass`)
+- **Current main tip:** dynamic — run `git rev-parse --short HEAD` on `main` / `origin/main`
 - **Version bump commit:** 4001276
 - **Implementation commit:** 272bd45
 - **Merge commit:** 0dcad22

@@ -5,7 +5,7 @@
 **BaseCommit:** 99d4903 (`merge: v2.8.10 bryan retest follow-up`)
 **TargetBranch:** main / origin/main
 **Branch:** main
-**Current main tip:** 0dcad22 (`merge: v2.8.11 Bryan polish pass`)
+**Current main tip:** dynamic — run `git rev-parse --short HEAD` on `main` / `origin/main`
 **Tag:** v2.8.11
 **Version bump commit:** 4001276 (`release: bump to v2.8.11 for Bryan polish pass`)
 **Implementation commit:** 272bd45 (`fix: v2.8.11 Bryan polish feedback`)
@@ -14,7 +14,7 @@
 **LastEditor:** Balerion
 **Date:** 2026-05-01
 **Timestamp:** 2026-05-01 04:34:00
-**WorkingTreeStatus:** released on `main`, pushed to GitHub, deployed live on Render
+**WorkingTreeStatus:** released on `main`, pushed to GitHub, deployed live on Render; post-release docs commit pushed after merge
 **Live deploy on Render:** ✅ live verified
 **Live `/api/version`:** `{"version":"2.8.11","build":"2026-05-01T02:30:30.787Z"}`
 **Version SSOT:** `package.json`
