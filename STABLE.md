@@ -8,6 +8,17 @@
 - **RecordedCommit:** 497f78d
 - **Date:** 2026-04-18
 
+
+## In-flight (prepared, awaiting Dino review / merge / deploy)
+- **Version:** v2.8.11
+- **Branch:** `dev/v2.8.11-bryan-polish`
+- **Version bump commit:** `4001276`
+- **RecordedCommit:** `272bd45`
+- **Date:** 2026-05-01
+- **Scope:** Bryan 2026-05-01 tight polish pass: clean Relay pre-generation state, consistent/prominent print headings, remove `(decides ranking)`, Event Report Special Entry `N` instead of `—` for present/null swimmers.
+- **Verification:** `USER-INTERACTION-TEST-SPEC-v2.8.11.md` = 75 test cases; `USER-INTERACTION-TEST-PROTOCOL-v2.8.11.md` = 56 PASS / 0 FAIL with screenshots in `docs/screenshots/v2.8.11-bryan/`.
+- **Release status:** not live until Dino merges/pushes/deploys and `/api/version` verifies `2.8.11`.
+
 ## In-flight (prepared, awaiting Balerion deployment)
 - **Version:** v2.8.10
 - **Branch:** `dev/v2.8.10-bryan-retest-followup`
