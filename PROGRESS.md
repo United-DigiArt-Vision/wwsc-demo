@@ -2,8 +2,8 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: 17 — Bryan v2.8.10 Retest-Feedback → v2.8.11 Polish Pass
-Schritt: v2.8.11 ist auf `dev/v2.8.11-bryan-polish` implementiert und lokal browser-/CDP-verifiziert. Bryans 2026-05-01 Feedback wurde eng umgesetzt: clean Relay pre-generation display, Print heading consistency/prominence, remove `(decides ranking)`, Event Report Special Entry `N` instead of `—` for present/null swimmers.
-Blockiert: Nein für Implementierung/Test. Noch nicht live/deployed; Dino review/merge/deploy bleibt Gate.
+Schritt: v2.8.11 ist implementiert, getestet, in `main` gemergt, als `v2.8.11` getaggt, zu GitHub gepusht und live auf Render verifiziert. Bryan-Reply-Draft liegt bereit.
+Blockiert: Nein für diese Delivery. Nächster externer Schritt: Dino sendet/prüft Bryan-Nachricht.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] Bryan inbound 2026-05-01 archiviert: `../messages/2026-05-01-Bryan-inbound-v2810-retest-feedback.md`.
@@ -16,12 +16,16 @@ Blockiert: Nein für Implementierung/Test. Noch nicht live/deployed; Dino review
 - [x] Implementation commit: `272bd45` (`fix: v2.8.11 Bryan polish feedback`).
 - [x] Automated/browser-assisted protocol: `USER-INTERACTION-TEST-PROTOCOL-v2.8.11.md` — 56 PASS / 0 FAIL.
 - [x] Screenshot evidence: `docs/screenshots/v2.8.11-bryan/`.
-- [x] Local test DB restored after verification.
+- [x] Local verification rerun by Balerion: 56 PASS / 0 FAIL.
+- [x] Merge to main: `0dcad22` (`merge: v2.8.11 Bryan polish pass`).
+- [x] Git tag pushed: `v2.8.11`.
+- [x] Render live verification: `/api/version` returned `2.8.11`, build `2026-05-01T02:30:30.787Z`.
+- [x] Live browser snapshot: sidebar shows `v2.8.11` and matching build timestamp.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Dino reviewen lassen. Wenn Dino OK gibt: Branch in `main` mergen, pushen, Render deploy abwarten, live `/api/version` auf `2.8.11` verifizieren, dann Bryan-Reply-Draft erstellen.
-Dateien lesen: `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `USER-INTERACTION-TEST-PROTOCOL-v2.8.11.md`, `../messages/2026-05-01-Bryan-inbound-v2810-retest-feedback.md`.
-Kriterium fertig: v2.8.11 live auf Render + `/api/version=2.8.11` + finaler Bryan-Text an Dino.
+Was: Dino kann Bryan die vorbereitete Nachricht senden.
+Datei: `../messages/2026-05-01-outgoing-to-bryan-v2811-live.md`.
+Kriterium fertig: Bryan hat Nachricht erhalten; nächste Bryan-Antwort in `../messages/` archivieren und gegen v2.8.11 klassifizieren.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Nicht gestartet: Pointscore/M3.
@@ -30,7 +34,8 @@ Kriterium fertig: v2.8.11 live auf Render + `/api/version=2.8.11` + finaler Brya
 - Bestehende größere Pogo/Architecture-Themen bleiben separat und nicht Teil dieses engen v2.8.11 Polish Pass.
 
 ## 📊 FORTSCHRITT
-Gesamt: 10/10 Implementierung/Test für aktuellen v2.8.11 Scope
+Gesamt: 10/10 Implementierung/Test/Deploy für aktuellen v2.8.11 Scope
 Test Spec: 75 Cases
 Automated/browser-assisted Checks: 56 PASS / 0 FAIL
 Syntax Checks: PASS (`server.js`, `heat-builder.js`, `results.js`, `scripts/verify-v2811-ux.mjs`)
+Live Deploy: PASS (`/api/version=2.8.11`)

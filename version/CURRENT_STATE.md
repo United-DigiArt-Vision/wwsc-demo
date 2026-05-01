@@ -3,24 +3,28 @@
 **Version (from `package.json`):** 2.8.11
 **BaseBranch:** main / origin/main
 **BaseCommit:** 99d4903 (`merge: v2.8.10 bryan retest follow-up`)
-**TargetBranch:** dev/v2.8.11-bryan-polish
-**Branch:** dev/v2.8.11-bryan-polish
-**Current branch tip:** dynamic — run `git rev-parse --short HEAD` on branch `dev/v2.8.11-bryan-polish`
+**TargetBranch:** main / origin/main
+**Branch:** main
+**Current main tip:** 0dcad22 (`merge: v2.8.11 Bryan polish pass`)
+**Tag:** v2.8.11
 **Version bump commit:** 4001276 (`release: bump to v2.8.11 for Bryan polish pass`)
-**RecordedCommit:** 272bd45 (`fix: v2.8.11 Bryan polish feedback`)
+**Implementation commit:** 272bd45 (`fix: v2.8.11 Bryan polish feedback`)
+**Verification screenshots commit:** 7c643d2 (`docs: refresh v2.8.11 verification screenshots`)
+**Merge commit:** 0dcad22 (`merge: v2.8.11 Bryan polish pass`)
 **LastEditor:** Balerion
 **Date:** 2026-05-01
-**Timestamp:** 2026-05-01 04:25:00
-**WorkingTreeStatus:** implementation committed; SSOT docs update pending/finalizing
-**Live deploy on Render:** not deployed; production still expected to be v2.8.10 until merge/push/deploy
+**Timestamp:** 2026-05-01 04:34:00
+**WorkingTreeStatus:** released on `main`, pushed to GitHub, deployed live on Render
+**Live deploy on Render:** ✅ live verified
+**Live `/api/version`:** `{"version":"2.8.11","build":"2026-05-01T02:30:30.787Z"}`
 **Version SSOT:** `package.json`
-**Release Anchors:** `STABLE.md`, Git Tag when released, `/api/version`, `src/public/index.html?v=2.8.11`
+**Release Anchors:** `STABLE.md`, Git tag `v2.8.11`, `/api/version`, `src/public/index.html?v=2.8.11`
 
 ## Scope of v2.8.11
 
 Focused Bryan 2026-05-01 v2.8.10 retest polish pass. This is not Pointscore/M3 and does not expand scope beyond the five feedback items.
 
-### Changes in commit `272bd45`
+### Changes released
 
 - `src/public/js/screens/heat-builder.js`
   - 25m Team Relay pre-generation state now stays clean: no `0/0 teams complete` banner, no unassigned swimmer pool, no Add Team button before any teams exist.
@@ -46,19 +50,22 @@ Focused Bryan 2026-05-01 v2.8.10 retest polish pass. This is not Pointscore/M3 a
   - `node --check src/public/js/screens/results.js`
   - `node --check scripts/verify-v2811-ux.mjs`
 - Runtime/browser-assisted verification:
-  - Local app started on `http://127.0.0.1:3000` after `npm rebuild better-sqlite3` fixed local native-module architecture.
+  - Local app started on `http://127.0.0.1:3000`.
   - `node scripts/verify-v2811-ux.mjs`
   - Result: 56 PASS / 0 FAIL.
-- Test DB mutation was restored from pre-test backup after verification.
+- Live verification:
+  - GitHub push: `main 99d4903..0dcad22`, tag `v2.8.11`.
+  - Render `/api/version` changed from `2.8.10` to `2.8.11` at build `2026-05-01T02:30:30.787Z`.
+  - Browser snapshot confirmed live UI sidebar shows `v2.8.11` and `Build: 2026-05-01T02:30:30.787Z`.
 
 ## Current delivery status
 
-- v2.8.11 is implemented and tested on branch `dev/v2.8.11-bryan-polish`.
-- Not pushed/deployed by Balerion. Dino review/merge/deploy remains the release gate.
+- v2.8.11 is live on Render.
+- Bryan reply draft prepared in `../messages/2026-05-01-outgoing-to-bryan-v2811-live.md`.
 
 ## Rules
 
 - `package.json` is the only SSOT for semantic version numbers.
-- `CURRENT_STATE.md` records the delivery anchor (`RecordedCommit`) plus working-tree state. It does not freeze a static HEAD hash.
-- `version/CHANGELOG.md` must reflect the same RecordedCommit / Branch / Version for the corresponding delivery.
+- `CURRENT_STATE.md` records the delivery anchor plus working-tree state.
+- `version/CHANGELOG.md` must reflect the same release / branch / version for the corresponding delivery.
 - If version changes, `package.json`, cache-busting in `src/public/index.html`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, and release anchors must stay in sync.

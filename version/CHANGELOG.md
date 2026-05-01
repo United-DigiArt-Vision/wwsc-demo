@@ -14,10 +14,12 @@
 ## 2026-05-01 — fix: v2.8.11 Bryan 2026-05-01 polish feedback
 - **Timestamp:** 2026-05-01 04:25:00
 - **App Version (from package.json):** 2.8.11
-- **Branch:** dev/v2.8.11-bryan-polish
-- **RecordedCommit:** 272bd45
+- **Branch:** main / origin/main (released via `dev/v2.8.11-bryan-polish`)
+- **RecordedCommit:** 0dcad22 (`merge: v2.8.11 Bryan polish pass`)
+- **Implementation commit:** 272bd45
 - **Version bump commit:** 4001276
-- **Current branch tip:** dynamic — `git rev-parse --short HEAD` on `dev/v2.8.11-bryan-polish`
+- **Git Tag:** v2.8.11
+- **Live Render Build:** `2026-05-01T02:30:30.787Z`
 - **Editor:** Balerion
 - **Bryan inbound (2026-05-01):** Bryan reviewed latest delivered v2.8.10 (message label says "V2.1.10", interpreted as typo) and said this section is "very close". Randomness looks OK on surface. Remaining feedback: Relay selection display looks odd before generation; Print headings need consistent look/font and more prominence; 25m Relay should remove `(decides ranking)` wording; Event Report shows Andrew Barnes as `—` under Special Entry even though Times Sheet effectively shows `N`.
 - **Changes in commit `272bd45`:**
@@ -31,7 +33,7 @@
   - Evidence screenshots: `docs/screenshots/v2.8.11-bryan/01-pre-generation-relay-clean.png`, `02-generated-relay-teams.png`, `03-print-media-relay-headings.png`, `04-results-no-decides-ranking.png`, `05-report-special-entry-n.png`.
   - Local native module issue during verification: `better-sqlite3` was x86_64 in local `node_modules`; fixed with `npm rebuild better-sqlite3`. Test DB was backed up and restored after verification.
 - **Scope non-goals:** No Pointscore/M3 work. No new Event Report field expansion beyond the Special Entry display bug. Larger Pogo/architecture items remain out of scope.
-- **Delivery state:** Implemented and tested locally on branch `dev/v2.8.11-bryan-polish`. Not pushed/deployed by Balerion; Dino review/merge/deploy remains the gate.
+- **Delivery state:** Released. Merged to `main` as `0dcad22`, pushed to GitHub with tag `v2.8.11`, and live Render `/api/version` verified `2.8.11` / build `2026-05-01T02:30:30.787Z`.
 
 ## 2026-04-23 — fix: v2.8.10 Bryan 2026-04-23 retest follow-up (complete delivery)
 - **Timestamp:** 2026-04-23 07:45:00
