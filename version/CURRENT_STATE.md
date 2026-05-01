@@ -14,7 +14,7 @@
 **LastEditor:** Balerion
 **Date:** 2026-05-01
 **Timestamp:** 2026-05-01 04:56:00
-**WorkingTreeStatus:** released on `main`, pushed to GitHub, deployed live on Render; Dino has sent v2.8.11 reply to Bryan; waiting for Bryan response
+**WorkingTreeStatus:** released on `main`, pushed to GitHub, deployed live on Render; Dino has sent v2.8.11 reply to Bryan; waiting for Bryan response. Post-delivery retrospective evidence docs are committed locally and not pushed/deployed.
 **Live deploy on Render:** ✅ live verified
 **Live `/api/version`:** `{"version":"2.8.11","build":"2026-05-01T02:30:30.787Z"}`
 **Version SSOT:** `package.json`
@@ -41,6 +41,21 @@ Focused Bryan 2026-05-01 v2.8.10 retest polish pass. This is not Pointscore/M3 a
   - `USER-INTERACTION-TEST-PROTOCOL-v2.8.11.md` — 56 automated/browser-assisted checks, 56 PASS / 0 FAIL.
   - `docs/screenshots/v2.8.11-bryan/` — 5 screenshot evidence files.
   - `scripts/verify-v2811-ux.mjs` — repeatable CDP verification script.
+
+## Retrospective Browser-E2E audit (after V0006 v5.4/v5.5)
+
+Dino asked on 2026-05-01 whether WWSC v2.8.11 had all necessary tests including evidence under the new Browser-E2E standard. Audit result:
+
+- Existing v2.8.11 evidence: 75-case UI test spec, 56/56 automated/browser-assisted checks, screenshot evidence.
+- Gap found: existing run was CDP/browser-assisted, not explicit Playwright/installed-Chrome Browser-E2E under the new standard.
+- Added retrospective Playwright Browser-E2E against v2.8.11: 23/23 PASS.
+- Post-delivery evidence commit: `docs: add v2.8.11 retrospective browser e2e evidence` — local docs/test-evidence commit, not pushed/deployed.
+- Script: `scripts/e2e-v2811-browser-playwright.cjs`.
+- Audit: `docs/evidence/WWSC-v2.8.11-test-audit-after-V0006-v5.4.md`.
+- Evidence: `docs/evidence/WWSC-v2.8.11-retrospective-browser-e2e-evidence.md`.
+- Raw log: `docs/evidence/WWSC-v2.8.11-retrospective-browser-e2e-raw.log`.
+- Screenshots: `docs/screenshots/v2.8.11-browser-e2e-retro/`.
+- Local DB was backed up before test and restored after test.
 
 ## Verification
 

@@ -1,0 +1,28 @@
+PASS WWSC-E2E-001 /api/version is {"version":"2.8.11","build":"2026-05-01T05:03:39.148Z"}
+PASS WWSC-E2E-002 25m Team Relay test race exists
+PASS WWSC-E2E-003 sidebar/body shows v2.8.11 after page load
+PASS WWSC-E2E-004 navigated to Heat Builder via click
+PASS WWSC-E2E-005 25m Team Relay selected
+PASS WWSC-E2E-006 Generate Teams is clear next action before generation
+PASS WWSC-E2E-007 no confusing 0/0 teams complete banner before generation
+PASS WWSC-E2E-008 no unassigned swimmer pool before generation
+PASS WWSC-E2E-009 no Add Team control before generation
+PASS WWSC-E2E-010 teams generated via click
+PASS WWSC-E2E-011 team total/target remain visible
+PASS WWSC-E2E-012 relay print headings consistent: 18px/900, 18px/900, 18px/900
+PASS WWSC-E2E-013 relay print headings prominent enough
+PASS WWSC-E2E-014 page heading hierarchy preserved h1=20px h2=16px
+PASS WWSC-E2E-015 Results screen reached via confirm=click, resultsNav=click
+PASS WWSC-E2E-016 variance row remains visible
+PASS WWSC-E2E-017 removed decides ranking wording is absent
+PASS WWSC-E2E-018 relay placing still visible
+PASS WWSC-E2E-019 Andrew Barnes report row renders N: Andrew Barnes	N
+PASS WWSC-E2E-020 Andrew Barnes report row does not render dash
+PASS WWSC-E2E-021 Event Report keeps Special Entry column visible
+PASS WWSC-E2E-022 Event Report has no visible undefined/null/NaN
+CONSOLE_ERRORS_RAW [
+  "Failed to load resource: the server responded with a status of 404 (Not Found)"
+]
+PASS WWSC-E2E-023 relevant browser console/page errors: 0 (raw: 1)
+
+SUMMARY 23/23 PASS, 0 FAIL
