@@ -2,8 +2,8 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: 17 — Bryan v2.8.10 Retest-Feedback → v2.8.11 Polish Pass
-Schritt: v2.8.11 ist implementiert, getestet, in `main` gemergt, als `v2.8.11` getaggt, zu GitHub gepusht und live auf Render verifiziert. Bryan-Reply-Draft liegt bereit.
-Blockiert: Nein für diese Delivery. Nächster externer Schritt: Dino sendet/prüft Bryan-Nachricht.
+Schritt: v2.8.11 ist implementiert, getestet, in `main` gemergt, als `v2.8.11` getaggt, zu GitHub gepusht und live auf Render verifiziert. Dino hat die v2.8.11-Antwort an Bryan gesendet; Screenshots und tatsächlicher Sendestand sind im `messages/` Ordner archiviert.
+Blockiert: Nein für diese Delivery. Ball liegt bei Bryan — warten auf seine Antwort / Retest-Reaktion.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] Bryan inbound 2026-05-01 archiviert: `../messages/2026-05-01-Bryan-inbound-v2810-retest-feedback.md`.
@@ -21,11 +21,14 @@ Blockiert: Nein für diese Delivery. Nächster externer Schritt: Dino sendet/pr�
 - [x] Git tag pushed: `v2.8.11`.
 - [x] Render live verification: `/api/version` returned `2.8.11`, build `2026-05-01T02:30:30.787Z`.
 - [x] Live browser snapshot: sidebar shows `v2.8.11` and matching build timestamp.
+- [x] Bryan reply prepared: `../messages/2026-05-01-outgoing-to-bryan-v2811-live.md`.
+- [x] Dino sent reply to Bryan; actual sent-message proof archived: `../messages/2026-05-01-outgoing-to-bryan-v2811-sent-confirmed.md` plus screenshots in `../messages/attachments/2026-05-01-v2811-sent-to-bryan-confirmation/`.
+- [x] Continuity anchor created: `../messages/2026-05-01-current-state-after-v2811-live-message-sent.md`.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Dino kann Bryan die vorbereitete Nachricht senden.
-Datei: `../messages/2026-05-01-outgoing-to-bryan-v2811-live.md`.
-Kriterium fertig: Bryan hat Nachricht erhalten; nächste Bryan-Antwort in `../messages/` archivieren und gegen v2.8.11 klassifizieren.
+Was: Auf Bryans Antwort warten. Sobald Bryan antwortet: exakten Inbound + Screenshots zuerst in `../messages/` archivieren, dann gegen v2.8.11 klassifizieren.
+Dateien zuerst lesen: `../messages/2026-05-01-current-state-after-v2811-live-message-sent.md`, `../messages/2026-05-01-outgoing-to-bryan-v2811-sent-confirmed.md`, `version/CURRENT_STATE.md`, dann Bryans neue Antwort.
+Kriterium fertig: Antwort ist archiviert und klassifiziert als Acceptance / M1 blocker / Scope expansion / Payment-boundary topic.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Nicht gestartet: Pointscore/M3.

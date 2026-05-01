@@ -13,8 +13,8 @@
 **Merge commit:** 0dcad22 (`merge: v2.8.11 Bryan polish pass`)
 **LastEditor:** Balerion
 **Date:** 2026-05-01
-**Timestamp:** 2026-05-01 04:34:00
-**WorkingTreeStatus:** released on `main`, pushed to GitHub, deployed live on Render; post-release docs commit pushed after merge
+**Timestamp:** 2026-05-01 04:56:00
+**WorkingTreeStatus:** released on `main`, pushed to GitHub, deployed live on Render; Dino has sent v2.8.11 reply to Bryan; waiting for Bryan response
 **Live deploy on Render:** ✅ live verified
 **Live `/api/version`:** `{"version":"2.8.11","build":"2026-05-01T02:30:30.787Z"}`
 **Version SSOT:** `package.json`
@@ -61,7 +61,21 @@ Focused Bryan 2026-05-01 v2.8.10 retest polish pass. This is not Pointscore/M3 a
 ## Current delivery status
 
 - v2.8.11 is live on Render.
-- Bryan reply draft prepared in `../messages/2026-05-01-outgoing-to-bryan-v2811-live.md`.
+- Dino sent the v2.8.11 reply to Bryan.
+- Actual sent-message record: `../messages/2026-05-01-outgoing-to-bryan-v2811-sent-confirmed.md`.
+- Continuity anchor: `../messages/2026-05-01-current-state-after-v2811-live-message-sent.md`.
+- Next step: wait for Bryan's response; archive first, then classify against v2.8.11.
+
+
+
+## Communication status
+
+- Bryan inbound v2.8.10 retest feedback archived: `../messages/2026-05-01-Bryan-inbound-v2810-retest-feedback.md`.
+- v2.8.11 point-by-point audit archived: `../messages/2026-05-01-bryan-v2811-point-by-point-audit.md`.
+- Dino sent v2.8.11 reply to Bryan on 2026-05-01 around 04:54–04:55 Europe/Berlin.
+- Sent proof screenshots archived under `../messages/attachments/2026-05-01-v2811-sent-to-bryan-confirmation/`.
+- Treat `../messages/2026-05-01-outgoing-to-bryan-v2811-sent-confirmed.md` as the truth for what was actually sent; the clean draft is not exact sent truth.
+- Ball is with Bryan. No further code or message until Bryan replies or Dino explicitly instructs.
 
 ## Rules
 
