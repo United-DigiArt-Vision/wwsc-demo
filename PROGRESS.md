@@ -1,76 +1,36 @@
-# PROGRESS — WWSC Swimming App v2.8.10
+# PROGRESS — WWSC Swimming App v2.8.11
 
 ## 🎯 AKTUELLER STATUS
-Phase: 15 — Bryan 2026-04-23 v2.8.9 Retest-Follow-up → v2.8.10 Delivery
-Schritt: v2.8.10 ist auf `dev/v2.8.10-bryan-retest-followup` **vollständig implementiert und browser-verifiziert** (RecordedCommit `4015f9c`, Version-Bump `1a04e9b`). Bryans Retest-Bilanz: 2 v2.8.9-Punkte bestätigt gelöst (Brace+Relay, Shuffle-Randomness). 4 weitere Themen in v2.8.10 adressiert: (B) 25m Team Relay Swim-Twice-Dropdown zeigt jetzt nur Team-Members (v2.8.4 Bryan fix 4 widerrufen), (D) View Event Report Null-Ref-Crash behoben durch optionalen `eventIdArg` in `showSeasonReport`, (E) Initial Generate Teams wendet jetzt auch Random-Rotation an — jeder Click liefert frische Paarungen. Issue A ("shuffle only works after confirm") war in v2.8.10 nicht reproduzierbar — vermutlich Bryan-Cache-Artefakt in v2.8.9. Issue C (Event Report Inhalt) bewusst deferred bis Bryan die gewünschten Felder nennt. Delivery bereit für Balerion-Handoff → Render-Auto-Deploy.
-Blockiert: Nein — offene Seite ist Balerion-Deployment und danach Bryans nächster Retest + Scope-Rückfrage zu Issue C.
+Phase: 17 — Bryan v2.8.10 Retest-Feedback → v2.8.11 Polish Pass
+Schritt: v2.8.11 ist auf `dev/v2.8.11-bryan-polish` implementiert und lokal browser-/CDP-verifiziert. Bryans 2026-05-01 Feedback wurde eng umgesetzt: clean Relay pre-generation display, Print heading consistency/prominence, remove `(decides ranking)`, Event Report Special Entry `N` instead of `—` for present/null swimmers.
+Blockiert: Nein für Implementierung/Test. Noch nicht live/deployed; Dino review/merge/deploy bleibt Gate.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
-- [x] Phase 0: Workspace & State Verifikation (`git fetch`, Hard Reset auf `origin/main` - Stand v2.7.4).
-- [x] Phase 1: PRD → `REQUIREMENTS.md` (R1 bis R20 erfasst; R17-R20 aus Acceptance ergänzt).
-- [x] Phase 2: Design Spec → `DESIGN-SPEC.md` / `docs/DESIGN_SPEC.md` (aktive + Legacy-Logiken dokumentiert; Widersprüche sichtbar gemacht).
-- [x] Phase 3a: Test-Spec-Ausbau → `USER-INTERACTION-TEST-SPEC.md` (UI-TC-1 bis UI-TC-168 vorhanden).
-- [x] Phase 4: Claude-Handoffs für R17/R20 und Konsolidierung erstellt (`messages/2026-04-10-*.md`).
-- [x] Acceptance Finding: R17 live von Dino im Browser verifiziert — 25m Brace zeigt jetzt nur noch eine 25m-Variante.
-- [x] Interim Delivery Note: Diese Verbesserung kommt in die nächste Bryan-Nachricht.
-- [x] Phase 6.5: Pre-Delivery Browser Sweep (TC-69 bis TC-168) — 99 PASS / 0 FAIL / 1 DOC-AMBIGUITY.
-- [x] Phase 6.5 gesamt (TC-01 bis TC-168): 160 PASS / 0 FAIL / 1 TEST-BUG / 1 DOC-AMBIGUITY.
-- [x] Runtime wieder online gebracht über direkten Start mit `node src/server.js` im Pfad `temp/wwsc-v280-runtime`; Test-URL war wieder erreichbar.
-- [x] Dino hat live bestätigt: Bei Pogo speichern T1/T2 für Teilnehmer 1 und 2 korrekt und getrennt.
-- [x] Pogo Variance Anzeige-Bug isoliert (renderte Team-Variance statt Swimmer-Variance). Code in `results.js` korrigiert. Test-Server läuft wieder.
-- [x] Mehrere weitere lokale Fix-Versuche durchgeführt: `Exp. Finish` Spalte ergänzt/verschoben, `Target` ergänzt, Numpad-Handler mehrfach nachgebessert.
-- [x] Ergebnis dieser Runde: UI weiterhin instabil, daher Übergabe an Claude Code vorbereitet statt weitere unstrukturierte Patches.
+- [x] Bryan inbound 2026-05-01 archiviert: `../messages/2026-05-01-Bryan-inbound-v2810-retest-feedback.md`.
+- [x] Version bump first commit: `4001276` → `package.json=2.8.11`, cache bust `?v=2.8.11`.
+- [x] 75-Case User Test Spec erstellt: `USER-INTERACTION-TEST-SPEC-v2.8.11.md`.
+- [x] Fix 1: Relay selection display before Generate Teams cleaned — no `0/0`, no unassigned pool, no Add Team before teams exist.
+- [x] Fix 2/3: Print heading consistency/prominence via stable relay print classes + CSS print hierarchy.
+- [x] Fix 4: `(decides ranking)` wording removed from variance rows.
+- [x] Fix 5: Event Report participant Special Entry defaults present/null to `N`, not `—`.
+- [x] Implementation commit: `272bd45` (`fix: v2.8.11 Bryan polish feedback`).
+- [x] Automated/browser-assisted protocol: `USER-INTERACTION-TEST-PROTOCOL-v2.8.11.md` — 56 PASS / 0 FAIL.
+- [x] Screenshot evidence: `docs/screenshots/v2.8.11-bryan/`.
+- [x] Local test DB restored after verification.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Balerion-Handoff — Branch `dev/v2.8.9-bryan-relay-randomness` (tip `e4152ba` nach SSOT-Sync-Commit) in `~/wwsc-demo` übernehmen, in `main` mergen, Render-Auto-Deploy abwarten, Live-`/api/version` auf `2.8.9` verifizieren, dann die drei Bryan-Punkte am Live-System smoketesten. Bryan-Antwort ist bereits gesendet (2026-04-21 ~21:52) — ab Deploy ist Bryan frei, die drei Punkte live zu retesten und zu antworten.
-Datei lesen: `messages/2026-04-21-Claude-To-Balerion-v289-Bryan-Relay-Randomness.md`, `messages/2026-04-21-outgoing-to-bryan-v289-response.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `USER-INTERACTION-TEST-PROTOCOL-v2.8.9.md`, `STABLE.md`.
-Kriterium fertig: v2.8.9 live auf Render + Bryan's Retest-Antwort im `messages/` Ordner dokumentiert.
+Was: Dino reviewen lassen. Wenn Dino OK gibt: Branch in `main` mergen, pushen, Render deploy abwarten, live `/api/version` auf `2.8.11` verifizieren, dann Bryan-Reply-Draft erstellen.
+Dateien lesen: `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `USER-INTERACTION-TEST-PROTOCOL-v2.8.11.md`, `../messages/2026-05-01-Bryan-inbound-v2810-retest-feedback.md`.
+Kriterium fertig: v2.8.11 live auf Render + `/api/version=2.8.11` + finaler Bryan-Text an Dino.
 
-## 📬 BRYAN KOMMUNIKATION
-- **v2.8.9 Inbound (2026-04-21):** 3 Issues + Meta-Feedback (Pace, Pointscore).
-- **v2.8.9 Outbound (2026-04-21 ~21:52):** gesendet. `messages/2026-04-21-outgoing-to-bryan-v289-response.md`.
-- **v2.8.9 Retest Inbound (2026-04-23):** `messages/2026-04-23-Bryan-inbound-v289-retest-feedback.md`. 2 bestätigt, 5 neue Themen.
-- **v2.8.10 Outbound:** Draft liegt in `messages/` und wird nach Balerion-Deploy durch Dino gesendet.
-
-## 🎯 BRYAN 2026-04-23 ISSUE-KATALOG & STATUS (v2.8.10)
-
-| # | Bryan Observation | Status | Commit |
-|---|-------------------|--------|--------|
-| A | "shuffle only works after confirm the heats" | ✅ Nicht reproduzierbar in v2.8.10 — Bryan's Beobachtung vermutlich Cache-Artefakt, Fix E reduziert die Wahrnehmung weiter | — (verifiziert, kein Code-Change) |
-| B | 25m Team Relay swim-twice Dropdown zeigt alle Schwimmer | ✅ Gelöst — `heat-builder.js:619-625` auf `optionPool = members` zurückgesetzt, v2.8.4 Bryan fix 4 widerrufen | `4015f9c` |
-| C | Event Report nach Save nicht descriptiv genug | ⏸ Deferred — wartet auf Bryan field-level Scope-Klärung | — (out of scope) |
-| D | "View Event Report" crash "null reading id" | ✅ Gelöst — `showSeasonReport(eventIdArg)` nimmt optionalen eventId, `openEventReportFromCalendar` übergibt direkt | `4015f9c` |
-| E | Initial Generate wirkt nicht random | ✅ Gelöst — `heat-builder.js:343` Generate-Button sendet jetzt auch `forceReshuffle: true`, jeder Click erzeugt neue Paarung | `4015f9c` |
-
-## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Balerion-Handoff — Branch `dev/v2.8.10-bryan-retest-followup` (tip nach SSOT-Sync) in `~/wwsc-demo` übernehmen, in `main` mergen, Render-Auto-Deploy abwarten, Live-`/api/version` auf `2.8.10` prüfen, dann die 4 v2.8.10-Punkte (B/D/E + A-Verifikation) am Live-System smoketesten. Danach: Bryan-Response-Draft (messages/2026-04-23-outgoing-to-bryan-v2810-response.md) durch Dino senden lassen.
-Datei lesen: `messages/2026-04-23-Claude-To-Balerion-v2810-Bryan-Retest-Followup.md`, `messages/2026-04-23-outgoing-to-bryan-v2810-response.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, `USER-INTERACTION-TEST-PROTOCOL-v2.8.10.md`, `STABLE.md`.
-Kriterium fertig: v2.8.10 live auf Render + Bryan-Response gesendet + Bryan's nächste Antwort auf Issue C (Event Report Inhalt) im `messages/` Ordner dokumentiert.
-
-## ⚠️ OFFENE PUNKTE / BLOCKER
-- **Bryan 2026-04-21, Punkt 1:** ✅ GELÖST in v2.8.9 (commit `6069347`, `event-setup.js`). Browser-verifiziert: 50m Brace + 25m Freestyle + 25m Team Relay alle im Heat Builder sichtbar.
-- **Bryan 2026-04-21, Punkt 2:** ✅ GELÖST in v2.8.9 (commits `6069347` + `004d70f`, `heat-builder.js` + `api.js` + `server.js`). Shuffle sendet `forceReshuffle: true`, Server reagiert mit Rotation der Input-Liste vor der Team-Bildung.
-- **Bryan 2026-04-21, Punkt 3:** ✅ GELÖST in v2.8.9 (commit `004d70f`, `server.js` Brace-Zweig). Browser-verifiziert: 8 aufeinander folgende Shuffles zeigen klar unterschiedliche Pairings und Totals (Bereich 65–97 bei 7-Schwimmer-Brace).
-- **R20 (DOC-AMBIGUITY / TC-148):** Ranking-Logik für Special Races (Brace / Medley / Pogo) — App nutzt `fastest_total_time`, Legacy-Doku sagt `nearest-to-target`. Bryan-Bestätigung erforderlich.
-- **R18:** Medley-Leftover für einzelnen gültigen Teilnehmer — Fachfrage an Bryan offen.
-- **Pogo Edit Bug:** Bereits eingetragene T1/T2 Werte lassen sich weiterhin nicht zuverlässig erneut bearbeiten; Numpad-Fenster öffnet, reagiert aber nicht sauber auf Eingaben.
-- **Pogo Table Layout Bug:** `Result` ist visuell / strukturell weiterhin nicht sauber dargestellt; mehrere Spaltenänderungen haben die Tabelle destabilisiert.
-- **Neuer kritischer Pogo-Crash-Bug:** Dino meldet jetzt zum zweiten Mal, dass sich der Browser-Tab / die App unter Pogo während echter Eingabe komplett schließt. Neues klares Repro: 7 Schwimmer gewählt → nur 1 Pogo-Team mit 4 generiert → T1 Schwimmer 1 → T2 Schwimmer 1 → T1 Schwimmer 1 korrigiert → T1 Schwimmer 2 → T2 Schwimmer 2 → Klick auf OK → Tab schließt sich komplett.
-- **Pogo Edit Flow:** Re-Edit von T1 hat diesmal funktioniert, aber der gesamte Flow ist weiterhin instabil wegen des Tab-Crashs.
-- **Release-Gate:** Keine Bryan-Auslieferung, bevor diese Acceptance-Bugs sauber behoben und live verifiziert sind.
-- **Neuer Dino-Testbefund (2026-04-17):** Auf der Results-Seite für `25m Brace Relay` wirkt die Eingabespalte für Result/Tap trotz Gruppierung weiterhin unklar bzw. "ohne richtigen Header". Das muss in der nächsten Claude-Runde als echte User-Readability-Aufgabe behandelt werden, nicht nur als Tabellenstruktur-Thema.
-- **Neuer Dino-Testbefund (2026-04-17):** Die Platzierungslogik bei `25m Brace Relay` ist fachlich korrekt nach Bryan-Regel (`smallest absolute variance wins`), wirkt aber UX-seitig potenziell missverständlich, weil die schnellste `Tap`-Zeit nicht gewinnt. Die UI muss deutlicher kommunizieren, dass `Variance` — nicht rohe `Tap` — die Platzierung bestimmt.
-- **Neuer Dino-Testbefund (2026-04-17):** Auf der Results-Seite für `Medley Relay` ist aktuell **keine sichtbare Variance-Darstellung** erkennbar. Das ist problematisch, weil Bryan ausdrücklich gesagt hat, dass bei `25m Brace`, `50m Brace`, `Pogo` **und `Medley Relay`** die kleinste Variance gewinnt. Wenn Variance die Ranking-Grundlage ist, muss sie im Medley-Results-UI auch sichtbar und nachvollziehbar sein — sonst ist die Platzierungslogik für den Nutzer nicht prüfbar.
-- **Neuer Dino-Testbefund (2026-04-17):** Auch auf der Results-Seite für `Pogo` ist aktuell **keine sichtbare Variance-Darstellung** vorhanden. Da Bryan `Pogo` ebenfalls explizit unter die Regel "smallest variance wins" gefasst hat, muss Variance in der Pogo-Results-Ansicht sichtbar und verständlich dargestellt werden. Sonst bleibt die Platzierungsgrundlage für den Nutzer intransparent.
-- **Architektur-Track (beschlossen):** Breakers / Exceedings / gemeinsame Report-Metriken müssen nach dieser Delivery in eine zentrale Datenlogik überführt werden. Das ist ausdrücklich beschlossen und darf nicht vergessen werden.
+## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
+- Nicht gestartet: Pointscore/M3.
+- Nicht erweitert: Event Report field-level content beyond the Special Entry dash bug.
+- Issue C aus v2.8.10 (Report content not descriptive enough) bleibt nur dann neuer Scope, wenn Bryan konkrete Felder nennt.
+- Bestehende größere Pogo/Architecture-Themen bleiben separat und nicht Teil dieses engen v2.8.11 Polish Pass.
 
 ## 📊 FORTSCHRITT
-Gesamt: 9.2/10 Schritte
-Unit Tests: legacy vorhanden / nicht Fokus dieser Runde
-Integration Tests: legacy vorhanden / teilweise überholt
-UI Tests: 476 spezifiziert (Section A–M)
-  - Section K (v2.8.6): 56 PASS / 0 FAIL / 0 OPEN
-  - Section L (v2.8.7): 58 PASS / 0 FAIL / 0 OPEN
-  - Section M (v2.8.8): 26 PASS / 0 FAIL / 0 OPEN
-  - Ältere Sections: zuletzt ausführlich in v2.8.5 / v2.8.6 ausgeführt
-Console Errors: 0 in v2.8.8 pre-fix+post-fix cycle (preview_console_logs level=error → "No console logs.")
+Gesamt: 10/10 Implementierung/Test für aktuellen v2.8.11 Scope
+Test Spec: 75 Cases
+Automated/browser-assisted Checks: 56 PASS / 0 FAIL
+Syntax Checks: PASS (`server.js`, `heat-builder.js`, `results.js`, `scripts/verify-v2811-ux.mjs`)

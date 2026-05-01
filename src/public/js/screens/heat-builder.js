@@ -373,7 +373,7 @@ function renderRelayContent() {
   let r27Banner = '';
   let r27UnassignedCard = '';
   let r27AddTeamBtn = '';
-  if (isR27EligibleRace(race.race_type) && !hbRelayConfirmed) {
+  if (isR27EligibleRace(race.race_type) && !hbRelayConfirmed && (hbRelayTeams || []).length > 0) {
     const totalTeams = (hbRelayTeams || []).length;
     const completeTeams = countCompleteTeams(hbRelayTeams || [], race.race_type);
     const incompleteTeams = totalTeams - completeTeams;
@@ -670,10 +670,10 @@ function renderRelayTeamsInHB(teams, race) {
     const strokeHeader = showStroke ? '<th>Stroke</th>' : '';
     const splitHeader = showSplits ? '<th style="min-width:80px">Split</th>' : '';
 
-    html += '<div class="card" style="margin-bottom:40px;padding:0;overflow:hidden;border:4px solid ' + teamColor + '">' +
-            '<div style="background:' + teamColor + ';color:white;padding:12px 16px;font-weight:800;font-size:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(0,0,0,0.1)">' +
-            '<span style="flex-shrink:0">' + teamHeader + '</span>' +
-            '<span style="display:flex;align-items:center;gap:12px;flex-shrink:0"><span style="background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px">' + startDelayDisplay + '</span><span style="font-weight:400;font-size:13px;color:rgba(255,255,255,0.9);white-space:nowrap">' + (totalDisplay ? totalDisplay : '') + (targetDisplay ? ' • ' + targetDisplay : '') + '</span></span>' +
+    html += '<div class="card relay-team-card" style="margin-bottom:40px;padding:0;overflow:hidden;border:4px solid ' + teamColor + '">' +
+            '<div class="relay-team-header" style="background:' + teamColor + ';color:white;padding:12px 16px;font-weight:800;font-size:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(0,0,0,0.1)">' +
+            '<span class="relay-team-title" style="flex-shrink:0">' + teamHeader + '</span>' +
+            '<span class="relay-team-meta" style="display:flex;align-items:center;gap:12px;flex-shrink:0"><span style="background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px">' + startDelayDisplay + '</span><span style="font-weight:400;font-size:13px;color:rgba(255,255,255,0.9);white-space:nowrap">' + (totalDisplay ? totalDisplay : '') + (targetDisplay ? ' • ' + targetDisplay : '') + '</span></span>' +
             '</div>' +
             leftoverBanner +
             '<table class="spreadsheet-table" style="margin:0">' +
