@@ -658,7 +658,7 @@ async function showSeasonReport(eventIdArg) {
   html += '<h1>Event Report — ' + report.event.date + '</h1>';
   html += '<div class="meta">Participants: ' + report.attendance.length + ' • Status: ' + report.event.status + '</div>';
   html += '<div class="card"><h2>Participants</h2><table><thead><tr><th>Name</th><th>Special Entry</th></tr></thead><tbody>' +
-    report.attendance.map(a => '<tr><td>' + a.name + '</td><td>' + (a.special_event_entry || '—') + '</td></tr>').join('') +
+    report.attendance.map(a => '<tr><td>' + a.name + '</td><td>' + (a.special_event_entry || 'N') + '</td></tr>').join('') +
     '</tbody></table></div>';
 
   for (const race of report.races) {
@@ -920,14 +920,14 @@ function renderPogoResultsInline(race) {
       const placeText = team.place ? ordinal(team.place) : '—';
       const placeBg = team.place === 1 ? '#FFD700' : team.place === 2 ? '#C0C0C0' : team.place === 3 ? '#CD7F32' : '#fff';
       const placeFg = team.place === 3 ? '#fff' : '#333';
-      teamRankingRow = '<tr style="background:#fff3e0;border-top:2px solid #e65100"><td colspan="9" style="text-align:right;padding:10px 14px;font-size:13px;color:#5d4037"><strong>Team Variance from Target</strong> (decides ranking): <strong style="color:' + teamVarColor + ';font-size:16px">' + teamVarDisp + '</strong></td><td style="background:' + placeBg + ';color:' + placeFg + ';font-weight:800;font-size:16px;text-align:center">' + placeText + '</td></tr>';
+      teamRankingRow = '<tr style="background:#fff3e0;border-top:2px solid #e65100"><td colspan="9" style="text-align:right;padding:10px 14px;font-size:13px;color:#5d4037"><strong>Team Variance from Target</strong>: <strong style="color:' + teamVarColor + ';font-size:16px">' + teamVarDisp + '</strong></td><td style="background:' + placeBg + ';color:' + placeFg + ';font-weight:800;font-size:16px;text-align:center">' + placeText + '</td></tr>';
     }
 
     // v2.8.6 fix D: Ranking-rule banner on each Pogo team card
     const pogoRankingBanner = '<div style="background:#fff3e0;border-top:1px solid #e65100;padding:8px 14px;font-size:12px;color:#5d4037;text-align:center"><strong style="color:#e65100">🏁 Ranking basis:</strong> smallest absolute <strong>Variance from Target</strong> wins (not the fastest average).</div>';
 
     const headerBg = team.place ? '#e8f5e9' : '#e0f2f1';
-    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + totalPB + ' • ' + targetCalc + '</span></span></div>' + pogoRankingBanner +
+    html += '<div class="card relay-team-card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div class="relay-team-header" style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span class="relay-team-title">' + teamHeader + placeBadge + '</span><span class="relay-team-meta" style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + totalPB + ' • ' + targetCalc + '</span></span></div>' + pogoRankingBanner +
       '<div style="overflow-x:auto"><table class="spreadsheet-table" style="margin:0;font-size:12px;width:100%"><thead><tr style="white-space:nowrap"><th style="text-align:left;min-width:90px">Swimmer</th><th style="min-width:30px">PB</th><th style="min-width:36px">Start</th><th style="min-width:42px">Exp.F</th><th style="min-width:36px">Total</th><th style="min-width:36px">Tgt</th><th style="min-width:50px">T1</th><th style="min-width:50px">T2</th><th style="min-width:52px;background:#2e7d32;color:#fff;font-weight:800;text-shadow:none">Result</th><th style="min-width:60px;background:#fff3e0;color:#e65100;font-weight:800">Var.</th></tr></thead><tbody>' + rows + teamRankingRow +
       '</tbody></table></div></div>'; // R16: No Team Total footer for Pogo
   }
@@ -1092,7 +1092,7 @@ function renderRelayResultsInline(race) {
       const placeText = team.place ? ordinal(team.place) : '—';
       const placeBg = team.place === 1 ? '#FFD700' : team.place === 2 ? '#C0C0C0' : team.place === 3 ? '#CD7F32' : '#fff';
       const placeFg = team.place === 3 ? '#fff' : '#333';
-      rankingRow = '<tr style="background:#fff3e0;border-top:2px solid #e65100"><td colspan="' + (colCount - 1) + '" style="text-align:right;padding:10px 16px;font-size:14px;color:#5d4037"><strong>Variance from Target</strong> (decides ranking): <strong style="color:' + varColor + ';font-size:16px">' + varOnly + '</strong></td><td style="background:' + placeBg + ';color:' + placeFg + ';font-weight:800;font-size:16px;text-align:center">' + placeText + '</td></tr>';
+      rankingRow = '<tr style="background:#fff3e0;border-top:2px solid #e65100"><td colspan="' + (colCount - 1) + '" style="text-align:right;padding:10px 16px;font-size:14px;color:#5d4037"><strong>Variance from Target</strong>: <strong style="color:' + varColor + ';font-size:16px">' + varOnly + '</strong></td><td style="background:' + placeBg + ';color:' + placeFg + ';font-weight:800;font-size:16px;text-align:center">' + placeText + '</td></tr>';
     }
 
     // v2.8.6 fix C: per-card ranking-rule banner for Medley + Pogo so the user
@@ -1102,7 +1102,7 @@ function renderRelayResultsInline(race) {
       rankingBanner = '<div style="background:#fff3e0;border-top:1px solid #e65100;padding:8px 14px;font-size:12px;color:#5d4037;text-align:center"><strong style="color:#e65100">🏁 Ranking basis:</strong> smallest absolute <strong>Variance from Target</strong> wins (not the fastest Total Time).</div>';
     }
 
-    html += '<div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span>' + teamHeader + placeBadge + '</span><span style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + (totalPBDisplay ? totalPBDisplay + ' ' : '') + (targetCalcDisplay ? '• ' + targetCalcDisplay : '') + '</span></span></div>' + rankingBanner + '<table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + (showStroke ? '<th>Stroke</th>' : '') + '<th>PB</th>' + splitHeader + pogoHeaders + '</tr></thead><tbody>' + rows + teamTotalRow + rankingRow + '</tbody></table></div>';
+    html += '<div class="card relay-team-card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div class="relay-team-header" style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span class="relay-team-title">' + teamHeader + placeBadge + '</span><span class="relay-team-meta" style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + (totalPBDisplay ? totalPBDisplay + ' ' : '') + (targetCalcDisplay ? '• ' + targetCalcDisplay : '') + '</span></span></div>' + rankingBanner + '<table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + (showStroke ? '<th>Stroke</th>' : '') + '<th>PB</th>' + splitHeader + pogoHeaders + '</tr></thead><tbody>' + rows + teamTotalRow + rankingRow + '</tbody></table></div>';
   }
 
   return html;
