@@ -50,3 +50,21 @@ Automated/browser-assisted Checks: 56 PASS / 0 FAIL
 Retrospective Playwright Browser-E2E: 23 PASS / 0 FAIL
 Syntax Checks: PASS (`server.js`, `heat-builder.js`, `results.js`, `scripts/verify-v2811-ux.mjs`)
 Live Deploy: PASS (`/api/version=2.8.11`)
+
+## 2026-05-06 — Bryan response part 1 received
+- First of two Bryan response messages archived: `../messages/2026-05-06-Bryan-inbound-v2811-response-part1.md`.
+- Attachment archived: `../messages/attachments/2026-05-06-bryan-v2811-response-part1/01-medley-relay-results-readout.png`.
+- Preliminary classification: medley relay variance/readout = likely M1 polish; 25m breaks >=0.5 sec = new requirement/scope clarification; next phases question = milestone/payment-boundary topic.
+- Waiting for message part 2 before final classification/response.
+
+## 2026-05-06 — Bryan response part 2 + combined classification
+- Second Bryan response message archived: `../messages/2026-05-06-Bryan-inbound-v2811-response-part2.md`.
+- Attachments archived under `../messages/attachments/2026-05-06-bryan-v2811-response-part2/`.
+- Combined classification written: `../messages/2026-05-06-bryan-v2811-response-combined-classification.md`.
+- Key findings:
+  - `Looks close` = positive, not rejection.
+  - Medley readout/print variance and relay member history = likely M1 polish/reporting completeness.
+  - 25m breaks `>= 0.5 sec` = new requirement/scope clarification, technically likely small.
+  - Saved events disappearing = high-severity persistence/data-loss issue; Render config has no persistent disk while SQLite lives under `src/data/wwsc.db`.
+  - Next phases = boundary/payment topic; Pointscore/M3 not started.
+- Suggested next action: decide whether to authorize a narrow v2.8.12 final M1 polish + persistence hardening pass before replying or send a boundary-aware acknowledgement first.
