@@ -20,7 +20,7 @@
 - **Test spec commit:** 5562ec4 (`test: define v2.8.12 Bryan user test spec`)
 - **Version bump commit:** 79eb9cc (`release: bump to v2.8.12 for Bryan final polish`)
 - **Git Tag:** v2.8.12
-- **Live Render Build:** pending deploy verification
+- **Live Render Build:** `2026-05-06T12:12:59.088Z`
 - **Editor:** Balerion
 - **Bryan inbound (2026-05-06):** Bryan said the app "looks close" and flagged final items: Medley Relay Readout needs variance context; history/report should include relay team members for 25m Relay and Medley; 25m record breaks should count at >= 0.5s; saved events appear to disappear across hosted usage; next phases are separate.
 - **Changes:**
@@ -38,7 +38,7 @@
   - Screenshots/text/html: `docs/screenshots/v2.8.12-bryan/`.
   - Persistence restart proof: `docs/evidence/WWSC-v2.8.12-persistence-restart-proof.md` — restarted local server with same `WWSC_DB_PATH`; 2 finalized active events survived.
 - **Scope non-goals:** No Pointscore/M3. No new phases started. Live deploy and Render persistent disk verification still pending.
-- **Delivery state:** Merged locally to `main`; push/deploy/live verification in progress.
+- **Delivery state:** Released. Pushed to GitHub (`main` tip after release docs `b082d25`), tag `v2.8.12` pushed, Render live `/api/version` verified `2.8.12` / build `2026-05-06T12:12:59.088Z`. Live sidebar also verified `v2.8.12`.
 
 ## 2026-05-01 — fix: v2.8.11 Bryan 2026-05-01 polish feedback
 - **Timestamp:** 2026-05-01 04:25:00

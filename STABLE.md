@@ -1,4 +1,4 @@
-## Current Stable (Release Candidate for Live Deploy) Version
+## Current Stable (Live) Version
 - **Version:** v2.8.12
 - **Tag:** v2.8.12
 - **Branch:** main
@@ -9,8 +9,8 @@
 - **Evidence commit:** f39be1b
 - **Merge commit:** 596458f
 - **Date:** 2026-05-06
-- **Live Render verification:** pending immediately after push/deploy
-- **Browser verification:** pending immediately after push/deploy
+- **Live Render verification:** `/api/version` returned `2.8.12`, build `2026-05-06T12:12:59.088Z`
+- **Browser verification:** live sidebar shows `v2.8.12` and `Build: 2026-05-06T12:12:59.088Z`
 
 ## What's in v2.8.12
 Focused Bryan 2026-05-06 final M1 polish plus persistence hardening based on his latest v2.8.11 feedback.

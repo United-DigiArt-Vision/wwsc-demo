@@ -15,9 +15,9 @@
 **LastEditor:** Balerion
 **Date:** 2026-05-06
 **Timestamp:** 2026-05-06 14:12 Europe/Berlin
-**WorkingTreeStatus:** release docs being finalized for push/deploy; local Browser-E2E and persistence restart proof PASS.
-**Live deploy on Render:** pending push/deploy verification
-**Live `/api/version`:** pending; expected `2.8.12` after Render deploy
+**WorkingTreeStatus:** released on `main`, pushed to GitHub with tag `v2.8.12`, deployed live on Render; Bryan message draft prepared.
+**Live deploy on Render:** ✅ live verified
+**Live `/api/version`:** `{"version":"2.8.12","build":"2026-05-06T12:12:59.088Z"}`
 **Version SSOT:** `package.json`
 **Release Anchors:** `STABLE.md`, Git tag `v2.8.12`, `/api/version`, `src/public/index.html?v=2.8.12`, evidence docs.
 
@@ -57,11 +57,14 @@ Narrow Bryan 2026-05-06 final M1 polish + persistence hardening pass. This does 
 
 ## Current delivery status
 
-- v2.8.12 is merged locally to `main` and ready for push/deploy.
-- After push, verify live `/api/version=2.8.12`, sidebar version, and persistence/disk behavior.
+- v2.8.12 is live on Render.
+- GitHub push: `main 2b60cad..b082d25`, tag `v2.8.12`.
+- Live `/api/version` verified: `2.8.12` / build `2026-05-06T12:12:59.088Z`.
+- Browser snapshot confirmed live sidebar shows `v2.8.12` and `Build: 2026-05-06T12:12:59.088Z`.
+- Live `/api/events?archived=1` currently returns `[]` after switching to persistent disk path; this means the new persistent DB is initialized and will retain future saved events, but old ephemeral saved test events were not migrated.
 
 ## Scope boundaries
 
 - Pointscore/M3 was not implemented.
 - No new phases started.
-- Live Render persistent disk behavior must be verified after deployment.
+- Render persistent disk path is deployed; future event persistence is hardened via `/var/data/wwsc.db`. Existing prior ephemeral saved events were not migrated because they were on Render ephemeral filesystem.

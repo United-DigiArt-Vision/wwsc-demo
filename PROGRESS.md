@@ -2,8 +2,8 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: 18 — Bryan v2.8.11 Response → v2.8.12 Final M1 Polish + Persistence
-Schritt: v2.8.12 ist implementiert und lokal mit Browser-E2E + Persistence-Restart-Proof verifiziert. Branch ist `dev/v2.8.12-bryan-final-polish-persistence`. Noch nicht gemergt, nicht gepusht, nicht live deployed.
-Blockiert: Live-Deploy/Render-Verifikation offen bis Dino Review/Freigabe.
+Schritt: v2.8.12 ist auf `main` gemergt, getaggt, gepusht und live auf Render verifiziert. `/api/version` = `2.8.12`, Build `2026-05-06T12:12:59.088Z`.
+Blockiert: Nein für diese Delivery; Bryan-Nachricht ist als Draft vorzubereiten/zu senden.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] Bryan Response Teil 1 archiviert: `../messages/2026-05-06-Bryan-inbound-v2811-response-part1.md`.
@@ -26,21 +26,26 @@ Blockiert: Live-Deploy/Render-Verifikation offen bis Dino Review/Freigabe.
 - [x] Screenshots/Text/HTML Evidence: `docs/screenshots/v2.8.12-bryan/`.
 - [x] Persistence Restart Proof: Server mit gleicher `/tmp/wwsc-v2812-data/wwsc.db` neu gestartet; 2 finalized active events blieben erhalten.
 - [x] Persistence Evidence: `docs/evidence/WWSC-v2.8.12-persistence-restart-proof.md` + raw log.
+- [x] Merge to main: `596458f` (`merge: v2.8.12 Bryan final polish and persistence`).
+- [x] Release docs commit/tag: `b082d25`, tag `v2.8.12`.
+- [x] GitHub push: `main 2b60cad..b082d25`, tag `v2.8.12`.
+- [x] Render live verification: `/api/version` returned `2.8.12`, build `2026-05-06T12:12:59.088Z`.
+- [x] Live browser snapshot: sidebar shows `v2.8.12` and matching build timestamp.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Evidence/Docs final committen, dann Dino Review. Danach erst Merge/Push/Render Deploy + Live `/api/version`/Browser-Verifikation.
-Dateien zuerst lesen: `version/CURRENT_STATE.md`, `docs/evidence/WWSC-v2.8.12-bryan-browser-e2e-evidence.md`, `docs/evidence/WWSC-v2.8.12-persistence-restart-proof.md`.
-Kriterium fertig: v2.8.12 ist auf `main` gemergt, getaggt, live deployed, `/api/version=2.8.12` live verifiziert, und Bryan-Antwort vorbereitet.
+Was: Bryan-Antwort an Dino liefern/senden.
+Dateien zuerst lesen: `messages/2026-05-06-draft-to-bryan-v2812-live.md`, `version/CURRENT_STATE.md`.
+Kriterium fertig: Bryan hat die v2.8.12-Live-Info mit detaillierten Änderungen seit seiner letzten Rückmeldung erhalten.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Nicht gestartet: Pointscore/M3.
-- Live Render persistent disk muss nach Deploy in Render/live verifiziert werden; lokal ist der gleiche Mechanismus mit `WWSC_DB_PATH` bewiesen.
-- Wenn Render den persistent disk plan/config nicht automatisch akzeptiert, muss die Disk im Render Dashboard bestätigt/eingerichtet werden.
+- Live `/api/events?archived=1` returns `[]` after persistent disk switch. This is acceptable for forward persistence but means old ephemeral saved test/demo events were not migrated.
+- Do not create test events on Bryan's live demo just to prove persistence unless Dino explicitly approves polluting/resetting live demo data.
 
 ## 📊 FORTSCHRITT
-Gesamt: 8/10 für v2.8.12 Delivery
+Gesamt: 10/10 für v2.8.12 Delivery
 Test Spec: 40 Cases
 Browser-E2E/API Checks: 31 PASS / 0 FAIL
 Persistence Restart Proof: 2 PASS / 0 FAIL
 Syntax Checks: PASS
-Live Deploy: offen
+Live Deploy: PASS (`/api/version=2.8.12`)
