@@ -1,100 +1,80 @@
 # CURRENT_STATE
 
-**Version (from `package.json`):** 2.8.11
+**Version (from `package.json`):** 2.8.12
 **BaseBranch:** main / origin/main
-**BaseCommit:** 99d4903 (`merge: v2.8.10 bryan retest follow-up`)
-**TargetBranch:** main / origin/main
-**Branch:** main
-**Current main tip:** dynamic — run `git rev-parse --short HEAD` on `main` / `origin/main`
-**Tag:** v2.8.11
-**Version bump commit:** 4001276 (`release: bump to v2.8.11 for Bryan polish pass`)
-**Implementation commit:** 272bd45 (`fix: v2.8.11 Bryan polish feedback`)
-**Verification screenshots commit:** 7c643d2 (`docs: refresh v2.8.11 verification screenshots`)
-**Merge commit:** 0dcad22 (`merge: v2.8.11 Bryan polish pass`)
+**BaseCommit:** v2.8.11 line (`0dcad22` release lineage plus local evidence commits)
+**TargetBranch:** main / origin/main after Dino review
+**Branch:** dev/v2.8.12-bryan-final-polish-persistence
+**Current branch tip:** dynamic — run `git rev-parse --short HEAD`
+**Tag:** not created yet for v2.8.12
+**Version bump commit:** 79eb9cc (`release: bump to v2.8.12 for Bryan final polish`)
+**Test spec commit:** 5562ec4 (`test: define v2.8.12 Bryan user test spec`)
+**Implementation commit:** 2321284 (`fix: v2.8.12 Bryan relay reporting and persistence`)
+**Evidence commit:** pending at time of this file update
 **LastEditor:** Balerion
-**Date:** 2026-05-01
-**Timestamp:** 2026-05-01 04:56:00
-**WorkingTreeStatus:** released on `main`, pushed to GitHub, deployed live on Render; Dino has sent v2.8.11 reply to Bryan; waiting for Bryan response. Post-delivery retrospective evidence docs are committed locally and not pushed/deployed.
-**Live deploy on Render:** ✅ live verified
-**Live `/api/version`:** `{"version":"2.8.11","build":"2026-05-01T02:30:30.787Z"}`
+**Date:** 2026-05-06
+**Timestamp:** 2026-05-06 11:57 Europe/Berlin
+**WorkingTreeStatus:** v2.8.12 implemented and locally verified on branch; not merged, not pushed, not deployed live yet.
+**Live deploy on Render:** not yet
+**Live `/api/version`:** still expected v2.8.11 until merge/push/deploy
 **Version SSOT:** `package.json`
-**Release Anchors:** `STABLE.md`, Git tag `v2.8.11`, `/api/version`, `src/public/index.html?v=2.8.11`
+**Release Anchors:** `package.json`, `src/public/index.html?v=2.8.12`, `USER-INTERACTION-TEST-SPEC-v2.8.12.md`, `docs/evidence/WWSC-v2.8.12-bryan-browser-e2e-evidence.md`, `docs/evidence/WWSC-v2.8.12-persistence-restart-proof.md`
 
-## Scope of v2.8.11
+## Scope of v2.8.12
 
-Focused Bryan 2026-05-01 v2.8.10 retest polish pass. This is not Pointscore/M3 and does not expand scope beyond the five feedback items.
+Narrow Bryan 2026-05-06 final M1 polish + persistence hardening pass. This does not start Pointscore/M3.
 
-### Changes released
+### Changes implemented
 
-- `src/public/js/screens/heat-builder.js`
-  - 25m Team Relay pre-generation state now stays clean: no `0/0 teams complete` banner, no unassigned swimmer pool, no Add Team button before any teams exist.
-  - Relay team cards now have stable print classes (`relay-team-card`, `relay-team-header`, `relay-team-title`, `relay-team-meta`) for consistent print typography.
-- `src/public/css/style.css`
-  - Print headings are larger/bolder and consistently use Arial.
-  - Relay team print headings are fixed at prominent 18px / 900 weight instead of collapsing into tiny print text.
 - `src/public/js/screens/results.js`
-  - Removed `(decides ranking)` wording from variance rows.
-  - Event Report participants table now renders missing/null `special_event_entry` as user-facing `N` for present swimmers, so Andrew Barnes no longer appears as `—` when Times Sheet effectively shows `N`.
-  - Relay/Pogo result cards use the same print heading classes for consistency.
-- Test/spec artifacts:
-  - `USER-INTERACTION-TEST-SPEC-v2.8.11.md` — 75 user-perspective test cases.
-  - `USER-INTERACTION-TEST-PROTOCOL-v2.8.11.md` — 56 automated/browser-assisted checks, 56 PASS / 0 FAIL.
-  - `docs/screenshots/v2.8.11-bryan/` — 5 screenshot evidence files.
-  - `scripts/verify-v2811-ux.mjs` — repeatable CDP verification script.
-
-## Retrospective Browser-E2E audit (after V0006 v5.4/v5.5)
-
-Dino asked on 2026-05-01 whether WWSC v2.8.11 had all necessary tests including evidence under the new Browser-E2E standard. Audit result:
-
-- Existing v2.8.11 evidence: 75-case UI test spec, 56/56 automated/browser-assisted checks, screenshot evidence.
-- Gap found: existing run was CDP/browser-assisted, not explicit Playwright/installed-Chrome Browser-E2E under the new standard.
-- Added retrospective Playwright Browser-E2E against v2.8.11: 23/23 PASS.
-- Post-delivery evidence commit: `docs: add v2.8.11 retrospective browser e2e evidence` — local docs/test-evidence commit, not pushed/deployed.
-- Script: `scripts/e2e-v2811-browser-playwright.cjs`.
-- Audit: `docs/evidence/WWSC-v2.8.11-test-audit-after-V0006-v5.4.md`.
-- Evidence: `docs/evidence/WWSC-v2.8.11-retrospective-browser-e2e-evidence.md`.
-- Raw log: `docs/evidence/WWSC-v2.8.11-retrospective-browser-e2e-raw.log`.
-- Screenshots: `docs/screenshots/v2.8.11-browser-e2e-retro/`.
-- Local DB was backed up before test and restored after test.
+  - Relay readout now includes signed variance for relay teams.
+  - Relay readout now includes team participant/member names; Medley includes stroke labels where available.
+  - Event Report relay sections now show team total and signed variance directly in the team heading.
+  - 25m breaker UI logic uses the new 0.50s threshold while non-25m races keep the prior 1.00s threshold.
+- `src/public/js/screens/calendar.js`
+  - Season Calendar event details now show relay team members for completed 25m Team Relay and Medley Relay results.
+  - Calendar event details also include signed variance for relay teams.
+- `src/server.js`
+  - Time entry breaker calculation now joins the race type and applies race-specific thresholds.
+  - 25m break threshold: improvement >= 0.50s (`variance <= -50`).
+  - Other standard races keep existing >= 1.00s threshold (`variance <= -100`).
+- `src/db.js`
+  - Database path is configurable via `WWSC_DB_PATH`.
+  - `WWSC_DATA_DIR` and `WWSC_BACKUP_DIR` are also supported for hosted/persistent deployments.
+  - Default local behavior remains `src/data/wwsc.db`.
+- `render.yaml`
+  - Adds Render persistent disk config at `/var/data` and sets `WWSC_DB_PATH=/var/data/wwsc.db`.
 
 ## Verification
 
 - Syntax checks:
-  - `node --check src/server.js`
-  - `node --check src/public/js/screens/heat-builder.js`
-  - `node --check src/public/js/screens/results.js`
-  - `node --check scripts/verify-v2811-ux.mjs`
-- Runtime/browser-assisted verification:
-  - Local app started on `http://127.0.0.1:3000`.
-  - `node scripts/verify-v2811-ux.mjs`
-  - Result: 56 PASS / 0 FAIL.
-- Live verification:
-  - GitHub push: `main 99d4903..0dcad22`, tag `v2.8.11`.
-  - Render `/api/version` changed from `2.8.10` to `2.8.11` at build `2026-05-01T02:30:30.787Z`.
-  - Browser snapshot confirmed live UI sidebar shows `v2.8.11` and `Build: 2026-05-01T02:30:30.787Z`.
+  - `node --check src/db.js` — PASS
+  - `node --check src/server.js` — PASS
+  - `node --check src/public/js/screens/results.js` — PASS
+  - `node --check src/public/js/screens/calendar.js` — PASS
+  - `node --check scripts/e2e-v2812-bryan.cjs` — PASS
+- Browser-E2E / API evidence:
+  - Script: `scripts/e2e-v2812-bryan.cjs`
+  - Raw log: `docs/evidence/WWSC-v2.8.12-browser-e2e-raw.log`
+  - Evidence summary: `docs/evidence/WWSC-v2.8.12-bryan-browser-e2e-evidence.md`
+  - Result: 31 PASS / 0 FAIL
+  - Screenshots/text/html: `docs/screenshots/v2.8.12-bryan/`
+- Persistence restart proof:
+  - DB path: `/tmp/wwsc-v2812-data/wwsc.db`
+  - Restarted server with same `WWSC_DB_PATH`.
+  - `/api/events?archived=1` still returned 2 finalized active events after restart.
+  - Evidence: `docs/evidence/WWSC-v2.8.12-persistence-restart-proof.md`
+  - Raw log: `docs/evidence/WWSC-v2.8.12-persistence-restart-raw.log`
 
 ## Current delivery status
 
-- v2.8.11 is live on Render.
-- Dino sent the v2.8.11 reply to Bryan.
-- Actual sent-message record: `../messages/2026-05-01-outgoing-to-bryan-v2811-sent-confirmed.md`.
-- Continuity anchor: `../messages/2026-05-01-current-state-after-v2811-live-message-sent.md`.
-- Next step: wait for Bryan's response; archive first, then classify against v2.8.11.
+- v2.8.12 is implemented and locally proven.
+- Branch is ready for final documentation commit, then Dino review.
+- Not yet deployed live.
+- Render persistent disk support is in config, but live Render dashboard/deploy must still be verified after push/deploy.
 
+## Scope boundaries
 
-
-## Communication status
-
-- Bryan inbound v2.8.10 retest feedback archived: `../messages/2026-05-01-Bryan-inbound-v2810-retest-feedback.md`.
-- v2.8.11 point-by-point audit archived: `../messages/2026-05-01-bryan-v2811-point-by-point-audit.md`.
-- Dino sent v2.8.11 reply to Bryan on 2026-05-01 around 04:54–04:55 Europe/Berlin.
-- Sent proof screenshots archived under `../messages/attachments/2026-05-01-v2811-sent-to-bryan-confirmation/`.
-- Treat `../messages/2026-05-01-outgoing-to-bryan-v2811-sent-confirmed.md` as the truth for what was actually sent; the clean draft is not exact sent truth.
-- Ball is with Bryan. No further code or message until Bryan replies or Dino explicitly instructs.
-
-## Rules
-
-- `package.json` is the only SSOT for semantic version numbers.
-- `CURRENT_STATE.md` records the delivery anchor plus working-tree state.
-- `version/CHANGELOG.md` must reflect the same release / branch / version for the corresponding delivery.
-- If version changes, `package.json`, cache-busting in `src/public/index.html`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`, and release anchors must stay in sync.
+- Pointscore/M3 was not implemented.
+- No new milestone scope beyond Bryan's explicit v2.8.11 notes.
+- Persistence hardening addresses the likely root cause of disappearing hosted events: SQLite must live on persistent storage, not ephemeral app filesystem.

@@ -22,6 +22,14 @@ Focused Bryan 2026-05-01 polish pass for the latest delivered v2.8.10.
 - Event Report Special Entry now shows `N` for present swimmers with missing/null special-entry data, fixing Andrew Barnes showing `—` when the Times Sheet effectively indicates `N`.
 - Added repeatable v2.8.11 verification script, 75-case test spec, 56 PASS / 0 FAIL protocol, and screenshot evidence.
 
+
+## Candidate Version — v2.8.12 (not live yet)
+- **Branch:** `dev/v2.8.12-bryan-final-polish-persistence`
+- **Status:** implemented and locally proven; not merged/pushed/deployed yet.
+- **Scope:** Bryan 2026-05-06 final M1 polish + persistence hardening.
+- **Key fixes:** Medley Readout variance + members; Calendar/Event Report relay members for 25m + Medley; 25m break threshold >=0.50s; configurable persistent SQLite path for Render (`WWSC_DB_PATH=/var/data/wwsc.db`).
+- **Evidence:** `docs/evidence/WWSC-v2.8.12-bryan-browser-e2e-evidence.md` — 31 PASS / 0 FAIL; `docs/evidence/WWSC-v2.8.12-persistence-restart-proof.md` — 2 finalized events survived server restart with persistent DB path.
+
 ## Previous Stable
 - **Version:** v2.8.10
 - **Tag/merge anchor:** 99d4903 (`merge: v2.8.10 bryan retest follow-up`)

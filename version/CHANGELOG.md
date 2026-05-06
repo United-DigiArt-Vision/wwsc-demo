@@ -11,6 +11,35 @@
 
 ---
 
+## 2026-05-06 — fix: v2.8.12 Bryan final polish + persistence hardening
+- **Timestamp:** 2026-05-06 11:57:00
+- **App Version (from package.json):** 2.8.12
+- **Branch:** dev/v2.8.12-bryan-final-polish-persistence
+- **RecordedCommit:** pending docs/evidence commit
+- **Implementation commit:** 2321284 (`fix: v2.8.12 Bryan relay reporting and persistence`)
+- **Test spec commit:** 5562ec4 (`test: define v2.8.12 Bryan user test spec`)
+- **Version bump commit:** 79eb9cc (`release: bump to v2.8.12 for Bryan final polish`)
+- **Git Tag:** not created yet
+- **Live Render Build:** not deployed yet
+- **Editor:** Balerion
+- **Bryan inbound (2026-05-06):** Bryan said the app "looks close" and flagged final items: Medley Relay Readout needs variance context; history/report should include relay team members for 25m Relay and Medley; 25m record breaks should count at >= 0.5s; saved events appear to disappear across hosted usage; next phases are separate.
+- **Changes:**
+  - `src/public/js/screens/results.js`: relay readout now includes signed variance plus team members; Medley readout includes stroke labels where available; Event Report relay headings include team total and signed variance; 25m breaker UI follows >=0.50s threshold while non-25m threshold stays unchanged.
+  - `src/public/js/screens/calendar.js`: completed event details now show relay team member lists and variance for 25m Team Relay and Medley Relay instead of only Team N + time.
+  - `src/server.js`: time-entry breaker calculation now joins race type and applies race-specific break thresholds (`25m <= -50`, other races `<= -100`).
+  - `src/db.js`: DB path is configurable via `WWSC_DB_PATH`; `WWSC_DATA_DIR` and `WWSC_BACKUP_DIR` supported; local default remains unchanged.
+  - `render.yaml`: adds Render persistent disk at `/var/data` and sets `WWSC_DB_PATH=/var/data/wwsc.db`.
+- **Test specification:** `USER-INTERACTION-TEST-SPEC-v2.8.12.md` with 40 user-perspective test cases, written before implementation.
+- **Verification:**
+  - Syntax: `node --check src/db.js`, `src/server.js`, `src/public/js/screens/results.js`, `src/public/js/screens/calendar.js`, `scripts/e2e-v2812-bryan.cjs` — PASS.
+  - Browser-E2E/API: `scripts/e2e-v2812-bryan.cjs` — 31 PASS / 0 FAIL.
+  - Evidence summary: `docs/evidence/WWSC-v2.8.12-bryan-browser-e2e-evidence.md`.
+  - Raw log: `docs/evidence/WWSC-v2.8.12-browser-e2e-raw.log`.
+  - Screenshots/text/html: `docs/screenshots/v2.8.12-bryan/`.
+  - Persistence restart proof: `docs/evidence/WWSC-v2.8.12-persistence-restart-proof.md` — restarted local server with same `WWSC_DB_PATH`; 2 finalized active events survived.
+- **Scope non-goals:** No Pointscore/M3. No new phases started. Live deploy and Render persistent disk verification still pending.
+- **Delivery state:** Implemented and locally proven on branch. Awaiting Dino review before merge/push/deploy.
+
 ## 2026-05-01 — fix: v2.8.11 Bryan 2026-05-01 polish feedback
 - **Timestamp:** 2026-05-01 04:25:00
 - **App Version (from package.json):** 2.8.11
