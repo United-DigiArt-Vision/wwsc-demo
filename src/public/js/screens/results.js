@@ -162,12 +162,36 @@ function drawResults() {
   }
 }
 
+
+function getBreakThresholdCsForRaceType(raceType) {
+  return raceType === '25m' ? -50 : -100;
+}
+
+function isBreakForRaceType(variance, raceType) {
+  return variance != null && variance <= getBreakThresholdCsForRaceType(raceType);
+}
+
+function formatSignedTime(value) {
+  if (value == null) return '—';
+  return (value >= 0 ? '+' : '') + formatTime(value);
+}
+
+function formatRelayMembersForReadout(team, raceType) {
+  const members = team.members || [];
+  if (members.length === 0) return '  Members: —';
+  const isMedley = raceType === 'medley_relay';
+  return '  Members: ' + members.map(m => {
+    const stroke = isMedley && m.stroke ? ' (' + m.stroke + ')' : '';
+    return m.name + stroke;
+  }).join(', ');
+}
+
 function renderBreakersSection(race) {
   // Collect breakers from current race
   const breakers = [];
   for (const heat of (race.heats || [])) {
     for (const lane of heat.lanes) {
-      if (lane.finish_time != null && lane.variance != null && lane.variance <= -100 && lane.net_time > 0) {
+      if (lane.finish_time != null && lane.variance != null && isBreakForRaceType(lane.variance, race.race_type) && lane.net_time > 0) {
         // v2.7.1: handicap_time is WHOLE SECONDS, net_time is CENTISECONDS
         // Convert PB to centiseconds for correct improvement calculation
         const pbCs = lane.handicap_time * 100;
@@ -241,7 +265,7 @@ function renderResultsTable(race) {
     for (let li = 0; li < heat.lanes.length; li++) {
       const lane = heat.lanes[li];
       const hasTime = lane.finish_time != null;
-      const isBreak = hasTime && lane.variance != null && lane.variance <= -100;
+      const isBreak = hasTime && isBreakForRaceType(lane.variance, race.race_type);
       const autoPlace = livePlaces[lane.id] || lane.place || null;
 
       let finishCell;
@@ -353,7 +377,9 @@ function buildResultsReadout(race) {
     ranked.forEach(t => {
       const place = t.place ? ordinal(t.place) + ': ' : '';
       const time = t.total_time != null ? formatTime(t.total_time) : '—';
-      lines.push(`${place}${t.team_name} — ${time}`);
+      const variance = t.variance != null ? ` | Variance: ${formatSignedTime(t.variance)}` : '';
+      lines.push(`${place}${t.team_name} — ${time}${variance}`);
+      lines.push(formatRelayMembersForReadout(t, race.race_type));
     });
     return lines.join('\n');
   }
@@ -597,7 +623,7 @@ async function doFinalizeEvent(allComplete) {
           for (const lane of heat.lanes) {
             total++;
             if (lane.finish_time != null) entered++;
-            if (lane.variance != null && lane.variance <= -100 && lane.net_time > 0) breakers++;
+            if (lane.variance != null && isBreakForRaceType(lane.variance, race.race_type) && lane.net_time > 0) breakers++;
           }
         }
         finalReport += '• ' + label + ': ' + entered + '/' + total + ' results';
@@ -665,7 +691,9 @@ async function showSeasonReport(eventIdArg) {
     html += '<div class="card"><h2>' + (RACE_LABELS[race.race_type] || race.race_type) + '</h2>';
     if (race.teams) {
       for (const team of race.teams) {
-        html += '<h3>' + team.team_name + (team.place ? ' — ' + ordinal(team.place) : '') + '</h3>';
+        const teamVariance = team.variance != null ? ' • Variance: ' + formatSignedTime(team.variance) : '';
+        const teamTotal = team.total_time != null ? ' • Total: ' + formatTime(team.total_time) : '';
+        html += '<h3>' + team.team_name + (team.place ? ' — ' + ordinal(team.place) : '') + teamTotal + teamVariance + '</h3>';
         html += '<table><thead><tr><th>Leg</th><th>Swimmer</th><th>Stroke</th><th>Total</th><th>Variance</th></tr></thead><tbody>' +
           team.members.map(m => '<tr><td>' + m.leg_order + '</td><td>' + m.name + '</td><td>' + (m.stroke || '—') + '</td><td></td><td></td></tr>').join('') +
           '<tr><td colspan="3"><strong>Team Result</strong></td><td>' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td><td>' + (team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—') + '</td></tr>' +
@@ -1198,7 +1226,7 @@ function showReadout() {
     (race.heats || []).forEach(h => {
       h.lanes.forEach(l => {
         if (l.finish_time != null) {
-          const isBreak = l.variance != null && l.variance <= -100;
+          const isBreak = isBreakForRaceType(l.variance, race.race_type);
           allLanes.push({ ...l, heat_number: h.heat_number, isBreak });
         }
       });

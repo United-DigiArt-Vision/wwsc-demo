@@ -7,6 +7,23 @@
 
 let calShowArchive = false;
 
+
+function formatCalendarSignedTime(value) {
+  if (value == null) return '—';
+  return (value >= 0 ? '+' : '') + formatTime(value);
+}
+
+function formatCalendarRelayMembers(team, raceType) {
+  const members = team.members || [];
+  if (members.length === 0) return '<div style="color:#64748b;font-size:12px;margin-top:2px">Members: —</div>';
+  const isMedley = raceType === 'medley_relay';
+  const memberText = members.map(m => {
+    const stroke = isMedley && m.stroke ? ' (' + m.stroke + ')' : '';
+    return m.name + stroke;
+  }).join(', ');
+  return '<div style="color:#cbd5e1;font-size:12px;margin-top:2px;padding-left:12px">Members: ' + memberText + '</div>';
+}
+
 // BRY-24: View event details — show summary modal with races and breakers
 async function viewEventDetails(eventId) {
   const modal = document.createElement('div');
@@ -47,10 +64,11 @@ async function viewEventDetails(eventId) {
         }
       } else if (race.teams && race.teams.length > 0) {
         const ranked = race.teams.filter(t => t.total_time != null).sort((a, b) => (a.place || 99) - (b.place || 99));
-        const top3 = ranked.slice(0, 3).map(t =>
-          `<span style="margin-right:12px">${t.place ? ordinal(t.place) + ': ' : ''}${t.team_name} (${formatTime(t.total_time)})</span>`
-        ).join('');
-        racesHtml += `<li style="padding:4px 0"><strong>${label}</strong><br><span style="font-size:13px;color:#94a3b8">${top3 || 'No results'}</span></li>`;
+        const teamDetails = ranked.length > 0 ? ranked.map(t => {
+          const variance = t.variance != null ? ' • Var ' + formatCalendarSignedTime(t.variance) : '';
+          return `<div style="margin:4px 0 8px"><span style="margin-right:12px;color:#94a3b8">${t.place ? ordinal(t.place) + ': ' : ''}${t.team_name} (${formatTime(t.total_time)})${variance}</span>${formatCalendarRelayMembers(t, race.race_type)}</div>`;
+        }).join('') : 'No results';
+        racesHtml += `<li style="padding:4px 0"><strong>${label}</strong><br><div style="font-size:13px;color:#94a3b8">${teamDetails}</div></li>`;
       } else {
         racesHtml += `<li style="padding:4px 0;color:#64748b">${label} — no results</li>`;
       }

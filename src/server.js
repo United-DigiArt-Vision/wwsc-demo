@@ -168,6 +168,16 @@ function isEventLocked(eventId) {
   return ev && ev.status === 'locked';
 }
 
+function getBreakThresholdCsForRaceType(raceType) {
+  // v2.8.12 Bryan clarification: 25m breaks count at >= 0.5s improvement.
+  // Existing non-25m threshold remains >= 1.0s improvement unless explicitly changed.
+  return raceType === '25m' ? -50 : -100;
+}
+
+function isBreakForRaceType(variance, raceType) {
+  return variance != null && variance <= getBreakThresholdCsForRaceType(raceType);
+}
+
 // List all events with attendance/race counts (for calendar screen)
 app.get('/api/events', (req, res) => {
   try {
@@ -632,7 +642,13 @@ app.put('/api/heats/:heatId/lanes/:laneId/time', (req, res) => {
     const { finish_time } = req.body;
     if (finish_time == null || finish_time < 0) return res.status(400).json({ error: 'finish_time required (non-negative integer)' });
 
-    const lane = db.prepare('SELECT * FROM heat_lane WHERE id = ? AND heat_id = ?').get(req.params.laneId, req.params.heatId);
+    const lane = db.prepare(`
+      SELECT hl.*, er.race_type
+      FROM heat_lane hl
+      JOIN heat h ON h.id = hl.heat_id
+      JOIN event_race er ON er.id = h.event_race_id
+      WHERE hl.id = ? AND hl.heat_id = ?
+    `).get(req.params.laneId, req.params.heatId);
     if (!lane) return res.status(404).json({ error: 'Lane not found' });
 
     // v2.6.0: PB (handicap_time) and start_delay are in WHOLE SECONDS.
@@ -642,8 +658,7 @@ app.put('/api/heats/:heatId/lanes/:laneId/time', (req, res) => {
     const pbCs = lane.handicap_time * 100;  // whole seconds → centiseconds
     const net_time = finish_time - delayCs;
     const variance = net_time - pbCs;
-    // break = variance <= -100 (centiseconds: 1.00s improvement required).
-    const is_break = (variance <= -100) ? 1 : 0;
+    const is_break = isBreakForRaceType(variance, lane.race_type) ? 1 : 0;
 
     db.prepare(`
       UPDATE heat_lane SET finish_time = ?, net_time = ?, variance = ?, is_break = ?

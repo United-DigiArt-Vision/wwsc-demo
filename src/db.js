@@ -6,9 +6,17 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 
-const DATA_DIR = path.join(__dirname, 'data');
-const BACKUP_DIR = path.join(DATA_DIR, 'backups');
-const DB_PATH = path.join(DATA_DIR, 'wwsc.db');
+// v2.8.12: Hosted deployments need persistent storage.
+// Default stays repo-local for development, but Render/production can set
+// WWSC_DB_PATH=/var/data/wwsc.db on a persistent disk.
+const configuredDbPath = process.env.WWSC_DB_PATH ? path.resolve(process.env.WWSC_DB_PATH) : null;
+const DATA_DIR = process.env.WWSC_DATA_DIR
+  ? path.resolve(process.env.WWSC_DATA_DIR)
+  : (configuredDbPath ? path.dirname(configuredDbPath) : path.join(__dirname, 'data'));
+const BACKUP_DIR = process.env.WWSC_BACKUP_DIR
+  ? path.resolve(process.env.WWSC_BACKUP_DIR)
+  : path.join(DATA_DIR, 'backups');
+const DB_PATH = configuredDbPath || path.join(DATA_DIR, 'wwsc.db');
 
 // Ensure directories exist
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
