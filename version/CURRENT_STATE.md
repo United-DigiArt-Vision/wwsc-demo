@@ -9,12 +9,15 @@
 **Branch:** dev/v2.9.0-m2-time-history
 **Version bump commit:** aa004be (`release: bump to v2.9.0 for M2 time history`)
 **Implementation commit:** a864414 (`feat: v2.9.0 M2 time history implementation (T1-T7)`)
-**Evidence commit:** 3fce550 (`docs: M2 evidence package (protocol + coverage matrix + raw run + screenshots)`)
-**RecordedCommit:** a864414 (substantive delivery anchor — three API/UI changes wiring M2 contract)
+**Evidence commit (first delivery):** 3fce550 (`docs: M2 evidence package (...)`)
+**Full-Proof runner extension commit:** 87b68b7 (`feat: M2 full-proof rerun — runner extension + harness setup script`)
+**Full-Proof evidence commit:** be6ef8d (`docs: M2 full-proof evidence package (14 screenshots + refreshed run log)`)
+**Full-Proof Protocol/Matrix commit:** c1d2522 (`docs: M2 full-proof Protocol + Coverage Matrix rewrite (PROVEN per case)`)
+**RecordedCommit:** a864414 (substantive delivery anchor — three API/UI changes wiring M2 contract; the Full-Proof rerun did not modify any app-source file)
 **LastEditor:** Claude Code
 **Date:** 2026-05-18
-**Timestamp:** 2026-05-18 07:35:00 Europe/Berlin
-**WorkingTreeStatus:** clean after this SSOT completion commit; HEAD is dynamic — resolve with `git rev-parse --short HEAD` on branch `dev/v2.9.0-m2-time-history`.
+**Timestamp:** 2026-05-18 07:42:00 Europe/Berlin
+**WorkingTreeStatus:** clean after Full-Proof SSOT closure commit; HEAD is dynamic — resolve with `git rev-parse --short HEAD` on branch `dev/v2.9.0-m2-time-history`.
 **Version SSOT:** `package.json`
 **Release Anchors:** `package.json=2.9.0`, `src/public/index.html?v=2.9.0`, feature branch `dev/v2.9.0-m2-time-history`.
 
@@ -34,6 +37,12 @@
 4. **2026-05-18 07:30:** Claude Code completed implementation + evidence run (38 PASS / 0 FAIL).
 5. **2026-05-18 07:35:** Claude → Balerion delivery handoff.
    - Handoff: `../messages/2026-05-18-Claude-To-Balerion-M2-Time-History-Delivery.md`
+6. **2026-05-18 07:12:** Balerion V0015 first-pass verification with 3 carry-overs identified.
+   - `../messages/2026-05-18-0712-Balerion-V0015-M2-Time-History-Verification.md`
+7. **2026-05-18 07:18:** Balerion `M2-Full-Proof-Required` — explicit demand to prove every case with browser evidence, close `UI-M2-F06`/`UI-M2-F08`/`UI-M2-C04`.
+   - `../messages/2026-05-18-0718-Balerion-To-Claude-M2-Full-Proof-Required.md`
+8. **2026-05-18 07:40:** Claude → Balerion Full-Proof Handoff. Runner extended (F06 / F08 / C04 + 7 explicit cases), harness setup script added, 55 PASS / 0 FAIL, 0 carry-overs.
+   - `../messages/2026-05-18-Claude-To-Balerion-M2-Full-Proof-Handoff.md`
 
 ## Current Boundary
 

@@ -11,6 +11,39 @@
 
 ---
 
+## 2026-05-18 — feat: v2.9.0 M2 Full-Proof Rerun (closes Balerion `M2-Full-Proof-Required`)
+- **Timestamp:** 2026-05-18 07:40:00
+- **App Version (from package.json):** 2.9.0
+- **Branch:** dev/v2.9.0-m2-time-history
+- **Runner+harness commit:** 87b68b7 (`feat: M2 full-proof rerun — runner extension + harness setup script`)
+- **Evidence commit:** be6ef8d (`docs: M2 full-proof evidence package (14 screenshots + refreshed run log)`)
+- **Protocol/Matrix rewrite commit:** c1d2522 (`docs: M2 full-proof Protocol + Coverage Matrix rewrite (PROVEN per case)`)
+- **SSOT closure commit:** this commit (HEAD = dynamic via `git rev-parse --short HEAD`)
+- **RecordedCommit:** a864414 (substantive M2 implementation; full-proof rerun did not change app source)
+- **Editor:** Claude Code
+- **Trigger:** Balerion `messages/2026-05-18-0718-Balerion-To-Claude-M2-Full-Proof-Required.md` — explicit requirement to prove every spec case with executable browser evidence; no "diff-only" verdicts for user-visible behavior; close carry-overs `UI-M2-F06`, `UI-M2-F08`, `UI-M2-C04`.
+- **Changes (no app-source modifications — runner + harness + docs only):**
+  - `scripts/e2e-m2-time-history.cjs`:
+    * Hardened puppeteer-core resolution: three search paths (`WWSC_PUPPETEER_CORE` env, `/tmp/wwsc-screenshot-tool/node_modules/puppeteer-core`, projektlokal). Bootstrap-Hinweis bei Fehlen statt MODULE_NOT_FOUND.
+    * New helper `setupRelayEvent(date)` seeds a fourth weekly event with 25m Team Relay + Medley Relay, generates teams, enters times that produce non-trivial variance, ranks, finalizes.
+    * New section `UI-M2-F06` exercises the Results screen against the relay event with four sub-cases (25m section / Medley section / member names / variance).
+    * New section `UI-M2-F08` archives an event via `archiveEvent()` + Confirm click, then restores via `restoreEvent()`. Two sub-cases assert the archived count delta 0→1→0.
+    * New section `UI-M2-C04` after the main run shuts the test server down and starts a fresh server process against the same `WWSC_DB_PATH`, then re-reads `/api/members/:id/time-history` and asserts the 5 dated rows persisted.
+    * Explicit cases `UI-M2-C01/C02` (ev5 finalized in the live page, history visible without reload), `UI-M2-D02` (replaced value `11.00` visible in member-timeline cell after re-finalize), `UI-M2-D03` (🏆 chip + same swimmer on Breaker Report), `UI-M2-E01..E04` (rendered cells inspected for X.XX / non-0.X PB / dash / readable date), and `UI-M2-G02/G03` (sub-claims of G01 banned-string scan made explicit).
+  - `scripts/setup-m2-harness.sh` (new): idempotent harness bootstrap. Installs puppeteer-core into `/tmp/wwsc-screenshot-tool` and rebuilds better-sqlite3 if its native binding is for the wrong architecture.
+- **Evidence run:**
+  - Total PASS: **55** / FAIL: **0** / NOT APPLICABLE: **0**
+  - Console errors: 0 (favicon-404 noise filtered)
+  - Five events finalised: 2026-04-04, 2026-04-11, 2026-04-18 (primary weekly), 2026-04-25 (relay event for F06), 2026-04-26 (ev5 for C01/C02).
+  - Cross-process restart confirmed 5 dated rows persisted under same `WWSC_DB_PATH=/tmp/wwsc-m2-test/wwsc.db`.
+  - Server version returned during run: `2.9.0` build `2026-05-18T05:24:45.606Z`.
+- **Documentation updates:**
+  - `USER-INTERACTION-TEST-PROTOCOL-M2-TIME-HISTORY.md` — full rewrite with PROVEN / NOT PROVEN / NOT APPLICABLE classification per case, Reproducibility section, output-standard verdict block.
+  - `USER-INTERACTION-COVERAGE-MATRIX-M2-TIME-HISTORY.md` — full rewrite; 0 carry-overs, 0 ⚙️ deferred, all entries ✅.
+  - `PROGRESS.md`, `DEV-CHECKLIST-M2-TIME-HISTORY.md`, `version/CURRENT_STATE.md` updated to reflect the full-proof state.
+- **New handoff message:** `../messages/2026-05-18-Claude-To-Balerion-M2-Full-Proof-Handoff.md`.
+- **Scope guard re-verified:** no Pointscore / no accumulated season totals / no reports/graphs / no constitution scoring routes; only one new API endpoint (`GET /api/members/:memberId/time-history`).
+
 ## 2026-05-18 — feat: v2.9.0 M2 Time History implementation + browser E2E evidence
 - **Timestamp:** 2026-05-18 07:30:00
 - **App Version (from package.json):** 2.9.0

@@ -28,7 +28,7 @@ Date: 2026-05-18
 - [x] T4: Add Members screen History action and modal/panel. (`src/public/js/screens/members.js`)
 - [x] T5: Add completed-event Time History access in Calendar/Event detail. (`src/public/js/screens/calendar.js`)
 - [x] T6: Add/adjust automated tests/scripts for M2 flows. (`scripts/e2e-m2-time-history.cjs`)
-- [x] T7: Run M1 regression smoke. (UI-M2-F-dashboard, UI-M2-F01..F05, UI-M2-F07, UI-M2-F09 — all PASS in this run; UI-M2-F06/F08 deferred to V0015 manual)
+- [x] T7: Run M1 regression smoke. (Full-Proof Rerun closed all carry-overs: UI-M2-F-dashboard, UI-M2-F01..F09 incl. F06 4 sub-cases + F08 archive/restore — all PASS)
 - [x] T8: Update version/CHANGELOG.md and version/CURRENT_STATE.md. (entries dated 2026-05-18)
 - [x] T9: Final SSOT completion commit. (created at delivery close)
 

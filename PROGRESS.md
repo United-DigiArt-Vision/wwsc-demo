@@ -1,9 +1,9 @@
 # PROGRESS — WWSC v2.9.0 M2 Time History
 
 ## 🎯 AKTUELLER STATUS
-Phase: M2 Phase 4 complete — Implementation + evidence delivered, awaiting Balerion V0015 verification
-Schritt: All 9 dev-checklist tasks (T1..T9) implemented on `dev/v2.9.0-m2-time-history`; isolated browser-E2E run produced 38 PASS / 0 FAIL across UT-M2-01..04, UI-M2-A..G plus M1 regression smoke; screenshots + raw log archived.
-Blockiert: Nein. Open items (`UI-M2-F06`, `UI-M2-F08`, `UI-M2-C04` server-restart manual smoke) are explicitly routed to Balerion's V0015 step in the protocol and coverage matrix.
+Phase: M2 Phase 4 complete + Full-Proof Rerun — all carry-overs closed under executable browser evidence
+Schritt: After Balerion's `M2-Full-Proof-Required` brief, the runner was extended to cover `UI-M2-F06` (relay readout), `UI-M2-F08` (archive/restore), `UI-M2-C04` (cross-process server restart) and seven additional explicit cases. Re-run produced **55 PASS / 0 FAIL** with 0 console errors. Every spec case is now classified as PROVEN with concrete evidence anchors. Harness bootstrap script (`scripts/setup-m2-harness.sh`) added for reproducibility.
+Blockiert: Nein. Awaiting Balerion's V0015 independent re-run on this branch.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] M2 activated/funded evidence: `../messages/2026-05-18-Bryan-M2-active-funded.md`.
@@ -31,19 +31,18 @@ Blockiert: Nein. Open items (`UI-M2-F06`, `UI-M2-F08`, `UI-M2-C04` server-restar
 - [x] T9 Final SSOT completion commit (delivery close).
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Balerion V0015 verification — branch/commit/version truth, diff review, API + browser-E2E reproduction, M1 regression smoke including the manually-owned `UI-M2-F06` (relay readout) and `UI-M2-F08` (archive/restore), and the `UI-M2-C04` cross-process persistence smoke.
-Dateien zuerst lesen: `USER-INTERACTION-TEST-PROTOCOL-M2-TIME-HISTORY.md`, `USER-INTERACTION-COVERAGE-MATRIX-M2-TIME-HISTORY.md`, `docs/evidence/m2-time-history-run.log`, `version/CHANGELOG.md`, `version/CURRENT_STATE.md`, `DEV-CHECKLIST-M2-TIME-HISTORY.md`.
-Kriterium fertig: Balerion V0015 review attests "ready for Dino" → Dino acceptance → outgoing message to Bryan.
+Was: Balerion V0015 independent re-run after the Full-Proof Rerun — `./scripts/setup-m2-harness.sh && node scripts/e2e-m2-time-history.cjs`, expect 55 PASS / 0 FAIL. Confirm by diff that no app-source modification happened in this rerun (runner + harness + docs only) and that the `UI-M2-F06`/`UI-M2-F08`/`UI-M2-C04` cases are now PROVEN with screenshots + log lines.
+Dateien zuerst lesen: `USER-INTERACTION-TEST-PROTOCOL-M2-TIME-HISTORY.md`, `USER-INTERACTION-COVERAGE-MATRIX-M2-TIME-HISTORY.md`, `docs/evidence/m2-time-history-run.log`, `../messages/2026-05-18-Claude-To-Balerion-M2-Full-Proof-Handoff.md`, `version/CHANGELOG.md`, `version/CURRENT_STATE.md`, `DEV-CHECKLIST-M2-TIME-HISTORY.md`.
+Kriterium fertig: Balerion V0015 reproduce + sign-off → merge to main → Render deploy → Dino → Bryan.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Pointscore/M3 ist explizit ausgeschlossen. (verified clean by `UI-M2-G01` scan)
 - Reports/graphs/constitution scoring sind explizit ausgeschlossen.
 - Stable M1/v2.8.12 unverändert (backup-Branch und File-Snapshot existieren).
-- `UI-M2-F06` und `UI-M2-F08` carry-over: code path unchanged from v2.8.12, manuelles Balerion-Smoke nötig.
-- `UI-M2-C04` carry-over: cross-process restart persistence smoke ist V0015-owned.
+- **Keine Carry-overs mehr.** `UI-M2-F06` / `UI-M2-F08` / `UI-M2-C04` sind unter ausführbarer Browser-Evidenz geschlossen.
 
 ## 📊 FORTSCHRITT
 Dev-loop preparation: 6/6 spec artifacts
 Implementation: 9/9 checklist tasks done
-Browser-E2E evidence: 38 PASS / 0 FAIL / 0 console errors
-Quality gate: ready for Balerion V0015 review
+Browser-E2E evidence: 55 PASS / 0 FAIL / 0 console errors (Full-Proof Rerun)
+Quality gate: ready for Balerion V0015 independent re-run
