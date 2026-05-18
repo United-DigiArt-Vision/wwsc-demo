@@ -1010,15 +1010,45 @@ app.get('/api/events/:eventId/report', (req, res) => {
 });
 
 // GET /api/events/:eventId/time-history — time history entries for event
+// M2 (R-M2-02): include event_date so the dated view of an event's history can render the date.
 app.get('/api/events/:eventId/time-history', (req, res) => {
   try {
     const entries = db.prepare(`
-      SELECT th.*, m.name as member_name
+      SELECT th.id, th.member_id, m.name AS member_name,
+             th.event_id, e.date AS event_date,
+             th.stroke, th.time, th.previous_best, th.is_break
       FROM time_history th
       JOIN member m ON th.member_id = m.id
+      JOIN event  e ON th.event_id  = e.id
       WHERE th.event_id = ?
       ORDER BY th.stroke, m.name
     `).all(req.params.eventId);
+    res.json(entries);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/members/:memberId/time-history — per-swimmer timeline (M2 R-M2-03)
+// Sort: newest event date first, then event id desc as a stable tie-breaker, then stroke asc.
+// 404 if the member does not exist.
+app.get('/api/members/:memberId/time-history', (req, res) => {
+  try {
+    const memberId = Number(req.params.memberId);
+    if (!Number.isInteger(memberId) || memberId <= 0) {
+      return res.status(400).json({ error: 'Invalid member id' });
+    }
+    const member = db.prepare('SELECT id, name FROM member WHERE id = ?').get(memberId);
+    if (!member) return res.status(404).json({ error: 'Member not found' });
+
+    const entries = db.prepare(`
+      SELECT th.id, th.member_id, m.name AS member_name,
+             th.event_id, e.date AS event_date,
+             th.stroke, th.time, th.previous_best, th.is_break
+      FROM time_history th
+      JOIN member m ON th.member_id = m.id
+      JOIN event  e ON th.event_id  = e.id
+      WHERE th.member_id = ?
+      ORDER BY e.date DESC, th.event_id DESC, th.stroke ASC
+    `).all(memberId);
     res.json(entries);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });

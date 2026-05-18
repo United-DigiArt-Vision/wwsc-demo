@@ -37,9 +37,15 @@ async function viewEventDetails(eventId) {
   modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
   try {
-    // v2.7.1: Use full report endpoint for attendance + results + breakers
-    const reportRes = await fetch('/api/events/' + eventId + '/report');
+    // v2.7.1: Use full report endpoint for attendance + results + breakers.
+    // M2 R-M2-04: also fetch event time history so the completed-event detail
+    // surfaces a dated per-swimmer time list for week-by-week review.
+    const [reportRes, historyRes] = await Promise.all([
+      fetch('/api/events/' + eventId + '/report'),
+      fetch('/api/events/' + eventId + '/time-history')
+    ]);
     const report = await reportRes.json();
+    const eventHistory = historyRes.ok ? await historyRes.json() : [];
 
     // Attendance list
     const attendees = report.attendance || [];
@@ -86,6 +92,50 @@ async function viewEventDetails(eventId) {
         `).join('')
       : '<li style="color:#64748b">No record breakers</li>';
 
+    // M2 R-M2-02 / R-M2-04: dated per-swimmer Time History section. Server-sorted
+    // by stroke, then member name. Date is rendered once at the top because all
+    // rows share the same event_date.
+    const eventDateLabel = eventHistory.length && eventHistory[0].event_date
+      ? formatDate(eventHistory[0].event_date)
+      : formatDate(report.event_date || (report.event && report.event.date) || '');
+    let historyHtml;
+    if (eventHistory.length === 0) {
+      historyHtml = '<p style="color:#64748b;font-size:13px;margin:0">No finalized individual times yet. Times appear here once the event is finalized.</p>';
+    } else {
+      const historyRows = eventHistory.map(h => {
+        const strokeLabel = (typeof memberHistoryStrokeLabel === 'function')
+          ? memberHistoryStrokeLabel(h.stroke) : h.stroke;
+        const newTime = formatTime(h.time);
+        const pbCs = h.previous_best != null ? h.previous_best * 100 : null;
+        const pbCell = pbCs != null ? formatTime(pbCs) : '—';
+        const breakCell = h.is_break ? '<span style="color:#4ade80;font-weight:700" title="New personal best">🏆 PB</span>' : '';
+        return `
+          <tr>
+            <td style="padding:4px 8px">${h.member_name}</td>
+            <td style="padding:4px 8px">${strokeLabel}</td>
+            <td style="padding:4px 8px;text-align:right;font-weight:600">${newTime}</td>
+            <td style="padding:4px 8px;text-align:right;color:#94a3b8">${pbCell}</td>
+            <td style="padding:4px 8px">${breakCell}</td>
+          </tr>`;
+      }).join('');
+      historyHtml = `
+        <div style="font-size:12px;color:#94a3b8;margin-bottom:6px">Event date: <strong style="color:#e2e8f0">${eventDateLabel}</strong> · ${eventHistory.length} entr${eventHistory.length === 1 ? 'y' : 'ies'}</div>
+        <div style="overflow:auto;max-height:240px;border:1px solid #334155;border-radius:6px">
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead style="position:sticky;top:0;background:#0f172a">
+              <tr style="color:#94a3b8">
+                <th style="text-align:left;padding:6px 8px">Swimmer</th>
+                <th style="text-align:left;padding:6px 8px">Stroke / Race</th>
+                <th style="text-align:right;padding:6px 8px">Time</th>
+                <th style="text-align:right;padding:6px 8px">Prev. Best</th>
+                <th style="text-align:left;padding:6px 8px">Break</th>
+              </tr>
+            </thead>
+            <tbody>${historyRows}</tbody>
+          </table>
+        </div>`;
+    }
+
     modal.querySelector('div > div').innerHTML = `
       <h3 style="margin:0 0 16px;font-size:20px">📊 Event Details</h3>
       <h4 style="margin:16px 0 8px;color:#94a3b8">👥 Participants (${attendees.length})</h4>
@@ -94,6 +144,8 @@ async function viewEventDetails(eventId) {
       <ul style="list-style:none;padding:0;margin:0">${racesHtml}</ul>
       <h4 style="margin:16px 0 8px;color:#94a3b8">🏆 Record Breakers (${breakers.length})</h4>
       <ul style="list-style:none;padding:0;margin:0">${breakerList}</ul>
+      <h4 style="margin:16px 0 8px;color:#94a3b8">📜 Time History (M2)</h4>
+      ${historyHtml}
       <button class="btn btn-accent" onclick="openEventReportFromCalendar(${eventId})" style="margin-top:16px;width:100%">📄 View Event Report</button>
       <button class="btn" onclick="this.closest('div[style*=fixed]').remove()" style="margin-top:8px;width:100%">Close</button>
     `;

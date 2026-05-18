@@ -66,6 +66,8 @@ const API = {
   completeEvent: (eventId) => API.post(`/api/events/${eventId}/complete`),
   getEventReport: (eventId) => API.get(`/api/events/${eventId}/report`),
   getTimeHistory: (eventId) => API.get(`/api/events/${eventId}/time-history`),
+  // M2 R-M2-03: per-swimmer time history timeline.
+  getMemberTimeHistory: (memberId) => API.get(`/api/members/${memberId}/time-history`),
   getBreakersReport: () => API.get('/api/reports/breakers'),
   getExceededReport: () => API.get('/api/reports/exceeded'), // BF2.6-20
 
