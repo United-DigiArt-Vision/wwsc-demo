@@ -7,18 +7,20 @@
 **Stable M1 file backup:** `../backups/2026-05-18-0615-v2.8.12-m1-stable-origin-main/`
 **TargetBranch:** dev/v2.9.0-m2-time-history
 **Branch:** dev/v2.9.0-m2-time-history
-**RecordedCommit:** c0c0c68 (`docs: define M2 time history dev loop specs`)
 **Version bump commit:** aa004be (`release: bump to v2.9.0 for M2 time history`)
-**LastEditor:** Balerion
+**Implementation commit:** a864414 (`feat: v2.9.0 M2 time history implementation (T1-T7)`)
+**Evidence commit:** 3fce550 (`docs: M2 evidence package (protocol + coverage matrix + raw run + screenshots)`)
+**RecordedCommit:** a864414 (substantive delivery anchor — three API/UI changes wiring M2 contract)
+**LastEditor:** Claude Code
 **Date:** 2026-05-18
-**Timestamp:** 2026-05-18 06:22:00 Europe/Berlin
-**WorkingTreeStatus:** clean after final SSOT completion commit; current HEAD is dynamic — run `git rev-parse --short HEAD`.
+**Timestamp:** 2026-05-18 07:35:00 Europe/Berlin
+**WorkingTreeStatus:** clean after this SSOT completion commit; HEAD is dynamic — resolve with `git rev-parse --short HEAD` on branch `dev/v2.9.0-m2-time-history`.
 **Version SSOT:** `package.json`
 **Release Anchors:** `package.json=2.9.0`, `src/public/index.html?v=2.9.0`, feature branch `dev/v2.9.0-m2-time-history`.
 
 ## Client / Milestone Status
 
-**Current client status:** M2 ACTIVE & FUNDED. Implement scoped M2 only.
+**Current client status:** M2 ACTIVE & FUNDED. Implementation delivered, awaiting Balerion V0015 verification.
 
 ### Latest communication anchors
 
@@ -29,13 +31,14 @@
    - Screenshot evidence: `../messages/attachments/2026-05-18-upwork-outgoing-m2-scope-confirmation-sent.png`
 3. **2026-05-18 06:20:** Balerion prepared Claude Code implementation handoff.
    - Handoff: `../messages/2026-05-18-0620-Balerion-To-Claude-M2-Time-History-Implementation.md`
+4. **2026-05-18 07:30:** Claude Code completed implementation + evidence run (38 PASS / 0 FAIL).
 
 ## Current Boundary
 
 - M2 scope: "Generate solution for recording time changes and archiving historical times with dates."
 - Pointscore, accumulated season totals, reports/graphs, and constitution accumulation are **Milestone 3**, not M2.
 - M1/v2.8.12 stable code is protected by backup branch and file snapshot.
-- Development must stay on `dev/v2.9.0-m2-time-history`; no direct `main` development.
+- Development stays on `dev/v2.9.0-m2-time-history`; no direct `main` development.
 
 ## M2 Dev-Loop Artifacts
 
@@ -45,21 +48,38 @@
 - Unit tests: `UNIT-TEST-SPEC-M2-TIME-HISTORY.md`
 - Integration tests: `INTEGRATION-TEST-SPEC-M2-TIME-HISTORY.md`
 - User interaction tests: `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md`
-- Dev checklist: `DEV-CHECKLIST-M2-TIME-HISTORY.md`
+- Dev checklist: `DEV-CHECKLIST-M2-TIME-HISTORY.md` (all 9 tasks ticked)
+- Test protocol: `USER-INTERACTION-TEST-PROTOCOL-M2-TIME-HISTORY.md`
+- Coverage matrix: `USER-INTERACTION-COVERAGE-MATRIX-M2-TIME-HISTORY.md`
+- Raw run + browser console capture: `docs/evidence/m2-time-history-run.log` + `docs/evidence/m2-time-history-console-errors.log`
+- Screenshots: `docs/screenshots/m2-time-history/` (9 PNGs)
+- E2E runner: `scripts/e2e-m2-time-history.cjs`
+
+## M2 Delivery Summary
+
+Three client-side contract pieces, one new server endpoint, one new E2E runner, full evidence:
+
+- `src/server.js`:
+  - `GET /api/events/:eventId/time-history` joins `event` so each row carries `event_date` (R-M2-02).
+  - New `GET /api/members/:memberId/time-history` returns the per-swimmer dated timeline (R-M2-03), validates the id, 404 on unknown member.
+- `src/public/js/api.js`: `API.getMemberTimeHistory(memberId)` wrapper.
+- `src/public/js/screens/members.js`: per-row `📜 History` action and `showMemberHistoryModal(id)` rendering Date / Stroke / Time / Previous Best / Break.
+- `src/public/js/screens/calendar.js`: completed-event detail modal now exposes a "Time History (M2)" section.
+- `scripts/e2e-m2-time-history.cjs`: self-contained runner, isolated server on PORT=3003 with WWSC_DB_PATH=/tmp/wwsc-m2-test/wwsc.db, 38 PASS / 0 FAIL.
 
 ## Final SSOT Note
 
-The final SSOT commit is a documentation anchor per SR-VERSION-003. `RecordedCommit` intentionally points to the last substantive M2 spec commit (`c0c0c68`); the current HEAD may be a later SSOT-only commit.
+The SSOT completion commit is a documentation anchor per SR-VERSION-003. `RecordedCommit` points to the substantive implementation commit `a864414`; the current HEAD may be a later SSOT-only commit. Resolve HEAD dynamically with `git rev-parse --short HEAD`.
 
 ## Next Action
 
-Claude Code implements from the M2 handoff. Balerion then verifies the result using V0015:
+Balerion executes V0015 verification on this branch:
 - branch/commit/version truth
 - diff review
-- API tests
-- Browser-E2E user flows with raw logs/screenshots
+- API tests (re-run `node scripts/e2e-m2-time-history.cjs`)
+- Browser-E2E manual reproduction of UI-M2-A..G + the carry-overs `UI-M2-F06` (relay readout), `UI-M2-F08` (archive/restore), `UI-M2-C04` (server-restart persistence)
 - M1 regression smoke
-- no M3 leakage
+- no M3 leakage scan
 
 ## SSOT Rule
 

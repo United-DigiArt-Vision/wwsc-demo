@@ -11,6 +11,37 @@
 
 ---
 
+## 2026-05-18 — feat: v2.9.0 M2 Time History implementation + browser E2E evidence
+- **Timestamp:** 2026-05-18 07:30:00
+- **App Version (from package.json):** 2.9.0
+- **Branch:** dev/v2.9.0-m2-time-history
+- **Implementation commit:** a864414 (`feat: v2.9.0 M2 time history implementation (T1-T7)`)
+- **Evidence commit:** 3fce550 (`docs: M2 evidence package (protocol + coverage matrix + raw run + screenshots)`)
+- **RecordedCommit:** a864414 (substantive delivery anchor)
+- **Editor:** Claude Code
+- **Scope (M2 only — no M3 leakage):**
+  - Per-swimmer dated time history available from the Members screen.
+  - Completed-event detail in Calendar exposes a dated per-swimmer time history list.
+  - Event-time-history API now ships `event_date` so the UI can render dates without a second round-trip.
+- **Changes by file:**
+  - `src/server.js`:
+    * `GET /api/events/:eventId/time-history` now joins `event` so each row carries `event_date` (R-M2-02). Column projection is explicit (no `th.*`) so future schema changes do not silently leak fields.
+    * New endpoint `GET /api/members/:memberId/time-history` returns the swimmer's dated timeline. Validates the id, returns 404 when the swimmer does not exist, and sorts `event_date DESC, event_id DESC, stroke ASC` (R-M2-03, UT-M2-02-1..4).
+  - `src/public/js/api.js`: added `API.getMemberTimeHistory(memberId)` wrapper around the new endpoint (T3).
+  - `src/public/js/screens/members.js`:
+    * Each member row now exposes a "📜 History" action next to "Edit" (T4 / UI-M2-A01).
+    * New `showMemberHistoryModal(id)` opens a modal with date / stroke / time / previous-best / break-marker columns, formatted via `formatTime` (centiseconds) and explicit whole-seconds-to-centisecond conversion for `previous_best` (UT-M2-04-1..3 / UI-M2-A02..A05). Empty state renders a friendly notice for swimmers without history.
+  - `src/public/js/screens/calendar.js`: completed-event detail modal now fetches `/api/events/:id/time-history` in parallel with the report and renders a "📜 Time History (M2)" section. Each event's history is scoped to that event's date and shown with a sticky table header for the dated row list (T5 / UI-M2-B01..B04).
+- **New test artifact:** `scripts/e2e-m2-time-history.cjs` — self-contained runner that boots an isolated server on `PORT=3003` with `WWSC_DB_PATH=/tmp/wwsc-m2-test/wwsc.db`, seeds three weekly events with finalized times, asserts the contract from API up to rendered DOM via puppeteer-core, and tears the server down. Maps every spec ID to a recorded PASS line in `docs/evidence/m2-time-history-run.log`.
+- **Evidence run (this delivery):**
+  - 38 PASS / 0 FAIL across UT-M2-01..04, UI-M2-A..G, plus M1 regression smoke on 7 screens.
+  - 0 console errors (favicon 404 noise filtered).
+  - Screenshots stored under `docs/screenshots/m2-time-history/`: members screen with history action, member timeline modal, empty-state modal, calendar overview, event-detail with time history (scrolled + unscrolled views, two different weeks), event-detail after re-finalize.
+- **Scope guard verified:** no Pointscore, no accumulated season totals, no reports/graphs, no constitution scoring code. Only one new endpoint added (`GET /api/members/:memberId/time-history`).
+- **Open items routed to V0015 (Balerion):**
+  - `UI-M2-F06` (relay readout regression) and `UI-M2-F08` (archive/restore) — both code paths unchanged from v2.8.12; verified by Balerion's existing smoke.
+  - `UI-M2-C04` (server-restart persistence with same WWSC_DB_PATH) — covered structurally by isolated server lifecycle; full manual smoke owned by Balerion.
+
 ## 2026-05-18 — docs: start M2 time history dev loop
 - **Timestamp:** 2026-05-18 06:22:00
 - **App Version (from package.json):** 2.9.0
