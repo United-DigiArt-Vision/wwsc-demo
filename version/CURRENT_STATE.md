@@ -32,6 +32,8 @@
 3. **2026-05-18 06:20:** Balerion prepared Claude Code implementation handoff.
    - Handoff: `../messages/2026-05-18-0620-Balerion-To-Claude-M2-Time-History-Implementation.md`
 4. **2026-05-18 07:30:** Claude Code completed implementation + evidence run (38 PASS / 0 FAIL).
+5. **2026-05-18 07:35:** Claude → Balerion delivery handoff.
+   - Handoff: `../messages/2026-05-18-Claude-To-Balerion-M2-Time-History-Delivery.md`
 
 ## Current Boundary
 
