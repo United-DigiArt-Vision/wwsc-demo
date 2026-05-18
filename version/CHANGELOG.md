@@ -11,6 +11,23 @@
 
 ---
 
+## 2026-05-18 — docs: start M2 time history dev loop
+- **Timestamp:** 2026-05-18 06:22:00
+- **App Version (from package.json):** 2.9.0
+- **Branch:** dev/v2.9.0-m2-time-history
+- **RecordedCommit:** c0c0c68 (`docs: define M2 time history dev loop specs`)
+- **Version bump commit:** aa004be (`release: bump to v2.9.0 for M2 time history`)
+- **Editor:** Balerion
+- **Changes:**
+  - Created stable M1 backup branch `backup/v2.8.12-m1-stable-20260518` at `eb87e11`.
+  - Created stable M1 file backup at `../backups/2026-05-18-0615-v2.8.12-m1-stable-origin-main/`.
+  - Created M2 feature branch `dev/v2.9.0-m2-time-history`.
+  - Bumped app version to `2.9.0` and synchronized cache-busting as the first feature-branch commit.
+  - Added M2 requirements, design spec, unit test spec, integration test spec, user interaction test spec, and dev checklist.
+  - Prepared Claude Code implementation handoff in `../messages/2026-05-18-0620-Balerion-To-Claude-M2-Time-History-Implementation.md`.
+- **Scope guard:** M2 is limited to recording time changes and archiving historical times with dates. Pointscore, accumulated totals, reports/graphs, and constitution scoring remain M3.
+- **Verification status:** Specification phase only. Implementation and browser-E2E evidence pending Claude Code delivery and Balerion QA.
+
 ## 2026-05-06 — fix: v2.8.12 Bryan final polish + persistence hardening
 - **Timestamp:** 2026-05-06 11:57:00
 - **App Version (from package.json):** 2.8.12

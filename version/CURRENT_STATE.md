@@ -1,70 +1,67 @@
 # CURRENT_STATE
 
-**Version (from `package.json`):** 2.8.12
+**Version (from `package.json`):** 2.9.0
 **BaseBranch:** main / origin/main
-**BaseCommit:** 2b60cad (`docs: record v2.8.11 Bryan message sent`) plus local Bryan classification b417c0a
-**TargetBranch:** main / origin/main
-**Branch:** main
-**Current main tip:** dynamic — run `git rev-parse --short HEAD` on `main` / `origin/main`
-**Tag:** v2.8.12
-**Version bump commit:** 79eb9cc (`release: bump to v2.8.12 for Bryan final polish`)
-**Test spec commit:** 5562ec4 (`test: define v2.8.12 Bryan user test spec`)
-**Implementation commit:** 2321284 (`fix: v2.8.12 Bryan relay reporting and persistence`)
-**Evidence commit:** f39be1b (`docs: add v2.8.12 Bryan evidence package`)
-**Merge commit:** 596458f (`merge: v2.8.12 Bryan final polish and persistence`)
+**BaseCommit:** eb87e11 (`docs: record v2.8.12 live verification`)
+**Stable M1 backup branch:** backup/v2.8.12-m1-stable-20260518
+**Stable M1 file backup:** `../backups/2026-05-18-0615-v2.8.12-m1-stable-origin-main/`
+**TargetBranch:** dev/v2.9.0-m2-time-history
+**Branch:** dev/v2.9.0-m2-time-history
+**RecordedCommit:** c0c0c68 (`docs: define M2 time history dev loop specs`)
+**Version bump commit:** aa004be (`release: bump to v2.9.0 for M2 time history`)
 **LastEditor:** Balerion
-**Date:** 2026-05-06
-**Timestamp:** 2026-05-06 14:12 Europe/Berlin
-**WorkingTreeStatus:** released on `main`, pushed to GitHub with tag `v2.8.12`, deployed live on Render; Bryan message draft prepared.
-**Live deploy on Render:** ✅ live verified
-**Live `/api/version`:** `{"version":"2.8.12","build":"2026-05-06T12:12:59.088Z"}`
+**Date:** 2026-05-18
+**Timestamp:** 2026-05-18 06:22:00 Europe/Berlin
+**WorkingTreeStatus:** modified by this SSOT update; final SSOT commit pending.
 **Version SSOT:** `package.json`
-**Release Anchors:** `STABLE.md`, Git tag `v2.8.12`, `/api/version`, `src/public/index.html?v=2.8.12`, evidence docs.
+**Release Anchors:** `package.json=2.9.0`, `src/public/index.html?v=2.9.0`, feature branch `dev/v2.9.0-m2-time-history`.
 
-## Scope of v2.8.12
+## Client / Milestone Status
 
-Narrow Bryan 2026-05-06 final M1 polish + persistence hardening pass. This does not start Pointscore/M3.
+**Current client status:** M2 ACTIVE & FUNDED. Implement scoped M2 only.
 
-### Changes released
+### Latest communication anchors
 
-- `src/public/js/screens/results.js`
-  - Relay readout now includes signed variance for relay teams.
-  - Relay readout now includes team participant/member names; Medley includes stroke labels where available.
-  - Event Report relay sections now show team total and signed variance directly in the team heading.
-  - 25m breaker UI logic uses the new 0.50s threshold while non-25m races keep the prior 1.00s threshold.
-- `src/public/js/screens/calendar.js`
-  - Season Calendar event details now show relay team members for completed 25m Team Relay and Medley Relay results.
-  - Calendar event details also include signed variance for relay teams.
-- `src/server.js`
-  - Time entry breaker calculation now joins the race type and applies race-specific thresholds.
-  - 25m break threshold: improvement >= 0.50s (`variance <= -50`).
-  - Other standard races keep existing >= 1.00s threshold (`variance <= -100`).
-- `src/db.js`
-  - Database path is configurable via `WWSC_DB_PATH`.
-  - `WWSC_DATA_DIR` and `WWSC_BACKUP_DIR` are also supported for hosted/persistent deployments.
-  - Default local behavior remains `src/data/wwsc.db`.
-- `render.yaml`
-  - Adds Render persistent disk config at `/var/data` and sets `WWSC_DB_PATH=/var/data/wwsc.db`.
+1. **2026-05-18:** Bryan activated and funded M2 on Upwork.
+   - Source: `../messages/2026-05-18-Bryan-M2-active-funded.md`
+2. **2026-05-18 06:08:** Dino sent M2 scope-confirmation to Bryan.
+   - Sent-confirmed record: `../messages/2026-05-18-outgoing-to-bryan-m2-scope-confirmation-sent-confirmed.md`
+   - Screenshot evidence: `../messages/attachments/2026-05-18-upwork-outgoing-m2-scope-confirmation-sent.png`
+3. **2026-05-18 06:20:** Balerion prepared Claude Code implementation handoff.
+   - Handoff: `../messages/2026-05-18-0620-Balerion-To-Claude-M2-Time-History-Implementation.md`
 
-## Verification before deploy
+## Current Boundary
 
-- Syntax checks PASS: `src/db.js`, `src/server.js`, `src/public/js/screens/results.js`, `src/public/js/screens/calendar.js`, `scripts/e2e-v2812-bryan.cjs`.
-- Browser-E2E/API: `scripts/e2e-v2812-bryan.cjs` — 31 PASS / 0 FAIL.
-- Evidence summary: `docs/evidence/WWSC-v2.8.12-bryan-browser-e2e-evidence.md`.
-- Raw log: `docs/evidence/WWSC-v2.8.12-browser-e2e-raw.log`.
-- Screenshots/text/html: `docs/screenshots/v2.8.12-bryan/`.
-- Persistence restart proof: `docs/evidence/WWSC-v2.8.12-persistence-restart-proof.md` — restarted local server with same `WWSC_DB_PATH`; 2 finalized active events survived.
+- M2 scope: "Generate solution for recording time changes and archiving historical times with dates."
+- Pointscore, accumulated season totals, reports/graphs, and constitution accumulation are **Milestone 3**, not M2.
+- M1/v2.8.12 stable code is protected by backup branch and file snapshot.
+- Development must stay on `dev/v2.9.0-m2-time-history`; no direct `main` development.
 
-## Current delivery status
+## M2 Dev-Loop Artifacts
 
-- v2.8.12 is live on Render.
-- GitHub push: `main 2b60cad..b082d25`, tag `v2.8.12`.
-- Live `/api/version` verified: `2.8.12` / build `2026-05-06T12:12:59.088Z`.
-- Browser snapshot confirmed live sidebar shows `v2.8.12` and `Build: 2026-05-06T12:12:59.088Z`.
-- Live `/api/events?archived=1` currently returns `[]` after switching to persistent disk path; this means the new persistent DB is initialized and will retain future saved events, but old ephemeral saved test events were not migrated.
+- Progress: `PROGRESS.md`
+- Requirements: `REQUIREMENTS-M2-TIME-HISTORY.md`
+- Design: `DESIGN-SPEC-M2-TIME-HISTORY.md`
+- Unit tests: `UNIT-TEST-SPEC-M2-TIME-HISTORY.md`
+- Integration tests: `INTEGRATION-TEST-SPEC-M2-TIME-HISTORY.md`
+- User interaction tests: `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md`
+- Dev checklist: `DEV-CHECKLIST-M2-TIME-HISTORY.md`
 
-## Scope boundaries
+## Next Action
 
-- Pointscore/M3 was not implemented.
-- No new phases started.
-- Render persistent disk path is deployed; future event persistence is hardened via `/var/data/wwsc.db`. Existing prior ephemeral saved events were not migrated because they were on Render ephemeral filesystem.
+Claude Code implements from the M2 handoff. Balerion then verifies the result using V0015:
+- branch/commit/version truth
+- diff review
+- API tests
+- Browser-E2E user flows with raw logs/screenshots
+- M1 regression smoke
+- no M3 leakage
+
+## SSOT Rule
+
+- Operative project SSOT: `~/Dropbox/Dino-Balerion-Claude-Code/Projekte/0004_swimming-app/`
+- Code SSOT: this `code/` directory.
+- Status SSOT: `code/version/CURRENT_STATE.md`.
+- Messages/evidence: `messages/`.
+- Do not treat `~/wwsc-demo`, `projects/0004_swimming-app/`, daily notes, or chat memory as a second project truth.
+
