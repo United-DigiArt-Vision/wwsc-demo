@@ -1,0 +1,40 @@
+PASS  VERSION-OK  /api/version={"version":"2.9.0","build":"2026-05-18T04:50:07.244Z"}
+PASS  SEED-MEMBERS  created 4 members
+PASS  SEED-EVENTS  events 1,2,3
+PASS  UT-M2-01-1  row has event_date=2026-04-18
+PASS  UT-M2-01-2  has columns id,member_id,member_name,event_id,event_date,stroke,time,previous_best,is_break
+PASS  UT-M2-01-3  empty event returns []
+PASS  UT-M2-02-1  rows=3 onlyMember=true
+PASS  UT-M2-02-2  dates desc=2026-04-18,2026-04-11,2026-04-04
+PASS  UT-M2-02-3  unknown member status=404
+PASS  UT-M2-02-4  no-history member returns []
+PASS  UT-M2-03-1  first finalize wrote 23 rows for finished lanes
+PASS  UT-M2-03-2  second finalize still has 23 rows (no duplication)
+PASS  UT-M2-03-3  rows=23 updated time=1100
+PASS  UT-M2-04-1  formatTime(1325)=13.25
+PASS  UT-M2-04-2  formatTime(14*100)=14.00 formatWhole(14)=14
+PASS  UT-M2-04-3  formatTime(null)=—
+PASS  UI-M2-A01  history buttons=24
+PASS  UI-M2-A02-locator  alice button onclick=showMemberHistoryModal(22)
+PASS  UI-M2-A02  rows=3 visible=true
+PASS  UI-M2-A03  columns+pb chip present
+PASS  UI-M2-A04  newest-first row date=Sat, 18 Apr 2026
+PASS  UI-M2-A05  empty-state text=Time History — Empty Eddie
+
+No time history yet for this swimmer. Times appear h
+PASS  UI-M2-A06  still on members screen
+PASS  UI-M2-B01  event detail has Time History section
+PASS  UI-M2-B02  event detail shows swimmer rows: Andrew Barnes,Ben Chandler,Bryan Hesketh,David Hughes
+PASS  UI-M2-B03  event date visible
+PASS  UI-M2-B04  week 1 detail shows its own date
+PASS  UI-M2-D01  rows in latest modal after re-finalize=23 (expected 23) diag={"found":true,"tables":1,"matchedTables":1,"rows":23}
+PASS  UI-M2-C03  rows after page reload=3
+PASS  UI-M2-F-dashboard  dashboard renders
+PASS  UI-M2-F01  members renders
+PASS  UI-M2-F02  event-setup renders
+PASS  UI-M2-F03  heat builder renders
+PASS  UI-M2-F04  results renders
+PASS  UI-M2-F05  breaker-report renders
+PASS  UI-M2-F07  calendar renders
+PASS  UI-M2-G01  m3 leakage scan: clean
+PASS  UI-M2-F09  console errors=0
