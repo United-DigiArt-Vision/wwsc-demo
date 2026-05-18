@@ -12,7 +12,7 @@
 **LastEditor:** Balerion
 **Date:** 2026-05-18
 **Timestamp:** 2026-05-18 06:22:00 Europe/Berlin
-**WorkingTreeStatus:** modified by this SSOT update; final SSOT commit pending.
+**WorkingTreeStatus:** clean after final SSOT completion commit; current HEAD is dynamic — run `git rev-parse --short HEAD`.
 **Version SSOT:** `package.json`
 **Release Anchors:** `package.json=2.9.0`, `src/public/index.html?v=2.9.0`, feature branch `dev/v2.9.0-m2-time-history`.
 
@@ -47,6 +47,10 @@
 - User interaction tests: `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md`
 - Dev checklist: `DEV-CHECKLIST-M2-TIME-HISTORY.md`
 
+## Final SSOT Note
+
+The final SSOT commit is a documentation anchor per SR-VERSION-003. `RecordedCommit` intentionally points to the last substantive M2 spec commit (`c0c0c68`); the current HEAD may be a later SSOT-only commit.
+
 ## Next Action
 
 Claude Code implements from the M2 handoff. Balerion then verifies the result using V0015:
@@ -64,4 +68,3 @@ Claude Code implements from the M2 handoff. Balerion then verifies the result us
 - Status SSOT: `code/version/CURRENT_STATE.md`.
 - Messages/evidence: `messages/`.
 - Do not treat `~/wwsc-demo`, `projects/0004_swimming-app/`, daily notes, or chat memory as a second project truth.
-
