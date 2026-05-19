@@ -6,7 +6,8 @@
 **Stable M1 backup branch:** backup/v2.8.12-m1-stable-20260518
 **Stable M1 file backup:** `../backups/2026-05-18-0615-v2.8.12-m1-stable-origin-main/`
 **TargetBranch:** dev/v2.9.0-m2-time-history
-**Branch:** dev/v2.9.0-m2-time-history
+**Branch:** main
+**Merge commit:** 1c01b10 (`merge: v2.9.0 M2 time history`)
 **Version bump commit:** aa004be (`release: bump to v2.9.0 for M2 time history`)
 **Implementation commit:** a864414 (`feat: v2.9.0 M2 time history implementation (T1-T7)`)
 **Evidence commit (first delivery):** 3fce550 (`docs: M2 evidence package (...)`)
@@ -18,13 +19,13 @@
 **LastEditor:** Balerion
 **Date:** 2026-05-18
 **Timestamp:** 2026-05-18 07:42:00 Europe/Berlin
-**WorkingTreeStatus:** Balerion verification refreshed evidence artifacts; no app-source files changed. HEAD is dynamic — resolve with `git rev-parse --short HEAD` on branch `dev/v2.9.0-m2-time-history`.
+**WorkingTreeStatus:** M2 merged into local `main`; post-merge browser E2E verification refreshed evidence artifacts. HEAD is dynamic — resolve with `git rev-parse --short HEAD` on branch `main`.
 **Version SSOT:** `package.json`
 **Release Anchors:** `package.json=2.9.0`, `src/public/index.html?v=2.9.0`, feature branch `dev/v2.9.0-m2-time-history`.
 
 ## Client / Milestone Status
 
-**Current client status:** M2 ACTIVE & FUNDED. Implementation and independent Balerion V0015 verification complete; next gate is controlled merge -> deploy -> live smoke. Do not message Bryan before live smoke.
+**Current client status:** M2 ACTIVE & FUNDED. Implementation is merged into local `main` and post-merge verification passed; next gate is deploy -> live smoke. Do not message Bryan before live smoke.
 
 ### Latest communication anchors
 
@@ -47,13 +48,17 @@
 9. **2026-05-18 07:52:** Balerion independently reproduced the Full-Proof run from the SSOT branch at HEAD `b5b99e2`.
    - `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md`
    - Result: 55 PASS / 0 FAIL. V0015 classification: PROVEN for the agreed M2 release gate; NOT PROVEN: none.
+10. **2026-05-19 10:11:** Balerion merged M2 into local `main` and re-ran the M2 browser E2E runner on `main`.
+   - `../messages/2026-05-19-Balerion-M2-main-merge-post-merge-verification.md`
+   - Merge commit: `1c01b10`
+   - Result: 55 PASS / 0 FAIL.
 
 ## Current Boundary
 
 - M2 scope: "Generate solution for recording time changes and archiving historical times with dates."
 - Pointscore, accumulated season totals, reports/graphs, and constitution accumulation are **Milestone 3**, not M2.
 - M1/v2.8.12 stable code is protected by backup branch and file snapshot.
-- Development stays on `dev/v2.9.0-m2-time-history` until controlled merge; no direct `main` development.
+- M2 is now merged into local `main`. Further release changes should happen through controlled commits, then deploy/live-smoke.
 
 ## M2 Dev-Loop Artifacts
 
@@ -89,8 +94,7 @@ The SSOT completion commit is a documentation anchor per SR-VERSION-003. `Record
 ## Next Action
 
 Controlled release sequence:
-- Commit Balerion-refreshed verification artifacts and this SSOT state update.
-- Merge `dev/v2.9.0-m2-time-history` into `main`.
+- Commit post-merge verification artifacts and this SSOT state update.
 - Deploy to Render.
 - Live smoke: `/api/version` must report `2.9.0`, core UI must load, M2 Time History must be visible.
 - Only after live smoke: prepare/send Bryan update and archive the sent-confirmed record.

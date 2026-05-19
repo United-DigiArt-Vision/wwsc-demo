@@ -1,4 +1,4 @@
-PASS  VERSION-OK  /api/version={"version":"2.9.0","build":"2026-05-18T07:10:33.207Z"}
+PASS  VERSION-OK  /api/version={"version":"2.9.0","build":"2026-05-19T08:10:30.076Z"}
 PASS  SEED-MEMBERS  created 4 members
 PASS  SEED-EVENTS  events 1,2,3
 PASS  UT-M2-01-1  row has event_date=2026-04-18
@@ -43,7 +43,7 @@ PASS  UI-M2-F06-relay25  25m Team Relay section rendered (diag={"has25mRelay":tr
 PASS  UI-M2-F06-medley  Medley Relay section rendered
 PASS  UI-M2-F06-members  relay member names visible
 PASS  UI-M2-F06-variance  variance column/text present in relay readout
-PASS  UI-M2-D02  updated time 11.00 visible in member timeline for ev2 row: ["Sat, 11 Apr 2026","25m","11.00","19.00","🏆 PB Break"]
+PASS  UI-M2-D02  updated time 11.00 visible in member timeline for ev2 row: ["Sat, 11 Apr 2026","25m","11.00","20.00","🏆 PB Break"]
 PASS  UI-M2-D03  break-marker consistent: modal=true, breaker-report mentions Andrew Barnes=true
 PASS  UI-M2-C01  time-history rows visible immediately after create+enter+finalize: 23
 PASS  UI-M2-C02  rows visible without a browser refresh (same page instance, fresh API call)

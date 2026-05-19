@@ -1,9 +1,9 @@
 # PROGRESS — WWSC v2.9.0 M2 Time History
 
 ## 🎯 AKTUELLER STATUS
-Phase: M2 V0015 independent verification complete — ready for controlled merge/deploy sequence
-Schritt: Balerion independently reproduced the Full-Proof M2 runner on branch `dev/v2.9.0-m2-time-history` at HEAD `b5b99e2`. Re-run produced **55 PASS / 0 FAIL**. Every relevant M2 spec case is classified as PROVEN; no NOT PROVEN items remain for the agreed release gate. Verification note: `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md`.
-Blockiert: Nein. Next controlled step is merge `dev/v2.9.0-m2-time-history` -> `main`, deploy, live smoke, then Bryan update.
+Phase: M2 merged to `main` locally and post-merge verification passed
+Schritt: `dev/v2.9.0-m2-time-history` was merged into local `main` at merge commit `1c01b10`. Balerion ran the M2 browser E2E runner on `main`; result: **55 PASS / 0 FAIL**. Every relevant M2 spec case remains PROVEN after merge.
+Blockiert: No technical blocker. External publish gate remains: deploy to Render, live smoke, then Bryan update.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] M2 activated/funded evidence: `../messages/2026-05-18-Bryan-M2-active-funded.md`.
@@ -31,8 +31,8 @@ Blockiert: Nein. Next controlled step is merge `dev/v2.9.0-m2-time-history` -> `
 - [x] T9 Final SSOT completion commit (delivery close).
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Controlled release sequence — merge `dev/v2.9.0-m2-time-history` into `main`, deploy to Render, verify `/api/version` reports `2.9.0`, run live smoke, then prepare Bryan update.
-Dateien zuerst lesen: `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`.
+Was: Deploy to Render, verify `/api/version` reports `2.9.0`, run live smoke, then prepare Bryan update.
+Dateien zuerst lesen: `../messages/2026-05-19-Balerion-M2-main-merge-post-merge-verification.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`.
 Kriterium fertig: Live v2.9.0 smoke passes and Bryan update draft/sent-confirmed is archived.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
@@ -45,4 +45,4 @@ Kriterium fertig: Live v2.9.0 smoke passes and Bryan update draft/sent-confirmed
 Dev-loop preparation: 6/6 spec artifacts
 Implementation: 9/9 checklist tasks done
 Browser-E2E evidence: 55 PASS / 0 FAIL / 0 console errors (Full-Proof Rerun)
-Quality gate: Balerion V0015 independent verification complete; ready for merge/deploy/live-smoke
+Quality gate: local `main` post-merge verification complete; ready for deploy/live-smoke
