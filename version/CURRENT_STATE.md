@@ -13,17 +13,18 @@
 **Full-Proof runner extension commit:** 87b68b7 (`feat: M2 full-proof rerun — runner extension + harness setup script`)
 **Full-Proof evidence commit:** be6ef8d (`docs: M2 full-proof evidence package (14 screenshots + refreshed run log)`)
 **Full-Proof Protocol/Matrix commit:** c1d2522 (`docs: M2 full-proof Protocol + Coverage Matrix rewrite (PROVEN per case)`)
+**Balerion V0015 verification:** `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md` — independently reproduced 55 PASS / 0 FAIL on HEAD `b5b99e2`
 **RecordedCommit:** a864414 (substantive delivery anchor — three API/UI changes wiring M2 contract; the Full-Proof rerun did not modify any app-source file)
-**LastEditor:** Claude Code
+**LastEditor:** Balerion
 **Date:** 2026-05-18
 **Timestamp:** 2026-05-18 07:42:00 Europe/Berlin
-**WorkingTreeStatus:** clean after Full-Proof SSOT closure commit; HEAD is dynamic — resolve with `git rev-parse --short HEAD` on branch `dev/v2.9.0-m2-time-history`.
+**WorkingTreeStatus:** Balerion verification refreshed evidence artifacts; no app-source files changed. HEAD is dynamic — resolve with `git rev-parse --short HEAD` on branch `dev/v2.9.0-m2-time-history`.
 **Version SSOT:** `package.json`
 **Release Anchors:** `package.json=2.9.0`, `src/public/index.html?v=2.9.0`, feature branch `dev/v2.9.0-m2-time-history`.
 
 ## Client / Milestone Status
 
-**Current client status:** M2 ACTIVE & FUNDED. Implementation delivered, awaiting Balerion V0015 verification.
+**Current client status:** M2 ACTIVE & FUNDED. Implementation and independent Balerion V0015 verification complete; next gate is controlled merge -> deploy -> live smoke. Do not message Bryan before live smoke.
 
 ### Latest communication anchors
 
@@ -43,13 +44,16 @@
    - `../messages/2026-05-18-0718-Balerion-To-Claude-M2-Full-Proof-Required.md`
 8. **2026-05-18 07:40:** Claude → Balerion Full-Proof Handoff. Runner extended (F06 / F08 / C04 + 7 explicit cases), harness setup script added, 55 PASS / 0 FAIL, 0 carry-overs.
    - `../messages/2026-05-18-Claude-To-Balerion-M2-Full-Proof-Handoff.md`
+9. **2026-05-18 07:52:** Balerion independently reproduced the Full-Proof run from the SSOT branch at HEAD `b5b99e2`.
+   - `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md`
+   - Result: 55 PASS / 0 FAIL. V0015 classification: PROVEN for the agreed M2 release gate; NOT PROVEN: none.
 
 ## Current Boundary
 
 - M2 scope: "Generate solution for recording time changes and archiving historical times with dates."
 - Pointscore, accumulated season totals, reports/graphs, and constitution accumulation are **Milestone 3**, not M2.
 - M1/v2.8.12 stable code is protected by backup branch and file snapshot.
-- Development stays on `dev/v2.9.0-m2-time-history`; no direct `main` development.
+- Development stays on `dev/v2.9.0-m2-time-history` until controlled merge; no direct `main` development.
 
 ## M2 Dev-Loop Artifacts
 
@@ -63,7 +67,7 @@
 - Test protocol: `USER-INTERACTION-TEST-PROTOCOL-M2-TIME-HISTORY.md`
 - Coverage matrix: `USER-INTERACTION-COVERAGE-MATRIX-M2-TIME-HISTORY.md`
 - Raw run + browser console capture: `docs/evidence/m2-time-history-run.log` + `docs/evidence/m2-time-history-console-errors.log`
-- Screenshots: `docs/screenshots/m2-time-history/` (9 PNGs)
+- Screenshots: `docs/screenshots/m2-time-history/` (14 PNGs)
 - E2E runner: `scripts/e2e-m2-time-history.cjs`
 
 ## M2 Delivery Summary
@@ -84,13 +88,12 @@ The SSOT completion commit is a documentation anchor per SR-VERSION-003. `Record
 
 ## Next Action
 
-Balerion executes V0015 verification on this branch:
-- branch/commit/version truth
-- diff review
-- API tests (re-run `node scripts/e2e-m2-time-history.cjs`)
-- Browser-E2E manual reproduction of UI-M2-A..G + the carry-overs `UI-M2-F06` (relay readout), `UI-M2-F08` (archive/restore), `UI-M2-C04` (server-restart persistence)
-- M1 regression smoke
-- no M3 leakage scan
+Controlled release sequence:
+- Commit Balerion-refreshed verification artifacts and this SSOT state update.
+- Merge `dev/v2.9.0-m2-time-history` into `main`.
+- Deploy to Render.
+- Live smoke: `/api/version` must report `2.9.0`, core UI must load, M2 Time History must be visible.
+- Only after live smoke: prepare/send Bryan update and archive the sent-confirmed record.
 
 ## SSOT Rule
 

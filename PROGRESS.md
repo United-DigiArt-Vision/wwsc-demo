@@ -1,9 +1,9 @@
 # PROGRESS — WWSC v2.9.0 M2 Time History
 
 ## 🎯 AKTUELLER STATUS
-Phase: M2 Phase 4 complete + Full-Proof Rerun — all carry-overs closed under executable browser evidence
-Schritt: After Balerion's `M2-Full-Proof-Required` brief, the runner was extended to cover `UI-M2-F06` (relay readout), `UI-M2-F08` (archive/restore), `UI-M2-C04` (cross-process server restart) and seven additional explicit cases. Re-run produced **55 PASS / 0 FAIL** with 0 console errors. Every spec case is now classified as PROVEN with concrete evidence anchors. Harness bootstrap script (`scripts/setup-m2-harness.sh`) added for reproducibility.
-Blockiert: Nein. Awaiting Balerion's V0015 independent re-run on this branch.
+Phase: M2 V0015 independent verification complete — ready for controlled merge/deploy sequence
+Schritt: Balerion independently reproduced the Full-Proof M2 runner on branch `dev/v2.9.0-m2-time-history` at HEAD `b5b99e2`. Re-run produced **55 PASS / 0 FAIL**. Every relevant M2 spec case is classified as PROVEN; no NOT PROVEN items remain for the agreed release gate. Verification note: `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md`.
+Blockiert: Nein. Next controlled step is merge `dev/v2.9.0-m2-time-history` -> `main`, deploy, live smoke, then Bryan update.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] M2 activated/funded evidence: `../messages/2026-05-18-Bryan-M2-active-funded.md`.
@@ -31,9 +31,9 @@ Blockiert: Nein. Awaiting Balerion's V0015 independent re-run on this branch.
 - [x] T9 Final SSOT completion commit (delivery close).
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Balerion V0015 independent re-run after the Full-Proof Rerun — `./scripts/setup-m2-harness.sh && node scripts/e2e-m2-time-history.cjs`, expect 55 PASS / 0 FAIL. Confirm by diff that no app-source modification happened in this rerun (runner + harness + docs only) and that the `UI-M2-F06`/`UI-M2-F08`/`UI-M2-C04` cases are now PROVEN with screenshots + log lines.
-Dateien zuerst lesen: `USER-INTERACTION-TEST-PROTOCOL-M2-TIME-HISTORY.md`, `USER-INTERACTION-COVERAGE-MATRIX-M2-TIME-HISTORY.md`, `docs/evidence/m2-time-history-run.log`, `../messages/2026-05-18-Claude-To-Balerion-M2-Full-Proof-Handoff.md`, `version/CHANGELOG.md`, `version/CURRENT_STATE.md`, `DEV-CHECKLIST-M2-TIME-HISTORY.md`.
-Kriterium fertig: Balerion V0015 reproduce + sign-off → merge to main → Render deploy → Dino → Bryan.
+Was: Controlled release sequence — merge `dev/v2.9.0-m2-time-history` into `main`, deploy to Render, verify `/api/version` reports `2.9.0`, run live smoke, then prepare Bryan update.
+Dateien zuerst lesen: `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`.
+Kriterium fertig: Live v2.9.0 smoke passes and Bryan update draft/sent-confirmed is archived.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Pointscore/M3 ist explizit ausgeschlossen. (verified clean by `UI-M2-G01` scan)
@@ -45,4 +45,4 @@ Kriterium fertig: Balerion V0015 reproduce + sign-off → merge to main → Rend
 Dev-loop preparation: 6/6 spec artifacts
 Implementation: 9/9 checklist tasks done
 Browser-E2E evidence: 55 PASS / 0 FAIL / 0 console errors (Full-Proof Rerun)
-Quality gate: ready for Balerion V0015 independent re-run
+Quality gate: Balerion V0015 independent verification complete; ready for merge/deploy/live-smoke
