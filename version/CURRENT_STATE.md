@@ -27,7 +27,7 @@
 
 ## Client / Milestone Status
 
-**Current client status:** M2 ACTIVE & FUNDED. Implementation is merged into local `main`, post-merge verification passed, and the expanded 100-case screenshot evidence gate is provisionally accepted by Balerion. Next gate is deploy -> live smoke. Do not message Bryan before live smoke.
+**Current client status:** M2 ACTIVE & FUNDED. Implementation is deployed live on Render as `v2.9.0`; local post-merge verification passed, expanded 100-case screenshot evidence gate passed, and live smoke passed. Next gate is Bryan delivery/update message with evidence summary.
 
 ### Latest communication anchors
 
@@ -66,6 +66,12 @@
    - Result: `98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED`, 101 screenshots.
    - Balerion V0015 review: `../messages/2026-05-19-Balerion-V0015-M2-100-case-screenshot-review.md`
    - Final local verdict: PROVISIONALLY ACCEPTED for local M2 user-interaction screenshot gate. Deploy/live-smoke still pending.
+13. **2026-05-19 13:39-13:42:** Balerion deployed `main` to Render and ran live smoke.
+   - Pushed `main` from `eb87e11` to `8d167fd`; Render live `/api/version` returned `2.9.0`, build `2026-05-19T11:38:54.177Z`.
+   - Live smoke evidence: `docs/evidence/live-smoke-v2.9.0-2026-05-19.json`.
+   - Screenshots: `docs/screenshots/live-smoke-2026-05-19/`.
+   - Result: PASS for live version, dashboard/sidebar, Members History actions, History empty-state modal on current no-history live DB, Season Calendar, no M3 leakage on loaded screens, and no relevant console/page errors.
+   - Note: current live DB has no finalized events/history rows, so populated row/persistence behavior remains proven by local isolated E2E evidence rather than by mutating live production data.
 
 ## Current Boundary
 
@@ -111,7 +117,7 @@ The SSOT completion commit is a documentation anchor per SR-VERSION-003. `Record
 ## Next Action
 
 Current quality sequence:
-- Continue the controlled release sequence: deploy to Render, live smoke (`/api/version` must report `2.9.0`, core UI must load, M2 Time History must be visible), then prepare/send Bryan update and archive the sent-confirmed record.
+- Prepare/send Bryan update with concise evidence summary and archive the sent-confirmed record. Do not claim live populated history rows were proven against production data; say the live deployment is verified and populated history behavior is proven in isolated E2E evidence.
 
 ## SSOT Rule
 

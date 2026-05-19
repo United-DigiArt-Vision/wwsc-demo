@@ -1,9 +1,9 @@
-## Current Stable Release Candidate
+## Current Stable Live Version
 
 - **Version:** v2.9.0
 - **Tag:** v2.9.0
 - **Branch:** main
-- **Current main tip before deploy:** 0e637eb (`docs: record M2 100-case screenshot review`)
+- **Deployed main tip:** 8d167fd (`docs: mark v2.9.0 stable release candidate`)
 - **Version bump commit:** aa004be (`release: bump to v2.9.0 for M2 time history`)
 - **Implementation commit:** a864414 (`feat: v2.9.0 M2 time history implementation (T1-T7)`)
 - **Merge commit:** 1c01b10 (`merge: v2.9.0 M2 time history`)
@@ -11,7 +11,9 @@
 - **Balerion review commit:** 0e637eb (`docs: record M2 100-case screenshot review`)
 - **Date:** 2026-05-19
 - **Local verification:** 55 PASS / 0 FAIL post-merge, plus 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED expanded screenshot gate.
-- **Deploy gate:** Render deploy and live smoke pending at the time this file was updated.
+- **Live Render verification:** `/api/version` returned `2.9.0`, build `2026-05-19T11:38:54.177Z`.
+- **Browser verification:** live sidebar shows `v2.9.0`; Members screen exposes History actions; member History modal opens and shows the correct no-history empty state on the current live DB; Season Calendar loads; no relevant console/page errors.
+- **Live smoke evidence:** `docs/evidence/live-smoke-v2.9.0-2026-05-19.json`, screenshots under `docs/screenshots/live-smoke-2026-05-19/`.
 
 ## What's in v2.9.0
 

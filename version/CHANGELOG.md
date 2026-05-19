@@ -11,6 +11,23 @@
 
 ---
 
+## 2026-05-19 — release: v2.9.0 Render deploy + live smoke
+- **Timestamp:** 2026-05-19 13:42:00
+- **App Version (from package.json):** 2.9.0
+- **Branch:** main
+- **RecordedCommit:** 8d167fd (`docs: mark v2.9.0 stable release candidate`)
+- **Editor:** Balerion
+- **Changes (deployment/evidence docs only):**
+  - Pushed `main` to `origin/main`, triggering Render deploy.
+  - Live `/api/version` verified `2.9.0`, build `2026-05-19T11:38:54.177Z`.
+  - Added live-smoke evidence JSON: `docs/evidence/live-smoke-v2.9.0-2026-05-19.json`.
+  - Added live-smoke screenshots under `docs/screenshots/live-smoke-2026-05-19/`.
+  - Updated `STABLE.md` and `version/CURRENT_STATE.md` from deploy-pending to live-verified.
+- **Verification:**
+  - `curl https://wwsc-demo.onrender.com/api/version` returned `{"version":"2.9.0","build":"2026-05-19T11:38:54.177Z"}`.
+  - Puppeteer live smoke: dashboard/sidebar `v2.9.0`, Members screen History actions visible, member History modal opens with correct no-history empty-state on current live DB, Season Calendar loads, no M3 leakage on loaded screens, no relevant console/page errors.
+- **Live-data boundary:** Current live DB has no finalized events/history rows; live smoke was read-only and did not create test events. Populated M2 history rows, no-refresh visibility, reload/restart persistence, and no-duplicate re-finalize remain proven by the local isolated E2E evidence package.
+
 ## 2026-05-19 — test: M2 Screenshot Evidence Gate retest
 - **Timestamp:** 2026-05-19 10:44:00
 - **App Version (from package.json):** 2.9.0
