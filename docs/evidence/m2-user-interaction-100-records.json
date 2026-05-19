@@ -1,0 +1,927 @@
+{
+  "baseline": {
+    "branch": "main",
+    "commit": "7eb7f32",
+    "pkgVersion": "2.9.0",
+    "apiVersion": {
+      "version": "2.9.0",
+      "build": "2026-05-19T10:03:33.259Z"
+    }
+  },
+  "records": [
+    {
+      "tcId": "TC-001",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-001-members-loaded.png",
+      "visible": "Members screen heading + 25 rows visible",
+      "notes": "rowCount=25",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-002",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-002-first-row-history-action.png",
+      "visible": "First row swimmer=Andrew Barnes has History action=true",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-003",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-003-history-actions-on-all-rows.png",
+      "visible": "25 History actions across 25 rows",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-004",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-004-first-history-action-focused.png",
+      "visible": "First History action focused without layout shift",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-005",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-005-modal-open-membera.png",
+      "visible": "Modal open for Andrew Barnes, rows=4",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-006",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-006-modal-second-swimmer.png",
+      "visible": "Modal heading shows Time History — David Hughes",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-007",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-007-modal-empty-state.png",
+      "visible": "Empty-state copy present for Bryan Hesketh",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-008",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-008-after-close-populated.png",
+      "visible": "Members screen visible, modal hidden",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-009",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-009-after-close-empty.png",
+      "visible": "Members screen still rendered after closing empty modal",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-010",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-010-reopen-same-swimmer.png",
+      "visible": "Reopen shows Time History — Andrew Barnes",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-011",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-011-modal-after-scroll.png",
+      "visible": "Lower-list swimmer modal heading=Time History — Peter Davidson",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-012",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-012-after-close-lower-list.png",
+      "visible": "Members still rendered after lower-list modal close",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-013",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-013-bottom-row-modal.png",
+      "visible": "Bottom-row modal heading=Time History — Wendy Cooper",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-014",
+      "area": "Members entry",
+      "status": "NOT APPLICABLE",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-014-escape-key-state.png",
+      "visible": "Escape: modal stable=true, real console errors=0 (favicon 404 filtered)",
+      "notes": "Modal component does not bind Escape; spec calls \"closes OR remains stable without console error\"",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-015",
+      "area": "Members entry",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-015-members-after-navigation.png",
+      "visible": "25 History actions visible after navigation away+back",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-016",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-016-modal-4-rows.png",
+      "visible": "Time History — Andrew Barnes, rows=4",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-017",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-017-modal-header.png",
+      "visible": "Header text=Date\tStroke / Race\tTime\tPrevious Best\tBreak | ",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-018",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-018-first-history-row.png",
+      "visible": "First row cells: [Sun, 26 Apr 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-019",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-019-pb-break-row.png",
+      "visible": "PB Break row cells: [Sun, 26 Apr 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-020",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-020-non-break-row.png",
+      "visible": "First row no PB chip; cells: [Sun, 26 Apr 2026 | 25m | 19.60 | 19.00 | ]",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-021",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-021-null-previous-best.png",
+      "visible": "Null PB row: [] pbCell=\"\"",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-022",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-022-whole-second-pb.png",
+      "visible": "Whole-second PB cell: [Sun, 26 Apr 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-023",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-023-centisecond-time.png",
+      "visible": "Centisecond time cell: [Sun, 26 Apr 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-024",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-024-modal-mobile.png",
+      "visible": "Mobile viewport (375x812) modal visible",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-025",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-025-modal-desktop.png",
+      "visible": "Desktop viewport 1440x900 alignment captured",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-026",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-026-modal-scrolled-bottom.png",
+      "visible": "Scrolled to bottom inside modal scroll container",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-027",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-027-one-history-row.png",
+      "visible": "Exactly 1 row(s) shown for Ben Chandler",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-028",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-028-empty-state-detail.png",
+      "visible": "Empty-state copy present",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-029",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-029-switch-empty-to-populated.png",
+      "visible": "After empty→populated: rows=4, emptyText=false",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-030",
+      "area": "Member modal content",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-030-switch-populated-to-empty.png",
+      "visible": "After populated→empty: rows=0, emptyText=true",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-031",
+      "area": "Sorting/date",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-031-four-dates-visible.png",
+      "visible": "Visible dates: Sun, 26 Apr 2026 | Sat, 18 Apr 2026 | Sat, 11 Apr 2026 | Sat, 04 Apr 2026",
+      "notes": "",
+      "reqs": "R-M2-02"
+    },
+    {
+      "tcId": "TC-032",
+      "area": "Sorting/date",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-032-newest-first-order.png",
+      "visible": "Top→bottom dates: Sun, 26 Apr 2026 → Sat, 18 Apr 2026 → Sat, 11 Apr 2026 → Sat, 04 Apr 2026",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-033",
+      "area": "Sorting/date",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-033-oldest-row-position.png",
+      "visible": "Last row date=Sat, 04 Apr 2026",
+      "notes": "",
+      "reqs": "R-M2-02"
+    },
+    {
+      "tcId": "TC-034",
+      "area": "Sorting/date",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-034-same-stroke-multi-dates.png",
+      "visible": "Strokes=[25m,25m,25m,25m] dates=[Sun, 26 Apr 2026,Sat, 18 Apr 2026,Sat, 11 Apr 2026,Sat, 04 Apr 2026]",
+      "notes": "",
+      "reqs": "R-M2-02"
+    },
+    {
+      "tcId": "TC-035",
+      "area": "Sorting/date",
+      "status": "NOT APPLICABLE",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-035-multi-stroke-same-date-na.png",
+      "visible": "Seed data uses one race type (25m) per event by design; memberA does not have multiple strokes on the same date. Same-stroke-different-date proof covered by TC-034.",
+      "notes": "NOT APPLICABLE for fresh isolated DB seeded per spec",
+      "reqs": "R-M2-02"
+    },
+    {
+      "tcId": "TC-036",
+      "area": "Sorting/date",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-036-second-swimmer-multi-date.png",
+      "visible": "David Hughes dates top→bottom: Sun, 26 Apr 2026 → Sat, 18 Apr 2026 → Sat, 11 Apr 2026 → Sat, 04 Apr 2026",
+      "notes": "",
+      "reqs": "R-M2-02"
+    },
+    {
+      "tcId": "TC-037",
+      "area": "Sorting/date",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-037-old-date-only-swimmer.png",
+      "visible": "Single row date=Sat, 04 Apr 2026",
+      "notes": "",
+      "reqs": "R-M2-02"
+    },
+    {
+      "tcId": "TC-038",
+      "area": "Sorting/date",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-038-latest-date-only-swimmer.png",
+      "visible": "Single row date=Tue, 19 May 2026",
+      "notes": "",
+      "reqs": "R-M2-02"
+    },
+    {
+      "tcId": "TC-039",
+      "area": "Sorting/date",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-039-calendar-event-2026-04-18.png",
+      "visible": "Member modal row: Sat, 18 Apr 2026; Calendar event has matching date text: true (cross-ref TC-039-a=docs/screenshots/m2-user-interaction-100/TC-039-a-member-history-2026-04-18.png)",
+      "notes": "",
+      "reqs": "R-M2-02"
+    },
+    {
+      "tcId": "TC-040",
+      "area": "Sorting/date",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-040-reload-then-modal-order.png",
+      "visible": "After reload, first date=Sun, 26 Apr 2026",
+      "notes": "",
+      "reqs": "R-M2-02"
+    },
+    {
+      "tcId": "TC-041",
+      "area": "Sorting/date",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-041-human-readable-date.png",
+      "visible": "Date cell: \"Sun, 26 Apr 2026\"",
+      "notes": "",
+      "reqs": "R-M2-02"
+    },
+    {
+      "tcId": "TC-042",
+      "area": "Sorting/date",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-042-mobile-date-labels.png",
+      "visible": "Mobile dates: Sun, 26 Apr 2026 | Sat, 18 Apr 2026 | Sat, 11 Apr 2026 | Sat, 04 Apr 2026",
+      "notes": "",
+      "reqs": "R-M2-02"
+    },
+    {
+      "tcId": "TC-043",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-043-calendar-overview.png",
+      "visible": "Season Calendar heading + completed events listed",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-044",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-044-event-2026-04-04-open.png",
+      "visible": "Event-04-04 detail header: 📊 Event Details | 👥 Participants (24) | Andrew Barnes | Ben Chandler | David Hughes | Diane Foster | Extra Swimmer 24 | Felicia O'Brien | Glenne Murray | Greg Patterson | Helen Sharp | James Morton | Jenny Walsh | Karen Mitc",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-045",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-045-event-2026-04-04-time-history-heading.png",
+      "visible": "Time History heading visible in 2026-04-04 detail",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-046",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-046-event-2026-04-04-history-rows.png",
+      "visible": "Rows=23, sample=Andrew Barnes\t25m\t15.50\t16.00\t🏆 PB",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-047",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-047-event-2026-04-11-open.png",
+      "visible": "Detail modal text head: 📊 Event Details | 👥 Participants (24) | Andrew Barnes",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-048",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-048-event-2026-04-11-history-rows.png",
+      "visible": "Time History rows=23, header=Swimmer\tStroke / Race\tTime\tPrev. Best\tBreak | ",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-049",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-049-event-2026-04-18-open.png",
+      "visible": "Detail modal text head: 📊 Event Details | 👥 Participants (24) | Andrew Barnes",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-050",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-050-event-2026-04-18-history-rows.png",
+      "visible": "Time History rows=23, header=Swimmer\tStroke / Race\tTime\tPrev. Best\tBreak | ",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-051",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-051-event-2026-04-26-open.png",
+      "visible": "Detail modal text head: 📊 Event Details | 👥 Participants (24) | Andrew Barnes",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-052",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-052-event-2026-04-26-history-rows.png",
+      "visible": "Time History rows=23, header=Swimmer\tStroke / Race\tTime\tPrev. Best\tBreak | ",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-053",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-053-compare-events-not-stale.png",
+      "visible": "Separate per-event screenshots TC-046/TC-048/TC-050/TC-052 each show that event's own date in row text — see protocol cross-references",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-054",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-054-event-detail-scrolled.png",
+      "visible": "Event detail scrolled to Time History section",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-055",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-055-event-detail-reopen.png",
+      "visible": "Time History present after reopen",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-056",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-056-calendar-after-modal-flow.png",
+      "visible": "Calendar still renders after Members modal flow",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-057",
+      "area": "Calendar history",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-057-members-after-calendar-flow.png",
+      "visible": "28 History actions still present after Calendar flow",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-058",
+      "area": "Finalize flow",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-058-new-event-in-calendar.png",
+      "visible": "Calendar shows newly created event date (substring match): true — sample: 🏊 WWSC | 🏠 | Dashboard | 👥 | Members | 📋 | Times Sheet | 🔧 | Heat Builder | 🏆 | Results | 🏅 | Breaker Report | 📅 | Season Calendar | v2.9.0 | 📅 Season Calendar | ▶ CURRENT EVENT | Fri, 15 May 2026 | 👥 8 swimmers | 🏁 1 races | Setup | Tap to continue working on this event →",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-059",
+      "area": "Finalize flow",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-059-event-setup-swimmers.png",
+      "visible": "Event setup shows attendance list incl. Andrew Barnes",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-060",
+      "area": "Finalize flow",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-060-results-with-entered-times.png",
+      "visible": "Results screen rendered after time entry",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-061",
+      "area": "Finalize flow",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-061-post-finalize-state.png",
+      "visible": "Finalize POST succeeded; results screen still visible (no error)",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-062",
+      "area": "Finalize flow",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-062-event-detail-no-refresh.png",
+      "visible": "Time History visible immediately after finalize (no refresh)",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-063",
+      "area": "Finalize flow",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-063-member-history-no-refresh.png",
+      "visible": "2026-05-15 row visible in memberA modal: true",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-064",
+      "area": "Finalize flow",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-064-event-history-row-count.png",
+      "visible": "Event Time History rows=7",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-065",
+      "area": "Finalize flow",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-065-member-modal-includes-new-event.png",
+      "visible": "memberA modal includes 15 May 2026",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-066",
+      "area": "Persistence",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-066-app-after-reload.png",
+      "visible": "App reloaded without losing UI surface",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-067",
+      "area": "Persistence",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-067-member-history-after-reload.png",
+      "visible": "15 May 2026 row still visible after reload",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-068",
+      "area": "Persistence",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-068-event-detail-after-reload.png",
+      "visible": "Time History section visible after reload on event 6",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-069",
+      "area": "Persistence",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-069-after-server-restart.png",
+      "visible": "After server stop+restart, sidebar shows v2.9.0 and /api/version=2.9.0",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-070",
+      "area": "Persistence",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-070-member-history-after-server-restart.png",
+      "visible": "15 May 2026 row still visible after server restart",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-071",
+      "area": "Re-finalize",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-071-results-screen.png",
+      "visible": "Results screen renders for editing path",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-072",
+      "area": "Re-finalize",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-072-changed-time-pre-refinalize.png",
+      "visible": "Lane time updated to 11.00 via documented API path",
+      "notes": "preRefinalizeRows captured via API",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-073",
+      "area": "Re-finalize",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-073-post-refinalize.png",
+      "visible": "Re-finalize OK; row count before=23 after=23",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-074",
+      "area": "Re-finalize",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-074-member-history-after-refinalize.png",
+      "visible": "04 Apr 2026 row in memberA modal shows 11.00 after re-finalize",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-075",
+      "area": "Re-finalize",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-075-duplicate-defense.png",
+      "visible": "memberA has exactly 1 row for 04 Apr 2026 (no duplicate); total rows=5",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-076",
+      "area": "Re-finalize",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-076-event-history-after-refinalize.png",
+      "visible": "Event Time History contains 11.00 cell after re-finalize",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-077",
+      "area": "Re-finalize",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-077-row-count-stable.png",
+      "visible": "Row count before=23, after=23 — stable",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-078",
+      "area": "Re-finalize",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-078-after-reload-refinalize.png",
+      "visible": "11.00 row still visible for memberA on 04 Apr 2026 after reload",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-079",
+      "area": "Re-finalize",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-079-after-restart-refinalize.png",
+      "visible": "11.00 row still visible for memberA on 04 Apr 2026 after server restart",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-080",
+      "area": "Re-finalize",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-080-breaker-report.png",
+      "visible": "Breaker Report screen mentions Andrew Barnes (consistency with break marker)",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-081",
+      "area": "Formatting",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-081-time-format.png",
+      "visible": "Time cell follows X.XX: [Fri, 15 May 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-082",
+      "area": "Formatting",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-082-time-11-00.png",
+      "visible": "11.00 cell: [Sat, 04 Apr 2026 | 25m | 11.00 | 16.00 | 🏆 PB Break]",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-083",
+      "area": "Formatting",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-083-previous-best-16-00.png",
+      "visible": "PB 16.00 row: [Fri, 15 May 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-084",
+      "area": "Formatting",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-084-previous-best-null.png",
+      "visible": "Null PB row first cells: []",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-085",
+      "area": "Formatting",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-085-pb-break-marker.png",
+      "visible": "🏆 PB Break chip visible for memberA timeline",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-086",
+      "area": "Formatting",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-086-non-break-row.png",
+      "visible": "memberD timeline has no 🏆 marker (no PB break)",
+      "notes": "",
+      "reqs": "R-M2-01"
+    },
+    {
+      "tcId": "TC-087",
+      "area": "Formatting",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-087-stroke-labels.png",
+      "visible": "Stroke labels: [25m | 25m | 25m | 25m | 25m]",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-088",
+      "area": "Formatting",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-088-event-member-names.png",
+      "visible": "Event Time History shows Andrew Barnes (no id-only display)",
+      "notes": "",
+      "reqs": "R-M2-04"
+    },
+    {
+      "tcId": "TC-089",
+      "area": "Formatting",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-089-empty-state-copy.png",
+      "visible": "Empty-state human copy: Time History — Bryan Hesketh |  | No time history yet for this swimmer. Times appear here after an event is finalized. | ",
+      "notes": "",
+      "reqs": "R-M2-03"
+    },
+    {
+      "tcId": "TC-090",
+      "area": "Formatting",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-090-console-state.png",
+      "visible": "Real console errors (excl. favicon 404): 0",
+      "notes": "Raw error capture: docs/evidence/m2-user-interaction-100-raw-2026-05-19.log",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-091",
+      "area": "Regression",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-091-dashboard.png",
+      "visible": "Dashboard renders after M2 changes",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-092",
+      "area": "Regression",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-092-edit-member-modal.png",
+      "visible": "Edit Member modal opens and shows fields",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-093",
+      "area": "Regression",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-093-event-setup.png",
+      "visible": "Event Setup screen renders",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-094",
+      "area": "Regression",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-094-heat-builder.png",
+      "visible": "Heat Builder screen renders",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-095",
+      "area": "Regression",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-095-results.png",
+      "visible": "Results screen renders",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-096",
+      "area": "Regression",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-096-relay-results.png",
+      "visible": "Relay sections present (relay=true, variance=true, names=true)",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-097",
+      "area": "Regression",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-097-after-archive.png",
+      "visible": "Archive count 0 → 1",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-098",
+      "area": "Regression",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-098-after-restore.png",
+      "visible": "Archive count after restore 0 (returned to 0)",
+      "notes": "",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-099",
+      "area": "No M3 leakage",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-099-no-m3-leakage.png",
+      "visible": "Banned-string scan across 7 screens: clean",
+      "notes": "banned set: Pointscore|Season Total|Accumulated|Constitution Score|Trend graph",
+      "reqs": "R-M2-05"
+    },
+    {
+      "tcId": "TC-100",
+      "area": "Final evidence gate",
+      "status": "PASS",
+      "shotRel": "docs/screenshots/m2-user-interaction-100/TC-100-final-evidence-state.png",
+      "visible": "99 prior TCs classified — PASS=97, NOT APPLICABLE=2, FAIL=0, BLOCKED=0",
+      "notes": "Protocol/coverage produced at docs/evidence/m2-user-interaction-100-test-protocol-2026-05-19.md",
+      "reqs": "R-M2-05"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "url": "http://127.0.0.1:3004/?cb=1779185015571",
+      "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://127.0.0.1:3004/?cb=1779185080245",
+      "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://127.0.0.1:3004/?cb=1779185094682",
+      "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ]
+}
