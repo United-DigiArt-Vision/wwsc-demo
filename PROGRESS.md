@@ -1,9 +1,9 @@
 # PROGRESS — WWSC v2.9.0 M2 Time History
 
 ## 🎯 AKTUELLER STATUS
-Phase: M2 merged to `main` locally and post-merge verification passed
-Schritt: `dev/v2.9.0-m2-time-history` was merged into local `main` at merge commit `1c01b10`. Balerion ran the M2 browser E2E runner on `main`; result: **55 PASS / 0 FAIL**. Every relevant M2 spec case remains PROVEN after merge.
-Blockiert: No technical blocker. External publish gate remains: deploy to Render, live smoke, then Bryan update.
+Phase: M2 merged to `main` locally and post-merge verification passed; expanded 100-case user-interaction screenshot spec prepared
+Schritt: `dev/v2.9.0-m2-time-history` was merged into local `main` at merge commit `1c01b10`. Balerion ran the M2 browser E2E runner on `main`; result: **55 PASS / 0 FAIL**. On 2026-05-19, Dino requested a stricter 100-case user-interaction screenshot proof package for M2. Spec and Claude handoff are now prepared.
+Blockiert: No technical blocker. Current quality gate is execution of the new 100-case screenshot spec before any stronger user-interaction-proof claim. External publish gate remains: deploy to Render, live smoke, then Bryan update.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] M2 activated/funded evidence: `../messages/2026-05-18-Bryan-M2-active-funded.md`.
@@ -29,11 +29,13 @@ Blockiert: No technical blocker. External publish gate remains: deploy to Render
 - [x] Test protocol + coverage matrix: `USER-INTERACTION-TEST-PROTOCOL-M2-TIME-HISTORY.md`, `USER-INTERACTION-COVERAGE-MATRIX-M2-TIME-HISTORY.md`.
 - [x] T8 CHANGELOG + CURRENT_STATE updated.
 - [x] T9 Final SSOT completion commit (delivery close).
+- [x] Expanded 100-case screenshot user-interaction spec: `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md`.
+- [x] Claude Code execution handoff for 100-case spec: `../messages/2026-05-19-Balerion-To-Claude-M2-100-user-interaction-screenshot-test-spec.md`.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Deploy to Render, verify `/api/version` reports `2.9.0`, run live smoke, then prepare Bryan update.
-Dateien zuerst lesen: `../messages/2026-05-19-Balerion-M2-main-merge-post-merge-verification.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`.
-Kriterium fertig: Live v2.9.0 smoke passes and Bryan update draft/sent-confirmed is archived.
+Was: Give Claude Code the 100-case screenshot spec, execute it, then Balerion visually reviews the resulting screenshots/protocol.
+Dateien zuerst lesen: `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md`, `../messages/2026-05-19-Balerion-To-Claude-M2-100-user-interaction-screenshot-test-spec.md`, `version/CURRENT_STATE.md`.
+Kriterium fertig: `docs/evidence/m2-user-interaction-100-test-protocol-2026-05-19.md` exists, screenshots exist under `docs/screenshots/m2-user-interaction-100/`, all 100 cases are classified, and Balerion has visually reviewed the set.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Pointscore/M3 ist explizit ausgeschlossen. (verified clean by `UI-M2-G01` scan)
@@ -45,4 +47,5 @@ Kriterium fertig: Live v2.9.0 smoke passes and Bryan update draft/sent-confirmed
 Dev-loop preparation: 6/6 spec artifacts
 Implementation: 9/9 checklist tasks done
 Browser-E2E evidence: 55 PASS / 0 FAIL / 0 console errors (Full-Proof Rerun)
-Quality gate: local `main` post-merge verification complete; ready for deploy/live-smoke
+Expanded user-interaction screenshot spec: 100 cases written, execution pending
+Quality gate: local `main` post-merge verification complete; 100-case screenshot proof requested before final confidence claim/deploy sequence

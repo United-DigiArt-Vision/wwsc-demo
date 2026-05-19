@@ -16,6 +16,7 @@
 **Full-Proof Protocol/Matrix commit:** c1d2522 (`docs: M2 full-proof Protocol + Coverage Matrix rewrite (PROVEN per case)`)
 **Balerion V0015 verification:** `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md` — independently reproduced 55 PASS / 0 FAIL on HEAD `b5b99e2`
 **Screenshot Evidence Gate audit:** `docs/evidence/m2-screenshot-evidence-gate-balerion-audit-2026-05-19.md` — Balerion visually reviewed 23/23 screenshots; Claude Code retested missing screenshot gaps for reload/restart/no-refresh/re-finalize; final verdict PROVEN.
+**Expanded 100-case user-interaction screenshot spec:** `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md` — rewritten on 2026-05-19 at Dino's request to require 100 screenshot-backed browser/user cases for all M2 Time History behavior. Execution handoff: `../messages/2026-05-19-Balerion-To-Claude-M2-100-user-interaction-screenshot-test-spec.md`. Execution is pending.
 **RecordedCommit:** a864414 (substantive delivery anchor — three API/UI changes wiring M2 contract; the Full-Proof rerun did not modify any app-source file)
 **LastEditor:** Balerion
 **Date:** 2026-05-18
@@ -78,6 +79,7 @@
 - Dev checklist: `DEV-CHECKLIST-M2-TIME-HISTORY.md` (all 9 tasks ticked)
 - Test protocol: `USER-INTERACTION-TEST-PROTOCOL-M2-TIME-HISTORY.md`
 - Coverage matrix: `USER-INTERACTION-COVERAGE-MATRIX-M2-TIME-HISTORY.md`
+- Expanded 100-case screenshot interaction spec: `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md`
 - Raw run + browser console capture: `docs/evidence/m2-time-history-run.log` + `docs/evidence/m2-time-history-console-errors.log`
 - Screenshots: `docs/screenshots/m2-time-history/` (14 PNGs)
 - Screenshot Gate audit: `docs/evidence/m2-screenshot-evidence-gate-balerion-audit-2026-05-19.md`
@@ -102,11 +104,10 @@ The SSOT completion commit is a documentation anchor per SR-VERSION-003. `Record
 
 ## Next Action
 
-Controlled release sequence:
-- Commit post-merge verification artifacts and this SSOT state update.
-- Deploy to Render.
-- Live smoke: `/api/version` must report `2.9.0`, core UI must load, M2 Time History must be visible.
-- Only after live smoke: prepare/send Bryan update and archive the sent-confirmed record.
+Current quality sequence:
+- Execute the new 100-case user-interaction screenshot spec via Claude Code.
+- Balerion visually reviews the resulting screenshot set and protocol.
+- Then continue the controlled release sequence: deploy to Render, live smoke (`/api/version` must report `2.9.0`, core UI must load, M2 Time History must be visible), then prepare/send Bryan update and archive the sent-confirmed record.
 
 ## SSOT Rule
 
