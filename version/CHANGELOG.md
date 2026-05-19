@@ -11,6 +11,25 @@
 
 ---
 
+## 2026-05-19 — test: M2 Screenshot Evidence Gate retest
+- **Timestamp:** 2026-05-19 10:44:00
+- **App Version (from package.json):** 2.9.0
+- **Branch:** main
+- **RecordedCommit:** a864414 (substantive M2 implementation; this entry adds QA evidence only)
+- **Editor:** Claude Code + Balerion
+- **Trigger:** Dino's Screenshot Evidence Gate rule: all screenshot evidence must be visually checked by Balerion; missing screenshot proof must be retested instead of inferred from logs.
+- **Changes (no product-source modifications):**
+  - Added focused screenshot retest script: `tests/m2-screenshot-gate-retest.js`.
+  - Added raw log and protocol: `docs/evidence/m2-screenshot-gate-retest-2026-05-19.log`, `docs/evidence/m2-screenshot-gate-retest-2026-05-19.md`.
+  - Added 9 screenshots under `docs/screenshots/m2-time-history-screenshot-gate-2026-05-19/`.
+  - Added Balerion visual audit: `docs/evidence/m2-screenshot-evidence-gate-balerion-audit-2026-05-19.md`.
+- **Verification:**
+  - `./scripts/setup-m2-harness.sh`
+  - `node tests/m2-screenshot-gate-retest.js`
+  - Result: UI-M2-C01/C02, UI-M2-C03, UI-M2-C04, UI-M2-D01 all PROVEN with screenshot + log/API evidence.
+  - Balerion reviewed 23/23 screenshots (14 original + 9 retest).
+- **Final verdict:** PROVEN for M2 Screenshot Evidence Gate; no remaining `NOT PROVEN` screenshot gaps.
+
 ## 2026-05-18 — feat: v2.9.0 M2 Full-Proof Rerun (closes Balerion `M2-Full-Proof-Required`)
 - **Timestamp:** 2026-05-18 07:40:00
 - **App Version (from package.json):** 2.9.0

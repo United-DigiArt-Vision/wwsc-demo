@@ -15,6 +15,7 @@
 **Full-Proof evidence commit:** be6ef8d (`docs: M2 full-proof evidence package (14 screenshots + refreshed run log)`)
 **Full-Proof Protocol/Matrix commit:** c1d2522 (`docs: M2 full-proof Protocol + Coverage Matrix rewrite (PROVEN per case)`)
 **Balerion V0015 verification:** `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md` — independently reproduced 55 PASS / 0 FAIL on HEAD `b5b99e2`
+**Screenshot Evidence Gate audit:** `docs/evidence/m2-screenshot-evidence-gate-balerion-audit-2026-05-19.md` — Balerion visually reviewed 23/23 screenshots; Claude Code retested missing screenshot gaps for reload/restart/no-refresh/re-finalize; final verdict PROVEN.
 **RecordedCommit:** a864414 (substantive delivery anchor — three API/UI changes wiring M2 contract; the Full-Proof rerun did not modify any app-source file)
 **LastEditor:** Balerion
 **Date:** 2026-05-18
@@ -52,6 +53,12 @@
    - `../messages/2026-05-19-Balerion-M2-main-merge-post-merge-verification.md`
    - Merge commit: `1c01b10`
    - Result: 55 PASS / 0 FAIL.
+11. **2026-05-19 10:44:** Screenshot Evidence Gate applied after Dino's new rule.
+   - Balerion visually reviewed all 14 original M2 screenshots plus 9 new screenshot-gate retest screenshots.
+   - Claude Code generated focused missing screenshot evidence for no-refresh finalize, browser reload, server restart with same DB, and re-finalize/no-duplicate UI table.
+   - Audit: `docs/evidence/m2-screenshot-evidence-gate-balerion-audit-2026-05-19.md`
+   - Retest protocol/log: `docs/evidence/m2-screenshot-gate-retest-2026-05-19.md`, `docs/evidence/m2-screenshot-gate-retest-2026-05-19.log`
+   - Final verdict: PROVEN for M2 Screenshot Evidence Gate.
 
 ## Current Boundary
 
@@ -73,6 +80,8 @@
 - Coverage matrix: `USER-INTERACTION-COVERAGE-MATRIX-M2-TIME-HISTORY.md`
 - Raw run + browser console capture: `docs/evidence/m2-time-history-run.log` + `docs/evidence/m2-time-history-console-errors.log`
 - Screenshots: `docs/screenshots/m2-time-history/` (14 PNGs)
+- Screenshot Gate audit: `docs/evidence/m2-screenshot-evidence-gate-balerion-audit-2026-05-19.md`
+- Screenshot Gate retest: `docs/evidence/m2-screenshot-gate-retest-2026-05-19.md`, `docs/screenshots/m2-time-history-screenshot-gate-2026-05-19/` (9 PNGs)
 - E2E runner: `scripts/e2e-m2-time-history.cjs`
 
 ## M2 Delivery Summary
