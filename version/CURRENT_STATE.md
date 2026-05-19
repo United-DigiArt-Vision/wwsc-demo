@@ -16,7 +16,7 @@
 **Full-Proof Protocol/Matrix commit:** c1d2522 (`docs: M2 full-proof Protocol + Coverage Matrix rewrite (PROVEN per case)`)
 **Balerion V0015 verification:** `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md` — independently reproduced 55 PASS / 0 FAIL on HEAD `b5b99e2`
 **Screenshot Evidence Gate audit:** `docs/evidence/m2-screenshot-evidence-gate-balerion-audit-2026-05-19.md` — Balerion visually reviewed 23/23 screenshots; Claude Code retested missing screenshot gaps for reload/restart/no-refresh/re-finalize; final verdict PROVEN.
-**Expanded 100-case user-interaction screenshot spec:** `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md` — rewritten on 2026-05-19 at Dino's request to require 100 screenshot-backed browser/user cases for all M2 Time History behavior. Execution handoff: `../messages/2026-05-19-Balerion-To-Claude-M2-100-user-interaction-screenshot-test-spec.md`. Execution is pending.
+**Expanded 100-case user-interaction screenshot spec:** `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md` — rewritten on 2026-05-19 at Dino's request to require 100 screenshot-backed browser/user cases for all M2 Time History behavior. Execution handoff: `../messages/2026-05-19-Balerion-To-Claude-M2-100-user-interaction-screenshot-test-spec.md`. Claude Code executed the suite and produced `98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED` with 101 screenshots. Balerion V0015 review: `../messages/2026-05-19-Balerion-V0015-M2-100-case-screenshot-review.md`.
 **RecordedCommit:** a864414 (substantive delivery anchor — three API/UI changes wiring M2 contract; the Full-Proof rerun did not modify any app-source file)
 **LastEditor:** Balerion
 **Date:** 2026-05-18
@@ -27,7 +27,7 @@
 
 ## Client / Milestone Status
 
-**Current client status:** M2 ACTIVE & FUNDED. Implementation is merged into local `main` and post-merge verification passed; next gate is deploy -> live smoke. Do not message Bryan before live smoke.
+**Current client status:** M2 ACTIVE & FUNDED. Implementation is merged into local `main`, post-merge verification passed, and the expanded 100-case screenshot evidence gate is provisionally accepted by Balerion. Next gate is deploy -> live smoke. Do not message Bryan before live smoke.
 
 ### Latest communication anchors
 
@@ -60,6 +60,12 @@
    - Audit: `docs/evidence/m2-screenshot-evidence-gate-balerion-audit-2026-05-19.md`
    - Retest protocol/log: `docs/evidence/m2-screenshot-gate-retest-2026-05-19.md`, `docs/evidence/m2-screenshot-gate-retest-2026-05-19.log`
    - Final verdict: PROVEN for M2 Screenshot Evidence Gate.
+12. **2026-05-19 12:41:** Expanded 100-case screenshot evidence package reviewed after Claude Code handoff.
+   - Claude handoff: `../messages/2026-05-19-Claude-To-Balerion-M2-100-case-screenshot-handoff.md`
+   - Evidence commit before review note: `14c3118`
+   - Result: `98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED`, 101 screenshots.
+   - Balerion V0015 review: `../messages/2026-05-19-Balerion-V0015-M2-100-case-screenshot-review.md`
+   - Final local verdict: PROVISIONALLY ACCEPTED for local M2 user-interaction screenshot gate. Deploy/live-smoke still pending.
 
 ## Current Boundary
 
@@ -105,9 +111,7 @@ The SSOT completion commit is a documentation anchor per SR-VERSION-003. `Record
 ## Next Action
 
 Current quality sequence:
-- Execute the new 100-case user-interaction screenshot spec via Claude Code.
-- Balerion visually reviews the resulting screenshot set and protocol.
-- Then continue the controlled release sequence: deploy to Render, live smoke (`/api/version` must report `2.9.0`, core UI must load, M2 Time History must be visible), then prepare/send Bryan update and archive the sent-confirmed record.
+- Continue the controlled release sequence: deploy to Render, live smoke (`/api/version` must report `2.9.0`, core UI must load, M2 Time History must be visible), then prepare/send Bryan update and archive the sent-confirmed record.
 
 ## SSOT Rule
 

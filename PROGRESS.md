@@ -1,9 +1,9 @@
 # PROGRESS — WWSC v2.9.0 M2 Time History
 
 ## 🎯 AKTUELLER STATUS
-Phase: M2 merged to `main` locally and post-merge verification passed; expanded 100-case user-interaction screenshot spec prepared
-Schritt: `dev/v2.9.0-m2-time-history` was merged into local `main` at merge commit `1c01b10`. Balerion ran the M2 browser E2E runner on `main`; result: **55 PASS / 0 FAIL**. On 2026-05-19, Dino requested a stricter 100-case user-interaction screenshot proof package for M2. Spec and Claude handoff are now prepared.
-Blockiert: No technical blocker. Current quality gate is execution of the new 100-case screenshot spec before any stronger user-interaction-proof claim. External publish gate remains: deploy to Render, live smoke, then Bryan update.
+Phase: M2 merged to `main` locally; post-merge verification and expanded 100-case screenshot evidence gate passed locally
+Schritt: Claude Code executed the expanded 100-case user-interaction screenshot suite and produced **98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED** with 101 screenshots. Balerion completed V0015 artifact/visual review and provisionally accepted the local screenshot gate.
+Blockiert: No technical blocker. External publish gate remains: deploy to Render, live smoke, then Bryan update.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] M2 activated/funded evidence: `../messages/2026-05-18-Bryan-M2-active-funded.md`.
@@ -31,11 +31,14 @@ Blockiert: No technical blocker. Current quality gate is execution of the new 10
 - [x] T9 Final SSOT completion commit (delivery close).
 - [x] Expanded 100-case screenshot user-interaction spec: `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md`.
 - [x] Claude Code execution handoff for 100-case spec: `../messages/2026-05-19-Balerion-To-Claude-M2-100-user-interaction-screenshot-test-spec.md`.
+- [x] Claude Code 100-case execution handoff: `../messages/2026-05-19-Claude-To-Balerion-M2-100-case-screenshot-handoff.md`.
+- [x] 100-case screenshot evidence package: `docs/evidence/m2-user-interaction-100-test-protocol-2026-05-19.md`, `docs/evidence/m2-user-interaction-100-raw-2026-05-19.log`, `docs/evidence/m2-user-interaction-100-records.json`, `docs/screenshots/m2-user-interaction-100/` (101 PNGs).
+- [x] Balerion V0015 review of 100-case evidence: `../messages/2026-05-19-Balerion-V0015-M2-100-case-screenshot-review.md`.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Give Claude Code the 100-case screenshot spec, execute it, then Balerion visually reviews the resulting screenshots/protocol.
-Dateien zuerst lesen: `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md`, `../messages/2026-05-19-Balerion-To-Claude-M2-100-user-interaction-screenshot-test-spec.md`, `version/CURRENT_STATE.md`.
-Kriterium fertig: `docs/evidence/m2-user-interaction-100-test-protocol-2026-05-19.md` exists, screenshots exist under `docs/screenshots/m2-user-interaction-100/`, all 100 cases are classified, and Balerion has visually reviewed the set.
+Was: Deploy v2.9.0 to Render, run live smoke, then prepare/send Bryan update only if live smoke passes.
+Dateien zuerst lesen: `version/CURRENT_STATE.md`, `PROGRESS.md`, `docs/evidence/m2-user-interaction-100-test-protocol-2026-05-19.md`, `../messages/2026-05-19-Balerion-V0015-M2-100-case-screenshot-review.md`.
+Kriterium fertig: `/api/version` reports `2.9.0` on live, core UI loads, M2 Time History is visible on live, and sent-confirmed Bryan update is archived.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Pointscore/M3 ist explizit ausgeschlossen. (verified clean by `UI-M2-G01` scan)
@@ -47,5 +50,5 @@ Kriterium fertig: `docs/evidence/m2-user-interaction-100-test-protocol-2026-05-1
 Dev-loop preparation: 6/6 spec artifacts
 Implementation: 9/9 checklist tasks done
 Browser-E2E evidence: 55 PASS / 0 FAIL / 0 console errors (Full-Proof Rerun)
-Expanded user-interaction screenshot spec: 100 cases written, execution pending
-Quality gate: local `main` post-merge verification complete; 100-case screenshot proof requested before final confidence claim/deploy sequence
+Expanded user-interaction screenshot spec: 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED, 101 screenshots, Balerion V0015 review complete
+Quality gate: local `main` post-merge verification complete; 100-case screenshot proof provisionally accepted; deploy/live-smoke still pending
