@@ -58,7 +58,10 @@ function drawMembersList() {
             <td style="font-weight:600">${m.name}${(memberFilter === 'all' && isInactive) ? ' <span style="color:#999;font-size:12px">(Inactive)</span>' : ''}</td>
             <td><span class="tag ${m.is_active ? 'tag-active' : 'tag-inactive'}">${m.is_active ? 'Active' : 'Inactive'}</span></td>
             ${strokeKeys.map(k => `<td style="font-size:18px;font-weight:600">${formatWhole(m[k])}</td>`).join('')}
-            <td><button class="btn btn-outline" onclick="showEditMemberModal(${m.id})">Edit</button></td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-outline" onclick="showEditMemberModal(${m.id})">Edit</button>
+              <button class="btn btn-outline" onclick="showMemberHistoryModal(${m.id})" title="View this swimmer's time history (M2)">📜 History</button>
+            </td>
           </tr>
         `}).join('')}
       </tbody>
@@ -195,6 +198,105 @@ function handleCSVSelect(input) {
   if (selectedCSVFile) {
     document.getElementById('csv-label').textContent = `Selected: ${selectedCSVFile.name}`;
   }
+}
+
+// ════════════════════════════════════════════════════════
+//  MEMBER TIME HISTORY MODAL — M2 R-M2-03
+//  Per-swimmer dated timeline. Source: GET /api/members/:id/time-history.
+//  Date+stroke makes each row distinguishable (R-M2-02).
+//  Centisecond formatting via formatTime; whole-second previous_best via
+//  formatWhole-on-converted-centiseconds so a 14 PB never renders as 0.14.
+// ════════════════════════════════════════════════════════
+async function showMemberHistoryModal(id) {
+  const member = membersCache.find(m => m.id === id) || await API.getMember(id);
+  const memberName = member ? member.name : 'Swimmer';
+  // Show a loading state immediately so the click feels responsive.
+  showModal('Time History — ' + memberName,
+    '<p style="color:var(--text-secondary)">Loading…</p>',
+    [{ label: 'Close', cls: 'btn-outline' }]
+  );
+  let rows;
+  try {
+    rows = await API.getMemberTimeHistory(id);
+  } catch (err) {
+    showModal('Time History — ' + memberName,
+      '<p style="color:#dc3545">Could not load history: ' + (err && err.message ? err.message : 'unknown error') + '</p>',
+      [{ label: 'Close', cls: 'btn-outline' }]
+    );
+    return;
+  }
+  const body = renderMemberHistoryBody(rows);
+  showModal('Time History — ' + memberName, body, [
+    { label: 'Close', cls: 'btn-outline' }
+  ]);
+}
+
+// Pretty-print a stroke key (DB column "stroke" stores "25m", "50m", "75m",
+// "backstroke", "breaststroke", "butterfly"). Title-case for display.
+function memberHistoryStrokeLabel(stroke) {
+  if (!stroke) return '—';
+  const map = {
+    '25m': '25m', '50m': '50m', '75m': '75m',
+    backstroke: 'Backstroke',
+    breaststroke: 'Breaststroke',
+    butterfly: 'Butterfly'
+  };
+  return map[stroke] || stroke;
+}
+
+// Format an ISO date (YYYY-MM-DD) to "Sat, 18 Apr 2026". Falls back to the
+// raw string if Date parsing fails so the UI never silently shows nothing.
+function memberHistoryFormatDate(iso) {
+  if (!iso) return '—';
+  try {
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+  } catch (e) { return iso; }
+}
+
+function renderMemberHistoryBody(rows) {
+  if (!Array.isArray(rows) || rows.length === 0) {
+    return '<p style="color:var(--text-secondary)">No time history yet for this swimmer. Times appear here after an event is finalized.</p>';
+  }
+  // Rows are server-sorted newest-first by event_date.
+  const tableRows = rows.map(r => {
+    const dateCell = memberHistoryFormatDate(r.event_date);
+    const strokeCell = memberHistoryStrokeLabel(r.stroke);
+    // time is centiseconds → formatTime
+    const newTimeCell = formatTime(r.time);
+    // previous_best is whole seconds → convert to centiseconds before formatTime
+    // so a 14 PB renders as "14.00", not "0.14". Null PB renders as "—".
+    const pbCs = r.previous_best != null ? r.previous_best * 100 : null;
+    const pbCell = pbCs != null ? formatTime(pbCs) : '—';
+    const breakCell = r.is_break ? '<span style="color:#2e7d32;font-weight:700" title="New personal best">🏆 PB Break</span>' : '';
+    return `
+      <tr>
+        <td style="white-space:nowrap">${dateCell}</td>
+        <td>${strokeCell}</td>
+        <td style="font-weight:700;text-align:right">${newTimeCell}</td>
+        <td style="text-align:right;color:var(--text-secondary)">${pbCell}</td>
+        <td>${breakCell}</td>
+      </tr>
+    `;
+  }).join('');
+  return `
+    <div style="max-height:60vh;overflow:auto">
+      <table class="data-table" style="width:100%">
+        <thead>
+          <tr>
+            <th style="white-space:nowrap">Date</th>
+            <th>Stroke / Race</th>
+            <th style="text-align:right">Time</th>
+            <th style="text-align:right">Previous Best</th>
+            <th>Break</th>
+          </tr>
+        </thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>
+    <p style="margin-top:8px;color:var(--text-secondary);font-size:12px">${rows.length} entr${rows.length === 1 ? 'y' : 'ies'} — newest first. M2 R-M2-03.</p>
+  `;
 }
 
 async function handleCSVImport() {

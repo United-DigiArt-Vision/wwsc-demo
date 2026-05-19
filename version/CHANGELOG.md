@@ -11,6 +11,87 @@
 
 ---
 
+## 2026-05-18 — feat: v2.9.0 M2 Full-Proof Rerun (closes Balerion `M2-Full-Proof-Required`)
+- **Timestamp:** 2026-05-18 07:40:00
+- **App Version (from package.json):** 2.9.0
+- **Branch:** dev/v2.9.0-m2-time-history
+- **Runner+harness commit:** 87b68b7 (`feat: M2 full-proof rerun — runner extension + harness setup script`)
+- **Evidence commit:** be6ef8d (`docs: M2 full-proof evidence package (14 screenshots + refreshed run log)`)
+- **Protocol/Matrix rewrite commit:** c1d2522 (`docs: M2 full-proof Protocol + Coverage Matrix rewrite (PROVEN per case)`)
+- **SSOT closure commit:** this commit (HEAD = dynamic via `git rev-parse --short HEAD`)
+- **RecordedCommit:** a864414 (substantive M2 implementation; full-proof rerun did not change app source)
+- **Editor:** Claude Code
+- **Trigger:** Balerion `messages/2026-05-18-0718-Balerion-To-Claude-M2-Full-Proof-Required.md` — explicit requirement to prove every spec case with executable browser evidence; no "diff-only" verdicts for user-visible behavior; close carry-overs `UI-M2-F06`, `UI-M2-F08`, `UI-M2-C04`.
+- **Changes (no app-source modifications — runner + harness + docs only):**
+  - `scripts/e2e-m2-time-history.cjs`:
+    * Hardened puppeteer-core resolution: three search paths (`WWSC_PUPPETEER_CORE` env, `/tmp/wwsc-screenshot-tool/node_modules/puppeteer-core`, projektlokal). Bootstrap-Hinweis bei Fehlen statt MODULE_NOT_FOUND.
+    * New helper `setupRelayEvent(date)` seeds a fourth weekly event with 25m Team Relay + Medley Relay, generates teams, enters times that produce non-trivial variance, ranks, finalizes.
+    * New section `UI-M2-F06` exercises the Results screen against the relay event with four sub-cases (25m section / Medley section / member names / variance).
+    * New section `UI-M2-F08` archives an event via `archiveEvent()` + Confirm click, then restores via `restoreEvent()`. Two sub-cases assert the archived count delta 0→1→0.
+    * New section `UI-M2-C04` after the main run shuts the test server down and starts a fresh server process against the same `WWSC_DB_PATH`, then re-reads `/api/members/:id/time-history` and asserts the 5 dated rows persisted.
+    * Explicit cases `UI-M2-C01/C02` (ev5 finalized in the live page, history visible without reload), `UI-M2-D02` (replaced value `11.00` visible in member-timeline cell after re-finalize), `UI-M2-D03` (🏆 chip + same swimmer on Breaker Report), `UI-M2-E01..E04` (rendered cells inspected for X.XX / non-0.X PB / dash / readable date), and `UI-M2-G02/G03` (sub-claims of G01 banned-string scan made explicit).
+  - `scripts/setup-m2-harness.sh` (new): idempotent harness bootstrap. Installs puppeteer-core into `/tmp/wwsc-screenshot-tool` and rebuilds better-sqlite3 if its native binding is for the wrong architecture.
+- **Evidence run:**
+  - Total PASS: **55** / FAIL: **0** / NOT APPLICABLE: **0**
+  - Console errors: 0 (favicon-404 noise filtered)
+  - Five events finalised: 2026-04-04, 2026-04-11, 2026-04-18 (primary weekly), 2026-04-25 (relay event for F06), 2026-04-26 (ev5 for C01/C02).
+  - Cross-process restart confirmed 5 dated rows persisted under same `WWSC_DB_PATH=/tmp/wwsc-m2-test/wwsc.db`.
+  - Server version returned during run: `2.9.0` build `2026-05-18T05:24:45.606Z`.
+- **Documentation updates:**
+  - `USER-INTERACTION-TEST-PROTOCOL-M2-TIME-HISTORY.md` — full rewrite with PROVEN / NOT PROVEN / NOT APPLICABLE classification per case, Reproducibility section, output-standard verdict block.
+  - `USER-INTERACTION-COVERAGE-MATRIX-M2-TIME-HISTORY.md` — full rewrite; 0 carry-overs, 0 ⚙️ deferred, all entries ✅.
+  - `PROGRESS.md`, `DEV-CHECKLIST-M2-TIME-HISTORY.md`, `version/CURRENT_STATE.md` updated to reflect the full-proof state.
+- **New handoff message:** `../messages/2026-05-18-Claude-To-Balerion-M2-Full-Proof-Handoff.md`.
+- **Scope guard re-verified:** no Pointscore / no accumulated season totals / no reports/graphs / no constitution scoring routes; only one new API endpoint (`GET /api/members/:memberId/time-history`).
+
+## 2026-05-18 — feat: v2.9.0 M2 Time History implementation + browser E2E evidence
+- **Timestamp:** 2026-05-18 07:30:00
+- **App Version (from package.json):** 2.9.0
+- **Branch:** dev/v2.9.0-m2-time-history
+- **Implementation commit:** a864414 (`feat: v2.9.0 M2 time history implementation (T1-T7)`)
+- **Evidence commit:** 3fce550 (`docs: M2 evidence package (protocol + coverage matrix + raw run + screenshots)`)
+- **RecordedCommit:** a864414 (substantive delivery anchor)
+- **Editor:** Claude Code
+- **Scope (M2 only — no M3 leakage):**
+  - Per-swimmer dated time history available from the Members screen.
+  - Completed-event detail in Calendar exposes a dated per-swimmer time history list.
+  - Event-time-history API now ships `event_date` so the UI can render dates without a second round-trip.
+- **Changes by file:**
+  - `src/server.js`:
+    * `GET /api/events/:eventId/time-history` now joins `event` so each row carries `event_date` (R-M2-02). Column projection is explicit (no `th.*`) so future schema changes do not silently leak fields.
+    * New endpoint `GET /api/members/:memberId/time-history` returns the swimmer's dated timeline. Validates the id, returns 404 when the swimmer does not exist, and sorts `event_date DESC, event_id DESC, stroke ASC` (R-M2-03, UT-M2-02-1..4).
+  - `src/public/js/api.js`: added `API.getMemberTimeHistory(memberId)` wrapper around the new endpoint (T3).
+  - `src/public/js/screens/members.js`:
+    * Each member row now exposes a "📜 History" action next to "Edit" (T4 / UI-M2-A01).
+    * New `showMemberHistoryModal(id)` opens a modal with date / stroke / time / previous-best / break-marker columns, formatted via `formatTime` (centiseconds) and explicit whole-seconds-to-centisecond conversion for `previous_best` (UT-M2-04-1..3 / UI-M2-A02..A05). Empty state renders a friendly notice for swimmers without history.
+  - `src/public/js/screens/calendar.js`: completed-event detail modal now fetches `/api/events/:id/time-history` in parallel with the report and renders a "📜 Time History (M2)" section. Each event's history is scoped to that event's date and shown with a sticky table header for the dated row list (T5 / UI-M2-B01..B04).
+- **New test artifact:** `scripts/e2e-m2-time-history.cjs` — self-contained runner that boots an isolated server on `PORT=3003` with `WWSC_DB_PATH=/tmp/wwsc-m2-test/wwsc.db`, seeds three weekly events with finalized times, asserts the contract from API up to rendered DOM via puppeteer-core, and tears the server down. Maps every spec ID to a recorded PASS line in `docs/evidence/m2-time-history-run.log`.
+- **Evidence run (this delivery):**
+  - 38 PASS / 0 FAIL across UT-M2-01..04, UI-M2-A..G, plus M1 regression smoke on 7 screens.
+  - 0 console errors (favicon 404 noise filtered).
+  - Screenshots stored under `docs/screenshots/m2-time-history/`: members screen with history action, member timeline modal, empty-state modal, calendar overview, event-detail with time history (scrolled + unscrolled views, two different weeks), event-detail after re-finalize.
+- **Scope guard verified:** no Pointscore, no accumulated season totals, no reports/graphs, no constitution scoring code. Only one new endpoint added (`GET /api/members/:memberId/time-history`).
+- **Open items routed to V0015 (Balerion):**
+  - `UI-M2-F06` (relay readout regression) and `UI-M2-F08` (archive/restore) — both code paths unchanged from v2.8.12; verified by Balerion's existing smoke.
+  - `UI-M2-C04` (server-restart persistence with same WWSC_DB_PATH) — covered structurally by isolated server lifecycle; full manual smoke owned by Balerion.
+
+## 2026-05-18 — docs: start M2 time history dev loop
+- **Timestamp:** 2026-05-18 06:22:00
+- **App Version (from package.json):** 2.9.0
+- **Branch:** dev/v2.9.0-m2-time-history
+- **RecordedCommit:** c0c0c68 (`docs: define M2 time history dev loop specs`)
+- **Version bump commit:** aa004be (`release: bump to v2.9.0 for M2 time history`)
+- **Editor:** Balerion
+- **Changes:**
+  - Created stable M1 backup branch `backup/v2.8.12-m1-stable-20260518` at `eb87e11`.
+  - Created stable M1 file backup at `../backups/2026-05-18-0615-v2.8.12-m1-stable-origin-main/`.
+  - Created M2 feature branch `dev/v2.9.0-m2-time-history`.
+  - Bumped app version to `2.9.0` and synchronized cache-busting as the first feature-branch commit.
+  - Added M2 requirements, design spec, unit test spec, integration test spec, user interaction test spec, and dev checklist.
+  - Prepared Claude Code implementation handoff in `../messages/2026-05-18-0620-Balerion-To-Claude-M2-Time-History-Implementation.md`.
+- **Scope guard:** M2 is limited to recording time changes and archiving historical times with dates. Pointscore, accumulated totals, reports/graphs, and constitution scoring remain M3.
+- **Verification status:** Specification phase only. Implementation and browser-E2E evidence pending Claude Code delivery and Balerion QA.
+
 ## 2026-05-06 — fix: v2.8.12 Bryan final polish + persistence hardening
 - **Timestamp:** 2026-05-06 11:57:00
 - **App Version (from package.json):** 2.8.12

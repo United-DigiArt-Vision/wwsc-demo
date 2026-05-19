@@ -1,51 +1,48 @@
-# PROGRESS — WWSC Swimming App v2.8.12
+# PROGRESS — WWSC v2.9.0 M2 Time History
 
 ## 🎯 AKTUELLER STATUS
-Phase: 18 — Bryan v2.8.11 Response → v2.8.12 Final M1 Polish + Persistence
-Schritt: v2.8.12 ist auf `main` gemergt, getaggt, gepusht und live auf Render verifiziert. `/api/version` = `2.8.12`, Build `2026-05-06T12:12:59.088Z`.
-Blockiert: Nein für diese Delivery; Bryan-Nachricht ist als Draft vorzubereiten/zu senden.
+Phase: M2 V0015 independent verification complete — ready for controlled merge/deploy sequence
+Schritt: Balerion independently reproduced the Full-Proof M2 runner on branch `dev/v2.9.0-m2-time-history` at HEAD `b5b99e2`. Re-run produced **55 PASS / 0 FAIL**. Every relevant M2 spec case is classified as PROVEN; no NOT PROVEN items remain for the agreed release gate. Verification note: `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md`.
+Blockiert: Nein. Next controlled step is merge `dev/v2.9.0-m2-time-history` -> `main`, deploy, live smoke, then Bryan update.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
-- [x] Bryan Response Teil 1 archiviert: `../messages/2026-05-06-Bryan-inbound-v2811-response-part1.md`.
-- [x] Bryan Response Teil 2 + Screenshots archiviert: `../messages/2026-05-06-Bryan-inbound-v2811-response-part2.md`.
-- [x] Combined Classification geschrieben: `../messages/2026-05-06-bryan-v2811-response-combined-classification.md`.
-- [x] Branch angelegt: `dev/v2.8.12-bryan-final-polish-persistence`.
-- [x] Version-bump-first commit: `79eb9cc` → `package.json=2.8.12`, cache bust `?v=2.8.12`.
-- [x] User-Test-Spec VOR Implementierung geschrieben: `USER-INTERACTION-TEST-SPEC-v2.8.12.md` mit 40 User-Testcases.
-- [x] Test-Spec commit: `5562ec4`.
-- [x] Fix 1: Medley Relay Readout zeigt signed Variance + Members/Strokes.
-- [x] Fix 2: Season Calendar Event Details zeigen 25m Relay + Medley Relay Team Members und Variance.
-- [x] Fix 3: Event Report Relay-Abschnitte zeigen Team Members + Team Total + Variance.
-- [x] Fix 4: 25m Break threshold auf >= 0.50s gesetzt; 0.49s bleibt kein Break; 50m 0.50s bleibt Regression-Guard kein Break.
-- [x] Fix 5: Persistenz gehärtet via `WWSC_DB_PATH`, `WWSC_DATA_DIR`, `WWSC_BACKUP_DIR`; Render config setzt `/var/data/wwsc.db` + persistent disk.
-- [x] Implementation commit: `2321284`.
-- [x] Syntaxchecks: `src/db.js`, `src/server.js`, `src/public/js/screens/results.js`, `src/public/js/screens/calendar.js`, `scripts/e2e-v2812-bryan.cjs` — PASS.
-- [x] Browser-E2E mit installiertem Chrome/Playwright: `scripts/e2e-v2812-bryan.cjs` — 31 PASS / 0 FAIL.
-- [x] Browser-E2E Evidence: `docs/evidence/WWSC-v2.8.12-bryan-browser-e2e-evidence.md`.
-- [x] Raw Browser-E2E Log: `docs/evidence/WWSC-v2.8.12-browser-e2e-raw.log`.
-- [x] Screenshots/Text/HTML Evidence: `docs/screenshots/v2.8.12-bryan/`.
-- [x] Persistence Restart Proof: Server mit gleicher `/tmp/wwsc-v2812-data/wwsc.db` neu gestartet; 2 finalized active events blieben erhalten.
-- [x] Persistence Evidence: `docs/evidence/WWSC-v2.8.12-persistence-restart-proof.md` + raw log.
-- [x] Merge to main: `596458f` (`merge: v2.8.12 Bryan final polish and persistence`).
-- [x] Release docs commit/tag: `b082d25`, tag `v2.8.12`.
-- [x] GitHub push: `main 2b60cad..b082d25`, tag `v2.8.12`.
-- [x] Render live verification: `/api/version` returned `2.8.12`, build `2026-05-06T12:12:59.088Z`.
-- [x] Live browser snapshot: sidebar shows `v2.8.12` and matching build timestamp.
+- [x] M2 activated/funded evidence: `../messages/2026-05-18-Bryan-M2-active-funded.md`.
+- [x] M2 scope-confirmation sent/evidence: `../messages/2026-05-18-outgoing-to-bryan-m2-scope-confirmation-sent-confirmed.md`.
+- [x] Stable M1 file backup: `../backups/2026-05-18-0615-v2.8.12-m1-stable-origin-main/`.
+- [x] Stable M1 git backup branch: `backup/v2.8.12-m1-stable-20260518` at `eb87e11`.
+- [x] M2 feature branch: `dev/v2.9.0-m2-time-history`.
+- [x] Version bump first commit: `aa004be` (`2.9.0`).
+- [x] Requirements: `REQUIREMENTS-M2-TIME-HISTORY.md`.
+- [x] Design: `DESIGN-SPEC-M2-TIME-HISTORY.md`.
+- [x] Unit tests: `UNIT-TEST-SPEC-M2-TIME-HISTORY.md`.
+- [x] Integration tests: `INTEGRATION-TEST-SPEC-M2-TIME-HISTORY.md`.
+- [x] User interaction tests: `USER-INTERACTION-TEST-SPEC-M2-TIME-HISTORY.md`.
+- [x] Dev checklist: `DEV-CHECKLIST-M2-TIME-HISTORY.md`.
+- [x] T1 API enrichment (`event_date` on event time-history). `src/server.js`.
+- [x] T2 New member time-history endpoint. `src/server.js`.
+- [x] T3 Frontend API wrapper. `src/public/js/api.js`.
+- [x] T4 Members screen History action + modal. `src/public/js/screens/members.js`.
+- [x] T5 Calendar/Event-detail Time History section. `src/public/js/screens/calendar.js`.
+- [x] T6 Automated E2E runner. `scripts/e2e-m2-time-history.cjs`.
+- [x] T7 M1 regression smoke executed inside the E2E run (dashboard + 6 screens + console gate).
+- [x] Browser-E2E evidence: `docs/evidence/m2-time-history-run.log`, `docs/evidence/m2-time-history-console-errors.log`, `docs/screenshots/m2-time-history/` (9 PNGs).
+- [x] Test protocol + coverage matrix: `USER-INTERACTION-TEST-PROTOCOL-M2-TIME-HISTORY.md`, `USER-INTERACTION-COVERAGE-MATRIX-M2-TIME-HISTORY.md`.
+- [x] T8 CHANGELOG + CURRENT_STATE updated.
+- [x] T9 Final SSOT completion commit (delivery close).
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Bryan-Antwort an Dino liefern/senden.
-Dateien zuerst lesen: `messages/2026-05-06-draft-to-bryan-v2812-live.md`, `version/CURRENT_STATE.md`.
-Kriterium fertig: Bryan hat die v2.8.12-Live-Info mit detaillierten Änderungen seit seiner letzten Rückmeldung erhalten.
+Was: Controlled release sequence — merge `dev/v2.9.0-m2-time-history` into `main`, deploy to Render, verify `/api/version` reports `2.9.0`, run live smoke, then prepare Bryan update.
+Dateien zuerst lesen: `../messages/2026-05-18-0752-Balerion-V0015-M2-Full-Proof-Verification.md`, `version/CURRENT_STATE.md`, `version/CHANGELOG.md`.
+Kriterium fertig: Live v2.9.0 smoke passes and Bryan update draft/sent-confirmed is archived.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
-- Nicht gestartet: Pointscore/M3.
-- Live `/api/events?archived=1` returns `[]` after persistent disk switch. This is acceptable for forward persistence but means old ephemeral saved test/demo events were not migrated.
-- Do not create test events on Bryan's live demo just to prove persistence unless Dino explicitly approves polluting/resetting live demo data.
+- Pointscore/M3 ist explizit ausgeschlossen. (verified clean by `UI-M2-G01` scan)
+- Reports/graphs/constitution scoring sind explizit ausgeschlossen.
+- Stable M1/v2.8.12 unverändert (backup-Branch und File-Snapshot existieren).
+- **Keine Carry-overs mehr.** `UI-M2-F06` / `UI-M2-F08` / `UI-M2-C04` sind unter ausführbarer Browser-Evidenz geschlossen.
 
 ## 📊 FORTSCHRITT
-Gesamt: 10/10 für v2.8.12 Delivery
-Test Spec: 40 Cases
-Browser-E2E/API Checks: 31 PASS / 0 FAIL
-Persistence Restart Proof: 2 PASS / 0 FAIL
-Syntax Checks: PASS
-Live Deploy: PASS (`/api/version=2.8.12`)
+Dev-loop preparation: 6/6 spec artifacts
+Implementation: 9/9 checklist tasks done
+Browser-E2E evidence: 55 PASS / 0 FAIL / 0 console errors (Full-Proof Rerun)
+Quality gate: Balerion V0015 independent verification complete; ready for merge/deploy/live-smoke
