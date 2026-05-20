@@ -1,9 +1,9 @@
 # PROGRESS — WWSC v2.9.0 M2 Time History
 
 ## 🎯 AKTUELLER STATUS
-Phase: M2 merged to `main` locally; post-merge verification and expanded 100-case screenshot evidence gate passed locally
-Schritt: Claude Code executed the expanded 100-case user-interaction screenshot suite and produced **98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED** with 101 screenshots. Balerion completed V0015 artifact/visual review and provisionally accepted the local screenshot gate.
-Blockiert: No technical blocker. External publish gate remains: deploy to Render, live smoke, then Bryan update.
+Phase: M2 v2.9.0 live-delivered to Bryan; Bryan replied with graph/report question
+Schritt: Bryan asked on 2026-05-20 whether individual graphs can be created from the history report/data. Inbound archived and classified as M3 / reports-graphs scope question, not an M2 bug and not explicit M2 acceptance. Draft response prepared.
+Blockiert: No technical blocker. Next action is client response handling while preserving the M2/M3 payment boundary.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] M2 activated/funded evidence: `../messages/2026-05-18-Bryan-M2-active-funded.md`.
@@ -34,11 +34,17 @@ Blockiert: No technical blocker. External publish gate remains: deploy to Render
 - [x] Claude Code 100-case execution handoff: `../messages/2026-05-19-Claude-To-Balerion-M2-100-case-screenshot-handoff.md`.
 - [x] 100-case screenshot evidence package: `docs/evidence/m2-user-interaction-100-test-protocol-2026-05-19.md`, `docs/evidence/m2-user-interaction-100-raw-2026-05-19.log`, `docs/evidence/m2-user-interaction-100-records.json`, `docs/screenshots/m2-user-interaction-100/` (101 PNGs).
 - [x] Balerion V0015 review of 100-case evidence: `../messages/2026-05-19-Balerion-V0015-M2-100-case-screenshot-review.md`.
+- [x] Local installation/backup handover addendum created after Dino asked whether Bryan's handbooks explain local install/run requirements: `../handover/MS2-handover-2026-05-19/WWSC-Local-Installation-and-Backup-Guide-2026-05-19.pdf` plus source `.md`/`.html`.
+- [x] Future handbook requirement locked in: `../handover/HANDBOOK-REQUIREMENTS.md` now requires local install, SQLite licence/runtime notes, local data storage, backups, and troubleshooting in every future customer handbook.
+- [x] v2.9.0 / M2 delivery update sent to Bryan by Dino and archived: `../messages/2026-05-19-outgoing-to-bryan-v290-m2-delivery-sent-confirmed.md`.
+- [x] Bryan graph/history-data question archived: `../messages/2026-05-20-Bryan-inbound-graphs-history-question.md`.
+- [x] Screenshot archived: `../messages/attachments/2026-05-20-upwork-bryan-graphs-history-question.png`.
+- [x] Reply draft prepared: `../messages/2026-05-20-draft-to-bryan-graphs-history-question.md`.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Deploy v2.9.0 to Render, run live smoke, then prepare/send Bryan update only if live smoke passes.
-Dateien zuerst lesen: `version/CURRENT_STATE.md`, `PROGRESS.md`, `docs/evidence/m2-user-interaction-100-test-protocol-2026-05-19.md`, `../messages/2026-05-19-Balerion-V0015-M2-100-case-screenshot-review.md`.
-Kriterium fertig: `/api/version` reports `2.9.0` on live, core UI loads, M2 Time History is visible on live, and sent-confirmed Bryan update is archived.
+Was: Send/adjust the prepared response to Bryan's graph/history-data question, then continue seeking M2 acceptance/payment boundary clarity.
+Dateien zuerst lesen: `version/CURRENT_STATE.md`, `PROGRESS.md`, `../messages/2026-05-20-Bryan-inbound-graphs-history-question.md`, `../messages/2026-05-20-draft-to-bryan-graphs-history-question.md`.
+Kriterium fertig: Bryan confirms M2 acceptance/release, funds/starts M3 reporting work, or provides a concrete in-scope M2 issue to address.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Pointscore/M3 ist explizit ausgeschlossen. (verified clean by `UI-M2-G01` scan)
@@ -51,4 +57,4 @@ Dev-loop preparation: 6/6 spec artifacts
 Implementation: 9/9 checklist tasks done
 Browser-E2E evidence: 55 PASS / 0 FAIL / 0 console errors (Full-Proof Rerun)
 Expanded user-interaction screenshot spec: 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED, 101 screenshots, Balerion V0015 review complete
-Quality gate: local `main` post-merge verification complete; 100-case screenshot proof provisionally accepted; deploy/live-smoke still pending
+Quality gate: local `main` post-merge verification complete; 100-case screenshot proof accepted; Render live-smoke passed; Bryan update sent; graph/report scope question received and draft response prepared

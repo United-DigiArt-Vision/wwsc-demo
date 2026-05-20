@@ -27,7 +27,7 @@
 
 ## Client / Milestone Status
 
-**Current client status:** M2 ACTIVE & FUNDED. Implementation is deployed live on Render as `v2.9.0`; local post-merge verification passed, expanded 100-case screenshot evidence gate passed, and live smoke passed. Next gate is Bryan delivery/update message with evidence summary.
+**Current client status:** M2 ACTIVE & FUNDED. Implementation is deployed live on Render as `v2.9.0`; local post-merge verification passed, expanded 100-case screenshot evidence gate passed, and live smoke passed. Dino confirmed the Bryan delivery/update message was sent on 2026-05-19 15:23 CEST. Bryan replied on 2026-05-20 asking whether individual graphs can be created from the history report/data. Classification: M3 / reports-graphs scope question, not an M2 bug and not explicit M2 acceptance. Recommended reply draft exists; current gate is Bryan response handling + M2 acceptance/payment boundary.
 
 ### Latest communication anchors
 
@@ -72,6 +72,19 @@
    - Screenshots: `docs/screenshots/live-smoke-2026-05-19/`.
    - Result: PASS for live version, dashboard/sidebar, Members History actions, History empty-state modal on current no-history live DB, Season Calendar, no M3 leakage on loaded screens, and no relevant console/page errors.
    - Note: current live DB has no finalized events/history rows, so populated row/persistence behavior remains proven by local isolated E2E evidence rather than by mutating live production data.
+14. **2026-05-19 15:10-15:16:** Local-install handover gap closed and Bryan M2 delivery update drafted.
+   - Future handbook requirement: `../handover/HANDBOOK-REQUIREMENTS.md`.
+   - Local install/backup PDF: `../handover/MS2-handover-2026-05-19/WWSC-Local-Installation-and-Backup-Guide-2026-05-19.pdf`.
+   - Bryan draft: `../messages/2026-05-19-draft-to-bryan-v290-m2-delivery.md`.
+15. **2026-05-19 15:23:** Dino confirmed he sent the v2.9.0 / M2 delivery update to Bryan.
+   - Sent-confirmed record: `../messages/2026-05-19-outgoing-to-bryan-v290-m2-delivery-sent-confirmed.md`.
+   - No screenshot was provided with this confirmation.
+   - Current client gate: wait for Bryan response; archive inbound first, then classify against M2 scope and payment boundary.
+16. **2026-05-20 21:10:** Dino relayed Bryan's first response after v2.9.0 / M2 delivery.
+   - Inbound record: `../messages/2026-05-20-Bryan-inbound-graphs-history-question.md`.
+   - Screenshot: `../messages/attachments/2026-05-20-upwork-bryan-graphs-history-question.png`.
+   - Draft response: `../messages/2026-05-20-draft-to-bryan-graphs-history-question.md`.
+   - Classification: M3 / reports-graphs scope question. The M2 history data is a structured foundation for graphing, but graph UI/report views belong to the next reporting layer/M3 unless Dino explicitly chooses a different strategy or Bryan funds/starts M3.
 
 ## Current Boundary
 
@@ -117,7 +130,9 @@ The SSOT completion commit is a documentation anchor per SR-VERSION-003. `Record
 ## Next Action
 
 Current quality sequence:
-- Prepare/send Bryan update with concise evidence summary and archive the sent-confirmed record. Do not claim live populated history rows were proven against production data; say the live deployment is verified and populated history behavior is proven in isolated E2E evidence.
+- Bryan has asked whether individual graphs can be created from the history report/data.
+- Recommended next action: send the prepared short reply explaining that the data foundation is structured and graphable, while actual graph/report screens belong to the next reporting layer/M3.
+- Do not start M3/Pointscore/Reports/Constitution work unless Dino explicitly chooses that strategy or Bryan funds M3.
 
 ## SSOT Rule
 
