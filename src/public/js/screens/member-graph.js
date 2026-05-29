@@ -83,7 +83,7 @@ function memberGraphBuildSeries(seriesRows, options) {
     const radius = isBreak ? 6 : 4;
     const fill = isBreak ? '#2e7d32' : color;
     const tooltip = memberGraphStrokeLabel(stroke) + ' · ' + r.event_date + ' · ' + memberGraphTimeText(r.time) + (isBreak ? ' · PB Break' : '');
-    return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + radius + '" fill="' + fill + '" stroke="white" stroke-width="1"><title>' +
+    return '<circle data-series-pt="' + stroke + '" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + radius + '" fill="' + fill + '" stroke="white" stroke-width="1"><title>' +
       tooltip.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</title></circle>';
   }).join('');
   return polyline + dots;
