@@ -146,6 +146,13 @@
    - Carry-overs explicitly preserved: every other R-M3 + every PROVISIONAL UIT-M3 case stays blocked on QA-01 / QA-05 / QA-06.
    - Claude → Balerion delivery handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-History-Graphs-Delivery.md`.
    - No push, no deploy, no tag, no Bryan/client contact.
+26. **2026-05-29 18:02 Europe/Berlin:** Balerion R-M3-05 QA Fix Directive — CONDITIONAL PASS with 5 required corrections.
+   - `../messages/2026-05-29-1802-Balerion-To-Claude-WWSC-M3-R-M3-05-QA-Fix-Directive.md`.
+27. **2026-05-29 ~18:35 Europe/Berlin:** Claude Code applied all 5 corrections (fix commit `95ce853`).
+   - (1) Real date-range filter in `member-graph.js`; (2) real browser back/forward in UIT-M3-015; (3) exact point→row mapping in UIT-M3-019 via `data-*` attributes + `m3-data-correctness-mapping.json`; (4) 6-event seed for UIT-M3-001; (5) stale screenshots removed (dir now 20 PNGs, one per case).
+   - Re-run: 19 PASS / 1 NOT APPLICABLE / 0 FAIL / 0 BLOCKED / 0 PROVISIONAL, 0 console errors.
+   - Protocol Rev 2 + evidence: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-R-M3-05-QA-Fix-Evidence.md`.
+   - R-M3-12 still clean (`src/server.js`/`src/db.js`/`render.yaml` unchanged). No push/deploy/tag/Bryan contact.
 
 ## Current Boundary
 
