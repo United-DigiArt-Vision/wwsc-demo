@@ -1,9 +1,10 @@
-# M3 R-M3-05 — UIT-M3-001..UIT-M3-020 Test Protocol (Rev 2 — Balerion QA fixes applied)
+# M3 R-M3-05 — UIT-M3-001..UIT-M3-020 Test Protocol (Rev 3 — clean-HEAD evidence rerun)
 
 **Branch:** `dev/v2.10.0-m3-history-graphs`
+**HEAD at this evidence run:** `1545ea7` (full `1545ea7211f56d494a2e83b6ecf4d5face0092f3`) — working tree clean before the run; all `records`/`run.log`/`mapping` metadata captured this HEAD.
 **Baseline before bump:** `dev/m3-prd-planning` @ `f043dea` (off `main@7b4dcc5`)
 **Version after V0014 bump:** `2.10.0`
-**Date executed:** 2026-05-29 (Rev 2 after Balerion CONDITIONAL PASS fix directive 18:02 CEST)
+**Date executed:** 2026-05-29 (Rev 3 clean-HEAD rerun per Balerion 21:21 directive, after the Rev 2 QA fixes from the 18:02 directive)
 **Runner:** `scripts/e2e-m3-history-graphs.cjs` (puppeteer-core + headless Chrome)
 **Test data:** isolated server PORT=3005, DB `/tmp/wwsc-m3-graphs-test/wwsc.db` (fresh per run); **6 weekly events** so memberA has 6 dated rows
 **Raw run log:** `m3-history-graphs-run.log`
