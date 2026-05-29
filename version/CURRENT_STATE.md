@@ -160,6 +160,13 @@
    - Result reconfirmed: 19 PASS / 1 NOT APPLICABLE / 0 FAIL / 0 BLOCKED / 0 PROVISIONAL, 0 console errors. 20 screenshots (byte-identical, deterministic render).
    - Evidence-refresh commit: `926e9aa`. Handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-R-M3-05-Clean-HEAD-Evidence.md`.
    - No push/deploy/tag/Bryan contact/live-data mutation.
+30. **2026-05-29 21:47 Europe/Berlin:** Balerion accepted R-M3-05 as PASS and issued the forward-build guardrail (protect M1/M2/v2.9.0 baseline; pointscore from accepted app logic + Excel as candidate; constitution blocked).
+   - `../messages/2026-05-29-2147-Balerion-To-Claude-WWSC-M3-Accepted-Logic-Guardrail-And-Next-Scope.md`.
+31. **2026-05-29 ~22:05 Europe/Berlin:** Claude Code returned the four required guardrail lists (no code).
+   - Doc: `M3-FORWARD-BUILD-GUARDRAIL-2026-05-29.md`. Handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-Forward-Build-Guardrail-Response.md`.
+   - Audit finding: `pointscore_entry` is a stub table with NO write path / NO formula in code (db.js:110/134, server.js:371). The `bryan-excel-original.xlsm` carries 12 pointscore sheets (per-race + Total Pointscore + Total Improvement + Attendance) as a CANDIDATE, source-labeled basis only — not confirmed.
+   - Critical blockers restated: QA-01 (formula = Excel sheets?) + QA-05/06 (Constitution = Excel?). N1 pointscore write path is designed as additive + isolated, gated behind a new R5 isolation regression proof.
+   - No code/push/deploy/tag/Bryan contact.
 
 ## Current Boundary
 
