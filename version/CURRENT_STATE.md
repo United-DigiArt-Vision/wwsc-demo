@@ -153,6 +153,13 @@
    - Re-run: 19 PASS / 1 NOT APPLICABLE / 0 FAIL / 0 BLOCKED / 0 PROVISIONAL, 0 console errors.
    - Protocol Rev 2 + evidence: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-R-M3-05-QA-Fix-Evidence.md`.
    - R-M3-12 still clean (`src/server.js`/`src/db.js`/`render.yaml` unchanged). No push/deploy/tag/Bryan contact.
+28. **2026-05-29 21:21 Europe/Berlin:** Balerion Clean-HEAD Evidence Rerun directive — substantive fixes accepted, but evidence metadata still referenced baseline `06ec2da`; required a rerun from clean HEAD so records/log/protocol show the actual HEAD.
+   - `../messages/2026-05-29-2121-Balerion-To-Claude-WWSC-M3-R-M3-05-Clean-HEAD-Evidence-Rerun.md`.
+29. **2026-05-29 ~21:40 Europe/Berlin:** Claude Code reran the R-M3-05 gate from clean HEAD `1545ea7`.
+   - Working tree clean before and after. Evidence metadata now captures `1545ea7` (run.log, records.json, mapping.json, protocol Rev 3 with explicit HEAD field).
+   - Result reconfirmed: 19 PASS / 1 NOT APPLICABLE / 0 FAIL / 0 BLOCKED / 0 PROVISIONAL, 0 console errors. 20 screenshots (byte-identical, deterministic render).
+   - Evidence-refresh commit: `926e9aa`. Handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-R-M3-05-Clean-HEAD-Evidence.md`.
+   - No push/deploy/tag/Bryan contact/live-data mutation.
 
 ## Current Boundary
 
