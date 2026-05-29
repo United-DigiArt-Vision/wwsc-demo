@@ -27,7 +27,13 @@
 
 ## Client / Milestone Status
 
-**Current client status:** M2 ACTIVE & FUNDED. Implementation is deployed live on Render as `v2.9.0`; local post-merge verification passed, expanded 100-case screenshot evidence gate passed, and live smoke passed. Dino confirmed the Bryan delivery/update message was sent on 2026-05-19 15:23 CEST. Bryan replied on 2026-05-20 asking whether individual graphs can be created from the history report/data. Classification: M3 / reports-graphs scope question, not an M2 bug and not explicit M2 acceptance. Recommended reply draft exists; current gate is Bryan response handling + M2 acceptance/payment boundary.
+**Current client status:** M2 RELEASED/PAID; M3 COMMISSIONED/AUTHORIZED. Implementation is deployed live on Render as `v2.9.0`; local post-merge verification passed, expanded 100-case screenshot evidence gate passed, and live smoke passed. Dino confirmed the Bryan delivery/update message was sent on 2026-05-19 15:23 CEST. Bryan replied on 2026-05-20 asking whether individual graphs can be created from the history report/data; classification: M3 / reports-graphs scope question, not an M2 bug and not explicit M2 acceptance. Bryan then asked on 2026-05-21 what is needed from him now. Dino replied on 2026-05-21 19:06 Europe/Berlin asking Bryan to review/accept M2 or provide a specific M2 issue, while keeping graph/report views positioned as M3 after M2 acceptance. Bryan replied on 2026-05-23 that M2 "is met" and asked CSV/report/history-limit/production/commercial questions. Dino sent the final boundary response on 2026-05-23 05:53 Europe/Berlin, asking for formal Upwork M2 release/acceptance and explicitly stating that a commercial hosted version / multiple clubs / customer isolation / backups / access control / maintenance is separate scope from the current three milestones and must be separately scoped/quoted. Dino confirmed on 2026-05-29 11:04 Europe/Berlin that Bryan has paid Milestone 2 and commissioned Milestone 3. Current gate: Claude Code M3 implementation handoff from latest delivered M2 baseline, with Balerion as orchestrator/quality gate. No live deploy, no push/tag, no Bryan/client contact, and no live data mutation unless explicitly authorized.
+
+**M3 handoff:** `../messages/2026-05-29-1105-Balerion-To-Claude-WWSC-M3-Development-Handoff.md`
+
+**M3 mandatory user-interaction proof spec:** `docs/tests/M3-USER-INTERACTION-TEST-SPEC-v3.0.0.md` — 100 concrete user-interaction cases. Claude Code must implement/test against it, or update it first if the M3 PRD/acceptance checklist changes scope. Cases with ambiguous scoring/reporting/constitution/export rules are marked `PROVISIONAL` and must be resolved before shipped behavior is claimed complete.
+
+**Latest delivered M2 baseline verified on 2026-05-29:** `package.json=2.9.0`; `origin/main=3f225937247e797229cef77e2db224398b341469` (`docs: record v2.9.0 live smoke`); tag `v2.9.0=8d167fd` (`docs: mark v2.9.0 stable release candidate`). Local `main` is currently `7b4dcc5` (`docs: record Bryan graph scope question`) plus uncommitted continuity-doc updates; this is documentation-only on top of delivered v2.9.0 code. Claude must verify the exact repo/branch/commit before starting and should branch/worktree from the latest delivered M2 code truth, not from memory.
 
 ### Latest communication anchors
 
@@ -85,11 +91,52 @@
    - Screenshot: `../messages/attachments/2026-05-20-upwork-bryan-graphs-history-question.png`.
    - Draft response: `../messages/2026-05-20-draft-to-bryan-graphs-history-question.md`.
    - Classification: M3 / reports-graphs scope question. The M2 history data is a structured foundation for graphing, but graph UI/report views belong to the next reporting layer/M3 unless Dino explicitly chooses a different strategy or Bryan funds/starts M3.
+17. **2026-05-21 09:42 visible screenshot time:** Dino relayed Bryan's next Upwork question: "Hi Nedim What do you need from me now ?"
+   - Inbound record: `../messages/2026-05-21-Bryan-inbound-what-do-you-need-now.md`.
+   - Screenshot: `../messages/attachments/2026-05-21-upwork-bryan-what-do-you-need-now.png`.
+   - Draft response: `../messages/2026-05-21-draft-to-bryan-next-needed-m2-acceptance-m3-gate.md`.
+   - Classification: status / next-step clarification. Not an M2 bug and not explicit M2 acceptance. Recommended stance: ask Bryan to review/accept M2 or provide exact M2 reproduction details; keep graph/report views in M3.
+18. **2026-05-21 19:06 Europe/Berlin:** Dino confirmed he sent the M2 acceptance request / M3 gate reply to Bryan.
+   - Sent-confirmed record: `../messages/2026-05-21-outgoing-to-bryan-m2-acceptance-request-sent-confirmed.md`.
+   - Screenshot: `../messages/attachments/2026-05-21-upwork-outgoing-bryan-m2-acceptance-request-sent.png`.
+   - Exact visible ask: Bryan should review the current M2 update and confirm acceptance/close-release or provide a specific time-history issue; graph/report views are stated as the next reporting layer / M3 after M2 acceptance.
+   - Current gate: wait for Bryan's next reply; archive and classify before doing any new work.
+19. **2026-05-23 04:14 visible screenshot time:** Dino relayed Bryan's next Upwork reply.
+   - Inbound record: `../messages/2026-05-23-Bryan-inbound-m2-met-production-questions.md`.
+   - Screenshots: `../messages/attachments/2026-05-23-upwork-bryan-m2-met-production-questions-1.png`, `../messages/attachments/2026-05-23-upwork-bryan-m2-met-production-questions-2.png`.
+   - Draft response: `../messages/2026-05-23-draft-to-bryan-m2-release-production-questions.md`.
+   - Exact key signal: "Milestone 2 was quite simple and I think it is met."
+   - Classification: positive M2 acceptance signal + production/commercial questions. Not an M2 bug report and not authorization to start M3 implementation. Recommended stance: ask Bryan to formally release/accept M2 in Upwork; answer CSV/report/history-limit/production questions while preserving the M3 boundary.
+20. **2026-05-23 05:53 Europe/Berlin:** Dino confirmed he sent the final M2 release / commercial production boundary reply to Bryan.
+   - Sent-confirmed record: `../messages/2026-05-23-outgoing-to-bryan-commercial-scope-boundary-sent-confirmed.md`.
+   - Discord screenshot evidence filenames: `IMG_7068---55fece90-4e7e-4c22-b2e3-e184c18a95ce.png`, `IMG_7069---deeb1580-4fa3-4924-97cb-ddf007061fd0.png`.
+   - Exact sent boundary: commercial hosted version with multiple clubs, customer data separation, backups, access control, maintenance, and separate instances vs multi-customer platform is separate scope from the current three milestones and must be separately scoped/quoted.
+   - Current gate: wait for Bryan reply or formal Upwork M2 release/acceptance. Archive and classify the next inbound before doing any new work.
+21. **2026-05-29 11:04 Europe/Berlin:** Dino confirmed the commercial gate changed.
+   - Source: Dino direct confirmation in current OpenClaw/Balerion context.
+   - Exact operational signal: Bryan has paid Milestone 2 and commissioned Milestone 3.
+   - Classification: M2 released/paid + M3 authorized.
+   - Balerion role: orchestrate and quality-gate.
+   - Claude Code role: implement M3.
+   - Handoff: `../messages/2026-05-29-1105-Balerion-To-Claude-WWSC-M3-Development-Handoff.md`.
+   - Safety boundary: no origin push, deploy, tag, Bryan/client contact, or live data mutation without explicit authorization.
+22. **2026-05-29 11:12-11:35 Europe/Berlin:** Balerion QA spec hardening for M3.
+   - Created mandatory M3 user-interaction proof spec: `docs/tests/M3-USER-INTERACTION-TEST-SPEC-v3.0.0.md`.
+   - Spec contains 100 concrete user-interaction cases for reports/graphs, individual swimmer history graphs from M2 data, pointscore, yearly/season accumulation, constitution accumulation, event/report/export/print flows, filters, responsive/accessibility checks, and M1/M2 regressions.
+   - Updated Claude handoff to require this spec before implementation signoff and to require spec updates if the M3 PRD changes scope.
+23. **2026-05-29 ~11:50 Europe/Berlin:** Claude Code completed M3 Phase 1 (PRD-only, no code).
+   - Branch: `dev/m3-prd-planning` off `main@7b4dcc5`.
+   - Artifacts: `REQUIREMENTS-M3-POINTSCORE-REPORTS.md`, `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md`, `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md`.
+   - PRD covers R-M3-01..R-M3-12 + Cross-Reference table to UIT-M3-001..UIT-M3-100. Acceptance checklist's evidence layout follows the UIT-M3-v3.0.0 Required Final Protocol Format verbatim. Questions doc adds a "QA → UIT-M3 PROVISIONAL Unblock Map".
+   - Claude → Balerion handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-PRD-Handoff.md`.
+   - No code, no version bump, no push/deploy, no Bryan/client contact.
+   - Blocked on Bryan answers to QA-01 (pointscore formula), QA-05 (constitution doc location), QA-06 (constitution rules) before any pointscore/constitution code can start.
 
 ## Current Boundary
 
 - M2 scope: "Generate solution for recording time changes and archiving historical times with dates."
-- Pointscore, accumulated season totals, reports/graphs, and constitution accumulation are **Milestone 3**, not M2.
+- Pointscore, accumulated season totals, reports/graphs, and constitution accumulation are **Milestone 3**, now commissioned/authorized after M2 payment. Exact acceptance criteria must still be recovered from project truth before implementation; do not guess unclear rules.
+- Commercial hosted version, multiple clubs/customer access, customer data isolation, backups, access control, maintenance, server operations, and multi-customer/SaaS productization are **not included in M1/M2/M3**. Treat as separate commercial production/productization scope requiring separate planning and quote.
 - M1/v2.8.12 stable code is protected by backup branch and file snapshot.
 - M2 is now merged into local `main`. Further release changes should happen through controlled commits, then deploy/live-smoke.
 
@@ -130,9 +177,10 @@ The SSOT completion commit is a documentation anchor per SR-VERSION-003. `Record
 ## Next Action
 
 Current quality sequence:
-- Bryan has asked whether individual graphs can be created from the history report/data.
-- Recommended next action: send the prepared short reply explaining that the data foundation is structured and graphable, while actual graph/report screens belong to the next reporting layer/M3.
-- Do not start M3/Pointscore/Reports/Constitution work unless Dino explicitly chooses that strategy or Bryan funds M3.
+- Dino confirmed on 2026-05-29 11:04 Europe/Berlin that Bryan paid/released M2 and commissioned M3.
+- Next action: Claude Code starts M3 dev-loop preparation from the formal handoff, verifies exact repo/branch/commit, reads project messages/requirements and `docs/tests/M3-USER-INTERACTION-TEST-SPEC-v3.0.0.md`, then produces M3 PRD + acceptance checklist + questions/assumptions before coding ambiguous items.
+- Balerion performs V0015 QA of Claude's claims/evidence before any delivery/deploy/client communication.
+- Do not start commercial webhost/SaaS/productization work unless separately scoped and quoted.
 
 ## SSOT Rule
 
