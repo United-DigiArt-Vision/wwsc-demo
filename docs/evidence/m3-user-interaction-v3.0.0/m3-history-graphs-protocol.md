@@ -1,16 +1,25 @@
-# M3 R-M3-05 — UIT-M3-001..UIT-M3-020 Test Protocol
+# M3 R-M3-05 — UIT-M3-001..UIT-M3-020 Test Protocol (Rev 2 — Balerion QA fixes applied)
 
 **Branch:** `dev/v2.10.0-m3-history-graphs`
 **Baseline before bump:** `dev/m3-prd-planning` @ `f043dea` (off `main@7b4dcc5`)
 **Version after V0014 bump:** `2.10.0`
-**Date executed:** 2026-05-29
+**Date executed:** 2026-05-29 (Rev 2 after Balerion CONDITIONAL PASS fix directive 18:02 CEST)
 **Runner:** `scripts/e2e-m3-history-graphs.cjs` (puppeteer-core + headless Chrome)
-**Test data:** isolated server PORT=3005, DB `/tmp/wwsc-m3-graphs-test/wwsc.db` (fresh per run)
+**Test data:** isolated server PORT=3005, DB `/tmp/wwsc-m3-graphs-test/wwsc.db` (fresh per run); **6 weekly events** so memberA has 6 dated rows
 **Raw run log:** `m3-history-graphs-run.log`
 **Records sidecar:** `m3-history-graphs-records.json`
-**Screenshots:** `code/docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-###-*.png` (20 PNGs)
+**Exact-mapping data:** `m3-data-correctness-mapping.json`
+**Screenshots:** `code/docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-###-*.png` (20 PNGs, one per case)
 
-## Result Summary
+## Balerion CONDITIONAL-PASS fixes applied in Rev 2
+
+1. **Date-range, not stroke-filter (fix #1):** UIT-M3-007/008 now exercise the real from/to date-range filter (new `mg-from` / `mg-to` / Clear-range controls in `member-graph.js`). UIT-M3-007 narrows 6 rows → 4 (window 2026-04-11..2026-05-02, endpoints excluded); UIT-M3-008 clears the range and restores all 6.
+2. **Real browser back/forward (fix #2):** UIT-M3-015 now runs actual `page.goBack()` + `page.goForward()` across full-page loads and records the documented SPA behavior, instead of a nav-cycle substitution.
+3. **Exact point→row mapping (fix #3):** UIT-M3-019 reads each rendered circle's `data-date` / `data-time-cs` / `data-pb-cs` / `data-is-break` and asserts an exact set-equality against the API rows on `(stroke, date, time, previous_best, is_break)`. Full mapping persisted to `m3-data-correctness-mapping.json`. `exactMatch=true`.
+4. **6-row history proof (fix #4):** seed extended from 4 → 6 weekly events; UIT-M3-001 now asserts `apiRows >= 6 && dots === apiRows && xLabels >= 6`.
+5. **Stale screenshot removed (fix #5):** `UIT-M3-015-back-forward.png` and the interim `UIT-M3-015-nav-cycle.png` are deleted; the only UIT-M3-015 artifact is `UIT-M3-015-browser-back-forward.png`.
+
+## Result Summary (Rev 2)
 
 | Status | Count |
 |---|---|
@@ -23,12 +32,12 @@
 
 ## Case-by-Case
 
-UIT-M3-001 — Open swimmer with 4+ dated 25m rows; graph appears with all dates ordered
+UIT-M3-001 — Open swimmer with 6 dated 25m rows; graph appears with all dates ordered
 Status: PASS
 Area: History graphs
-Screenshot: `docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-001-graph-4-dates-ordered.png`
-Visible evidence: SVG rendered, data-graph-type=time-trend, 5 data points, X-axis labels `04 Apr / 11 Apr / 18 Apr / 26 Apr`
-Notes: memberA had 5 finalized rows from the bryan-seed pool; 4-date acceptance criterion satisfied with margin.
+Screenshot: `docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-001-graph-6-dates-ordered.png`
+Visible evidence: SVG rendered, data-graph-type=time-trend, 6 data points = 6 API rows, X-axis labels `04 Apr / 11 Apr / 18 Apr / 26 Apr / 02 May / 09 May`
+Notes: Held-back-gate 6-row expectation met (Balerion fix #4). Assertion now ties dot count to the live API row count, not a fixed number.
 
 UIT-M3-002 — Switch stroke filter from "All" to single stroke
 Status: PASS
@@ -55,15 +64,16 @@ Status: PASS
 Screenshot: `…UIT-M3-006-sparse-one-row.png`
 Visible evidence: SVG renders exactly 1 data point (counted via `circle[data-series-pt]` selector to exclude the legend marker).
 
-UIT-M3-007 — Stroke filter scoped to subset
+UIT-M3-007 — Date range covering the middle events only
 Status: PASS
-Screenshot: `…UIT-M3-007-stroke-filter-25m.png`
-Visible evidence: Filter applied, dot count remained correct for the 25m-only subset.
+Screenshot: `…UIT-M3-007-date-range-middle.png`
+Visible evidence: Window 2026-04-11..2026-05-02 → exactly 4 rendered points (full=6); rendered dates `2026-04-11, 2026-04-18, 2026-04-26, 2026-05-02`; both endpoints (04-04, 05-09) excluded.
+Notes: Real from/to date-range filter (Balerion fix #1), not a stroke-filter substitution.
 
-UIT-M3-008 — Reset filter back to "All strokes"
+UIT-M3-008 — Clear the date range; full history returns without reload
 Status: PASS
-Screenshot: `…UIT-M3-008-stroke-filter-cleared.png`
-Visible evidence: After clearing filter, full series re-appeared.
+Screenshot: `…UIT-M3-008-date-range-cleared.png`
+Visible evidence: After "Clear range" click, `mg-from`/`mg-to` empty and 6 points re-rendered without a page reload.
 
 UIT-M3-009 — Members search narrows to swimmer A
 Status: PASS
@@ -95,10 +105,11 @@ Status: PASS
 Screenshot: `…UIT-M3-014-after-refresh.png`
 Visible evidence: App surface re-mounts after reload (documented behavior: modals do not persist across reload by design).
 
-UIT-M3-015 — Navigation cycle Members → Dashboard → Members
+UIT-M3-015 — Real browser back/forward
 Status: PASS
-Screenshot: `…UIT-M3-015-nav-cycle.png`
-Visible evidence: After cycle, `#content h1` shows `Members`, 0 non-favicon console errors. Note: WWSC is a single-page app without a router, so a browser back/forward exercise is not meaningful for this case; nav-cycle is the equivalent user-perspective check.
+Screenshot: `…UIT-M3-015-browser-back-forward.png`
+Visible evidence: Actual `page.goBack()` then `page.goForward()` across full-page loads. After back: app present, body length 320+. After forward: app present, body length 320+. No new console errors introduced by either direction.
+Notes: Balerion fix #2 — real back/forward, not a nav-cycle. WWSC is an SPA whose nav buttons do not call pushState, so the browser history stack holds the full-page `?cb=` loads; both directions reload the app document cleanly with no blank screen.
 
 UIT-M3-016 — Export graph view
 Status: NOT APPLICABLE
@@ -116,10 +127,12 @@ Status: PASS
 Screenshot: `…UIT-M3-018-null-pb-row.png`
 Visible evidence: SVG output contains zero `NaN | undefined | null` tokens (defensive numeric guards).
 
-UIT-M3-019 — Data correctness vs API
+UIT-M3-019 — Data correctness vs API (exact point→row mapping)
 Status: PASS
 Screenshot: `…UIT-M3-019-data-correctness.png`
-Visible evidence: SVG data-point count equals `/api/members/:id/time-history` row count exactly.
+Visible evidence: Each rendered circle's `data-date` / `data-time-cs` / `data-pb-cs` / `data-is-break` was read and set-equality-compared against the API rows on the composite key `(stroke, date, time, previous_best, is_break)`. rendered=6, api=6, `exactMatch=true`.
+Raw/log evidence: full mapping in `m3-data-correctness-mapping.json` (apiKeys vs renKeys arrays).
+Notes: Balerion fix #3 — proves exact date/time/PB mapping, not just dot count.
 
 UIT-M3-020 — Accessibility (keyboard + alt text)
 Status: PASS

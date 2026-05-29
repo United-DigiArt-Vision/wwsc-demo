@@ -157,7 +157,10 @@ async function seedData() {
   const memberE = await ok('/api/members', { method: 'POST', body: { name: 'Newcomer No-PB', is_active: 1 } });
   const memberE_full = (await ok('/api/members')).find(m => m.id === memberE.id);
 
-  const dates = ['2026-04-04', '2026-04-11', '2026-04-18', '2026-04-26'];
+  // Six weekly events so memberA's 25m history has 6 dated rows — satisfies
+  // the held-back gate's UIT-M3-001 "6 dated rows" expectation (Balerion QA
+  // fix #4). memberB still attends only the first event (1 sparse row).
+  const dates = ['2026-04-04', '2026-04-11', '2026-04-18', '2026-04-26', '2026-05-02', '2026-05-09'];
   const events = [];
   for (let i = 0; i < dates.length; i++) {
     const ev = await ok('/api/events', { method: 'POST', body: { date: dates[i] } });
@@ -231,21 +234,23 @@ async function seedData() {
     await page.goto(BASE + '/?cb=' + Date.now(), { waitUntil: 'networkidle0' });
     await sleep(400);
 
-    // ── TC-001 — Open swimmer with 4 dated 25m rows; graph appears with all 4 dates
+    // ── TC-001 — Open swimmer with 6 dated 25m rows; graph appears with all dates ordered
     await openMembers(page);
     await openGraph(page, data.memberA.id);
     {
+      // Cross-check against the API: how many rows does memberA actually have?
+      const apiRows = await ok('/api/members/' + data.memberA.id + '/time-history');
       const info = await page.evaluate(() => {
         const svg = document.querySelector('#mg-canvas svg');
         const dots = svg ? svg.querySelectorAll('circle[data-series-pt]').length : 0;
         const xLabels = svg ? Array.from(svg.querySelectorAll('text[transform^="rotate"]')).map(t => t.textContent) : [];
         return { svg: !!svg, type: svg && svg.getAttribute('data-graph-type'), dots, xLabels };
       });
-      const shot = await takeShot(page, 'UIT-M3-001', 'graph-4-dates-ordered');
+      const shot = await takeShot(page, 'UIT-M3-001', 'graph-6-dates-ordered');
       record('UIT-M3-001', 'History graphs',
-        info.svg && info.dots >= 4 && info.xLabels.length >= 4 ? 'PASS' : 'FAIL', shot,
-        'svg=' + info.svg + ', type=' + info.type + ', dots=' + info.dots + ', dates=' + (info.xLabels || []).join('/'),
-        '', 'R-M3-05');
+        info.svg && apiRows.length >= 6 && info.dots === apiRows.length && info.xLabels.length >= 6 ? 'PASS' : 'FAIL', shot,
+        'svg=' + info.svg + ', type=' + info.type + ', dots=' + info.dots + ', apiRows=' + apiRows.length + ', dates=' + (info.xLabels || []).join('/'),
+        'Held-back gate expects ≥6 dated rows; memberA seeded across 6 weekly events', 'R-M3-05');
     }
 
     // ── TC-002 — Switch stroke filter; chart updates without stale data
@@ -321,31 +326,51 @@ async function seedData() {
     }
     await hideOverlay(page);
 
-    // ── TC-007 — Stroke filter scoped to a subset
+    // ── TC-007 — Date range covering the MIDDLE events only (Balerion QA fix #1)
+    // The graph ships a real from/to date filter. memberA has 6 dated rows
+    // (2026-04-04 .. 2026-05-09). We apply a window that includes only the
+    // middle four (04-11 .. 05-02) and assert the rendered point count drops
+    // to exactly those, with both endpoints inside the window.
     await openGraph(page, data.memberA.id);
+    const fullRowCount = (await ok('/api/members/' + data.memberA.id + '/time-history')).length;
     {
-      await page.evaluate(() => { const s = document.getElementById('mg-stroke'); s.value = '25m'; s.dispatchEvent(new Event('change')); });
-      await sleep(300);
+      await page.evaluate(() => {
+        document.getElementById('mg-from').value = '2026-04-11';
+        document.getElementById('mg-to').value = '2026-05-02';
+        document.getElementById('mg-from').dispatchEvent(new Event('change'));
+      });
+      await sleep(400);
       const after = await page.evaluate(() => {
         const svg = document.querySelector('#mg-canvas svg');
-        return { dots: svg ? svg.querySelectorAll('circle[data-series-pt]').length : 0 };
+        const pts = svg ? Array.from(svg.querySelectorAll('circle[data-series-pt]')) : [];
+        const dates = pts.map(c => c.getAttribute('data-date'));
+        return { count: pts.length, dates };
       });
-      const shot = await takeShot(page, 'UIT-M3-007', 'stroke-filter-25m');
-      record('UIT-M3-007', 'History graphs', after.dots > 0 ? 'PASS' : 'FAIL', shot,
-        'Filter applied. dots=' + after.dots, '', 'R-M3-05');
+      // Expected dates inside [2026-04-11, 2026-05-02]: 11/18/26 Apr + 02 May = 4
+      const inWindow = after.dates.every(d => d >= '2026-04-11' && d <= '2026-05-02');
+      const excludedEndpoints = !after.dates.includes('2026-04-04') && !after.dates.includes('2026-05-09');
+      const shot = await takeShot(page, 'UIT-M3-007', 'date-range-middle');
+      record('UIT-M3-007', 'History graphs',
+        after.count === 4 && inWindow && excludedEndpoints && after.count < fullRowCount ? 'PASS' : 'FAIL', shot,
+        'Date range 2026-04-11..2026-05-02 → ' + after.count + ' points (full=' + fullRowCount + '), dates=' + after.dates.join(',') + ', endpoints excluded=' + excludedEndpoints,
+        'Real from/to date-range filter, not a stroke-filter substitution', 'R-M3-05');
     }
 
-    // ── TC-008 — Reset filter back to "All strokes"
+    // ── TC-008 — Clear the date range; full history returns without reload
     {
-      await page.evaluate(() => { const s = document.getElementById('mg-stroke'); s.value = 'all'; s.dispatchEvent(new Event('change')); });
-      await sleep(300);
+      await page.evaluate(() => { document.getElementById('mg-clear-range').click(); });
+      await sleep(400);
       const after = await page.evaluate(() => {
         const svg = document.querySelector('#mg-canvas svg');
-        return { dots: svg ? svg.querySelectorAll('circle[data-series-pt]').length : 0 };
+        const from = document.getElementById('mg-from').value;
+        const to = document.getElementById('mg-to').value;
+        return { dots: svg ? svg.querySelectorAll('circle[data-series-pt]').length : 0, from, to };
       });
-      const shot = await takeShot(page, 'UIT-M3-008', 'stroke-filter-cleared');
-      record('UIT-M3-008', 'History graphs', after.dots >= 4 ? 'PASS' : 'FAIL', shot,
-        'After clearing filter: dots=' + after.dots, '', 'R-M3-05');
+      const shot = await takeShot(page, 'UIT-M3-008', 'date-range-cleared');
+      record('UIT-M3-008', 'History graphs',
+        after.dots === fullRowCount && after.from === '' && after.to === '' ? 'PASS' : 'FAIL', shot,
+        'After Clear range: from="' + after.from + '" to="' + after.to + '" dots=' + after.dots + ' (full=' + fullRowCount + ')',
+        'Clear-range button restores full history without page reload', 'R-M3-05');
     }
     await hideOverlay(page);
 
@@ -425,23 +450,34 @@ async function seedData() {
         'After reload app surface still mounts (documented behavior: modals do not persist)', '', 'R-M3-05');
     }
 
-    // ── TC-015 — Navigation cycle: Members → Dashboard → back to Members
-    // The app is an SPA without a router; "browser back" is documented to
-    // not push history. We exercise the equivalent: nav-button cycle.
+    // ── TC-015 — REAL browser back/forward (Balerion QA fix #2)
+    // The WWSC app is a single-page app whose nav buttons call navigate()
+    // WITHOUT pushState, so the browser history stack holds only full-page
+    // loads (each `?cb=` goto). We exercise actual page.goBack()/goForward()
+    // to prove the documented behavior: the app reloads cleanly to the
+    // previous/next document with no blank screen and no console error. The
+    // result is recorded factually (this is NOT a nav-cycle substitution).
     await openMembers(page);
-    await openGraph(page, data.memberA.id);
-    await hideOverlay(page);
-    await page.evaluate(() => navigate('dashboard'));
+    await page.goto(BASE + '/?cb=back1-' + Date.now(), { waitUntil: 'networkidle0' });
+    await sleep(300);
+    await page.goto(BASE + '/?cb=back2-' + Date.now(), { waitUntil: 'networkidle0' });
+    await sleep(300);
+    const errsBeforeBack = consoleErrors.filter(e => !/favicon/i.test(e.msg) && !/404 \(Not Found\)/i.test(e.msg)).length;
+    await page.goBack({ waitUntil: 'networkidle0' }).catch(() => {});
     await sleep(400);
-    await page.evaluate(() => navigate('members'));
+    const afterBack = await page.evaluate(() => ({ len: document.body.innerText.length, hasApp: /WWSC|Dashboard|Members/.test(document.body.innerText) }));
+    await page.goForward({ waitUntil: 'networkidle0' }).catch(() => {});
     await sleep(400);
+    const afterForward = await page.evaluate(() => ({ len: document.body.innerText.length, hasApp: /WWSC|Dashboard|Members/.test(document.body.innerText) }));
     {
-      const noBlank = await page.evaluate(() => document.body.innerText.length > 50);
-      const onMembers = await page.evaluate(() => /Members/.test(document.querySelector('#content h1')?.textContent || ''));
-      const realErrors = consoleErrors.filter(e => !/favicon/i.test(e.msg) && !/404 \(Not Found\)/i.test(e.msg)).length;
-      const shot = await takeShot(page, 'UIT-M3-015', 'nav-cycle');
-      record('UIT-M3-015', 'History graphs', noBlank && onMembers && realErrors === 0 ? 'PASS' : 'FAIL', shot,
-        'Nav cycle Members→Dashboard→Members; onMembers=' + onMembers + '; realErrors=' + realErrors, '', 'R-M3-05');
+      const errsAfter = consoleErrors.filter(e => !/favicon/i.test(e.msg) && !/404 \(Not Found\)/i.test(e.msg)).length;
+      const noNewErrors = errsAfter === errsBeforeBack;
+      const shot = await takeShot(page, 'UIT-M3-015', 'browser-back-forward');
+      record('UIT-M3-015', 'History graphs',
+        afterBack.hasApp && afterBack.len > 50 && afterForward.hasApp && afterForward.len > 50 && noNewErrors ? 'PASS' : 'FAIL', shot,
+        'Real page.goBack()/goForward(): afterBack hasApp=' + afterBack.hasApp + ' len=' + afterBack.len + ', afterForward hasApp=' + afterForward.hasApp + ' len=' + afterForward.len + ', no new console errors=' + noNewErrors,
+        'Actual browser back/forward exercised (not a nav-cycle). SPA has no pushState router; history stack holds full-page loads, both directions reload the app cleanly.',
+        'R-M3-05');
     }
 
     // ── TC-016 — Export NOT APPLICABLE in this slice (QA-10 blocked)
@@ -480,14 +516,39 @@ async function seedData() {
     }
     await hideOverlay(page);
 
-    // ── TC-019 — Data correctness: chart dots count matches API row count
+    // ── TC-019 — Data correctness: EXACT point→date/time/PB mapping (Balerion QA fix #3)
+    // Not just a dot count. We read each rendered circle's data-* attributes and
+    // assert there is a matching API row with the same event_date AND time AND
+    // previous_best for every plotted point, and vice-versa. The full mapping is
+    // written to the records sidecar for Balerion's independent check.
     await openGraph(page, data.memberA.id);
     {
       const apiRows = await ok('/api/members/' + data.memberA.id + '/time-history');
-      const renderedDots = await page.evaluate(() => document.querySelectorAll('#mg-canvas svg circle[data-series-pt]').length);
+      const rendered = await page.evaluate(() => {
+        return Array.from(document.querySelectorAll('#mg-canvas svg circle[data-series-pt]')).map(c => ({
+          stroke: c.getAttribute('data-series-pt'),
+          date: c.getAttribute('data-date'),
+          timeCs: c.getAttribute('data-time-cs') === '' ? null : Number(c.getAttribute('data-time-cs')),
+          timeText: c.getAttribute('data-time-text'),
+          pbCs: c.getAttribute('data-pb-cs') === '' ? null : Number(c.getAttribute('data-pb-cs')),
+          isBreak: c.getAttribute('data-is-break') === '1'
+        }));
+      });
+      // Build a comparison map. Each rendered point must match exactly one API row
+      // on (stroke, date, time, previous_best, is_break).
+      const apiKey = (r) => [r.stroke, r.event_date, r.time, (r.previous_best == null ? '' : r.previous_best * 100), r.is_break ? 1 : 0].join('|');
+      const renKey = (p) => [p.stroke, p.date, p.timeCs, (p.pbCs == null ? '' : p.pbCs), p.isBreak ? 1 : 0].join('|');
+      const apiKeys = apiRows.map(apiKey).sort();
+      const renKeys = rendered.map(renKey).sort();
+      const exactMatch = apiKeys.length === renKeys.length && apiKeys.every((k, i) => k === renKeys[i]);
+      // Persist the full mapping for the protocol/records.
+      fs.writeFileSync(path.join(EVIDENCE_DIR, 'm3-data-correctness-mapping.json'), JSON.stringify({
+        memberId: data.memberA.id, apiRows, rendered, apiKeys, renKeys, exactMatch
+      }, null, 2));
       const shot = await takeShot(page, 'UIT-M3-019', 'data-correctness');
-      record('UIT-M3-019', 'History graphs', renderedDots === apiRows.length ? 'PASS' : 'FAIL', shot,
-        'Chart dots=' + renderedDots + ' equals API row count=' + apiRows.length, '', 'R-M3-05');
+      record('UIT-M3-019', 'History graphs', exactMatch ? 'PASS' : 'FAIL', shot,
+        'Exact point↔row mapping on (stroke,date,time,previous_best,is_break): rendered=' + rendered.length + ', api=' + apiRows.length + ', exactMatch=' + exactMatch,
+        'Full mapping in docs/evidence/m3-user-interaction-v3.0.0/m3-data-correctness-mapping.json', 'R-M3-05');
     }
 
     // ── TC-020 — Accessibility (controls keyboard-focusable, alt text present)

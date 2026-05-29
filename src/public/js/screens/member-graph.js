@@ -83,14 +83,48 @@ function memberGraphBuildSeries(seriesRows, options) {
     const radius = isBreak ? 6 : 4;
     const fill = isBreak ? '#2e7d32' : color;
     const tooltip = memberGraphStrokeLabel(stroke) + ' · ' + r.event_date + ' · ' + memberGraphTimeText(r.time) + (isBreak ? ' · PB Break' : '');
-    return '<circle data-series-pt="' + stroke + '" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + radius + '" fill="' + fill + '" stroke="white" stroke-width="1"><title>' +
+    // data-* attributes expose the exact stored row behind each plotted point
+    // so automated tests (and a curious inspector) can verify the chart is not
+    // lying about the underlying time_history rows. Required by Balerion's
+    // R-M3-05 QA fix #3 (exact point/date/time/PB mapping, not just dot count).
+    const pbCs = r.previous_best != null ? r.previous_best * 100 : null;
+    return '<circle data-series-pt="' + stroke +
+      '" data-date="' + (r.event_date || '') +
+      '" data-time-cs="' + (typeof r.time === 'number' ? r.time : '') +
+      '" data-time-text="' + memberGraphTimeText(r.time) +
+      '" data-pb-cs="' + (pbCs == null ? '' : pbCs) +
+      '" data-is-break="' + (isBreak ? '1' : '0') +
+      '" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + radius + '" fill="' + fill + '" stroke="white" stroke-width="1"><title>' +
       tooltip.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</title></circle>';
   }).join('');
   return polyline + dots;
 }
 
+// Restrict rows to an inclusive [fromDate, toDate] ISO window (either bound
+// optional). Local to this graph view — NOT the QA-04 global Reports/CSV
+// slicer, which is a separate, still-blocked decision. This filter only
+// changes which of THIS swimmer's already-fetched rows are plotted.
+function memberGraphApplyDateRange(rows, opts) {
+  if (!opts) return rows;
+  const from = opts.fromDate || null;
+  const to = opts.toDate || null;
+  if (!from && !to) return rows;
+  return rows.filter(r => {
+    const d = r.event_date || '';
+    if (from && d < from) return false;
+    if (to && d > to) return false;
+    return true;
+  });
+}
+
 // Render the per-stroke time-trend graph (graph type A from QA-08).
-function memberGraphRenderTimeTrend(rows, container, opts) {
+function memberGraphRenderTimeTrend(rowsInput, container, opts) {
+  // Apply the optional date-range window first (UIT-M3-007 / UIT-M3-008).
+  const rows = memberGraphApplyDateRange(rowsInput, opts);
+  if (rows.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:24px">No history rows in the selected date range.</p>';
+    return;
+  }
   // Group rows by stroke; keep ASC chronological order for line drawing.
   const byStroke = {};
   rows.slice()
@@ -182,7 +216,14 @@ function memberGraphRenderTimeTrend(rows, container, opts) {
 }
 
 // Render the PB-progression graph (graph type B from QA-08).
-function memberGraphRenderPBProgression(rows, container, opts) {
+function memberGraphRenderPBProgression(rowsInput, container, opts) {
+  // Apply the date-range window before computing running PBs so the curve
+  // reflects only the visible window (UIT-M3-007).
+  const rows = memberGraphApplyDateRange(rowsInput, opts);
+  if (rows.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:24px">No history rows in the selected date range.</p>';
+    return;
+  }
   // Per stroke, walk chronologically and track the lowest finish-time so far.
   const byStroke = {};
   rows.slice()
@@ -263,6 +304,13 @@ async function showMemberGraphModal(memberId) {
         ${strokes.map(s => `<option value="${s}">${memberGraphStrokeLabel(s)}</option>`).join('')}
       </select>
     </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+      <label style="font-size:12px;color:var(--text-secondary)">From</label>
+      <input id="mg-from" type="date" class="form-control" style="max-width:170px">
+      <label style="font-size:12px;color:var(--text-secondary)">To</label>
+      <input id="mg-to" type="date" class="form-control" style="max-width:170px">
+      <button id="mg-clear-range" class="btn btn-outline" style="font-size:12px">Clear range</button>
+    </div>
     <div id="mg-canvas" style="width:100%;min-height:380px;border:1px solid #e5e7eb;border-radius:6px;background:white;padding:8px"></div>
     <p style="margin-top:8px;color:var(--text-secondary);font-size:12px">
       ${rows.length} history row${rows.length === 1 ? '' : 's'} · Bigger dots and a green color mark PB break events. M3 R-M3-05.
@@ -276,10 +324,13 @@ async function showMemberGraphModal(memberId) {
     if (!container) return;
     const type = document.getElementById('mg-type').value;
     const stroke = document.getElementById('mg-stroke').value;
+    const fromDate = document.getElementById('mg-from').value || null;
+    const toDate = document.getElementById('mg-to').value || null;
+    const opts = { strokeFilter: stroke, fromDate, toDate };
     if (type === 'pb-progression') {
-      memberGraphRenderPBProgression(rows, container, { strokeFilter: stroke });
+      memberGraphRenderPBProgression(rows, container, opts);
     } else {
-      memberGraphRenderTimeTrend(rows, container, { strokeFilter: stroke });
+      memberGraphRenderTimeTrend(rows, container, opts);
     }
   };
   // Initial draw, then redraw on picker changes. ResizeObserver lets the SVG
@@ -287,6 +338,14 @@ async function showMemberGraphModal(memberId) {
   draw();
   document.getElementById('mg-type').onchange = draw;
   document.getElementById('mg-stroke').onchange = draw;
+  document.getElementById('mg-from').onchange = draw;
+  document.getElementById('mg-to').onchange = draw;
+  document.getElementById('mg-clear-range').onclick = (e) => {
+    e.preventDefault();
+    document.getElementById('mg-from').value = '';
+    document.getElementById('mg-to').value = '';
+    draw();
+  };
   if (typeof ResizeObserver === 'function') {
     const canvas = document.getElementById('mg-canvas');
     if (canvas) new ResizeObserver(draw).observe(canvas);

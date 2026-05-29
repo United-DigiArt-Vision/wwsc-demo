@@ -11,6 +11,23 @@
 
 ---
 
+## 2026-05-29 — fix: v2.10.0 M3 R-M3-05 QA corrections (Balerion CONDITIONAL PASS → fixes)
+- **Timestamp:** 2026-05-29 18:30:00
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **Editor:** Claude Code
+- **Trigger:** Balerion 2026-05-29 18:02 `R-M3-05 QA Fix Directive` — CONDITIONAL PASS on the narrow graph slice with 5 required evidence corrections.
+- **Fixes:**
+  1. **Date-range filter implemented** (`src/public/js/screens/member-graph.js`): new `mg-from` / `mg-to` date inputs + "Clear range" button; `memberGraphApplyDateRange()` filters plotted rows before time-trend / PB-progression rendering. UIT-M3-007 now narrows 6 rows → 4 (window 2026-04-11..2026-05-02, endpoints excluded); UIT-M3-008 clears and restores all 6. No more stroke-filter substitution.
+  2. **Real browser back/forward** (`scripts/e2e-m3-history-graphs.cjs` UIT-M3-015): actual `page.goBack()` + `page.goForward()` across full-page loads, with documented SPA behavior (no pushState router; both directions reload cleanly, no blank screen, no new console errors). No more nav-cycle substitution.
+  3. **Exact point→row mapping** (UIT-M3-019 + new `data-date` / `data-time-cs` / `data-pb-cs` / `data-is-break` attributes on each SVG circle): set-equality of rendered points vs API rows on `(stroke, date, time, previous_best, is_break)`; `exactMatch=true`; full mapping persisted to `docs/evidence/m3-user-interaction-v3.0.0/m3-data-correctness-mapping.json`.
+  4. **6 dated rows** for the UIT-M3-001 history-graph proof: seed extended from 4 → 6 weekly events; assertion ties dot count to the live API row count.
+  5. **Stale screenshots removed:** deleted `UIT-M3-015-back-forward.png`, the interim `UIT-M3-015-nav-cycle.png`, and the renamed `UIT-M3-001-graph-4-dates-ordered.png` / `UIT-M3-007-stroke-filter-25m.png` / `UIT-M3-008-stroke-filter-cleared.png`. The directory now holds exactly 20 PNGs — one per case, all current.
+- **Re-run result:** 19 PASS / 1 NOT APPLICABLE (UIT-M3-016 export, QA-10-blocked) / 0 FAIL / 0 BLOCKED / 0 PROVISIONAL. 0 console errors.
+- **Protocol Rev 2:** `docs/evidence/m3-user-interaction-v3.0.0/m3-history-graphs-protocol.md` documents each fix per case.
+- **Claude → Balerion evidence-correction handoff:** `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-R-M3-05-QA-Fix-Evidence.md`.
+- No app-source change beyond `member-graph.js`; `src/server.js`/`src/db.js`/`render.yaml` still zero diff (R-M3-12 holds).
+
 ## 2026-05-29 — feat: v2.10.0 M3 R-M3-05 history-graphs slice (UNAMBIGUOUS items only)
 - **Timestamp:** 2026-05-29 12:35:00
 - **App Version (from package.json):** 2.10.0

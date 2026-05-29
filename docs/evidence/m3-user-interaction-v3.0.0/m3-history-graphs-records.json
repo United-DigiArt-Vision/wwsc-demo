@@ -1,11 +1,11 @@
 {
   "baseline": {
     "branch": "dev/v2.10.0-m3-history-graphs",
-    "commit": "6283ce6",
+    "commit": "06ec2da",
     "pkgVersion": "2.10.0",
     "apiVersion": {
       "version": "2.10.0",
-      "build": "2026-05-29T10:23:31.505Z"
+      "build": "2026-05-29T16:13:18.155Z"
     }
   },
   "records": [
@@ -13,9 +13,9 @@
       "tcId": "UIT-M3-001",
       "area": "History graphs",
       "status": "PASS",
-      "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-001-graph-4-dates-ordered.png",
-      "visible": "svg=true, type=time-trend, dots=4, dates=04 Apr/11 Apr/18 Apr/26 Apr",
-      "notes": "",
+      "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-001-graph-6-dates-ordered.png",
+      "visible": "svg=true, type=time-trend, dots=6, apiRows=6, dates=04 Apr/11 Apr/18 Apr/26 Apr/02 May/09 May",
+      "notes": "Held-back gate expects ≥6 dated rows; memberA seeded across 6 weekly events",
       "reqs": "R-M3-05"
     },
     {
@@ -23,7 +23,7 @@
       "area": "History graphs",
       "status": "PASS",
       "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-002-stroke-filter-applied.png",
-      "visible": "After stroke filter=25m: dots=4",
+      "visible": "After stroke filter=25m: dots=6",
       "notes": "",
       "reqs": "R-M3-05"
     },
@@ -32,7 +32,7 @@
       "area": "History graphs",
       "status": "PASS",
       "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-003-axis-labels-readable.png",
-      "visible": "Y labels=15.20 / 15.28 / 15.35 / 15.43 / 15.50",
+      "visible": "Y labels=15.00 / 15.13 / 15.25 / 15.38 / 15.50",
       "notes": "",
       "reqs": "R-M3-05"
     },
@@ -41,7 +41,7 @@
       "area": "History graphs",
       "status": "PASS",
       "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-004-pb-progression.png",
-      "visible": "data-graph-type=pb-progression, dots=4",
+      "visible": "data-graph-type=pb-progression, dots=6",
       "notes": "",
       "reqs": "R-M3-05"
     },
@@ -67,18 +67,18 @@
       "tcId": "UIT-M3-007",
       "area": "History graphs",
       "status": "PASS",
-      "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-007-stroke-filter-25m.png",
-      "visible": "Filter applied. dots=4",
-      "notes": "",
+      "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-007-date-range-middle.png",
+      "visible": "Date range 2026-04-11..2026-05-02 → 4 points (full=6), dates=2026-04-11,2026-04-18,2026-04-26,2026-05-02, endpoints excluded=true",
+      "notes": "Real from/to date-range filter, not a stroke-filter substitution",
       "reqs": "R-M3-05"
     },
     {
       "tcId": "UIT-M3-008",
       "area": "History graphs",
       "status": "PASS",
-      "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-008-stroke-filter-cleared.png",
-      "visible": "After clearing filter: dots=4",
-      "notes": "",
+      "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-008-date-range-cleared.png",
+      "visible": "After Clear range: from=\"\" to=\"\" dots=6 (full=6)",
+      "notes": "Clear-range button restores full history without page reload",
       "reqs": "R-M3-05"
     },
     {
@@ -139,9 +139,9 @@
       "tcId": "UIT-M3-015",
       "area": "History graphs",
       "status": "PASS",
-      "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-015-nav-cycle.png",
-      "visible": "Nav cycle Members→Dashboard→Members; onMembers=true; realErrors=0",
-      "notes": "",
+      "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-015-browser-back-forward.png",
+      "visible": "Real page.goBack()/goForward(): afterBack hasApp=true len=320, afterForward hasApp=true len=320, no new console errors=true",
+      "notes": "Actual browser back/forward exercised (not a nav-cycle). SPA has no pushState router; history stack holds full-page loads, both directions reload the app cleanly.",
       "reqs": "R-M3-05"
     },
     {
@@ -176,8 +176,8 @@
       "area": "History graphs",
       "status": "PASS",
       "shotRel": "docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-019-data-correctness.png",
-      "visible": "Chart dots=4 equals API row count=4",
-      "notes": "",
+      "visible": "Exact point↔row mapping on (stroke,date,time,previous_best,is_break): rendered=6, api=6, exactMatch=true",
+      "notes": "Full mapping in docs/evidence/m3-user-interaction-v3.0.0/m3-data-correctness-mapping.json",
       "reqs": "R-M3-05"
     },
     {
@@ -192,7 +192,7 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3005/?cb=1780050213621",
+      "url": "http://127.0.0.1:3005/?cb=1780071202473",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ],
