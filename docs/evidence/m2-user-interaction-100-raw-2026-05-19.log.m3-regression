@@ -1,0 +1,127 @@
+# Baseline branch=dev/v2.10.0-m3-history-graphs commit=7f7a0a3 pkg=2.10.0
+# Server: http://127.0.0.1:3004  DB: /tmp/wwsc-m2-100-test/wwsc.db
+# Started: 2026-05-29T10:28:47.131Z
+TC  |  STATUS  |  AREA  |  SCREENSHOT  |  VISIBLE_EVIDENCE
+# /api/version={"version":"2.10.0","build":"2026-05-29T10:28:47.367Z"}
+# Seeded 24 base members + memberE id=25
+# Member A id=22 name=Andrew Barnes
+# Member B id=4 name=Ben Chandler
+# Member C id=1 name=Bryan Hesketh
+# Member D id=10 name=David Hughes
+# Member E id=25 name=Newcomer No-PB
+# Events: 1@2026-04-04, 2@2026-04-11, 3@2026-04-18, 4@2026-04-26
+TC-001  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-001-members-loaded.png  |  Members screen heading + 25 rows visible
+TC-002  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-002-first-row-history-action.png  |  First row swimmer=Andrew Barnes has History action=true
+TC-003  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-003-history-actions-on-all-rows.png  |  25 History actions across 25 rows
+TC-004  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-004-first-history-action-focused.png  |  First History action focused without layout shift
+TC-005  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-005-modal-open-membera.png  |  Modal open for Andrew Barnes, rows=4
+TC-006  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-006-modal-second-swimmer.png  |  Modal heading shows Time History — David Hughes
+TC-007  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-007-modal-empty-state.png  |  Empty-state copy present for Bryan Hesketh
+TC-008  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-008-after-close-populated.png  |  Members screen visible, modal hidden
+TC-009  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-009-after-close-empty.png  |  Members screen still rendered after closing empty modal
+TC-010  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-010-reopen-same-swimmer.png  |  Reopen shows Time History — Andrew Barnes
+TC-011  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-011-modal-after-scroll.png  |  Lower-list swimmer modal heading=Time History — Peter Davidson
+TC-012  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-012-after-close-lower-list.png  |  Members still rendered after lower-list modal close
+TC-013  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-013-bottom-row-modal.png  |  Bottom-row modal heading=Time History — Wendy Cooper
+TC-014  |  NOT APPLICABLE  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-014-escape-key-state.png  |  Escape: modal stable=true, real console errors=0 (favicon 404 filtered)
+TC-015  |  PASS  |  Members entry  |  docs/screenshots/m2-user-interaction-100/TC-015-members-after-navigation.png  |  25 History actions visible after navigation away+back
+TC-016  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-016-modal-4-rows.png  |  Time History — Andrew Barnes, rows=4
+TC-017  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-017-modal-header.png  |  Header text=Date	Stroke / Race	Time	Previous Best	Break | 
+TC-018  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-018-first-history-row.png  |  First row cells: [Sun, 26 Apr 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]
+TC-019  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-019-pb-break-row.png  |  PB Break row cells: [Sun, 26 Apr 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]
+TC-020  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-020-non-break-row.png  |  First row no PB chip; cells: [Sun, 26 Apr 2026 | 25m | 19.60 | 19.00 | ]
+TC-021  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-021-null-previous-best.png  |  Null PB row: [] pbCell=""
+TC-022  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-022-whole-second-pb.png  |  Whole-second PB cell: [Sun, 26 Apr 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]
+TC-023  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-023-centisecond-time.png  |  Centisecond time cell: [Sun, 26 Apr 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]
+TC-024  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-024-modal-mobile.png  |  Mobile viewport (375x812) modal visible
+TC-025  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-025-modal-desktop.png  |  Desktop viewport 1440x900 alignment captured
+TC-026  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-026-modal-scrolled-bottom.png  |  Scrolled to bottom inside modal scroll container
+TC-027  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-027-one-history-row.png  |  Exactly 1 row(s) shown for Ben Chandler
+TC-028  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-028-empty-state-detail.png  |  Empty-state copy present
+TC-029  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-029-switch-empty-to-populated.png  |  After empty→populated: rows=4, emptyText=false
+TC-030  |  PASS  |  Member modal content  |  docs/screenshots/m2-user-interaction-100/TC-030-switch-populated-to-empty.png  |  After populated→empty: rows=0, emptyText=true
+# memberA dates ordered: Sun, 26 Apr 2026 / Sat, 18 Apr 2026 / Sat, 11 Apr 2026 / Sat, 04 Apr 2026
+TC-031  |  PASS  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-031-four-dates-visible.png  |  Visible dates: Sun, 26 Apr 2026 | Sat, 18 Apr 2026 | Sat, 11 Apr 2026 | Sat, 04 Apr 2026
+TC-032  |  PASS  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-032-newest-first-order.png  |  Top→bottom dates: Sun, 26 Apr 2026 → Sat, 18 Apr 2026 → Sat, 11 Apr 2026 → Sat, 04 Apr 2026
+TC-033  |  PASS  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-033-oldest-row-position.png  |  Last row date=Sat, 04 Apr 2026
+TC-034  |  PASS  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-034-same-stroke-multi-dates.png  |  Strokes=[25m,25m,25m,25m] dates=[Sun, 26 Apr 2026,Sat, 18 Apr 2026,Sat, 11 Apr 2026,Sat, 04 Apr 2026]
+TC-035  |  NOT APPLICABLE  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-035-multi-stroke-same-date-na.png  |  Seed data uses one race type (25m) per event by design; memberA does not have multiple strokes on the same date. Same-stroke-different-date proof covered by TC-034.
+TC-036  |  PASS  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-036-second-swimmer-multi-date.png  |  David Hughes dates top→bottom: Sun, 26 Apr 2026 → Sat, 18 Apr 2026 → Sat, 11 Apr 2026 → Sat, 04 Apr 2026
+TC-037  |  PASS  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-037-old-date-only-swimmer.png  |  Single row date=Sat, 04 Apr 2026
+TC-038  |  PASS  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-038-latest-date-only-swimmer.png  |  Single row date=Tue, 19 May 2026
+TC-039  |  PASS  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-039-calendar-event-2026-04-18.png  |  Member modal row: Sat, 18 Apr 2026; Calendar event has matching date text: true (cross-ref TC-039-a=docs/screenshots/m2-user-interaction-100/TC-039-a-member-history-2026-04-18.png)
+TC-040  |  PASS  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-040-reload-then-modal-order.png  |  After reload, first date=Sun, 26 Apr 2026
+TC-041  |  PASS  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-041-human-readable-date.png  |  Date cell: "Sun, 26 Apr 2026"
+TC-042  |  PASS  |  Sorting/date  |  docs/screenshots/m2-user-interaction-100/TC-042-mobile-date-labels.png  |  Mobile dates: Sun, 26 Apr 2026 | Sat, 18 Apr 2026 | Sat, 11 Apr 2026 | Sat, 04 Apr 2026
+TC-043  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-043-calendar-overview.png  |  Season Calendar heading + completed events listed
+TC-044  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-044-event-2026-04-04-open.png  |  Event-04-04 detail header: 📊 Event Details | 👥 Participants (24) | Andrew Barnes | Ben Chandler | David Hughes | Diane Foster | Extra Swimmer 24 | Felicia O'Brien | Glenne Murray | Greg Patterson | 
+TC-045  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-045-event-2026-04-04-time-history-heading.png  |  Time History heading visible in 2026-04-04 detail
+TC-046  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-046-event-2026-04-04-history-rows.png  |  Rows=23, sample=Andrew Barnes	25m	15.50	16.00	🏆 PB
+TC-047  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-047-event-2026-04-11-open.png  |  Detail modal text head: 📊 Event Details | 👥 Participants (24) | Andrew Barnes
+TC-048  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-048-event-2026-04-11-history-rows.png  |  Time History rows=23, header=Swimmer	Stroke / Race	Time	Prev. Best	Break | 
+TC-049  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-049-event-2026-04-18-open.png  |  Detail modal text head: 📊 Event Details | 👥 Participants (24) | Andrew Barnes
+TC-050  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-050-event-2026-04-18-history-rows.png  |  Time History rows=23, header=Swimmer	Stroke / Race	Time	Prev. Best	Break | 
+TC-051  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-051-event-2026-04-26-open.png  |  Detail modal text head: 📊 Event Details | 👥 Participants (24) | Andrew Barnes
+TC-052  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-052-event-2026-04-26-history-rows.png  |  Time History rows=23, header=Swimmer	Stroke / Race	Time	Prev. Best	Break | 
+TC-053  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-053-compare-events-not-stale.png  |  Separate per-event screenshots TC-046/TC-048/TC-050/TC-052 each show that event's own date in row text — see protocol cross-references
+TC-054  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-054-event-detail-scrolled.png  |  Event detail scrolled to Time History section
+TC-055  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-055-event-detail-reopen.png  |  Time History present after reopen
+TC-056  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-056-calendar-after-modal-flow.png  |  Calendar still renders after Members modal flow
+TC-057  |  PASS  |  Calendar history  |  docs/screenshots/m2-user-interaction-100/TC-057-members-after-calendar-flow.png  |  28 History actions still present after Calendar flow
+TC-058  |  PASS  |  Finalize flow  |  docs/screenshots/m2-user-interaction-100/TC-058-new-event-in-calendar.png  |  Calendar shows newly created event date (substring match): true — sample: 🏊 WWSC | 🏠 | Dashboard | 👥 | Members | 📋 | Times Sheet | 🔧 | Heat Builder | 🏆 | Results | 🏅 | Breaker Report | 📅 | Sea
+TC-059  |  PASS  |  Finalize flow  |  docs/screenshots/m2-user-interaction-100/TC-059-event-setup-swimmers.png  |  Event setup shows attendance list incl. Andrew Barnes
+TC-060  |  PASS  |  Finalize flow  |  docs/screenshots/m2-user-interaction-100/TC-060-results-with-entered-times.png  |  Results screen rendered after time entry
+TC-061  |  PASS  |  Finalize flow  |  docs/screenshots/m2-user-interaction-100/TC-061-post-finalize-state.png  |  Finalize POST succeeded; results screen still visible (no error)
+TC-062  |  PASS  |  Finalize flow  |  docs/screenshots/m2-user-interaction-100/TC-062-event-detail-no-refresh.png  |  Time History visible immediately after finalize (no refresh)
+TC-063  |  PASS  |  Finalize flow  |  docs/screenshots/m2-user-interaction-100/TC-063-member-history-no-refresh.png  |  2026-05-15 row visible in memberA modal: true
+TC-064  |  PASS  |  Finalize flow  |  docs/screenshots/m2-user-interaction-100/TC-064-event-history-row-count.png  |  Event Time History rows=7
+TC-065  |  PASS  |  Finalize flow  |  docs/screenshots/m2-user-interaction-100/TC-065-member-modal-includes-new-event.png  |  memberA modal includes 15 May 2026
+TC-066  |  PASS  |  Persistence  |  docs/screenshots/m2-user-interaction-100/TC-066-app-after-reload.png  |  App reloaded without losing UI surface
+TC-067  |  PASS  |  Persistence  |  docs/screenshots/m2-user-interaction-100/TC-067-member-history-after-reload.png  |  15 May 2026 row still visible after reload
+TC-068  |  PASS  |  Persistence  |  docs/screenshots/m2-user-interaction-100/TC-068-event-detail-after-reload.png  |  Time History section visible after reload on event 6
+# /api/version after restart: {"version":"2.10.0","build":"2026-05-29T10:29:52.346Z"}
+TC-069  |  PASS  |  Persistence  |  docs/screenshots/m2-user-interaction-100/TC-069-after-server-restart.png  |  After server stop+restart, sidebar shows v2.9.0 and /api/version=2.10.0
+TC-070  |  PASS  |  Persistence  |  docs/screenshots/m2-user-interaction-100/TC-070-member-history-after-server-restart.png  |  15 May 2026 row still visible after server restart
+TC-071  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-071-results-screen.png  |  Results screen renders for editing path
+TC-072  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-072-changed-time-pre-refinalize.png  |  Lane time updated to 11.00 via documented API path
+TC-073  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-073-post-refinalize.png  |  Re-finalize OK; row count before=23 after=23
+TC-074  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-074-member-history-after-refinalize.png  |  04 Apr 2026 row in memberA modal shows 11.00 after re-finalize
+TC-075  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-075-duplicate-defense.png  |  memberA has exactly 1 row for 04 Apr 2026 (no duplicate); total rows=5
+TC-076  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-076-event-history-after-refinalize.png  |  Event Time History contains 11.00 cell after re-finalize
+TC-077  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-077-row-count-stable.png  |  Row count before=23, after=23 — stable
+TC-078  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-078-after-reload-refinalize.png  |  11.00 row still visible for memberA on 04 Apr 2026 after reload
+TC-079  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-079-after-restart-refinalize.png  |  11.00 row still visible for memberA on 04 Apr 2026 after server restart
+TC-080  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-080-breaker-report.png  |  Breaker Report screen mentions Andrew Barnes (consistency with break marker)
+TC-081  |  PASS  |  Formatting  |  docs/screenshots/m2-user-interaction-100/TC-081-time-format.png  |  Time cell follows X.XX: [Fri, 15 May 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]
+TC-082  |  PASS  |  Formatting  |  docs/screenshots/m2-user-interaction-100/TC-082-time-11-00.png  |  11.00 cell: [Sat, 04 Apr 2026 | 25m | 11.00 | 16.00 | 🏆 PB Break]
+TC-083  |  PASS  |  Formatting  |  docs/screenshots/m2-user-interaction-100/TC-083-previous-best-16-00.png  |  PB 16.00 row: [Fri, 15 May 2026 | 25m | 15.50 | 16.00 | 🏆 PB Break]
+TC-084  |  PASS  |  Formatting  |  docs/screenshots/m2-user-interaction-100/TC-084-previous-best-null.png  |  Null PB row first cells: []
+TC-085  |  PASS  |  Formatting  |  docs/screenshots/m2-user-interaction-100/TC-085-pb-break-marker.png  |  🏆 PB Break chip visible for memberA timeline
+TC-086  |  PASS  |  Formatting  |  docs/screenshots/m2-user-interaction-100/TC-086-non-break-row.png  |  memberD timeline has no 🏆 marker (no PB break)
+TC-087  |  PASS  |  Formatting  |  docs/screenshots/m2-user-interaction-100/TC-087-stroke-labels.png  |  Stroke labels: [25m | 25m | 25m | 25m | 25m]
+TC-088  |  PASS  |  Formatting  |  docs/screenshots/m2-user-interaction-100/TC-088-event-member-names.png  |  Event Time History shows Andrew Barnes (no id-only display)
+TC-089  |  PASS  |  Formatting  |  docs/screenshots/m2-user-interaction-100/TC-089-empty-state-copy.png  |  Empty-state human copy: Time History — Bryan Hesketh |  | No time history yet for this swimmer. Times appear here after an event is finalized. | 
+TC-090  |  PASS  |  Formatting  |  docs/screenshots/m2-user-interaction-100/TC-090-console-state.png  |  Real console errors (excl. favicon 404): 0
+TC-091  |  PASS  |  Regression  |  docs/screenshots/m2-user-interaction-100/TC-091-dashboard.png  |  Dashboard renders after M2 changes
+TC-092  |  PASS  |  Regression  |  docs/screenshots/m2-user-interaction-100/TC-092-edit-member-modal.png  |  Edit Member modal opens and shows fields
+TC-093  |  PASS  |  Regression  |  docs/screenshots/m2-user-interaction-100/TC-093-event-setup.png  |  Event Setup screen renders
+TC-094  |  PASS  |  Regression  |  docs/screenshots/m2-user-interaction-100/TC-094-heat-builder.png  |  Heat Builder screen renders
+TC-095  |  PASS  |  Regression  |  docs/screenshots/m2-user-interaction-100/TC-095-results.png  |  Results screen renders
+TC-096  |  PASS  |  Regression  |  docs/screenshots/m2-user-interaction-100/TC-096-relay-results.png  |  Relay sections present (relay=true, variance=true, names=true)
+TC-097  |  PASS  |  Regression  |  docs/screenshots/m2-user-interaction-100/TC-097-after-archive.png  |  Archive count 0 → 1
+TC-098  |  PASS  |  Regression  |  docs/screenshots/m2-user-interaction-100/TC-098-after-restore.png  |  Archive count after restore 0 (returned to 0)
+TC-099  |  PASS  |  No M3 leakage  |  docs/screenshots/m2-user-interaction-100/TC-099-no-m3-leakage.png  |  Banned-string scan across 7 screens: clean
+TC-100  |  PASS  |  Final evidence gate  |  docs/screenshots/m2-user-interaction-100/TC-100-final-evidence-state.png  |  99 prior TCs classified — PASS=97, NOT APPLICABLE=2, FAIL=0, BLOCKED=0
+# Finished: 2026-05-29T10:30:29.511Z
+# Tally:
+#   PASS=98
+#   NOT APPLICABLE=2
+#   FAIL=0
+#   BLOCKED=0
+# Console errors (filtered favicon 404): 0
+
+=== TALLY ===
+PASS:           98
+NOT APPLICABLE: 2
+FAIL:           0
+BLOCKED:        0

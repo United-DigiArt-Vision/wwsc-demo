@@ -131,6 +131,21 @@
    - Claude → Balerion handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-PRD-Handoff.md`.
    - No code, no version bump, no push/deploy, no Bryan/client contact.
    - Blocked on Bryan answers to QA-01 (pointscore formula), QA-05 (constitution doc location), QA-06 (constitution rules) before any pointscore/constitution code can start.
+24. **2026-05-29 12:10 Europe/Berlin:** Balerion "You Are Next" implementation directive.
+   - Handoff: `../messages/2026-05-29-1210-Balerion-To-Claude-WWSC-M3-You-Are-Next.md`.
+   - Authorizes Claude to begin M3 implementation immediately on the UNAMBIGUOUS items, while continuing to hold the PROVISIONAL pointscore/constitution items behind Bryan's answers. Balerion reserves the held-back final QA matrix until Claude reports implementation complete.
+25. **2026-05-29 ~12:35 Europe/Berlin:** Claude Code delivered the M3 R-M3-05 history-graphs slice (V0014 first commit on `dev/v2.10.0-m3-history-graphs`).
+   - Branch: `dev/v2.10.0-m3-history-graphs` off `dev/m3-prd-planning@f043dea`.
+   - Version: `2.10.0` (V0014 bump commit `7712067`).
+   - Implementation: `6283ce6` (`feat: M3 R-M3-05 individual swimmer history graph (SVG, vanilla JS)`).
+   - Test runner: `7f7a0a3` (`test: M3 R-M3-05 e2e runner + member-graph circle-marker tweak`).
+   - R-M3-05 UIT-M3-001..020: **19 PASS / 1 NOT APPLICABLE / 0 FAIL** under `WWSC_E2E_EXPECTED_VERSION=2.10.0`.
+   - R-M3-11 M2 regression on the same branch: **55 PASS / 0 FAIL** + **98 PASS / 2 NA / 0 FAIL** — identical to the 2.9.0 baseline.
+   - R-M3-08 documentation answer: `docs/M3-HISTORY-RETENTION-POLICY.md`.
+   - R-M3-12 review: clean (`src/server.js`, `src/db.js`, `render.yaml`, `package-lock.json` zero diff).
+   - Carry-overs explicitly preserved: every other R-M3 + every PROVISIONAL UIT-M3 case stays blocked on QA-01 / QA-05 / QA-06.
+   - Claude → Balerion delivery handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-History-Graphs-Delivery.md`.
+   - No push, no deploy, no tag, no Bryan/client contact.
 
 ## Current Boundary
 

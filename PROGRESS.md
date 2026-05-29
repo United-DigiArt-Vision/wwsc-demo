@@ -56,14 +56,21 @@ Blockiert: No technical blocker for handoff. M3 coding must be done by Claude Co
 - [x] M3 acceptance checklist: `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md` (per-requirement gates + blocking-dependency matrix + evidence layout that matches the UIT-M3 spec's Required Final Protocol Format).
 - [x] M3 questions and assumptions: `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md` (QA-01..QA-13 + QA → UIT-M3 PROVISIONAL unblock map).
 - [x] Claude → Balerion PRD-phase handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-PRD-Handoff.md`.
+- [x] Balerion 2026-05-29 12:10 "You Are Next" implementation directive received: `../messages/2026-05-29-1210-Balerion-To-Claude-WWSC-M3-You-Are-Next.md`.
+- [x] M3 V0014 first commit on feature branch: `7712067` bumps to v2.10.0 on `dev/v2.10.0-m3-history-graphs`.
+- [x] R-M3-05 implementation: `src/public/js/screens/member-graph.js` + Members "📈 Graphs" action + script tag. Commit `6283ce6`.
+- [x] R-M3-05 E2E runner: `scripts/e2e-m3-history-graphs.cjs` (commit `7f7a0a3`).
+- [x] R-M3-05 evidence: 19 PASS / 1 NA (UIT-M3-016 deferred) / 0 FAIL / 0 PROVISIONAL, 0 console errors, 20 screenshots under `docs/screenshots/m3-user-interaction-v3.0.0/`, protocol at `docs/evidence/m3-user-interaction-v3.0.0/m3-history-graphs-protocol.md`.
+- [x] R-M3-08 history retention policy documentation: `docs/M3-HISTORY-RETENTION-POLICY.md` (QA-12 working answer).
+- [x] R-M3-11 M2 regression rerun on M3 branch with `WWSC_E2E_EXPECTED_VERSION=2.10.0`: 55 PASS / 0 FAIL (`e2e-m2-time-history`) + 98 PASS / 2 NA / 0 FAIL (`e2e-m2-user-interaction-100`). Logs archived as `docs/evidence/m2-*.log.m3-regression`.
+- [x] R-M3-12 out-of-scope code review: clean (`src/server.js`, `src/db.js`, `src/seed.js`, `render.yaml`, `package-lock.json` all untouched).
+- [x] Claude → Balerion delivery handoff (R-M3-05 slice): `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-History-Graphs-Delivery.md`.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Balerion reviews the three M3 Phase-1 artifacts on branch `dev/m3-prd-planning`, bundles QA-01..QA-13 for a single Dino-decision pass, optionally relays the externally-owned items (notably QA-01 pointscore formula, QA-05 constitution document, QA-06 constitution rules) to Bryan via Dino. Once QA-01 + QA-05 + QA-06 are answered, Claude moves into M3 design-spec + test-specs + V0014 version bump on a `dev/v2.10.0-m3-*` feature branch. Until then no M3 implementation will be started — per Balerion's 2026-05-29 handoff "stop and report the question instead of guessing".
+Was: Balerion runs the held-back final user-interaction / evidence gate on the R-M3-05 slice from `dev/v2.10.0-m3-history-graphs` (reproduce: `./scripts/setup-m2-harness.sh && WWSC_E2E_EXPECTED_VERSION=2.10.0 node scripts/e2e-m3-history-graphs.cjs` — expect 19 PASS / 1 NA / 0 FAIL). Then re-run M2 regression on the same branch. Independently confirm R-M3-12 out-of-scope guard by `git diff main..HEAD` showing no `src/server.js`/`src/db.js`/`render.yaml` touch. Parallel: bundle QA-01..QA-13 for a single Dino-decision pass to unblock the remaining R-M3 + PROVISIONAL UIT-M3 work.
 
-Three M3 items are NOT blocked by Bryan answers and can be pre-authorized for parallel work if Balerion chooses: R-M3-08 (history retention policy — documentation-only), R-M3-11 (regression rerun of existing M2 suites), R-M3-12 (out-of-scope code review).
-
-Dateien zuerst lesen: `REQUIREMENTS-M3-POINTSCORE-REPORTS.md`, `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md`, `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md`, `docs/tests/M3-USER-INTERACTION-TEST-SPEC-v3.0.0.md`, `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-PRD-Handoff.md`, `../messages/2026-05-29-1105-Balerion-To-Claude-WWSC-M3-Development-Handoff.md`.
-Kriterium fertig: Bryan/Dino answers archived in `messages/`, then Claude refreshes PRD/Checklist/Questions and starts design-spec + test-specs, ready for Balerion QA.
+Dateien zuerst lesen: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-History-Graphs-Delivery.md`, `docs/evidence/m3-user-interaction-v3.0.0/m3-history-graphs-protocol.md`, `REQUIREMENTS-M3-POINTSCORE-REPORTS.md`, `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md`, `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md`, `docs/tests/M3-USER-INTERACTION-TEST-SPEC-v3.0.0.md`.
+Kriterium fertig (slice 1): Balerion sign-off on R-M3-05 + R-M3-08 + R-M3-11 + R-M3-12. Slice 2 starts once QA-01 + QA-05 + QA-06 land via Dino.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - M3 is now commissioned, but exact implementation must be scoped from project messages before coding. If acceptance criteria are incomplete, Claude's first deliverable is the PRD/acceptance checklist/questions list.

@@ -11,6 +11,32 @@
 
 ---
 
+## 2026-05-29 — feat: v2.10.0 M3 R-M3-05 history-graphs slice (UNAMBIGUOUS items only)
+- **Timestamp:** 2026-05-29 12:35:00
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **Version bump commit:** 7712067 (`release: bump to v2.10.0 for M3 history-graphs slice`)
+- **Implementation commit:** 6283ce6 (`feat: M3 R-M3-05 individual swimmer history graph (SVG, vanilla JS)`)
+- **Test runner commit:** 7f7a0a3 (`test: M3 R-M3-05 e2e runner + member-graph circle-marker tweak`)
+- **RecordedCommit:** 6283ce6
+- **Editor:** Claude Code
+- **Trigger:** Balerion 2026-05-29 12:10 "You Are Next" implementation directive after my 11:23 PRD-phase handoff. Implements the M3 items that are unambiguous (do not require Bryan's pointscore/constitution answers).
+- **Delivered:**
+  - **R-M3-05** Individual swimmer history graph. New file `src/public/js/screens/member-graph.js` (SVG, no external chart lib). Two graph types: A) per-stroke time-trend line, B) PB progression step-down. Stroke filter, color-blind-safe palette, `<title>` tooltips, `role="img"` + `aria-label`, defensive null-PB handling. Entry point: new "📈 Graphs" button per row in `src/public/js/screens/members.js`. Wired in `src/public/index.html` with cache-bust `?v=2.10.0`.
+  - **R-M3-08** History retention policy — documentation-only working answer per QA-12: `docs/M3-HISTORY-RETENTION-POLICY.md`.
+  - **R-M3-11** M2 regression rerun on the M3 branch with `WWSC_E2E_EXPECTED_VERSION=2.10.0` env override: 55 PASS / 0 FAIL on `e2e-m2-time-history.cjs`, 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED on `e2e-m2-user-interaction-100.cjs`. Identical to the 2.9.0 baseline. Raw logs archived under `docs/evidence/m2-*-run.log.m3-regression`.
+  - **R-M3-12** Out-of-scope guard: `git diff main..HEAD` confirms zero changes to `src/server.js`, `src/db.js`, `src/seed.js`, `render.yaml`, `package-lock.json`. No multi-tenant / customer / access-control / commercial-deployment code.
+- **Test artifacts:**
+  - `scripts/e2e-m3-history-graphs.cjs` — UIT-M3-001..020 runner.
+  - `docs/evidence/m3-user-interaction-v3.0.0/m3-history-graphs-run.log` (raw line-per-case).
+  - `docs/evidence/m3-user-interaction-v3.0.0/m3-history-graphs-records.json` (records sidecar).
+  - `docs/evidence/m3-user-interaction-v3.0.0/m3-history-graphs-protocol.md` (Balerion's required protocol format).
+  - `docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-###-*.png` (20 PNGs).
+- **Result:** UIT-M3-001..020 → 19 PASS / 1 NOT APPLICABLE (UIT-M3-016 export deferred) / 0 FAIL / 0 BLOCKED / 0 PROVISIONAL. 0 console errors.
+- **Test infra delta:** `scripts/e2e-m2-time-history.cjs` and `scripts/e2e-m2-user-interaction-100.cjs` accept a `WWSC_E2E_EXPECTED_VERSION` env override; default stays `2.9.0` for back-compat. Required so the M2 runners can be re-executed on later branches without forking.
+- **Still BLOCKED on Bryan answers (NOT in this slice):** R-M3-01..R-M3-04 (Pointscore + Accumulation, QA-01/02/03), R-M3-03 (Constitution, QA-05/06), R-M3-06 (Reports list, QA-09), R-M3-07 (CSV, QA-10/11), R-M3-09 (PDF, QA-13), R-M3-10 (Rule banner, QA-01/06). PROVISIONAL UIT-M3 cases: 021..029, 035, 041, 044, 048, 051, 052, 063, 064, 071..080.
+- **Claude → Balerion handoff:** `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-History-Graphs-Delivery.md`.
+
 ## 2026-05-19 — release: v2.9.0 Render deploy + live smoke
 - **Timestamp:** 2026-05-19 13:42:00
 - **App Version (from package.json):** 2.9.0

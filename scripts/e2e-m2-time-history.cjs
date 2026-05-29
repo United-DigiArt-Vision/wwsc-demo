@@ -273,7 +273,10 @@ async function setupRelayEvent(date) {
   const server = await startServer();
   try {
     const versionInfo = await waitForServer();
-    record('VERSION-OK', versionInfo.version === '2.9.0', '/api/version=' + JSON.stringify(versionInfo));
+    // Default M2 baseline is 2.9.0. For forward-regression on later branches
+    // (e.g. M3 work on 2.10.x), set WWSC_E2E_EXPECTED_VERSION to override.
+    const expectedVersion = process.env.WWSC_E2E_EXPECTED_VERSION || '2.9.0';
+    record('VERSION-OK', versionInfo.version === expectedVersion, '/api/version=' + JSON.stringify(versionInfo) + ' expected=' + expectedVersion);
 
     // ── Seed phase ──
     const members = await seedMembers();
@@ -753,8 +756,12 @@ async function setupRelayEvent(date) {
   const expectedDates = ['2026-04-18', '2026-04-11', '2026-04-04'];
   const restartDates = restartHistory.map(r => r.event_date);
   const persistsOk = expectedDates.every(d => restartDates.includes(d));
-  record('UI-M2-C04', persistsOk && restartVersion && restartVersion.version === '2.9.0',
-    'after server restart member 22 history rows persisted with dates ' + restartDates.join(',') + ' (server reported version ' + (restartVersion && restartVersion.version) + ')');
+  // Cross-process restart preserves DB and reports the expected version.
+  // WWSC_E2E_EXPECTED_VERSION overrides the default 2.9.0 for forward-regression
+  // (e.g. when this M2 runner is re-run from an M3 branch).
+  const expectedVersionC04 = process.env.WWSC_E2E_EXPECTED_VERSION || '2.9.0';
+  record('UI-M2-C04', persistsOk && restartVersion && restartVersion.version === expectedVersionC04,
+    'after server restart member 22 history rows persisted with dates ' + restartDates.join(',') + ' (server reported version ' + (restartVersion && restartVersion.version) + ' / expected ' + expectedVersionC04 + ')');
 
   // ── Write evidence ──────────────────────────────────────
   const log = results.map(r => r.status + '  ' + r.id + '  ' + (r.note || '')).join('\n');
