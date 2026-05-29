@@ -1,11 +1,11 @@
 {
   "baseline": {
-    "branch": "main",
-    "commit": "7eb7f32",
-    "pkgVersion": "2.9.0",
+    "branch": "dev/v2.10.0-m3-history-graphs",
+    "commit": "7f7a0a3",
+    "pkgVersion": "2.10.0",
     "apiVersion": {
-      "version": "2.9.0",
-      "build": "2026-05-19T10:03:33.259Z"
+      "version": "2.10.0",
+      "build": "2026-05-29T10:28:47.367Z"
     }
   },
   "records": [
@@ -527,7 +527,7 @@
       "area": "Finalize flow",
       "status": "PASS",
       "shotRel": "docs/screenshots/m2-user-interaction-100/TC-058-new-event-in-calendar.png",
-      "visible": "Calendar shows newly created event date (substring match): true — sample: 🏊 WWSC | 🏠 | Dashboard | 👥 | Members | 📋 | Times Sheet | 🔧 | Heat Builder | 🏆 | Results | 🏅 | Breaker Report | 📅 | Season Calendar | v2.9.0 | 📅 Season Calendar | ▶ CURRENT EVENT | Fri, 15 May 2026 | 👥 8 swimmers | 🏁 1 races | Setup | Tap to continue working on this event →",
+      "visible": "Calendar shows newly created event date (substring match): true — sample: 🏊 WWSC | 🏠 | Dashboard | 👥 | Members | 📋 | Times Sheet | 🔧 | Heat Builder | 🏆 | Results | 🏅 | Breaker Report | 📅 | Season Calendar | v2.10.0 | 📅 Season Calendar | ▶ CURRENT EVENT | Fri, 15 May 2026 | 👥 8 swimmers | 🏁 1 races | Setup | Tap to continue working on this event ",
       "notes": "",
       "reqs": "R-M2-01"
     },
@@ -626,7 +626,7 @@
       "area": "Persistence",
       "status": "PASS",
       "shotRel": "docs/screenshots/m2-user-interaction-100/TC-069-after-server-restart.png",
-      "visible": "After server stop+restart, sidebar shows v2.9.0 and /api/version=2.9.0",
+      "visible": "After server stop+restart, sidebar shows v2.9.0 and /api/version=2.10.0",
       "notes": "",
       "reqs": "R-M2-05"
     },
@@ -912,15 +912,15 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3004/?cb=1779185015571",
+      "url": "http://127.0.0.1:3004/?cb=1780050529483",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     },
     {
-      "url": "http://127.0.0.1:3004/?cb=1779185080245",
+      "url": "http://127.0.0.1:3004/?cb=1780050594159",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     },
     {
-      "url": "http://127.0.0.1:3004/?cb=1779185094682",
+      "url": "http://127.0.0.1:3004/?cb=1780050608407",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ]
