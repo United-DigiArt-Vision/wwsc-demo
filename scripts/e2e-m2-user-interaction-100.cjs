@@ -1086,15 +1086,13 @@ async function seedRelayEvent(date) {
     await sleep(400);
     {
       const text = await page2.evaluate(() => document.body.innerText);
-      // (kept for back-compat; the actual gate is `showsExpected` below)
-      const showsVersion = /v2\.9\.0/i.test(text); // eslint-disable-line no-unused-vars
       const shot = await page2.screenshot({ path: path.join(SHOT_DIR, 'TC-069-after-server-restart.png'), fullPage: true });
       const shotRel = 'docs/screenshots/m2-user-interaction-100/TC-069-after-server-restart.png';
       // Allow forward-regression on later branches via WWSC_E2E_EXPECTED_VERSION.
       const expectedV = process.env.WWSC_E2E_EXPECTED_VERSION || '2.9.0';
       const showsExpected = new RegExp('v' + expectedV.replace(/\./g, '\\.'), 'i').test(text);
       record('TC-069', 'Persistence', showsExpected && versionRestart.version === expectedV ? 'PASS' : 'FAIL', shotRel,
-        'After server stop+restart, sidebar shows v2.9.0 and /api/version=' + versionRestart.version, '', 'R-M2-05');
+        'After server stop+restart, sidebar shows v' + expectedV + ' and /api/version=' + versionRestart.version, '', 'R-M2-05');
     }
 
     // TC-070 — memberA history after server restart

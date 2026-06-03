@@ -82,9 +82,13 @@ function computeEventPointscoreRows(db, eventId) {
 
   for (const race of races) {
     const categoryKey = categoryForRaceType(race.race_type);
-    const cat = POINTSCORE_RULES.categories[categoryKey];
 
-    if (cat.raceTypes.includes(race.race_type) && categoryKey === 'individual') {
+    // Branch on the resolved category, not on raceTypes.includes(): an unknown
+    // race_type resolves to 'individual' via categoryForRaceType() and must be
+    // scored as individual (defensive default, matching the documented comment).
+    // Branching on raceTypes.includes() would route unknown types into the relay
+    // path by mistake.
+    if (categoryKey === 'individual') {
       // Individual: per-heat lanes. place = COALESCE(manual_place, place).
       const lanes = db.prepare(`
         SELECT hl.member_id, hl.finish_time, hl.place, hl.manual_place

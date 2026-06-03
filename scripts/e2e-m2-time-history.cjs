@@ -278,6 +278,15 @@ async function setupRelayEvent(date) {
     const expectedVersion = process.env.WWSC_E2E_EXPECTED_VERSION || '2.9.0';
     record('VERSION-OK', versionInfo.version === expectedVersion, '/api/version=' + JSON.stringify(versionInfo) + ' expected=' + expectedVersion);
 
+    // Baseline header (consumed by the 120-suite's M2-regression freshness/HEAD
+    // check so it cannot pass on a stale prior-session log).
+    try {
+      const _cp = require('child_process'), _root = path.resolve(__dirname, '..');
+      const _commit = _cp.execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: _root }).toString().trim();
+      const _branch = _cp.execFileSync('git', ['branch', '--show-current'], { cwd: _root }).toString().trim();
+      console.log('# Baseline branch=' + _branch + ' commit=' + _commit + ' pkg=' + versionInfo.version + ' generated=' + new Date().toISOString());
+    } catch (e) { /* git unavailable — header omitted */ }
+
     // ── Seed phase ──
     const members = await seedMembers();
     record('SEED-MEMBERS', members.length === 4, 'created ' + members.length + ' members');

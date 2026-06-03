@@ -133,6 +133,32 @@ async function finalize25m(date) {
     try { await api('/api/members/999999/pointscore'); } catch (e) { got404 = /404/.test(e.message); }
     check('UT8-unknown-member-404', got404, 'unknown member → 404');
 
+    // UT9 — unknown race_type defaults to INDIVIDUAL scoring (5/4/3/2), not relay.
+    // Direct engine test on an in-memory DB (no server). Guards the regression
+    // Balerion found: branching on raceTypes.includes() routed unknown types to
+    // the relay path even though categoryForRaceType() resolves them to individual.
+    {
+      const Database = require('better-sqlite3');
+      const ps = require('../src/pointscore.js');
+      const mem = new Database(':memory:');
+      mem.exec(`
+        CREATE TABLE event_race (id INTEGER PRIMARY KEY, event_id INTEGER, race_type TEXT);
+        CREATE TABLE heat (id INTEGER PRIMARY KEY, event_race_id INTEGER, heat_number INTEGER);
+        CREATE TABLE heat_lane (id INTEGER PRIMARY KEY, heat_id INTEGER, member_id INTEGER, finish_time INTEGER, place INTEGER, manual_place INTEGER);
+        CREATE TABLE relay_team (id INTEGER PRIMARY KEY, event_race_id INTEGER, place INTEGER, total_time INTEGER);
+        CREATE TABLE relay_team_member (id INTEGER PRIMARY KEY, relay_team_id INTEGER, member_id INTEGER);
+      `);
+      mem.prepare("INSERT INTO event_race (id, event_id, race_type) VALUES (1, 1, 'mystery_stroke')").run();
+      mem.prepare('INSERT INTO heat (id, event_race_id, heat_number) VALUES (1, 1, 1)').run();
+      mem.prepare('INSERT INTO heat_lane (id, heat_id, member_id, finish_time, place, manual_place) VALUES (1, 1, 7, 1234, 1, NULL)').run();
+      const rows = ps.computeEventPointscoreRows(mem, 1);
+      const r = rows.find(x => x.member_id === 7);
+      mem.close();
+      check('UT9-unknown-racetype-individual',
+        ps.categoryForRaceType('mystery_stroke') === 'individual' && rows.length === 1 && !!r && r.points === 5 && r.basis === 'individual-place',
+        'unknown type → individual place1=5 (rows=' + rows.length + ', basis=' + (r && r.basis) + ')');
+    }
+
   } finally {
     await stop(server);
   }

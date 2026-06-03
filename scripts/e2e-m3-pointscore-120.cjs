@@ -110,6 +110,13 @@ async function finalizeEvent(date, raceTypes) {
     const evJun1 = await finalizeEvent('2026-06-06', ['25m', '50m', 'medley_relay']);
     const evJun2 = await finalizeEvent('2026-06-13', ['25m']);
     const evJun3 = await finalizeEvent('2026-06-20', ['25m', '50m']);
+    // Extra individual-stroke events so 75m / breaststroke / butterfly are
+    // exercised end-to-end (previously N/A). One optional stroke per event = the
+    // proven backstroke pattern. Kept inside the existing Apr/May/Jun months so
+    // the season still spans 3 months.
+    const ev75 = await finalizeEvent('2026-04-25', ['25m', '75m']);
+    const evBreast = await finalizeEvent('2026-05-30', ['25m', 'breaststroke']);
+    const evFly = await finalizeEvent('2026-06-27', ['25m', 'butterfly']);
     const events = [evApr1, evApr2, evMay1, evMay2, evMay3, evJun1, evJun2, evJun3];
     log('# events=' + events.join(','));
 
@@ -166,13 +173,18 @@ async function finalizeEvent(date, raceTypes) {
     const ev1ps = await api('/api/events/' + evApr1 + '/pointscore');
     rec('UIT-M3-023', ev1ps.rows.length > 0 ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-023', 'event-25m-points', { full: true }), '25m event pointscore rows=' + ev1ps.rows.length);
     rec('UIT-M3-024', ev1ps.rows.some(r => r.race_type === '50m') ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-024', 'event-50m-points'), '50m points present (Excel-derived 5/4/3/2)');
-    // 75m / strokes / brace / pogo: documented as applicable when present; our seed covers backstroke
-    rec('UIT-M3-025', 'NOT APPLICABLE', await shot(page, 'UIT-M3-025', 'event-75m-na'), '75m not seeded in this fixture; rule documented in artifact (individual 5/4/3/2)');
+    // 75m / breaststroke / butterfly now seeded end-to-end (one optional stroke
+    // per event, the proven backstroke pattern). Brace/pogo stay N/A: the relay/
+    // team rule 3/2/1 is proven via medley_relay and documented in the artifact.
+    const ps75 = await api('/api/events/' + ev75 + '/pointscore');
+    rec('UIT-M3-025', ps75.rows.some(r => r.race_type === '75m' && r.points > 0) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-025', 'event-75m'), '75m individual points present (5/4/3/2), rows=' + ps75.rows.filter(r => r.race_type === '75m').length);
     const bsEv = await api('/api/events/' + evMay2 + '/pointscore');
     rec('UIT-M3-026', bsEv.rows.some(r => r.race_type === 'backstroke') ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-026', 'event-backstroke'), 'backstroke points present');
-    rec('UIT-M3-027', 'NOT APPLICABLE', '', 'breaststroke not seeded; rule = individual 5/4/3/2 (artifact)');
-    rec('UIT-M3-028', 'NOT APPLICABLE', '', 'butterfly not seeded; rule = individual 5/4/3/2 (artifact)');
-    rec('UIT-M3-029', 'NOT APPLICABLE', '', 'brace not seeded; rule = relay/team 3/2/1 (artifact)');
+    const psBreast = await api('/api/events/' + evBreast + '/pointscore');
+    rec('UIT-M3-027', psBreast.rows.some(r => r.race_type === 'breaststroke' && r.points > 0) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-027', 'event-breaststroke'), 'breaststroke individual points present (5/4/3/2), rows=' + psBreast.rows.filter(r => r.race_type === 'breaststroke').length);
+    const psFly = await api('/api/events/' + evFly + '/pointscore');
+    rec('UIT-M3-028', psFly.rows.some(r => r.race_type === 'butterfly' && r.points > 0) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-028', 'event-butterfly'), 'butterfly individual points present (5/4/3/2), rows=' + psFly.rows.filter(r => r.race_type === 'butterfly').length);
+    rec('UIT-M3-029', 'NOT APPLICABLE', '', 'brace not seeded; relay/team 3/2/1 rule proven via medley_relay + documented in artifact');
     const mrEv = await api('/api/events/' + evJun1 + '/pointscore');
     rec('UIT-M3-030', mrEv.rows.some(r => r.race_type === 'medley_relay') ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-030', 'event-medley'), 'medley relay team points present (3/2/1)');
     rec('UIT-M3-031', 'NOT APPLICABLE', '', 'pogo not supported in current seed; rule documented (relay 3/2/1)');
@@ -236,7 +248,7 @@ async function finalizeEvent(date, raceTypes) {
     await page.evaluate(() => psSetTab('season')); await sleep(700);
     const season = await api('/api/pointscore/season/2026');
     rec('UIT-M3-061', season.standings.length > 0 ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-061', 'season-view', { full: true }), 'season winners by simple addition');
-    rec('UIT-M3-062', season.events.length === 8 ? 'PASS' : 'FAIL', '', 'season spans 8 events across 3 months; total=sum');
+    rec('UIT-M3-062', season.events.length === 11 ? 'PASS' : 'FAIL', '', 'season spans ' + season.events.length + ' events across 3 months (Apr/May/Jun); total=sum');
     rec('UIT-M3-063', /calendar year/i.test(season.seasonBoundary) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-063', 'season-filter'), 'season boundary = calendar year (working default)');
     const emptySeason = await api('/api/pointscore/season/2099');
     rec('UIT-M3-064', emptySeason.standings.length === 0 ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-064', 'season-empty'), 'empty season clean state');
@@ -333,12 +345,31 @@ async function finalizeEvent(date, raceTypes) {
     await nav(page, 'calendar'); await page.evaluate((id) => viewEventDetails(id), evApr2); await sleep(700);
     rec('UIT-M3-110', /Time History/.test(await page.evaluate(() => document.body.innerText)) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-110', 'reg-m2-event-history'), 'M2 event time history intact');
     await page.evaluate(() => { document.querySelectorAll('div[style*="position:fixed"]').forEach(n => n.remove()); });
-    rec('UIT-M3-111', fs.existsSync('/tmp/m3p-m2-55.log') && /Total PASS: 55/.test(fs.readFileSync('/tmp/m3p-m2-55.log', 'utf8')) ? 'PASS' : 'BLOCKED', '', 'M2 55-case runner: see /tmp/m3p-m2-55.log');
-    rec('UIT-M3-112', fs.existsSync('/tmp/m3p-m2-100.log') && /PASS:\s+98/.test(fs.readFileSync('/tmp/m3p-m2-100.log', 'utf8')) ? 'PASS' : 'BLOCKED', '', 'M2 100-case runner: see /tmp/m3p-m2-100.log');
+    // M2 regression (111/112). The M2 suites are run STANDALONE before this suite
+    // (each prints a "# Baseline ... commit=<HEAD>" header). This gate validates
+    // that the /tmp log exists AND carries the CURRENT HEAD — so a stale
+    // prior-session log can never make 111/112 look green; it BLOCKS with an
+    // explicit instruction instead. (An in-process self-run was rejected:
+    // spawning the browser-based M2 suites from inside this browser-driving
+    // script deadlocks. Standalone-then-validate is the reliable contract.)
+    const m2Check = (logPath, countRe) => {
+      if (!fs.existsSync(logPath)) return { status: 'BLOCKED', note: 'log missing (' + logPath + ') — run the M2 suite on HEAD ' + baseline.commit + ' first' };
+      const txt = fs.readFileSync(logPath, 'utf8');
+      if (!new RegExp('commit=' + baseline.commit + '\\b').test(txt)) return { status: 'BLOCKED', note: 'stale log: no commit=' + baseline.commit + ' header — re-run the M2 suite on this HEAD' };
+      if (!countRe.test(txt)) return { status: 'FAIL', note: 'expected pass count not found in ' + logPath };
+      return { status: 'PASS', note: 'fresh log @' + baseline.commit + ' (' + logPath + ')' };
+    };
+    const c111 = m2Check('/tmp/m3p-m2-55.log', /Total PASS: 55/);
+    rec('UIT-M3-111', c111.status, '', 'M2 55-case runner — ' + c111.note);
+    const c112 = m2Check('/tmp/m3p-m2-100.log', /PASS:\s+98/);
+    rec('UIT-M3-112', c112.status, '', 'M2 100-case runner — ' + c112.note);
 
     // ── Responsiveness + a11y (113-117) ──
+    // Dismiss any leftover modal/overlay (e.g. the UIT-M3-110 event-detail view)
+    // so the mobile shot captures the clean Pointscore report, not an overlay.
+    await page.evaluate(() => { try { hideModal(); } catch (e) {} const m = document.getElementById('modal-overlay'); if (m) { m.style.display = 'none'; m.innerHTML = ''; } document.querySelectorAll('div[style*="position:fixed"]').forEach(n => n.remove()); });
     await page.setViewport({ width: 390, height: 844 }); await sleep(200); await nav(page, 'pointscore'); await page.evaluate(() => psSetTab('month')); await sleep(400);
-    rec('UIT-M3-113', 'PASS', await shot(page, 'UIT-M3-113', 'resp-mobile', { full: true }), 'mobile pointscore report readable');
+    rec('UIT-M3-113', 'PASS', await shot(page, 'UIT-M3-113', 'resp-mobile', { full: true }), 'mobile pointscore report (month tab), no overlay');
     await page.setViewport({ width: 768, height: 1024 }); await sleep(200); await nav(page, 'pointscore'); await sleep(300);
     rec('UIT-M3-114', 'PASS', await shot(page, 'UIT-M3-114', 'resp-tablet'), 'tablet pointscore report');
     await page.setViewport({ width: 1440, height: 900 }); await sleep(200); await nav(page, 'pointscore'); await sleep(300);

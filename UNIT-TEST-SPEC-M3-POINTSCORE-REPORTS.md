@@ -29,6 +29,7 @@ Every assertion below is a **structural invariant** (an equality between a total
 | UT7-member-contribution | `GET /api/members/:id/pointscore` | `total == sum(contributions[].points)` and `contributions.length > 0` | Per-swimmer contribution detail is internally consistent | R-M3-02 |
 | UT8-months-list | `GET /api/pointscore/months` | Includes `2026-04` and `2026-05` (the seeded months) | Month picker source | R-M3-04 |
 | UT8-unknown-member-404 | `GET /api/members/999999/pointscore` | Throws → response status 404 | Unknown-member error path | R-M3-02 |
+| UT9-unknown-racetype-individual | `computeEventPointscoreRows` on an in-memory DB with race_type `mystery_stroke` | Unknown type resolves to `individual`; one finished lane at place 1 → `points = 5`, `basis = individual-place` (NOT relay) | Unknown race_type defaults to individual (defensive) | R-M3-01 |
 
 ## Isolation unit assertions (engine purity)
 
@@ -39,7 +40,9 @@ Realized by `scripts/e2e-m3-pointscore-isolation.cjs` (documented in full in the
 
 ## Expected result
 
-`11 PASS / 0 FAIL` (unit) plus isolation `VERDICT: PASS`. First-hand reproduced on 2026-06-03 in the resume session.
+`12 PASS / 0 FAIL` (unit, incl. UT9) plus isolation `VERDICT: PASS`. First-hand reproduced on 2026-06-03.
+
+> UT9 guards the regression Balerion's QA found: `computeEventPointscoreRows` branched on `raceTypes.includes(race_type)`, which routed an unknown type into the relay path even though `categoryForRaceType()` resolves it to `individual`. The fix branches on the resolved `categoryKey`.
 
 ## What is intentionally not unit-tested here
 
