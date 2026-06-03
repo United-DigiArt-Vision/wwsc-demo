@@ -1,0 +1,19 @@
+{
+  "results": {
+    "runA_disabled": {
+      "pointscoreRowCount": 0,
+      "timeHistoryRows": 46,
+      "breakers": 6
+    },
+    "runB_enabled": {
+      "pointscoreRowCount": 46,
+      "timeHistoryRows": 46,
+      "breakers": 6
+    },
+    "identical": true,
+    "pointscoreOnlyInB": true,
+    "verdict": "PASS"
+  },
+  "canonADigestLen": 4496,
+  "canonBDigestLen": 4496
+}

@@ -11,6 +11,20 @@
 
 ---
 
+## 2026-06-03 — docs: M3 pointscore clean-HEAD evidence package
+- **Timestamp:** 2026-06-03 08:20:00 Europe/Berlin
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **RecordedCommit:** evidence generated at clean HEAD `b3f9a82`; this docs-only commit stores it (resolve HEAD with `git rev-parse --short HEAD`)
+- **Editor:** Claude Code
+- **Trigger:** Resume-session clean-HEAD evidence rerun for Balerion V0015 QA of the M3 pointscore slice.
+- **Changes:**
+  - Re-ran the full suite first-hand from clean HEAD `b3f9a82` (working tree clean before/after): unit 11 PASS / 0 FAIL; isolation PASS (accepted flow byte-identical, deterministic 46/46/6); 120-case browser suite 111 PASS / 9 NA / 0 FAIL / 0 BLOCKED; M2 55 PASS / 0 FAIL; M2 100 = 98 PASS / 2 NA / 0 FAIL / 0 BLOCKED; R-M3-05 history-graphs 19 PASS / 1 NA / 0 FAIL.
+  - Integrity fix vs prior session: the 120-suite cases UIT-M3-111/112 only `grep` `/tmp/m3p-m2-*.log`; the M2 suites were re-run on `b3f9a82` so those logs are this run's output (copied into the evidence dir as `m2-regression-55.log` / `m2-regression-100.log`), and the 120-suite was re-run after, so its M2 citations are backed by this HEAD.
+  - Stored evidence under `docs/evidence/m3-user-interaction-v3.0.1/` (120 raw log + records, unit/isolation JSON, 4 CSVs, M2 + history-graphs regression logs, screenshot manifest, CSV sha256) + 62 screenshots under `docs/screenshots/m3-user-interaction-v3.0.1/`.
+  - Accepted v2.9.0 / R-M3-05 baseline screenshots and logs that the regression runs touched were restored to committed state — no accepted evidence mutated.
+- **No release action:** no push, no deploy, no tag, no client contact, no live-data mutation. Awaiting Balerion V0015 QA.
+
 ## 2026-06-03 — feat+test: M3 pointscore slice implemented + full evidence suite (working assumption)
 - **Timestamp:** 2026-06-03 07:35:00 Europe/Berlin
 - **App Version (from package.json):** 2.10.0

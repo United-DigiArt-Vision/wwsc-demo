@@ -4,7 +4,7 @@
 
 **Version (from `package.json`):** 2.10.0
 **Branch:** dev/v2.10.0-m3-history-graphs
-**Substantive anchors:** `219bdd9` (pointscore engine + event/monthly/season API + UI) and the immediately-following same-branch commit (CSV-route refactor + test suite + specs + this SSOT update). HEAD is dynamic — resolve with `git rev-parse --short HEAD`.
+**Substantive anchors:** `219bdd9` (pointscore engine + event/monthly/season API + UI) and `b3f9a82` (CSV-route refactor + test suite + specs + SSOT sync). The clean-HEAD evidence package was generated at HEAD `b3f9a82`; the following docs-only evidence commit stores it and becomes the new HEAD (same SSOT-anchor pattern used since v2.8.6 / R-M3-05). HEAD is dynamic — resolve with `git rev-parse --short HEAD`.
 **Date:** 2026-06-03
 **Timestamp:** 2026-06-03 07:35:00 Europe/Berlin
 **LastEditor:** Claude Code

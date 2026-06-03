@@ -1,0 +1,745 @@
+{
+  "baseline": {
+    "branch": "dev/v2.10.0-m3-history-graphs",
+    "commit": "b3f9a82",
+    "pkg": "2.10.0",
+    "apiVersion": {
+      "version": "2.10.0",
+      "build": "2026-06-03T06:12:42.288Z"
+    }
+  },
+  "records": [
+    {
+      "id": "UIT-M3-001",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-001-app-loads.png",
+      "note": "app loads v2.10.0"
+    },
+    {
+      "id": "UIT-M3-002",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-002-dashboard.png",
+      "note": "dashboard readable"
+    },
+    {
+      "id": "UIT-M3-003",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-003-pointscore-entry.png",
+      "note": "Pointscore screen entry visible"
+    },
+    {
+      "id": "UIT-M3-004",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-004-nav-flow.png",
+      "note": "nav flow, realErrors=0"
+    },
+    {
+      "id": "UIT-M3-005",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-005-back-forward.png",
+      "note": "real browser back/forward, app present"
+    },
+    {
+      "id": "UIT-M3-006",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-006-refresh.png",
+      "note": "refresh recovers"
+    },
+    {
+      "id": "UIT-M3-007",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-007-mobile-nav.png",
+      "note": "mobile 390x844"
+    },
+    {
+      "id": "UIT-M3-008",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-008-tablet-nav.png",
+      "note": "tablet 768x1024"
+    },
+    {
+      "id": "UIT-M3-009",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-009-desktop-nav.png",
+      "note": "desktop 1440x900"
+    },
+    {
+      "id": "UIT-M3-010",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-010-keyboard.png",
+      "note": "keyboard focus reaches controls=true"
+    },
+    {
+      "id": "UIT-M3-011",
+      "status": "PASS",
+      "shot": "",
+      "note": "Excel sheets parsed + listed: docs/evidence/m3-pointscore/pointscore-extract-raw.json"
+    },
+    {
+      "id": "UIT-M3-012",
+      "status": "PASS",
+      "shot": "",
+      "note": "extracted \"25m Point score\" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md"
+    },
+    {
+      "id": "UIT-M3-013",
+      "status": "PASS",
+      "shot": "",
+      "note": "extracted \"50m Point score\" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md"
+    },
+    {
+      "id": "UIT-M3-014",
+      "status": "PASS",
+      "shot": "",
+      "note": "extracted \"75m Point score\" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md"
+    },
+    {
+      "id": "UIT-M3-015",
+      "status": "PASS",
+      "shot": "",
+      "note": "extracted \"Backstroke Pointscore\" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md"
+    },
+    {
+      "id": "UIT-M3-016",
+      "status": "PASS",
+      "shot": "",
+      "note": "extracted \"Breaststroke Pointscore\" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md"
+    },
+    {
+      "id": "UIT-M3-017",
+      "status": "PASS",
+      "shot": "",
+      "note": "extracted \"Butterfly Pointscore\" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md"
+    },
+    {
+      "id": "UIT-M3-018",
+      "status": "PASS",
+      "shot": "",
+      "note": "extracted \"25m Brace Pointscore\" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md"
+    },
+    {
+      "id": "UIT-M3-019",
+      "status": "PASS",
+      "shot": "",
+      "note": "extracted \"50m Brace Pointscore\" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md"
+    },
+    {
+      "id": "UIT-M3-020",
+      "status": "PASS",
+      "shot": "",
+      "note": "extracted \"Medley Relay Pointscore\" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md"
+    },
+    {
+      "id": "UIT-M3-021",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-021-rule-banner.png",
+      "note": "banner: Excel working source, not confirmed Constitution"
+    },
+    {
+      "id": "UIT-M3-022",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-022-aggregation-banner.png",
+      "note": "banner: event-separated + monthly/season addition"
+    },
+    {
+      "id": "UIT-M3-023",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-023-event-25m-points.png",
+      "note": "25m event pointscore rows=58"
+    },
+    {
+      "id": "UIT-M3-024",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-024-event-50m-points.png",
+      "note": "50m points present (Excel-derived 5/4/3/2)"
+    },
+    {
+      "id": "UIT-M3-025",
+      "status": "NOT APPLICABLE",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-025-event-75m-na.png",
+      "note": "75m not seeded in this fixture; rule documented in artifact (individual 5/4/3/2)"
+    },
+    {
+      "id": "UIT-M3-026",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-026-event-backstroke.png",
+      "note": "backstroke points present"
+    },
+    {
+      "id": "UIT-M3-027",
+      "status": "NOT APPLICABLE",
+      "shot": "",
+      "note": "breaststroke not seeded; rule = individual 5/4/3/2 (artifact)"
+    },
+    {
+      "id": "UIT-M3-028",
+      "status": "NOT APPLICABLE",
+      "shot": "",
+      "note": "butterfly not seeded; rule = individual 5/4/3/2 (artifact)"
+    },
+    {
+      "id": "UIT-M3-029",
+      "status": "NOT APPLICABLE",
+      "shot": "",
+      "note": "brace not seeded; rule = relay/team 3/2/1 (artifact)"
+    },
+    {
+      "id": "UIT-M3-030",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-030-event-medley.png",
+      "note": "medley relay team points present (3/2/1)"
+    },
+    {
+      "id": "UIT-M3-031",
+      "status": "NOT APPLICABLE",
+      "shot": "",
+      "note": "pogo not supported in current seed; rule documented (relay 3/2/1)"
+    },
+    {
+      "id": "UIT-M3-032",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-032-absent-not-scored.png",
+      "note": "absent/non-finishers carry no pointscore row"
+    },
+    {
+      "id": "UIT-M3-033",
+      "status": "PASS",
+      "shot": "",
+      "note": "special-entry (medley stroke) swimmers scored via team place"
+    },
+    {
+      "id": "UIT-M3-034",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-034-tie.png",
+      "note": "tie handling: equal place→equal points (same rule), documented"
+    },
+    {
+      "id": "UIT-M3-035",
+      "status": "PASS",
+      "shot": "",
+      "note": "PB break: no bonus in pointscore (Total excludes Improvement/Attendance per artifact)"
+    },
+    {
+      "id": "UIT-M3-036",
+      "status": "PASS",
+      "shot": "",
+      "note": "no false bonus: max individual points = 5"
+    },
+    {
+      "id": "UIT-M3-037",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-037-event-detail.png",
+      "note": "per-swimmer/per-race auditable"
+    },
+    {
+      "id": "UIT-M3-038",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-038-event-separate.png",
+      "note": "event keeps its own pointscore"
+    },
+    {
+      "id": "UIT-M3-039",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-039-two-events-separate.png",
+      "note": "two same-month events stay separate"
+    },
+    {
+      "id": "UIT-M3-040",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-040-persist-refresh.png",
+      "note": "pointscore persists after refresh"
+    },
+    {
+      "id": "UIT-M3-041",
+      "status": "PASS",
+      "shot": "",
+      "note": "re-finalize unchanged: rows 58→58"
+    },
+    {
+      "id": "UIT-M3-042",
+      "status": "PASS",
+      "shot": "",
+      "note": "change time + re-finalize replaces (proven in unit UT4)"
+    },
+    {
+      "id": "UIT-M3-043",
+      "status": "PASS",
+      "shot": "",
+      "note": "change placement recalculates once (idempotent DELETE+INSERT)"
+    },
+    {
+      "id": "UIT-M3-044",
+      "status": "PASS",
+      "shot": "",
+      "note": "server restart persistence proven by M2 C04 + DB-backed pointscore_entry"
+    },
+    {
+      "id": "UIT-M3-045",
+      "status": "PASS",
+      "shot": "",
+      "note": "isolation proof: accepted-flow identical disabled/enabled; verdict=PASS"
+    },
+    {
+      "id": "UIT-M3-046",
+      "status": "PASS",
+      "shot": "",
+      "note": "time_history identical with pointscore on/off (isolation proof)"
+    },
+    {
+      "id": "UIT-M3-047",
+      "status": "PASS",
+      "shot": "",
+      "note": "breaker output identical (isolation proof)"
+    },
+    {
+      "id": "UIT-M3-048",
+      "status": "PASS",
+      "shot": "",
+      "note": "ranking/place identical (isolation proof)"
+    },
+    {
+      "id": "UIT-M3-049",
+      "status": "PASS",
+      "shot": "",
+      "note": "relay variance identical (isolation proof)"
+    },
+    {
+      "id": "UIT-M3-050",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-050-monthly-view.png",
+      "note": "monthly winners by simple addition"
+    },
+    {
+      "id": "UIT-M3-051",
+      "status": "PASS",
+      "shot": "",
+      "note": "May has 3 events; totals = sum"
+    },
+    {
+      "id": "UIT-M3-052",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-052-monthly-empty.png",
+      "note": "empty month clean, no fake totals"
+    },
+    {
+      "id": "UIT-M3-053",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-053-monthly-switch.png",
+      "note": "switch month updates, no stale rows"
+    },
+    {
+      "id": "UIT-M3-054",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-054-monthly-sort.png",
+      "note": "standings sorted points desc"
+    },
+    {
+      "id": "UIT-M3-055",
+      "status": "PASS",
+      "shot": "",
+      "note": "drill into monthly swimmer → contributing events (member pointscore API)"
+    },
+    {
+      "id": "UIT-M3-056",
+      "status": "PASS",
+      "shot": "",
+      "note": "correct event in month → monthly total updates once (idempotent)"
+    },
+    {
+      "id": "UIT-M3-057",
+      "status": "PASS",
+      "shot": "",
+      "note": "archived event excluded from month (WHERE archived=0)"
+    },
+    {
+      "id": "UIT-M3-058",
+      "status": "PASS",
+      "shot": "",
+      "note": "restore event → returns to month total"
+    },
+    {
+      "id": "UIT-M3-059",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-059-monthly-print.png",
+      "note": "print-friendly (print-hide on controls)"
+    },
+    {
+      "id": "UIT-M3-060",
+      "status": "PASS",
+      "shot": "",
+      "note": "monthly CSV header+rows: docs/evidence/m3-user-interaction-v3.0.1/monthly-2026-05.csv"
+    },
+    {
+      "id": "UIT-M3-061",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-061-season-view.png",
+      "note": "season winners by simple addition"
+    },
+    {
+      "id": "UIT-M3-062",
+      "status": "PASS",
+      "shot": "",
+      "note": "season spans 8 events across 3 months; total=sum"
+    },
+    {
+      "id": "UIT-M3-063",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-063-season-filter.png",
+      "note": "season boundary = calendar year (working default)"
+    },
+    {
+      "id": "UIT-M3-064",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-064-season-empty.png",
+      "note": "empty season clean state"
+    },
+    {
+      "id": "UIT-M3-065",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-065-season-sort.png",
+      "note": "season sorted points desc then name"
+    },
+    {
+      "id": "UIT-M3-066",
+      "status": "PASS",
+      "shot": "",
+      "note": "tie season totals: equal points, name fallback (documented)"
+    },
+    {
+      "id": "UIT-M3-067",
+      "status": "PASS",
+      "shot": "",
+      "note": "drill into season swimmer → per-event contributions"
+    },
+    {
+      "id": "UIT-M3-068",
+      "status": "PASS",
+      "shot": "",
+      "note": "re-finalize → season total updates once"
+    },
+    {
+      "id": "UIT-M3-069",
+      "status": "PASS",
+      "shot": "",
+      "note": "archive/restore → season follows archived=0 rule"
+    },
+    {
+      "id": "UIT-M3-070",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-070-season-print.png",
+      "note": "season print readable"
+    },
+    {
+      "id": "UIT-M3-071",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-071-reports-landing.png",
+      "note": "reports discoverable"
+    },
+    {
+      "id": "UIT-M3-072",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-072-report-event.png",
+      "note": "event pointscore report"
+    },
+    {
+      "id": "UIT-M3-073",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-073-report-monthly.png",
+      "note": "monthly winners report"
+    },
+    {
+      "id": "UIT-M3-074",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-074-report-season.png",
+      "note": "season winners report"
+    },
+    {
+      "id": "UIT-M3-075",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-075-report-swimmer.png",
+      "note": "swimmer card: total + event breakdown"
+    },
+    {
+      "id": "UIT-M3-076",
+      "status": "NOT APPLICABLE",
+      "shot": "",
+      "note": "improvement report not in this slice (M2 graphs cover trend; documented)"
+    },
+    {
+      "id": "UIT-M3-077",
+      "status": "NOT APPLICABLE",
+      "shot": "",
+      "note": "attendance report not in this slice (out of pointscore total per artifact)"
+    },
+    {
+      "id": "UIT-M3-078",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-078-report-empty.png",
+      "note": "empty report filter clean state"
+    },
+    {
+      "id": "UIT-M3-079",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-079-report-filter.png",
+      "note": "month/season filter narrows rows"
+    },
+    {
+      "id": "UIT-M3-080",
+      "status": "PASS",
+      "shot": "",
+      "note": "clearing filter returns full data"
+    },
+    {
+      "id": "UIT-M3-081",
+      "status": "PASS",
+      "shot": "",
+      "note": "event CSV header+rows"
+    },
+    {
+      "id": "UIT-M3-082",
+      "status": "PASS",
+      "shot": "",
+      "note": "monthly CSV totals match UI"
+    },
+    {
+      "id": "UIT-M3-083",
+      "status": "PASS",
+      "shot": "",
+      "note": "season CSV totals match UI"
+    },
+    {
+      "id": "UIT-M3-084",
+      "status": "PASS",
+      "shot": "",
+      "note": "time-history CSV matches M2 data"
+    },
+    {
+      "id": "UIT-M3-085",
+      "status": "NOT APPLICABLE",
+      "shot": "",
+      "note": "members CSV not in this slice (documented)"
+    },
+    {
+      "id": "UIT-M3-086",
+      "status": "PASS",
+      "shot": "",
+      "note": "export respects active month/season filter (per-period endpoint)"
+    },
+    {
+      "id": "UIT-M3-087",
+      "status": "PASS",
+      "shot": "",
+      "note": "empty export = header only, clean"
+    },
+    {
+      "id": "UIT-M3-088",
+      "status": "PASS",
+      "shot": "",
+      "note": "filename includes report/date/version"
+    },
+    {
+      "id": "UIT-M3-089",
+      "status": "PASS",
+      "shot": "",
+      "note": "CSV parses, no malformed rows (30 lines)"
+    },
+    {
+      "id": "UIT-M3-090",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-090-mobile-export.png",
+      "note": "mobile export controls reachable"
+    },
+    {
+      "id": "UIT-M3-091",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-091-graph-works.png",
+      "note": "R-M3-05 graph still works"
+    },
+    {
+      "id": "UIT-M3-092",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-092-graph-switch.png",
+      "note": "switch swimmer, no stale data"
+    },
+    {
+      "id": "UIT-M3-093",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-093-graph-stroke.png",
+      "note": "graph stroke filter"
+    },
+    {
+      "id": "UIT-M3-094",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-094-graph-date.png",
+      "note": "graph date filter"
+    },
+    {
+      "id": "UIT-M3-095",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-095-graph-empty.png",
+      "note": "no/sparse-history graph clean state"
+    },
+    {
+      "id": "UIT-M3-096",
+      "status": "PASS",
+      "shot": "",
+      "note": "sparse-history one-point state (proven in R-M3-05 UIT-M3-006)"
+    },
+    {
+      "id": "UIT-M3-097",
+      "status": "PASS",
+      "shot": "",
+      "note": "graph values == API rows (proven in R-M3-05 UIT-M3-019 exact mapping)"
+    },
+    {
+      "id": "UIT-M3-098",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-098-graph-mobile.png",
+      "note": "mobile graph no clipping"
+    },
+    {
+      "id": "UIT-M3-099",
+      "status": "PASS",
+      "shot": "",
+      "note": "print graph/report readable (print CSS)"
+    },
+    {
+      "id": "UIT-M3-100",
+      "status": "NOT APPLICABLE",
+      "shot": "",
+      "note": "graph data export not in this slice (CSV covers pointscore/time-history)"
+    },
+    {
+      "id": "UIT-M3-101",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-101-reg-members.png",
+      "note": "members flow"
+    },
+    {
+      "id": "UIT-M3-102",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-102-reg-event-setup.png",
+      "note": "event setup"
+    },
+    {
+      "id": "UIT-M3-103",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-103-reg-heat.png",
+      "note": "heat builder"
+    },
+    {
+      "id": "UIT-M3-104",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-104-reg-results.png",
+      "note": "results"
+    },
+    {
+      "id": "UIT-M3-105",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-105-reg-breaker.png",
+      "note": "breaker report"
+    },
+    {
+      "id": "UIT-M3-106",
+      "status": "PASS",
+      "shot": "",
+      "note": "special races smoke (medley relay finalized in fixture; ranking unchanged)"
+    },
+    {
+      "id": "UIT-M3-107",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-107-reg-relay.png",
+      "note": "relay team/variance readout intact"
+    },
+    {
+      "id": "UIT-M3-108",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-108-reg-archive.png",
+      "note": "archive/restore works"
+    },
+    {
+      "id": "UIT-M3-109",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-109-reg-m2-history.png",
+      "note": "M2 member history modal intact"
+    },
+    {
+      "id": "UIT-M3-110",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-110-reg-m2-event-history.png",
+      "note": "M2 event time history intact"
+    },
+    {
+      "id": "UIT-M3-111",
+      "status": "PASS",
+      "shot": "",
+      "note": "M2 55-case runner: see /tmp/m3p-m2-55.log"
+    },
+    {
+      "id": "UIT-M3-112",
+      "status": "PASS",
+      "shot": "",
+      "note": "M2 100-case runner: see /tmp/m3p-m2-100.log"
+    },
+    {
+      "id": "UIT-M3-113",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-113-resp-mobile.png",
+      "note": "mobile pointscore report readable"
+    },
+    {
+      "id": "UIT-M3-114",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-114-resp-tablet.png",
+      "note": "tablet pointscore report"
+    },
+    {
+      "id": "UIT-M3-115",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-115-resp-desktop.png",
+      "note": "desktop pointscore report polished"
+    },
+    {
+      "id": "UIT-M3-116",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-116-a11y-keyboard.png",
+      "note": "keyboard focus reaches filters/export"
+    },
+    {
+      "id": "UIT-M3-117",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-117-long-names.png",
+      "note": "long names wrap cleanly (extra swimmer long names in fixture)"
+    },
+    {
+      "id": "UIT-M3-118",
+      "status": "PASS",
+      "shot": "",
+      "note": "no SaaS/commercial scope in diff (docs/evidence/.../out-of-scope-diff.txt)"
+    },
+    {
+      "id": "UIT-M3-119",
+      "status": "PASS",
+      "shot": "",
+      "note": "screenshot inventory: 62 PNGs"
+    },
+    {
+      "id": "UIT-M3-120",
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-120-final.png",
+      "note": "119 prior classified, console errors=0"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "url": "http://127.0.0.1:3011/?cb=1780467165939",
+      "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ],
+  "tally": {
+    "PASS": 111,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "NOT APPLICABLE": 9
+  }
+}
