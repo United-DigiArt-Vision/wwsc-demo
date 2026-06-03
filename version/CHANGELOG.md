@@ -11,6 +11,33 @@
 
 ---
 
+## 2026-06-03 — docs: M3 pointscore Claude directive and 120-case QA spec prepared
+- **Timestamp:** 2026-06-03 06:45:00 Europe/Berlin
+- **App Version (from package.json):** 2.10.0 development branch context / no release
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **Editor:** Balerion
+- **Trigger:** Dino confirmed the working-assumptions message was sent to Bryan and asked Balerion to prepare the Claude Code implementation Auftrag, while Balerion remains QA gate.
+- **Changes:**
+  - Added Claude Code directive: `../messages/2026-06-03-0645-Balerion-To-Claude-WWSC-M3-Pointscore-Implementation-Directive.md`.
+  - Added mandatory 120-case proof spec: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md`.
+  - Updated `PROGRESS.md`, `version/CURRENT_STATE.md`, `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md`, `REQUIREMENTS-M3-POINTSCORE-REPORTS.md`, and `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md` so the operational gate is no longer "wait for another Bryan reply".
+  - Encoded current working assumptions: event-separated pointscore, monthly/season totals by simple addition, Excel pointscore sheets as working scoring source, later Constitution adjustment if Bryan sends a separate rule.
+  - Required evidence: Playwright/browser E2E, raw logs, screenshots, CSV artifacts, 120-case protocol, M2/M3 regressions, and pointscore isolation proof.
+- **No code/release action:** no app-source changes, no push, no deploy, no tag, no Bryan contact.
+
+## 2026-06-02 — docs: Bryan M3 pointscore partial answer mapped
+- **Timestamp:** 2026-06-02 21:20:00 Europe/Berlin
+- **App Version (from package.json):** 2.10.0 development branch context / no release
+- **Branch:** documentation/status update only
+- **Editor:** Balerion
+- **Trigger:** Dino relayed Bryan's partial M3 pointscore answer by screenshot.
+- **Changes:**
+  - Added inbound message record: `../messages/2026-06-02-Bryan-inbound-m3-event-separated-month-season-addition.md`.
+  - Updated `version/CURRENT_STATE.md`, `PROGRESS.md`, and `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md`.
+  - Classified Bryan's answer as M3 Pointscore / Accumulation partial clarification: event-separated points plus simple monthly/season addition for overall winners.
+  - Kept final pointscore code blocked pending actual formula, Constitution source/rules, exact season date range, bonus/special cases, eligibility, race weighting, and tie-breakers.
+- **No code/release action:** no app-source changes, no push, no deploy, no tag, no Bryan contact.
+
 ## 2026-05-29 — fix: v2.10.0 M3 R-M3-05 QA corrections (Balerion CONDITIONAL PASS → fixes)
 - **Timestamp:** 2026-05-29 18:30:00
 - **App Version (from package.json):** 2.10.0

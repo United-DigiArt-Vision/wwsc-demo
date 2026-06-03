@@ -5,6 +5,18 @@
 **Audience:** Balerion (for orchestration) and via Balerion, Dino / Bryan (for the answers).
 **Purpose:** Surface every ambiguous M3 acceptance criterion **before** any code is written. Per Balerion's 2026-05-29 handoff: "If you encounter ambiguity in pointscore rules, constitution accumulation, reports, graph definitions, export behavior, or production/commercial boundaries, stop that part and report the question instead of guessing."
 
+## 2026-06-03 Operational Override
+
+Dino/Nedim has now sent Bryan a transparent working-assumptions message. The implementation gate changed:
+
+- Do not ask Bryan another clarification round before pointscore implementation.
+- Proceed using event-separated pointscore.
+- Compute monthly and season overall winners by simple addition of relevant event totals.
+- Use the existing Excel pointscore sheets as the working scoring source.
+- Keep Formula / Season / Constitution behavior isolated and adjustable if Bryan later sends a separate Constitution rule.
+
+Older lines in this document that say "no coding without confirmation" or "blocked until Bryan answers" should now be read as: do not claim final Constitution truth without confirmation; implementation may proceed under the sent working assumptions and must label them as such.
+
 > Note: Balerion's `docs/tests/M3-USER-INTERACTION-TEST-SPEC-v3.0.0.md` already pre-marks the UIT-M3 cases that depend on these answers as `PROVISIONAL` (UIT-M3-021..029, UIT-M3-035, UIT-M3-041, UIT-M3-044, UIT-M3-048, UIT-M3-051, UIT-M3-052, UIT-M3-063, UIT-M3-064, UIT-M3-071..080). Each QA below cites which UIT-M3 cases unblock once the answer lands.
 
 Each item below has:
@@ -37,6 +49,8 @@ And:
 
 **Minimum working assumption (NOT to be coded without sign-off):** points are `4 / 3 / 2 / 1` for `1st / 2nd / 3rd / finished`, no PB-bonus, no attendance points, no race-type weighting. **Likely wrong**; we explicitly do not code on this default.
 
+**2026-06-02 Bryan partial answer:** Bryan wrote: "Just keep the pundits for each event separately" and "We do combine some of them for over all winners but the would be a simple addition at the end of each month and season." Context strongly indicates `pundits` means points/pointscore. This clarifies the aggregation shape: pointscore remains event-separated first, then monthly and season overall winners are computed by simple addition. The actual points-per-place formula is still not answered, so R-M3-01 and R-M3-10 remain blocked for final pointscore code.
+
 ## QA-02 — Season window definition  [BLOCKS R-M3-02, R-M3-04]
 
 **Question:** What constitutes a "season" for pointscore accumulation?
@@ -47,17 +61,23 @@ And:
 
 **Minimum working assumption:** the season is the calendar year of the current date. **No coding without confirmation.**
 
+**2026-06-02 Bryan partial answer:** Bryan confirmed there are month-end and season-end combined totals. The exact season boundary is still not defined, so QA-02 remains blocked.
+
 ## QA-03 — Season reset vs rolling  [BLOCKS R-M3-02]
 
 **Question:** When a new season starts, do swimmer pointscore totals reset to 0, or do they continue rolling? If reset: is the previous season's total still viewable (read-only) or archived?
 
 **Minimum working assumption:** reset at season boundary; previous seasons remain queryable read-only via a season-selector in the UI.
 
+**2026-06-02 Bryan partial answer:** Month-end and season-end totals should be separate outputs. Reset vs carry-over across seasons is still not explicitly answered.
+
 ## QA-04 — Date-range slicer scope  [BLOCKS R-M3-04, R-M3-05, R-M3-07]
 
 **Question:** Should Reports / Graphs / CSV exports all share the same season/date-range filter, or does each surface have its own picker?
 
 **Minimum working assumption:** a single global "Season" selector in the Reports nav drives all three surfaces.
+
+**2026-06-02 Bryan partial answer:** Month and season reporting periods should be supported for pointscore totals. Whether this should be one shared global filter across Reports / Graphs / CSV remains open.
 
 ## QA-05 — Constitution document location  [BLOCKS R-M3-03, R-M3-06, R-M3-10]
 
@@ -86,6 +106,8 @@ Examples we need decided (not exhaustive — Bryan should add anything missing):
 
 **Minimum working assumption:** rules are exactly what `bryan-excel-original.xlsm` encodes if Balerion confirms it is the source; otherwise blocked.
 
+**2026-06-02 Bryan partial answer:** Simple addition is confirmed for combining event points into monthly and season overall winners. Other Constitution rules remain unanswered.
+
 ## QA-07 — Season standings columns  [BLOCKS R-M3-04]
 
 **Question:** Which columns does the Season Pointscore standings table show?
@@ -94,6 +116,8 @@ Candidate columns we can supply from v2.9.0 data without new data collection:
 - Rank, Swimmer, Points, Events Attended, PB Breaks, Best Time per Stroke (configurable?), Last Event Date
 
 **Minimum working assumption:** Rank, Swimmer, Points, Events Attended, PB Breaks. **No coding until confirmed.**
+
+**2026-06-02 Bryan partial answer:** Monthly overall winners and season overall winners are expected pointscore outputs. Exact columns remain unconfirmed.
 
 ## QA-08 — Individual swimmer graph types  [BLOCKS R-M3-05]
 

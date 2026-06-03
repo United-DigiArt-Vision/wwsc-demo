@@ -11,6 +11,19 @@
 >
 > **Mandatory test target:** `docs/tests/M3-USER-INTERACTION-TEST-SPEC-v3.0.0.md` (UIT-M3-001..UIT-M3-100). Owner: Balerion QA gate. M3 cannot be called signoff-ready unless every UIT-M3 case has a screenshot-proven `PASS`, `BLOCKED`, or resolved-PROVISIONAL classification per that spec. The Cross-Reference table below maps each R-M3 requirement to the UIT-M3 cases that prove it.
 
+## 2026-06-03 Implementation Clarification
+
+Balerion has explicitly authorized Claude Code to proceed with pointscore implementation under the working assumptions Dino/Nedim sent to Bryan on 2026-06-02. The updated mandatory proof target is `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md` (120 cases).
+
+Implementation may proceed on:
+
+- event-separated pointscore,
+- monthly and season overall winners by simple addition,
+- existing Excel pointscore sheets as the working scoring source,
+- source-labeled, adjustable Formula / Season / Constitution logic.
+
+Do not represent these assumptions as final separate Constitution confirmation.
+
 ---
 
 ## 1. Source of Truth for M3 Scope

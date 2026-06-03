@@ -2,6 +2,10 @@
 
 **Status:** PRD-phase checklist. None of the implementation tasks below may start until the corresponding open questions in `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md` are answered (or Balerion explicitly authorizes a working assumption).
 
+## 2026-06-03 Gate Update
+
+Balerion has explicitly authorized the working assumptions Dino/Nedim sent Bryan on 2026-06-02. Pointscore implementation may proceed under those assumptions, with Formula / Season / Constitution logic isolated, source-labeled, and adjustable. The mandatory user-interaction proof spec is now `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md` with 120 cases.
+
 ## Phase 0 — Project Truth (must complete before anything else)
 
 - [x] Read Balerion's 2026-05-29 M3 handoff message.
