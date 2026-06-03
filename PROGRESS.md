@@ -13,9 +13,9 @@ Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 w
 - [x] Additive finalize hook + read APIs + CSV exports (`src/server.js`); `🎯 Pointscore` UI screen (`src/public/js/screens/pointscore.js`, nav in `sidebar.js`/`app.js`).
 - [x] Excel scoring source extracted + source-labeled: `scripts/extract-pointscore.py`, `docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md`.
 - [x] Specs: `DESIGN-SPEC` / `UNIT-TEST-SPEC` / `INTEGRATION-TEST-SPEC` / `REQUIREMENT-TEST-EVIDENCE-MATRIX` (M3 pointscore); `DEV-CHECKLIST-M3` → IMPLEMENTED.
-- [x] Unit/API: `scripts/test-m3-pointscore-unit.cjs` = 11 PASS / 0 FAIL (first-hand re-verified).
+- [x] Unit/API: `scripts/test-m3-pointscore-unit.cjs` = 12 PASS / 0 FAIL (incl. UT9 unknown-race_type → individual).
 - [x] Isolation proof: `scripts/e2e-m3-pointscore-isolation.cjs` = PASS (accepted flow byte-identical with pointscore on/off).
-- [x] 120-case browser suite: `scripts/e2e-m3-pointscore-120.cjs` = 111 PASS / 9 NA / 0 FAIL / 0 BLOCKED (clean-HEAD evidence in `docs/evidence/m3-user-interaction-v3.0.1/`, 62 screenshots).
+- [x] 120-case browser suite: `scripts/e2e-m3-pointscore-120.cjs` = 114 PASS / 6 NA / 0 FAIL / 0 BLOCKED (clean-HEAD evidence in `docs/evidence/m3-user-interaction-v3.0.1/`, 64 screenshots).
 - [x] Regression: M2 55/0, M2 100 = 98/2/0/0, R-M3-05 history-graphs 19/1/0; out-of-scope guard clean.
 - [ ] Balerion V0015 QA of the evidence package — pending.
 - [ ] `STABLE.md` update + merge to `main` + deploy — only after Balerion sign-off.

@@ -1,5 +1,5 @@
-# Baseline branch=dev/v2.10.0-m3-history-graphs commit=b3f9a82 pkg=2.10.0
-# /api/version={"version":"2.10.0","build":"2026-06-03T06:12:42.288Z"}
+# Baseline branch=dev/v2.10.0-m3-history-graphs commit=a94c0fc pkg=2.10.0
+# /api/version={"version":"2.10.0","build":"2026-06-03T19:35:40.749Z"}
 # members=30
 # events=1,2,3,4,5,6,7,8
 UIT-M3-001  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-001-app-loads.png  |  app loads v2.10.0
@@ -26,11 +26,11 @@ UIT-M3-021  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-021-r
 UIT-M3-022  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-022-aggregation-banner.png  |  banner: event-separated + monthly/season addition
 UIT-M3-023  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-023-event-25m-points.png  |  25m event pointscore rows=58
 UIT-M3-024  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-024-event-50m-points.png  |  50m points present (Excel-derived 5/4/3/2)
-UIT-M3-025  |  NOT APPLICABLE  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-025-event-75m-na.png  |  75m not seeded in this fixture; rule documented in artifact (individual 5/4/3/2)
+UIT-M3-025  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-025-event-75m.png  |  75m individual points present (5/4/3/2), rows=22
 UIT-M3-026  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-026-event-backstroke.png  |  backstroke points present
-UIT-M3-027  |  NOT APPLICABLE  |  -  |  breaststroke not seeded; rule = individual 5/4/3/2 (artifact)
-UIT-M3-028  |  NOT APPLICABLE  |  -  |  butterfly not seeded; rule = individual 5/4/3/2 (artifact)
-UIT-M3-029  |  NOT APPLICABLE  |  -  |  brace not seeded; rule = relay/team 3/2/1 (artifact)
+UIT-M3-027  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-027-event-breaststroke.png  |  breaststroke individual points present (5/4/3/2), rows=22
+UIT-M3-028  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-028-event-butterfly.png  |  butterfly individual points present (5/4/3/2), rows=22
+UIT-M3-029  |  NOT APPLICABLE  |  -  |  brace not seeded; relay/team 3/2/1 rule proven via medley_relay + documented in artifact
 UIT-M3-030  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-030-event-medley.png  |  medley relay team points present (3/2/1)
 UIT-M3-031  |  NOT APPLICABLE  |  -  |  pogo not supported in current seed; rule documented (relay 3/2/1)
 UIT-M3-032  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-032-absent-not-scored.png  |  absent/non-finishers carry no pointscore row
@@ -52,7 +52,7 @@ UIT-M3-047  |  PASS  |  -  |  breaker output identical (isolation proof)
 UIT-M3-048  |  PASS  |  -  |  ranking/place identical (isolation proof)
 UIT-M3-049  |  PASS  |  -  |  relay variance identical (isolation proof)
 UIT-M3-050  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-050-monthly-view.png  |  monthly winners by simple addition
-UIT-M3-051  |  PASS  |  -  |  May has 3 events; totals = sum
+UIT-M3-051  |  PASS  |  -  |  May has 4 events; totals = sum
 UIT-M3-052  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-052-monthly-empty.png  |  empty month clean, no fake totals
 UIT-M3-053  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-053-monthly-switch.png  |  switch month updates, no stale rows
 UIT-M3-054  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-054-monthly-sort.png  |  standings sorted points desc
@@ -63,7 +63,7 @@ UIT-M3-058  |  PASS  |  -  |  restore event → returns to month total
 UIT-M3-059  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-059-monthly-print.png  |  print-friendly (print-hide on controls)
 UIT-M3-060  |  PASS  |  -  |  monthly CSV header+rows: docs/evidence/m3-user-interaction-v3.0.1/monthly-2026-05.csv
 UIT-M3-061  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-061-season-view.png  |  season winners by simple addition
-UIT-M3-062  |  PASS  |  -  |  season spans 8 events across 3 months; total=sum
+UIT-M3-062  |  PASS  |  -  |  season spans 11 events across 3 months (Apr/May/Jun); total=sum
 UIT-M3-063  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-063-season-filter.png  |  season boundary = calendar year (working default)
 UIT-M3-064  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-064-season-empty.png  |  empty season clean state
 UIT-M3-065  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-065-season-sort.png  |  season sorted points desc then name
@@ -112,14 +112,14 @@ UIT-M3-107  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-107-r
 UIT-M3-108  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-108-reg-archive.png  |  archive/restore works
 UIT-M3-109  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-109-reg-m2-history.png  |  M2 member history modal intact
 UIT-M3-110  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-110-reg-m2-event-history.png  |  M2 event time history intact
-UIT-M3-111  |  PASS  |  -  |  M2 55-case runner: see /tmp/m3p-m2-55.log
-UIT-M3-112  |  PASS  |  -  |  M2 100-case runner: see /tmp/m3p-m2-100.log
-UIT-M3-113  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-113-resp-mobile.png  |  mobile pointscore report readable
+UIT-M3-111  |  PASS  |  -  |  M2 55-case runner — fresh log @a94c0fc (/tmp/m3p-m2-55.log)
+UIT-M3-112  |  PASS  |  -  |  M2 100-case runner — fresh log @a94c0fc (/tmp/m3p-m2-100.log)
+UIT-M3-113  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-113-resp-mobile.png  |  mobile pointscore report (month tab), no overlay
 UIT-M3-114  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-114-resp-tablet.png  |  tablet pointscore report
 UIT-M3-115  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-115-resp-desktop.png  |  desktop pointscore report polished
 UIT-M3-116  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-116-a11y-keyboard.png  |  keyboard focus reaches filters/export
 UIT-M3-117  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-117-long-names.png  |  long names wrap cleanly (extra swimmer long names in fixture)
 UIT-M3-118  |  PASS  |  -  |  no SaaS/commercial scope in diff (docs/evidence/.../out-of-scope-diff.txt)
-UIT-M3-119  |  PASS  |  -  |  screenshot inventory: 62 PNGs
+UIT-M3-119  |  PASS  |  -  |  screenshot inventory: 64 PNGs
 UIT-M3-120  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-120-final.png  |  119 prior classified, console errors=0
-# Tally {"PASS":111,"FAIL":0,"BLOCKED":0,"NOT APPLICABLE":9}
+# Tally {"PASS":114,"FAIL":0,"BLOCKED":0,"NOT APPLICABLE":6}

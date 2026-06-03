@@ -11,6 +11,22 @@
 
 ---
 
+## 2026-06-03 — fix: M3 pointscore QA hardening (Balerion feedback) + N/A reduction
+- **Timestamp:** 2026-06-03 (resume session, afternoon)
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **RecordedCommit:** a94c0fc (source fixes) + the following clean-HEAD evidence commit — resolve HEAD with `git rev-parse --short HEAD`
+- **Editor:** Claude Code
+- **Trigger:** Balerion 2026-06-03 08:45 QA feedback — `QA VERIFIED CORE / NEEDS SMALL QA HARDENING BEFORE FINAL GATE`. Balerion independently reproduced all suites; required 4 fixes + offered an optional N/A reduction.
+- **Changes:**
+  - Fix #1 (bug Balerion found): unknown `race_type` is now scored as individual, not relay — `computeEventPointscoreRows` branches on the resolved `categoryKey`, not `raceTypes.includes()`. New UT9 (in-memory DB) proves it; unit 11→12.
+  - Fix #2: 120-suite `UIT-M3-111/112` validate the M2 log carries the current HEAD (`commit=`) and BLOCK on stale/missing logs; added a baseline header to the M2-55 runner (M2-100 already had one). In-process self-run was rejected — spawning the browser suites from inside the browser-driving 120 script deadlocks; standalone-then-validate is the contract.
+  - Fix #3: `UIT-M3-113` dismisses any leftover modal/overlay before the mobile screenshot (was capturing an event-detail overlay).
+  - Fix #4: `TC-069` description version-parametrized (was hardcoded "v2.9.0"); removed an adjacent dead v2.9.0 reference.
+  - N/A reduction (Balerion optional): seeded 75m/breaststroke/butterfly events (one optional stroke per event = proven backstroke pattern, inside existing Apr/May/Jun months); `UIT-M3-025/027/028` N/A→PASS; season event-count assertion 8→11. 120-suite now **114 PASS / 6 NA / 0 FAIL / 0 BLOCKED**. Brace/pogo stay N/A (relay 3/2/1 proven via medley_relay + documented).
+  - Infra note: `node_modules/better-sqlite3` is a native binary in the Dropbox-synced tree; Balerion's arm64 QA rebuild synced onto this Intel (x86_64) machine and broke local runs. Rebuilt for x86_64 to verify (gitignored — commits/evidence unaffected). Recommend excluding `node_modules` from Dropbox sync to end the cross-arch churn.
+- **No release action:** no push, no deploy, no tag, no client contact, no live-data mutation. Awaiting Balerion re-QA.
+
 ## 2026-06-03 — docs: M3 pointscore clean-HEAD evidence package
 - **Timestamp:** 2026-06-03 08:20:00 Europe/Berlin
 - **App Version (from package.json):** 2.10.0

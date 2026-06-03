@@ -42,7 +42,7 @@
   {
     "id": "UT7-member-contribution",
     "status": "PASS",
-    "note": "member total == sum of contributions=13"
+    "note": "member total == sum of contributions=10"
   },
   {
     "id": "UT8-months-list",
@@ -53,5 +53,10 @@
     "id": "UT8-unknown-member-404",
     "status": "PASS",
     "note": "unknown member → 404"
+  },
+  {
+    "id": "UT9-unknown-racetype-individual",
+    "status": "PASS",
+    "note": "unknown type → individual place1=5 (rows=1, basis=individual-place)"
   }
 ]

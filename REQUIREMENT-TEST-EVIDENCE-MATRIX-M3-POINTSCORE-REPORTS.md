@@ -41,8 +41,8 @@ Evidence paths are relative to `code/`. Evidence directory: `docs/evidence/m3-us
 
 | Check | Target | Evidence |
 |---|---|---|
-| Unit/API: formula extraction, allocation, idempotency, monthly, season | 11 PASS / 0 FAIL | `pointscore-unit-results.json` |
-| Browser E2E for all visible report/pointscore flows | 111 PASS / 9 NA / 0 FAIL / 0 BLOCKED | `m3-pointscore-120-raw.log`, `m3-pointscore-120-records.json`, 62 screenshots |
+| Unit/API: formula extraction, allocation, idempotency, monthly, season, unknown-race_type | 12 PASS / 0 FAIL | `pointscore-unit-results.json` |
+| Browser E2E for all visible report/pointscore flows | 114 PASS / 6 NA / 0 FAIL / 0 BLOCKED | `m3-pointscore-120-raw.log`, `m3-pointscore-120-records.json`, 64 screenshots |
 | `e2e-m2-time-history.cjs` (M3 expected version) | 55 PASS / 0 FAIL | M2 55 log |
 | `e2e-m2-user-interaction-100.cjs` (M3 expected version) | 98 PASS / 2 NA / 0 FAIL / 0 BLOCKED | M2 100 log |
 | `e2e-m3-history-graphs.cjs` | 19 PASS / 1 NA / 0 FAIL | history-graphs log |

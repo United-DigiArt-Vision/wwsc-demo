@@ -1,11 +1,11 @@
 {
   "baseline": {
     "branch": "dev/v2.10.0-m3-history-graphs",
-    "commit": "b3f9a82",
+    "commit": "a94c0fc",
     "pkg": "2.10.0",
     "apiVersion": {
       "version": "2.10.0",
-      "build": "2026-06-03T06:12:42.288Z"
+      "build": "2026-06-03T19:35:40.749Z"
     }
   },
   "records": [
@@ -155,9 +155,9 @@
     },
     {
       "id": "UIT-M3-025",
-      "status": "NOT APPLICABLE",
-      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-025-event-75m-na.png",
-      "note": "75m not seeded in this fixture; rule documented in artifact (individual 5/4/3/2)"
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-025-event-75m.png",
+      "note": "75m individual points present (5/4/3/2), rows=22"
     },
     {
       "id": "UIT-M3-026",
@@ -167,21 +167,21 @@
     },
     {
       "id": "UIT-M3-027",
-      "status": "NOT APPLICABLE",
-      "shot": "",
-      "note": "breaststroke not seeded; rule = individual 5/4/3/2 (artifact)"
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-027-event-breaststroke.png",
+      "note": "breaststroke individual points present (5/4/3/2), rows=22"
     },
     {
       "id": "UIT-M3-028",
-      "status": "NOT APPLICABLE",
-      "shot": "",
-      "note": "butterfly not seeded; rule = individual 5/4/3/2 (artifact)"
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-028-event-butterfly.png",
+      "note": "butterfly individual points present (5/4/3/2), rows=22"
     },
     {
       "id": "UIT-M3-029",
       "status": "NOT APPLICABLE",
       "shot": "",
-      "note": "brace not seeded; rule = relay/team 3/2/1 (artifact)"
+      "note": "brace not seeded; relay/team 3/2/1 rule proven via medley_relay + documented in artifact"
     },
     {
       "id": "UIT-M3-030",
@@ -313,7 +313,7 @@
       "id": "UIT-M3-051",
       "status": "PASS",
       "shot": "",
-      "note": "May has 3 events; totals = sum"
+      "note": "May has 4 events; totals = sum"
     },
     {
       "id": "UIT-M3-052",
@@ -379,7 +379,7 @@
       "id": "UIT-M3-062",
       "status": "PASS",
       "shot": "",
-      "note": "season spans 8 events across 3 months; total=sum"
+      "note": "season spans 11 events across 3 months (Apr/May/Jun); total=sum"
     },
     {
       "id": "UIT-M3-063",
@@ -673,19 +673,19 @@
       "id": "UIT-M3-111",
       "status": "PASS",
       "shot": "",
-      "note": "M2 55-case runner: see /tmp/m3p-m2-55.log"
+      "note": "M2 55-case runner — fresh log @a94c0fc (/tmp/m3p-m2-55.log)"
     },
     {
       "id": "UIT-M3-112",
       "status": "PASS",
       "shot": "",
-      "note": "M2 100-case runner: see /tmp/m3p-m2-100.log"
+      "note": "M2 100-case runner — fresh log @a94c0fc (/tmp/m3p-m2-100.log)"
     },
     {
       "id": "UIT-M3-113",
       "status": "PASS",
       "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-113-resp-mobile.png",
-      "note": "mobile pointscore report readable"
+      "note": "mobile pointscore report (month tab), no overlay"
     },
     {
       "id": "UIT-M3-114",
@@ -721,7 +721,7 @@
       "id": "UIT-M3-119",
       "status": "PASS",
       "shot": "",
-      "note": "screenshot inventory: 62 PNGs"
+      "note": "screenshot inventory: 64 PNGs"
     },
     {
       "id": "UIT-M3-120",
@@ -732,14 +732,14 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3011/?cb=1780467165939",
+      "url": "http://127.0.0.1:3011/?cb=1780515344833",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ],
   "tally": {
-    "PASS": 111,
+    "PASS": 114,
     "FAIL": 0,
     "BLOCKED": 0,
-    "NOT APPLICABLE": 9
+    "NOT APPLICABLE": 6
   }
 }

@@ -1,8 +1,8 @@
-# Baseline branch=dev/v2.10.0-m3-history-graphs commit=b3f9a82 pkg=2.10.0
+# Baseline branch=dev/v2.10.0-m3-history-graphs commit=a94c0fc pkg=2.10.0
 # Server: http://127.0.0.1:3004  DB: /tmp/wwsc-m2-100-test/wwsc.db
-# Started: 2026-06-03T06:00:55.504Z
+# Started: 2026-06-03T19:21:25.624Z
 TC  |  STATUS  |  AREA  |  SCREENSHOT  |  VISIBLE_EVIDENCE
-# /api/version={"version":"2.10.0","build":"2026-06-03T06:00:55.870Z"}
+# /api/version={"version":"2.10.0","build":"2026-06-03T19:21:25.922Z"}
 # Seeded 24 base members + memberE id=25
 # Member A id=22 name=Andrew Barnes
 # Member B id=4 name=Ben Chandler
@@ -79,8 +79,8 @@ TC-065  |  PASS  |  Finalize flow  |  docs/screenshots/m2-user-interaction-100/T
 TC-066  |  PASS  |  Persistence  |  docs/screenshots/m2-user-interaction-100/TC-066-app-after-reload.png  |  App reloaded without losing UI surface
 TC-067  |  PASS  |  Persistence  |  docs/screenshots/m2-user-interaction-100/TC-067-member-history-after-reload.png  |  15 May 2026 row still visible after reload
 TC-068  |  PASS  |  Persistence  |  docs/screenshots/m2-user-interaction-100/TC-068-event-detail-after-reload.png  |  Time History section visible after reload on event 6
-# /api/version after restart: {"version":"2.10.0","build":"2026-06-03T06:02:02.425Z"}
-TC-069  |  PASS  |  Persistence  |  docs/screenshots/m2-user-interaction-100/TC-069-after-server-restart.png  |  After server stop+restart, sidebar shows v2.9.0 and /api/version=2.10.0
+# /api/version after restart: {"version":"2.10.0","build":"2026-06-03T19:22:30.029Z"}
+TC-069  |  PASS  |  Persistence  |  docs/screenshots/m2-user-interaction-100/TC-069-after-server-restart.png  |  After server stop+restart, sidebar shows v2.10.0 and /api/version=2.10.0
 TC-070  |  PASS  |  Persistence  |  docs/screenshots/m2-user-interaction-100/TC-070-member-history-after-server-restart.png  |  15 May 2026 row still visible after server restart
 TC-071  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-071-results-screen.png  |  Results screen renders for editing path
 TC-072  |  PASS  |  Re-finalize  |  docs/screenshots/m2-user-interaction-100/TC-072-changed-time-pre-refinalize.png  |  Lane time updated to 11.00 via documented API path
@@ -112,7 +112,7 @@ TC-097  |  PASS  |  Regression  |  docs/screenshots/m2-user-interaction-100/TC-0
 TC-098  |  PASS  |  Regression  |  docs/screenshots/m2-user-interaction-100/TC-098-after-restore.png  |  Archive count after restore 0 (returned to 0)
 TC-099  |  PASS  |  No M3 leakage  |  docs/screenshots/m2-user-interaction-100/TC-099-no-m3-leakage.png  |  Banned-string scan across 7 screens: clean
 TC-100  |  PASS  |  Final evidence gate  |  docs/screenshots/m2-user-interaction-100/TC-100-final-evidence-state.png  |  99 prior TCs classified — PASS=97, NOT APPLICABLE=2, FAIL=0, BLOCKED=0
-# Finished: 2026-06-03T06:02:41.363Z
+# Finished: 2026-06-03T19:23:09.450Z
 # Tally:
 #   PASS=98
 #   NOT APPLICABLE=2

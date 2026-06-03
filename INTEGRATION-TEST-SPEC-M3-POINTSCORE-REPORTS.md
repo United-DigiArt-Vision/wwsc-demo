@@ -85,6 +85,6 @@ All runners spin their own isolated server on a dedicated port with a `/tmp` DB 
 
 ## Expected result
 
-`scripts/e2e-m3-pointscore-120.cjs`: **111 PASS / 9 NOT APPLICABLE / 0 FAIL / 0 BLOCKED** (120/120 classified). Unit `11 PASS / 0 FAIL`. Isolation `PASS`. M2 regression `55 PASS / 0 FAIL` and `98 PASS / 2 NA / 0 FAIL / 0 BLOCKED`. History-graphs `19 PASS / 1 NA / 0 FAIL`.
+`scripts/e2e-m3-pointscore-120.cjs`: **114 PASS / 6 NOT APPLICABLE / 0 FAIL / 0 BLOCKED** (120/120 classified). Unit `12 PASS / 0 FAIL`. Isolation `PASS`. M2 regression `55 PASS / 0 FAIL` and `98 PASS / 2 NA / 0 FAIL / 0 BLOCKED`. History-graphs `19 PASS / 1 NA / 0 FAIL`.
 
-The 9 NOT APPLICABLE 120-cases are documented, not skipped: race types not in the seed fixture (75m/breaststroke/butterfly/brace/pogo — UIT-M3-025, 027, 028, 029, 031), members CSV not in this slice (UIT-M3-085), graph data export not in this slice (UIT-M3-100), and two further documented N/A. The rule for each N/A race type is still documented in the Excel rule artifact.
+The 6 NOT APPLICABLE 120-cases are documented, not skipped: brace (UIT-M3-029) and pogo (UIT-M3-031) team races not seeded — the relay/team 3/2/1 rule is proven via medley_relay (UIT-M3-030) and documented in the Excel artifact; members CSV not in this slice (UIT-M3-085); graph data export not in this slice (UIT-M3-100); plus two further documented N/A. 75m/breaststroke/butterfly are now seeded end-to-end (UIT-M3-025/027/028 PASS), and UT9 proves any individual race_type — including unseen ones — is scored 5/4/3/2.

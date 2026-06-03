@@ -1,429 +1,582 @@
 event_date,swimmer,stroke,time_centiseconds,previous_best_seconds,is_break
-2026-06-20,Andrew Barnes,25m,1640,16,0
-2026-06-20,Andrew Barnes,50m,3940,39,0
+2026-06-27,Andrew Barnes,25m,1610,16,0
+2026-06-27,Andrew Barnes,butterfly,5140,51,0
+2026-06-27,Ben Chandler,25m,1350,14,1
+2026-06-27,Ben Chandler,butterfly,4250,43,0
+2026-06-27,Bryan Hesketh,25m,1250,13,1
+2026-06-27,Bryan Hesketh,butterfly,4210,42,0
+2026-06-27,David Hughes,25m,1850,19,1
+2026-06-27,David Hughes,butterfly,5780,58,0
+2026-06-27,Diane Foster,25m,2110,21,0
+2026-06-27,Diane Foster,butterfly,6250,63,0
+2026-06-27,Extra Swimmer With A Fairly Long Name 24,25m,2150,22,1
+2026-06-27,Extra Swimmer With A Fairly Long Name 25,25m,2180,22,0
+2026-06-27,Extra Swimmer With A Fairly Long Name 26,25m,2210,22,0
+2026-06-27,Extra Swimmer With A Fairly Long Name 27,25m,2150,22,1
+2026-06-27,Extra Swimmer With A Fairly Long Name 28,25m,2240,22,0
+2026-06-27,Extra Swimmer With A Fairly Long Name 29,25m,2210,22,0
+2026-06-27,Extra Swimmer With A Fairly Long Name 30,25m,2180,22,0
+2026-06-27,Felicia O'Brien,25m,1640,16,0
+2026-06-27,Felicia O'Brien,butterfly,4980,50,0
+2026-06-27,Glenne Murray,25m,2140,21,0
+2026-06-27,Glenne Murray,butterfly,6510,65,0
+2026-06-27,Greg Patterson,25m,1580,16,0
+2026-06-27,Greg Patterson,butterfly,5010,50,0
+2026-06-27,Helen Sharp,25m,1810,18,0
+2026-06-27,Helen Sharp,butterfly,5440,54,0
+2026-06-27,James Morton,25m,1380,14,0
+2026-06-27,James Morton,butterfly,4280,43,0
+2026-06-27,Jenny Walsh,25m,1750,18,1
+2026-06-27,Jenny Walsh,butterfly,5450,55,0
+2026-06-27,Karen Mitchell,25m,1950,20,1
+2026-06-27,Karen Mitchell,butterfly,6140,61,0
+2026-06-27,Lisa Chen,25m,1610,16,0
+2026-06-27,Lisa Chen,butterfly,4940,49,0
+2026-06-27,Mark Thompson,25m,1510,15,0
+2026-06-27,Mark Thompson,butterfly,4550,46,0
+2026-06-27,Michelle Lee,25m,1650,17,1
+2026-06-27,Michelle Lee,butterfly,5310,53,0
+2026-06-27,Paul Nguyen,25m,1540,15,0
+2026-06-27,Paul Nguyen,butterfly,4680,47,0
+2026-06-27,Peter Davidson,25m,1380,14,0
+2026-06-27,Peter Davidson,butterfly,4410,44,0
+2026-06-27,Rob Stewart,25m,1510,15,0
+2026-06-27,Rob Stewart,butterfly,4650,47,0
+2026-06-27,Sandra Blake,25m,2280,23,0
+2026-06-27,Sandra Blake,butterfly,6580,66,0
+2026-06-27,Steve Collins,25m,1680,17,0
+2026-06-27,Steve Collins,butterfly,5180,52,0
+2026-06-27,Sue Williams,25m,2040,20,0
+2026-06-27,Sue Williams,butterfly,6150,62,0
+2026-06-27,Tom Richards,25m,1280,13,0
+2026-06-27,Tom Richards,butterfly,4110,41,0
+2026-06-20,Andrew Barnes,25m,1610,16,0
+2026-06-20,Andrew Barnes,50m,3910,39,0
 2026-06-20,Ben Chandler,25m,1380,14,0
 2026-06-20,Ben Chandler,50m,3280,33,0
-2026-06-20,Bryan Hesketh,25m,1310,13,0
-2026-06-20,Bryan Hesketh,50m,3210,32,0
+2026-06-20,Bryan Hesketh,25m,1250,13,1
+2026-06-20,Bryan Hesketh,50m,3150,32,0
 2026-06-20,David Hughes,25m,1850,19,1
 2026-06-20,David Hughes,50m,4350,44,0
-2026-06-20,Diane Foster,25m,2050,21,1
-2026-06-20,Diane Foster,50m,4750,48,0
+2026-06-20,Diane Foster,25m,2080,21,0
+2026-06-20,Diane Foster,50m,4780,48,0
 2026-06-20,Extra Swimmer With A Fairly Long Name 24,25m,2210,22,0
 2026-06-20,Extra Swimmer With A Fairly Long Name 24,50m,5010,50,0
-2026-06-20,Extra Swimmer With A Fairly Long Name 25,25m,2150,22,1
-2026-06-20,Extra Swimmer With A Fairly Long Name 25,50m,4950,50,0
-2026-06-20,Extra Swimmer With A Fairly Long Name 26,25m,2180,22,0
-2026-06-20,Extra Swimmer With A Fairly Long Name 26,50m,4980,50,0
-2026-06-20,Extra Swimmer With A Fairly Long Name 27,25m,2210,22,0
-2026-06-20,Extra Swimmer With A Fairly Long Name 27,50m,5010,50,0
-2026-06-20,Extra Swimmer With A Fairly Long Name 28,25m,2150,22,1
-2026-06-20,Extra Swimmer With A Fairly Long Name 28,50m,4950,50,0
-2026-06-20,Extra Swimmer With A Fairly Long Name 29,25m,2150,22,1
-2026-06-20,Extra Swimmer With A Fairly Long Name 29,50m,4950,50,0
-2026-06-20,Extra Swimmer With A Fairly Long Name 30,25m,2150,22,1
-2026-06-20,Extra Swimmer With A Fairly Long Name 30,50m,4950,50,0
-2026-06-20,Felicia O'Brien,25m,1580,16,0
-2026-06-20,Felicia O'Brien,50m,3780,38,0
-2026-06-20,Glenne Murray,25m,2080,21,0
-2026-06-20,Glenne Murray,50m,4880,49,0
-2026-06-20,Greg Patterson,25m,1610,16,0
-2026-06-20,Greg Patterson,50m,3810,38,0
-2026-06-20,Helen Sharp,25m,1810,18,0
-2026-06-20,Helen Sharp,50m,4210,42,0
+2026-06-20,Extra Swimmer With A Fairly Long Name 25,25m,2180,22,0
+2026-06-20,Extra Swimmer With A Fairly Long Name 25,50m,4980,50,0
+2026-06-20,Extra Swimmer With A Fairly Long Name 26,25m,2210,22,0
+2026-06-20,Extra Swimmer With A Fairly Long Name 26,50m,5010,50,0
+2026-06-20,Extra Swimmer With A Fairly Long Name 27,25m,2150,22,1
+2026-06-20,Extra Swimmer With A Fairly Long Name 27,50m,4950,50,0
+2026-06-20,Extra Swimmer With A Fairly Long Name 28,25m,2180,22,0
+2026-06-20,Extra Swimmer With A Fairly Long Name 28,50m,4980,50,0
+2026-06-20,Extra Swimmer With A Fairly Long Name 29,25m,2240,22,0
+2026-06-20,Extra Swimmer With A Fairly Long Name 29,50m,5040,50,0
+2026-06-20,Extra Swimmer With A Fairly Long Name 30,25m,2180,22,0
+2026-06-20,Extra Swimmer With A Fairly Long Name 30,50m,4980,50,0
+2026-06-20,Felicia O'Brien,25m,1610,16,0
+2026-06-20,Felicia O'Brien,50m,3810,38,0
+2026-06-20,Glenne Murray,25m,2140,21,0
+2026-06-20,Glenne Murray,50m,4940,49,0
+2026-06-20,Greg Patterson,25m,1640,16,0
+2026-06-20,Greg Patterson,50m,3840,38,0
+2026-06-20,Helen Sharp,25m,1780,18,0
+2026-06-20,Helen Sharp,50m,4180,42,0
 2026-06-20,James Morton,25m,1440,14,0
 2026-06-20,James Morton,50m,3340,33,0
-2026-06-20,Jenny Walsh,25m,1780,18,0
-2026-06-20,Jenny Walsh,50m,4180,42,0
-2026-06-20,Karen Mitchell,25m,2010,20,0
-2026-06-20,Karen Mitchell,50m,4610,46,0
-2026-06-20,Lisa Chen,25m,1640,16,0
-2026-06-20,Lisa Chen,50m,3740,37,0
+2026-06-20,Jenny Walsh,25m,1810,18,0
+2026-06-20,Jenny Walsh,50m,4210,42,0
+2026-06-20,Karen Mitchell,25m,1950,20,1
+2026-06-20,Karen Mitchell,50m,4550,46,0
+2026-06-20,Lisa Chen,25m,1610,16,0
+2026-06-20,Lisa Chen,50m,3710,37,0
 2026-06-20,Mark Thompson,25m,1450,15,1
 2026-06-20,Mark Thompson,50m,3450,35,0
-2026-06-20,Michelle Lee,25m,1680,17,0
-2026-06-20,Michelle Lee,50m,4080,41,0
+2026-06-20,Michelle Lee,25m,1740,17,0
+2026-06-20,Michelle Lee,50m,4140,41,0
 2026-06-20,Paul Nguyen,25m,1510,15,0
 2026-06-20,Paul Nguyen,50m,3610,36,0
-2026-06-20,Peter Davidson,25m,1380,14,0
-2026-06-20,Peter Davidson,50m,3380,34,0
-2026-06-20,Rob Stewart,25m,1480,15,0
-2026-06-20,Rob Stewart,50m,3580,36,0
-2026-06-20,Sandra Blake,25m,2340,23,0
-2026-06-20,Sandra Blake,50m,5040,50,0
-2026-06-20,Steve Collins,25m,1650,17,1
-2026-06-20,Steve Collins,50m,3950,40,0
-2026-06-20,Sue Williams,25m,2010,20,0
-2026-06-20,Sue Williams,50m,4710,47,0
-2026-06-20,Tom Richards,25m,1340,13,0
-2026-06-20,Tom Richards,50m,3140,31,0
-2026-06-13,Andrew Barnes,25m,1610,16,0
-2026-06-13,Ben Chandler,25m,1380,14,0
-2026-06-13,Bryan Hesketh,25m,1280,13,0
-2026-06-13,David Hughes,25m,1910,19,0
-2026-06-13,Diane Foster,25m,2110,21,0
+2026-06-20,Peter Davidson,25m,1350,14,1
+2026-06-20,Peter Davidson,50m,3350,34,0
+2026-06-20,Rob Stewart,25m,1450,15,1
+2026-06-20,Rob Stewart,50m,3550,36,0
+2026-06-20,Sandra Blake,25m,2250,23,1
+2026-06-20,Sandra Blake,50m,4950,50,0
+2026-06-20,Steve Collins,25m,1680,17,0
+2026-06-20,Steve Collins,50m,3980,40,0
+2026-06-20,Sue Williams,25m,1980,20,0
+2026-06-20,Sue Williams,50m,4680,47,0
+2026-06-20,Tom Richards,25m,1310,13,0
+2026-06-20,Tom Richards,50m,3110,31,0
+2026-06-13,Andrew Barnes,25m,1580,16,0
+2026-06-13,Ben Chandler,25m,1350,14,1
+2026-06-13,Bryan Hesketh,25m,1310,13,0
+2026-06-13,David Hughes,25m,1880,19,0
+2026-06-13,Diane Foster,25m,2080,21,0
 2026-06-13,Extra Swimmer With A Fairly Long Name 24,25m,2210,22,0
-2026-06-13,Extra Swimmer With A Fairly Long Name 25,25m,2180,22,0
-2026-06-13,Extra Swimmer With A Fairly Long Name 26,25m,2180,22,0
+2026-06-13,Extra Swimmer With A Fairly Long Name 25,25m,2210,22,0
+2026-06-13,Extra Swimmer With A Fairly Long Name 26,25m,2150,22,1
 2026-06-13,Extra Swimmer With A Fairly Long Name 27,25m,2180,22,0
-2026-06-13,Extra Swimmer With A Fairly Long Name 28,25m,2180,22,0
-2026-06-13,Extra Swimmer With A Fairly Long Name 29,25m,2150,22,1
-2026-06-13,Extra Swimmer With A Fairly Long Name 30,25m,2240,22,0
-2026-06-13,Felicia O'Brien,25m,1550,16,1
-2026-06-13,Glenne Murray,25m,2110,21,0
-2026-06-13,Greg Patterson,25m,1640,16,0
-2026-06-13,Helen Sharp,25m,1750,18,1
-2026-06-13,James Morton,25m,1350,14,1
-2026-06-13,Jenny Walsh,25m,1810,18,0
-2026-06-13,Karen Mitchell,25m,1980,20,0
-2026-06-13,Lisa Chen,25m,1640,16,0
-2026-06-13,Mark Thompson,25m,1510,15,0
-2026-06-13,Michelle Lee,25m,1650,17,1
-2026-06-13,Paul Nguyen,25m,1450,15,1
-2026-06-13,Peter Davidson,25m,1440,14,0
+2026-06-13,Extra Swimmer With A Fairly Long Name 28,25m,2240,22,0
+2026-06-13,Extra Swimmer With A Fairly Long Name 29,25m,2180,22,0
+2026-06-13,Extra Swimmer With A Fairly Long Name 30,25m,2150,22,1
+2026-06-13,Felicia O'Brien,25m,1610,16,0
+2026-06-13,Glenne Murray,25m,2140,21,0
+2026-06-13,Greg Patterson,25m,1580,16,0
+2026-06-13,Helen Sharp,25m,1840,18,0
+2026-06-13,James Morton,25m,1380,14,0
+2026-06-13,Jenny Walsh,25m,1750,18,1
+2026-06-13,Karen Mitchell,25m,2040,20,0
+2026-06-13,Lisa Chen,25m,1610,16,0
+2026-06-13,Mark Thompson,25m,1450,15,1
+2026-06-13,Michelle Lee,25m,1710,17,0
+2026-06-13,Paul Nguyen,25m,1480,15,0
+2026-06-13,Peter Davidson,25m,1350,14,1
 2026-06-13,Rob Stewart,25m,1450,15,1
-2026-06-13,Sandra Blake,25m,2280,23,0
-2026-06-13,Steve Collins,25m,1740,17,0
+2026-06-13,Sandra Blake,25m,2250,23,1
+2026-06-13,Steve Collins,25m,1710,17,0
 2026-06-13,Sue Williams,25m,2010,20,0
-2026-06-13,Tom Richards,25m,1250,13,1
+2026-06-13,Tom Richards,25m,1340,13,0
 2026-06-06,Andrew Barnes,25m,1580,16,0
 2026-06-06,Andrew Barnes,50m,3880,39,0
-2026-06-06,Ben Chandler,25m,1350,14,1
-2026-06-06,Ben Chandler,50m,3250,33,0
-2026-06-06,Bryan Hesketh,25m,1280,13,0
-2026-06-06,Bryan Hesketh,50m,3180,32,0
+2026-06-06,Ben Chandler,25m,1410,14,0
+2026-06-06,Ben Chandler,50m,3310,33,0
+2026-06-06,Bryan Hesketh,25m,1340,13,0
+2026-06-06,Bryan Hesketh,50m,3240,32,0
 2026-06-06,David Hughes,25m,1850,19,1
 2026-06-06,David Hughes,50m,4350,44,0
-2026-06-06,Diane Foster,25m,2140,21,0
-2026-06-06,Diane Foster,50m,4840,48,0
-2026-06-06,Extra Swimmer With A Fairly Long Name 24,25m,2180,22,0
-2026-06-06,Extra Swimmer With A Fairly Long Name 24,50m,4980,50,0
-2026-06-06,Extra Swimmer With A Fairly Long Name 25,25m,2150,22,1
-2026-06-06,Extra Swimmer With A Fairly Long Name 25,50m,4950,50,0
-2026-06-06,Extra Swimmer With A Fairly Long Name 26,25m,2150,22,1
-2026-06-06,Extra Swimmer With A Fairly Long Name 26,50m,4950,50,0
-2026-06-06,Extra Swimmer With A Fairly Long Name 27,25m,2150,22,1
-2026-06-06,Extra Swimmer With A Fairly Long Name 27,50m,4950,50,0
-2026-06-06,Extra Swimmer With A Fairly Long Name 28,25m,2240,22,0
-2026-06-06,Extra Swimmer With A Fairly Long Name 28,50m,5040,50,0
-2026-06-06,Extra Swimmer With A Fairly Long Name 29,25m,2150,22,1
-2026-06-06,Extra Swimmer With A Fairly Long Name 29,50m,4950,50,0
-2026-06-06,Extra Swimmer With A Fairly Long Name 30,25m,2150,22,1
-2026-06-06,Extra Swimmer With A Fairly Long Name 30,50m,4950,50,0
+2026-06-06,Diane Foster,25m,2080,21,0
+2026-06-06,Diane Foster,50m,4780,48,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 24,25m,2210,22,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 24,50m,5010,50,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 25,25m,2240,22,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 25,50m,5040,50,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 26,25m,2210,22,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 26,50m,5010,50,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 27,25m,2180,22,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 27,50m,4980,50,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 28,25m,2150,22,1
+2026-06-06,Extra Swimmer With A Fairly Long Name 28,50m,4950,50,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 29,25m,2180,22,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 29,50m,4980,50,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 30,25m,2180,22,0
+2026-06-06,Extra Swimmer With A Fairly Long Name 30,50m,4980,50,0
 2026-06-06,Felicia O'Brien,25m,1550,16,1
 2026-06-06,Felicia O'Brien,50m,3750,38,0
-2026-06-06,Glenne Murray,25m,2080,21,0
-2026-06-06,Glenne Murray,50m,4880,49,0
-2026-06-06,Greg Patterson,25m,1640,16,0
-2026-06-06,Greg Patterson,50m,3840,38,0
+2026-06-06,Glenne Murray,25m,2050,21,1
+2026-06-06,Glenne Murray,50m,4850,49,0
+2026-06-06,Greg Patterson,25m,1550,16,1
+2026-06-06,Greg Patterson,50m,3750,38,0
 2026-06-06,Helen Sharp,25m,1810,18,0
 2026-06-06,Helen Sharp,50m,4210,42,0
-2026-06-06,James Morton,25m,1410,14,0
-2026-06-06,James Morton,50m,3310,33,0
-2026-06-06,Jenny Walsh,25m,1810,18,0
-2026-06-06,Jenny Walsh,50m,4210,42,0
+2026-06-06,James Morton,25m,1350,14,1
+2026-06-06,James Morton,50m,3250,33,0
+2026-06-06,Jenny Walsh,25m,1840,18,0
+2026-06-06,Jenny Walsh,50m,4240,42,0
 2026-06-06,Karen Mitchell,25m,1980,20,0
 2026-06-06,Karen Mitchell,50m,4580,46,0
 2026-06-06,Lisa Chen,25m,1610,16,0
 2026-06-06,Lisa Chen,50m,3710,37,0
-2026-06-06,Mark Thompson,25m,1510,15,0
-2026-06-06,Mark Thompson,50m,3510,35,0
+2026-06-06,Mark Thompson,25m,1480,15,0
+2026-06-06,Mark Thompson,50m,3480,35,0
 2026-06-06,Michelle Lee,25m,1740,17,0
 2026-06-06,Michelle Lee,50m,4140,41,0
-2026-06-06,Paul Nguyen,25m,1480,15,0
-2026-06-06,Paul Nguyen,50m,3580,36,0
-2026-06-06,Peter Davidson,25m,1380,14,0
-2026-06-06,Peter Davidson,50m,3380,34,0
+2026-06-06,Paul Nguyen,25m,1510,15,0
+2026-06-06,Paul Nguyen,50m,3610,36,0
+2026-06-06,Peter Davidson,25m,1410,14,0
+2026-06-06,Peter Davidson,50m,3410,34,0
 2026-06-06,Rob Stewart,25m,1510,15,0
 2026-06-06,Rob Stewart,50m,3610,36,0
-2026-06-06,Sandra Blake,25m,2340,23,0
-2026-06-06,Sandra Blake,50m,5040,50,0
-2026-06-06,Steve Collins,25m,1710,17,0
-2026-06-06,Steve Collins,50m,4010,40,0
+2026-06-06,Sandra Blake,25m,2250,23,1
+2026-06-06,Sandra Blake,50m,4950,50,0
+2026-06-06,Steve Collins,25m,1740,17,0
+2026-06-06,Steve Collins,50m,4040,40,0
 2026-06-06,Sue Williams,25m,1980,20,0
 2026-06-06,Sue Williams,50m,4680,47,0
-2026-06-06,Tom Richards,25m,1310,13,0
-2026-06-06,Tom Richards,50m,3110,31,0
-2026-05-23,Andrew Barnes,25m,1640,16,0
-2026-05-23,Andrew Barnes,50m,3940,39,0
-2026-05-23,Ben Chandler,25m,1380,14,0
-2026-05-23,Ben Chandler,50m,3280,33,0
-2026-05-23,Bryan Hesketh,25m,1310,13,0
-2026-05-23,Bryan Hesketh,50m,3210,32,0
-2026-05-23,David Hughes,25m,1940,19,0
-2026-05-23,David Hughes,50m,4440,44,0
-2026-05-23,Diane Foster,25m,2080,21,0
-2026-05-23,Diane Foster,50m,4780,48,0
+2026-06-06,Tom Richards,25m,1250,13,1
+2026-06-06,Tom Richards,50m,3050,31,0
+2026-05-30,Andrew Barnes,25m,1610,16,0
+2026-05-30,Andrew Barnes,breaststroke,4480,45,0
+2026-05-30,Ben Chandler,25m,1380,14,0
+2026-05-30,Ben Chandler,breaststroke,3850,39,0
+2026-05-30,Bryan Hesketh,25m,1250,13,1
+2026-05-30,Bryan Hesketh,breaststroke,3840,38,0
+2026-05-30,David Hughes,25m,1850,19,1
+2026-05-30,David Hughes,breaststroke,4910,49,0
+2026-05-30,Diane Foster,25m,2140,21,0
+2026-05-30,Diane Foster,breaststroke,5340,53,0
+2026-05-30,Extra Swimmer With A Fairly Long Name 24,25m,2150,22,1
+2026-05-30,Extra Swimmer With A Fairly Long Name 25,25m,2180,22,0
+2026-05-30,Extra Swimmer With A Fairly Long Name 26,25m,2180,22,0
+2026-05-30,Extra Swimmer With A Fairly Long Name 27,25m,2210,22,0
+2026-05-30,Extra Swimmer With A Fairly Long Name 28,25m,2150,22,1
+2026-05-30,Extra Swimmer With A Fairly Long Name 29,25m,2210,22,0
+2026-05-30,Extra Swimmer With A Fairly Long Name 30,25m,2150,22,1
+2026-05-30,Felicia O'Brien,25m,1580,16,0
+2026-05-30,Felicia O'Brien,breaststroke,4210,42,0
+2026-05-30,Glenne Murray,25m,2050,21,1
+2026-05-30,Glenne Murray,breaststroke,5440,54,0
+2026-05-30,Greg Patterson,25m,1610,16,0
+2026-05-30,Greg Patterson,breaststroke,4380,44,0
+2026-05-30,Helen Sharp,25m,1780,18,0
+2026-05-30,Helen Sharp,breaststroke,4580,46,0
+2026-05-30,James Morton,25m,1410,14,0
+2026-05-30,James Morton,breaststroke,3880,39,0
+2026-05-30,Jenny Walsh,25m,1840,18,0
+2026-05-30,Jenny Walsh,breaststroke,4810,48,0
+2026-05-30,Karen Mitchell,25m,1950,20,1
+2026-05-30,Karen Mitchell,breaststroke,5110,51,0
+2026-05-30,Lisa Chen,25m,1550,16,1
+2026-05-30,Lisa Chen,breaststroke,4250,43,0
+2026-05-30,Mark Thompson,25m,1480,15,0
+2026-05-30,Mark Thompson,breaststroke,4050,41,0
+2026-05-30,Michelle Lee,25m,1680,17,0
+2026-05-30,Michelle Lee,breaststroke,4650,47,0
+2026-05-30,Paul Nguyen,25m,1510,15,0
+2026-05-30,Paul Nguyen,breaststroke,4080,41,0
+2026-05-30,Peter Davidson,25m,1410,14,0
+2026-05-30,Peter Davidson,breaststroke,3950,40,0
+2026-05-30,Rob Stewart,25m,1510,15,0
+2026-05-30,Rob Stewart,breaststroke,4180,42,0
+2026-05-30,Sandra Blake,25m,2280,23,0
+2026-05-30,Sandra Blake,breaststroke,5510,55,0
+2026-05-30,Steve Collins,25m,1740,17,0
+2026-05-30,Steve Collins,breaststroke,4550,46,0
+2026-05-30,Sue Williams,25m,2040,20,0
+2026-05-30,Sue Williams,breaststroke,5240,52,0
+2026-05-30,Tom Richards,25m,1340,13,0
+2026-05-30,Tom Richards,breaststroke,3710,37,0
+2026-05-23,Andrew Barnes,25m,1610,16,0
+2026-05-23,Andrew Barnes,50m,3910,39,0
+2026-05-23,Ben Chandler,25m,1350,14,1
+2026-05-23,Ben Chandler,50m,3250,33,0
+2026-05-23,Bryan Hesketh,25m,1280,13,0
+2026-05-23,Bryan Hesketh,50m,3180,32,0
+2026-05-23,David Hughes,25m,1910,19,0
+2026-05-23,David Hughes,50m,4410,44,0
+2026-05-23,Diane Foster,25m,2050,21,1
+2026-05-23,Diane Foster,50m,4750,48,0
 2026-05-23,Extra Swimmer With A Fairly Long Name 24,25m,2210,22,0
 2026-05-23,Extra Swimmer With A Fairly Long Name 24,50m,5010,50,0
-2026-05-23,Extra Swimmer With A Fairly Long Name 25,25m,2180,22,0
-2026-05-23,Extra Swimmer With A Fairly Long Name 25,50m,4980,50,0
-2026-05-23,Extra Swimmer With A Fairly Long Name 26,25m,2210,22,0
-2026-05-23,Extra Swimmer With A Fairly Long Name 26,50m,5010,50,0
-2026-05-23,Extra Swimmer With A Fairly Long Name 27,25m,2150,22,1
-2026-05-23,Extra Swimmer With A Fairly Long Name 27,50m,4950,50,0
-2026-05-23,Extra Swimmer With A Fairly Long Name 28,25m,2210,22,0
-2026-05-23,Extra Swimmer With A Fairly Long Name 28,50m,5010,50,0
-2026-05-23,Extra Swimmer With A Fairly Long Name 29,25m,2150,22,1
-2026-05-23,Extra Swimmer With A Fairly Long Name 29,50m,4950,50,0
-2026-05-23,Extra Swimmer With A Fairly Long Name 30,25m,2240,22,0
-2026-05-23,Extra Swimmer With A Fairly Long Name 30,50m,5040,50,0
-2026-05-23,Felicia O'Brien,25m,1550,16,1
-2026-05-23,Felicia O'Brien,50m,3750,38,0
-2026-05-23,Glenne Murray,25m,2110,21,0
-2026-05-23,Glenne Murray,50m,4910,49,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 25,25m,2240,22,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 25,50m,5040,50,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 26,25m,2240,22,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 26,50m,5040,50,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 27,25m,2210,22,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 27,50m,5010,50,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 28,25m,2180,22,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 28,50m,4980,50,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 29,25m,2180,22,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 29,50m,4980,50,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 30,25m,2210,22,0
+2026-05-23,Extra Swimmer With A Fairly Long Name 30,50m,5010,50,0
+2026-05-23,Felicia O'Brien,25m,1580,16,0
+2026-05-23,Felicia O'Brien,50m,3780,38,0
+2026-05-23,Glenne Murray,25m,2080,21,0
+2026-05-23,Glenne Murray,50m,4880,49,0
 2026-05-23,Greg Patterson,25m,1550,16,1
 2026-05-23,Greg Patterson,50m,3750,38,0
-2026-05-23,Helen Sharp,25m,1840,18,0
-2026-05-23,Helen Sharp,50m,4240,42,0
-2026-05-23,James Morton,25m,1440,14,0
-2026-05-23,James Morton,50m,3340,33,0
-2026-05-23,Jenny Walsh,25m,1750,18,1
-2026-05-23,Jenny Walsh,50m,4150,42,0
-2026-05-23,Karen Mitchell,25m,1950,20,1
-2026-05-23,Karen Mitchell,50m,4550,46,0
-2026-05-23,Lisa Chen,25m,1550,16,1
-2026-05-23,Lisa Chen,50m,3650,37,0
+2026-05-23,Helen Sharp,25m,1750,18,1
+2026-05-23,Helen Sharp,50m,4150,42,0
+2026-05-23,James Morton,25m,1410,14,0
+2026-05-23,James Morton,50m,3310,33,0
+2026-05-23,Jenny Walsh,25m,1840,18,0
+2026-05-23,Jenny Walsh,50m,4240,42,0
+2026-05-23,Karen Mitchell,25m,1980,20,0
+2026-05-23,Karen Mitchell,50m,4580,46,0
+2026-05-23,Lisa Chen,25m,1610,16,0
+2026-05-23,Lisa Chen,50m,3710,37,0
 2026-05-23,Mark Thompson,25m,1450,15,1
 2026-05-23,Mark Thompson,50m,3450,35,0
-2026-05-23,Michelle Lee,25m,1710,17,0
-2026-05-23,Michelle Lee,50m,4110,41,0
-2026-05-23,Paul Nguyen,25m,1480,15,0
-2026-05-23,Paul Nguyen,50m,3580,36,0
-2026-05-23,Peter Davidson,25m,1410,14,0
-2026-05-23,Peter Davidson,50m,3410,34,0
-2026-05-23,Rob Stewart,25m,1480,15,0
-2026-05-23,Rob Stewart,50m,3580,36,0
+2026-05-23,Michelle Lee,25m,1680,17,0
+2026-05-23,Michelle Lee,50m,4080,41,0
+2026-05-23,Paul Nguyen,25m,1450,15,1
+2026-05-23,Paul Nguyen,50m,3550,36,0
+2026-05-23,Peter Davidson,25m,1350,14,1
+2026-05-23,Peter Davidson,50m,3350,34,0
+2026-05-23,Rob Stewart,25m,1450,15,1
+2026-05-23,Rob Stewart,50m,3550,36,0
 2026-05-23,Sandra Blake,25m,2280,23,0
 2026-05-23,Sandra Blake,50m,4980,50,0
-2026-05-23,Steve Collins,25m,1680,17,0
-2026-05-23,Steve Collins,50m,3980,40,0
-2026-05-23,Sue Williams,25m,1980,20,0
-2026-05-23,Sue Williams,50m,4680,47,0
+2026-05-23,Steve Collins,25m,1740,17,0
+2026-05-23,Steve Collins,50m,4040,40,0
+2026-05-23,Sue Williams,25m,2040,20,0
+2026-05-23,Sue Williams,50m,4740,47,0
 2026-05-23,Tom Richards,25m,1310,13,0
 2026-05-23,Tom Richards,50m,3110,31,0
-2026-05-16,Andrew Barnes,25m,1580,16,0
-2026-05-16,Andrew Barnes,backstroke,4440,44,0
-2026-05-16,Ben Chandler,25m,1410,14,0
-2026-05-16,Ben Chandler,backstroke,3710,37,0
-2026-05-16,Bryan Hesketh,25m,1250,13,1
+2026-05-16,Andrew Barnes,25m,1640,16,0
+2026-05-16,Andrew Barnes,backstroke,4380,44,0
+2026-05-16,Ben Chandler,25m,1350,14,1
+2026-05-16,Ben Chandler,backstroke,3740,37,0
+2026-05-16,Bryan Hesketh,25m,1280,13,0
 2026-05-16,Bryan Hesketh,backstroke,3580,36,0
-2026-05-16,David Hughes,25m,1940,19,0
+2026-05-16,David Hughes,25m,1850,19,1
 2026-05-16,David Hughes,backstroke,4980,50,0
-2026-05-16,Diane Foster,25m,2110,21,0
-2026-05-16,Diane Foster,backstroke,5380,54,0
-2026-05-16,Extra Swimmer With A Fairly Long Name 24,25m,2150,22,1
+2026-05-16,Diane Foster,25m,2140,21,0
+2026-05-16,Diane Foster,backstroke,5410,54,0
+2026-05-16,Extra Swimmer With A Fairly Long Name 24,25m,2180,22,0
 2026-05-16,Extra Swimmer With A Fairly Long Name 25,25m,2150,22,1
-2026-05-16,Extra Swimmer With A Fairly Long Name 26,25m,2180,22,0
-2026-05-16,Extra Swimmer With A Fairly Long Name 27,25m,2240,22,0
-2026-05-16,Extra Swimmer With A Fairly Long Name 28,25m,2150,22,1
+2026-05-16,Extra Swimmer With A Fairly Long Name 26,25m,2210,22,0
+2026-05-16,Extra Swimmer With A Fairly Long Name 27,25m,2150,22,1
+2026-05-16,Extra Swimmer With A Fairly Long Name 28,25m,2210,22,0
 2026-05-16,Extra Swimmer With A Fairly Long Name 29,25m,2180,22,0
-2026-05-16,Extra Swimmer With A Fairly Long Name 30,25m,2150,22,1
-2026-05-16,Felicia O'Brien,25m,1580,16,0
-2026-05-16,Felicia O'Brien,backstroke,4410,44,0
-2026-05-16,Glenne Murray,25m,2110,21,0
-2026-05-16,Glenne Murray,backstroke,5450,55,0
-2026-05-16,Greg Patterson,25m,1580,16,0
-2026-05-16,Greg Patterson,backstroke,4280,43,0
-2026-05-16,Helen Sharp,25m,1840,18,0
-2026-05-16,Helen Sharp,backstroke,4710,47,0
-2026-05-16,James Morton,25m,1350,14,1
-2026-05-16,James Morton,backstroke,3740,37,0
+2026-05-16,Extra Swimmer With A Fairly Long Name 30,25m,2180,22,0
+2026-05-16,Felicia O'Brien,25m,1640,16,0
+2026-05-16,Felicia O'Brien,backstroke,4380,44,0
+2026-05-16,Glenne Murray,25m,2080,21,0
+2026-05-16,Glenne Murray,backstroke,5510,55,0
+2026-05-16,Greg Patterson,25m,1610,16,0
+2026-05-16,Greg Patterson,backstroke,4310,43,0
+2026-05-16,Helen Sharp,25m,1750,18,1
+2026-05-16,Helen Sharp,backstroke,4740,47,0
+2026-05-16,James Morton,25m,1440,14,0
+2026-05-16,James Morton,backstroke,3650,37,0
 2026-05-16,Jenny Walsh,25m,1810,18,0
-2026-05-16,Jenny Walsh,backstroke,4710,47,0
+2026-05-16,Jenny Walsh,backstroke,4740,47,0
 2026-05-16,Karen Mitchell,25m,2010,20,0
-2026-05-16,Karen Mitchell,backstroke,5180,52,0
-2026-05-16,Lisa Chen,25m,1550,16,1
+2026-05-16,Karen Mitchell,backstroke,5210,52,0
+2026-05-16,Lisa Chen,25m,1580,16,0
 2026-05-16,Lisa Chen,backstroke,4210,42,0
-2026-05-16,Mark Thompson,25m,1480,15,0
-2026-05-16,Mark Thompson,backstroke,4040,40,0
-2026-05-16,Michelle Lee,25m,1740,17,0
-2026-05-16,Michelle Lee,backstroke,4550,46,0
-2026-05-16,Paul Nguyen,25m,1480,15,0
+2026-05-16,Mark Thompson,25m,1450,15,1
+2026-05-16,Mark Thompson,backstroke,3950,40,0
+2026-05-16,Michelle Lee,25m,1680,17,0
+2026-05-16,Michelle Lee,backstroke,4610,46,0
+2026-05-16,Paul Nguyen,25m,1450,15,1
 2026-05-16,Paul Nguyen,backstroke,3950,40,0
-2026-05-16,Peter Davidson,25m,1410,14,0
-2026-05-16,Peter Davidson,backstroke,3840,38,0
-2026-05-16,Rob Stewart,25m,1480,15,0
-2026-05-16,Rob Stewart,backstroke,4110,41,0
+2026-05-16,Peter Davidson,25m,1380,14,0
+2026-05-16,Peter Davidson,backstroke,3750,38,0
+2026-05-16,Rob Stewart,25m,1510,15,0
+2026-05-16,Rob Stewart,backstroke,4050,41,0
 2026-05-16,Sandra Blake,25m,2310,23,0
 2026-05-16,Sandra Blake,backstroke,5580,56,0
 2026-05-16,Steve Collins,25m,1740,17,0
-2026-05-16,Steve Collins,backstroke,4450,45,0
+2026-05-16,Steve Collins,backstroke,4480,45,0
 2026-05-16,Sue Williams,25m,1950,20,1
 2026-05-16,Sue Williams,backstroke,5250,53,0
 2026-05-16,Tom Richards,25m,1310,13,0
-2026-05-16,Tom Richards,backstroke,3450,35,0
-2026-05-02,Andrew Barnes,25m,1610,16,0
-2026-05-02,Andrew Barnes,50m,3910,39,0
+2026-05-16,Tom Richards,backstroke,3540,35,0
+2026-05-02,Andrew Barnes,25m,1580,16,0
+2026-05-02,Andrew Barnes,50m,3880,39,0
 2026-05-02,Ben Chandler,25m,1440,14,0
 2026-05-02,Ben Chandler,50m,3340,33,0
-2026-05-02,Bryan Hesketh,25m,1280,13,0
-2026-05-02,Bryan Hesketh,50m,3180,32,0
-2026-05-02,David Hughes,25m,1880,19,0
-2026-05-02,David Hughes,50m,4380,44,0
-2026-05-02,Diane Foster,25m,2110,21,0
-2026-05-02,Diane Foster,50m,4810,48,0
-2026-05-02,Extra Swimmer With A Fairly Long Name 24,25m,2240,22,0
-2026-05-02,Extra Swimmer With A Fairly Long Name 24,50m,5040,50,0
-2026-05-02,Extra Swimmer With A Fairly Long Name 25,25m,2150,22,1
-2026-05-02,Extra Swimmer With A Fairly Long Name 25,50m,4950,50,0
+2026-05-02,Bryan Hesketh,25m,1250,13,1
+2026-05-02,Bryan Hesketh,50m,3150,32,0
+2026-05-02,David Hughes,25m,1910,19,0
+2026-05-02,David Hughes,50m,4410,44,0
+2026-05-02,Diane Foster,25m,2140,21,0
+2026-05-02,Diane Foster,50m,4840,48,0
+2026-05-02,Extra Swimmer With A Fairly Long Name 24,25m,2210,22,0
+2026-05-02,Extra Swimmer With A Fairly Long Name 24,50m,5010,50,0
+2026-05-02,Extra Swimmer With A Fairly Long Name 25,25m,2210,22,0
+2026-05-02,Extra Swimmer With A Fairly Long Name 25,50m,5010,50,0
 2026-05-02,Extra Swimmer With A Fairly Long Name 26,25m,2180,22,0
 2026-05-02,Extra Swimmer With A Fairly Long Name 26,50m,4980,50,0
-2026-05-02,Extra Swimmer With A Fairly Long Name 27,25m,2240,22,0
-2026-05-02,Extra Swimmer With A Fairly Long Name 27,50m,5040,50,0
-2026-05-02,Extra Swimmer With A Fairly Long Name 28,25m,2210,22,0
-2026-05-02,Extra Swimmer With A Fairly Long Name 28,50m,5010,50,0
+2026-05-02,Extra Swimmer With A Fairly Long Name 27,25m,2210,22,0
+2026-05-02,Extra Swimmer With A Fairly Long Name 27,50m,5010,50,0
+2026-05-02,Extra Swimmer With A Fairly Long Name 28,25m,2150,22,1
+2026-05-02,Extra Swimmer With A Fairly Long Name 28,50m,4950,50,0
 2026-05-02,Extra Swimmer With A Fairly Long Name 29,25m,2240,22,0
 2026-05-02,Extra Swimmer With A Fairly Long Name 29,50m,5040,50,0
-2026-05-02,Extra Swimmer With A Fairly Long Name 30,25m,2150,22,1
-2026-05-02,Extra Swimmer With A Fairly Long Name 30,50m,4950,50,0
-2026-05-02,Felicia O'Brien,25m,1550,16,1
-2026-05-02,Felicia O'Brien,50m,3750,38,0
+2026-05-02,Extra Swimmer With A Fairly Long Name 30,25m,2180,22,0
+2026-05-02,Extra Swimmer With A Fairly Long Name 30,50m,4980,50,0
+2026-05-02,Felicia O'Brien,25m,1610,16,0
+2026-05-02,Felicia O'Brien,50m,3810,38,0
 2026-05-02,Glenne Murray,25m,2050,21,1
 2026-05-02,Glenne Murray,50m,4850,49,0
 2026-05-02,Greg Patterson,25m,1580,16,0
 2026-05-02,Greg Patterson,50m,3780,38,0
-2026-05-02,Helen Sharp,25m,1750,18,1
-2026-05-02,Helen Sharp,50m,4150,42,0
-2026-05-02,James Morton,25m,1350,14,1
-2026-05-02,James Morton,50m,3250,33,0
-2026-05-02,Jenny Walsh,25m,1810,18,0
-2026-05-02,Jenny Walsh,50m,4210,42,0
-2026-05-02,Karen Mitchell,25m,2010,20,0
-2026-05-02,Karen Mitchell,50m,4610,46,0
-2026-05-02,Lisa Chen,25m,1610,16,0
-2026-05-02,Lisa Chen,50m,3710,37,0
-2026-05-02,Mark Thompson,25m,1450,15,1
-2026-05-02,Mark Thompson,50m,3450,35,0
-2026-05-02,Michelle Lee,25m,1650,17,1
-2026-05-02,Michelle Lee,50m,4050,41,0
-2026-05-02,Paul Nguyen,25m,1540,15,0
-2026-05-02,Paul Nguyen,50m,3640,36,0
-2026-05-02,Peter Davidson,25m,1380,14,0
-2026-05-02,Peter Davidson,50m,3380,34,0
+2026-05-02,Helen Sharp,25m,1840,18,0
+2026-05-02,Helen Sharp,50m,4240,42,0
+2026-05-02,James Morton,25m,1380,14,0
+2026-05-02,James Morton,50m,3280,33,0
+2026-05-02,Jenny Walsh,25m,1750,18,1
+2026-05-02,Jenny Walsh,50m,4150,42,0
+2026-05-02,Karen Mitchell,25m,1950,20,1
+2026-05-02,Karen Mitchell,50m,4550,46,0
+2026-05-02,Lisa Chen,25m,1550,16,1
+2026-05-02,Lisa Chen,50m,3650,37,0
+2026-05-02,Mark Thompson,25m,1510,15,0
+2026-05-02,Mark Thompson,50m,3510,35,0
+2026-05-02,Michelle Lee,25m,1680,17,0
+2026-05-02,Michelle Lee,50m,4080,41,0
+2026-05-02,Paul Nguyen,25m,1480,15,0
+2026-05-02,Paul Nguyen,50m,3580,36,0
+2026-05-02,Peter Davidson,25m,1350,14,1
+2026-05-02,Peter Davidson,50m,3350,34,0
 2026-05-02,Rob Stewart,25m,1480,15,0
 2026-05-02,Rob Stewart,50m,3580,36,0
-2026-05-02,Sandra Blake,25m,2280,23,0
-2026-05-02,Sandra Blake,50m,4980,50,0
-2026-05-02,Steve Collins,25m,1680,17,0
-2026-05-02,Steve Collins,50m,3980,40,0
-2026-05-02,Sue Williams,25m,2010,20,0
-2026-05-02,Sue Williams,50m,4710,47,0
+2026-05-02,Sandra Blake,25m,2310,23,0
+2026-05-02,Sandra Blake,50m,5010,50,0
+2026-05-02,Steve Collins,25m,1650,17,1
+2026-05-02,Steve Collins,50m,3950,40,0
+2026-05-02,Sue Williams,25m,2040,20,0
+2026-05-02,Sue Williams,50m,4740,47,0
 2026-05-02,Tom Richards,25m,1310,13,0
 2026-05-02,Tom Richards,50m,3110,31,0
+2026-04-25,Andrew Barnes,25m,1610,16,0
+2026-04-25,Andrew Barnes,75m,6210,62,0
+2026-04-25,Ben Chandler,25m,1380,14,0
+2026-04-25,Ben Chandler,75m,5380,54,0
+2026-04-25,Bryan Hesketh,25m,1250,13,1
+2026-04-25,Bryan Hesketh,75m,5240,52,0
+2026-04-25,David Hughes,25m,1850,19,1
+2026-04-25,David Hughes,75m,6980,70,0
+2026-04-25,Diane Foster,25m,2050,21,1
+2026-04-25,Diane Foster,75m,7610,76,0
+2026-04-25,Extra Swimmer With A Fairly Long Name 24,25m,2240,22,0
+2026-04-25,Extra Swimmer With A Fairly Long Name 25,25m,2210,22,0
+2026-04-25,Extra Swimmer With A Fairly Long Name 26,25m,2210,22,0
+2026-04-25,Extra Swimmer With A Fairly Long Name 27,25m,2180,22,0
+2026-04-25,Extra Swimmer With A Fairly Long Name 28,25m,2150,22,1
+2026-04-25,Extra Swimmer With A Fairly Long Name 29,25m,2180,22,0
+2026-04-25,Extra Swimmer With A Fairly Long Name 30,25m,2180,22,0
+2026-04-25,Felicia O'Brien,25m,1610,16,0
+2026-04-25,Felicia O'Brien,75m,6210,62,0
+2026-04-25,Glenne Murray,25m,2080,21,0
+2026-04-25,Glenne Murray,75m,7810,78,0
+2026-04-25,Greg Patterson,25m,1640,16,0
+2026-04-25,Greg Patterson,75m,6050,61,0
+2026-04-25,Helen Sharp,25m,1840,18,0
+2026-04-25,Helen Sharp,75m,6580,66,0
+2026-04-25,James Morton,25m,1410,14,0
+2026-04-25,James Morton,75m,5310,53,0
+2026-04-25,Jenny Walsh,25m,1750,18,1
+2026-04-25,Jenny Walsh,75m,6740,67,0
+2026-04-25,Karen Mitchell,25m,1980,20,0
+2026-04-25,Karen Mitchell,75m,7350,74,0
+2026-04-25,Lisa Chen,25m,1580,16,0
+2026-04-25,Lisa Chen,75m,6010,60,0
+2026-04-25,Mark Thompson,25m,1540,15,0
+2026-04-25,Mark Thompson,75m,5650,57,0
+2026-04-25,Michelle Lee,25m,1710,17,0
+2026-04-25,Michelle Lee,75m,6480,65,0
+2026-04-25,Paul Nguyen,25m,1450,15,1
+2026-04-25,Paul Nguyen,75m,5680,57,0
+2026-04-25,Peter Davidson,25m,1380,14,0
+2026-04-25,Peter Davidson,75m,5480,55,0
+2026-04-25,Rob Stewart,25m,1510,15,0
+2026-04-25,Rob Stewart,75m,5750,58,0
+2026-04-25,Sandra Blake,25m,2340,23,0
+2026-04-25,Sandra Blake,75m,8040,80,0
+2026-04-25,Steve Collins,25m,1650,17,1
+2026-04-25,Steve Collins,75m,6440,64,0
+2026-04-25,Sue Williams,25m,2010,20,0
+2026-04-25,Sue Williams,75m,7450,75,0
+2026-04-25,Tom Richards,25m,1250,13,1
+2026-04-25,Tom Richards,75m,4950,50,0
 2026-04-18,Andrew Barnes,25m,1550,16,1
 2026-04-18,Andrew Barnes,50m,3850,39,0
 2026-04-18,Ben Chandler,25m,1410,14,0
 2026-04-18,Ben Chandler,50m,3310,33,0
-2026-04-18,Bryan Hesketh,25m,1250,13,1
-2026-04-18,Bryan Hesketh,50m,3150,32,0
-2026-04-18,David Hughes,25m,1910,19,0
-2026-04-18,David Hughes,50m,4410,44,0
+2026-04-18,Bryan Hesketh,25m,1310,13,0
+2026-04-18,Bryan Hesketh,50m,3210,32,0
+2026-04-18,David Hughes,25m,1850,19,1
+2026-04-18,David Hughes,50m,4350,44,0
 2026-04-18,Diane Foster,25m,2080,21,0
 2026-04-18,Diane Foster,50m,4780,48,0
-2026-04-18,Extra Swimmer With A Fairly Long Name 24,25m,2210,22,0
-2026-04-18,Extra Swimmer With A Fairly Long Name 24,50m,5010,50,0
+2026-04-18,Extra Swimmer With A Fairly Long Name 24,25m,2150,22,1
+2026-04-18,Extra Swimmer With A Fairly Long Name 24,50m,4950,50,0
 2026-04-18,Extra Swimmer With A Fairly Long Name 25,25m,2180,22,0
 2026-04-18,Extra Swimmer With A Fairly Long Name 25,50m,4980,50,0
-2026-04-18,Extra Swimmer With A Fairly Long Name 26,25m,2150,22,1
-2026-04-18,Extra Swimmer With A Fairly Long Name 26,50m,4950,50,0
+2026-04-18,Extra Swimmer With A Fairly Long Name 26,25m,2180,22,0
+2026-04-18,Extra Swimmer With A Fairly Long Name 26,50m,4980,50,0
 2026-04-18,Extra Swimmer With A Fairly Long Name 27,25m,2210,22,0
 2026-04-18,Extra Swimmer With A Fairly Long Name 27,50m,5010,50,0
 2026-04-18,Extra Swimmer With A Fairly Long Name 28,25m,2210,22,0
 2026-04-18,Extra Swimmer With A Fairly Long Name 28,50m,5010,50,0
-2026-04-18,Extra Swimmer With A Fairly Long Name 29,25m,2180,22,0
-2026-04-18,Extra Swimmer With A Fairly Long Name 29,50m,4980,50,0
-2026-04-18,Extra Swimmer With A Fairly Long Name 30,25m,2180,22,0
-2026-04-18,Extra Swimmer With A Fairly Long Name 30,50m,4980,50,0
+2026-04-18,Extra Swimmer With A Fairly Long Name 29,25m,2240,22,0
+2026-04-18,Extra Swimmer With A Fairly Long Name 29,50m,5040,50,0
+2026-04-18,Extra Swimmer With A Fairly Long Name 30,25m,2210,22,0
+2026-04-18,Extra Swimmer With A Fairly Long Name 30,50m,5010,50,0
 2026-04-18,Felicia O'Brien,25m,1550,16,1
 2026-04-18,Felicia O'Brien,50m,3750,38,0
-2026-04-18,Glenne Murray,25m,2080,21,0
-2026-04-18,Glenne Murray,50m,4880,49,0
+2026-04-18,Glenne Murray,25m,2140,21,0
+2026-04-18,Glenne Murray,50m,4940,49,0
 2026-04-18,Greg Patterson,25m,1550,16,1
 2026-04-18,Greg Patterson,50m,3750,38,0
-2026-04-18,Helen Sharp,25m,1840,18,0
-2026-04-18,Helen Sharp,50m,4240,42,0
-2026-04-18,James Morton,25m,1350,14,1
-2026-04-18,James Morton,50m,3250,33,0
-2026-04-18,Jenny Walsh,25m,1840,18,0
-2026-04-18,Jenny Walsh,50m,4240,42,0
-2026-04-18,Karen Mitchell,25m,1980,20,0
-2026-04-18,Karen Mitchell,50m,4580,46,0
+2026-04-18,Helen Sharp,25m,1810,18,0
+2026-04-18,Helen Sharp,50m,4210,42,0
+2026-04-18,James Morton,25m,1380,14,0
+2026-04-18,James Morton,50m,3280,33,0
+2026-04-18,Jenny Walsh,25m,1750,18,1
+2026-04-18,Jenny Walsh,50m,4150,42,0
+2026-04-18,Karen Mitchell,25m,2010,20,0
+2026-04-18,Karen Mitchell,50m,4610,46,0
 2026-04-18,Lisa Chen,25m,1610,16,0
 2026-04-18,Lisa Chen,50m,3710,37,0
-2026-04-18,Mark Thompson,25m,1540,15,0
-2026-04-18,Mark Thompson,50m,3540,35,0
+2026-04-18,Mark Thompson,25m,1480,15,0
+2026-04-18,Mark Thompson,50m,3480,35,0
 2026-04-18,Michelle Lee,25m,1740,17,0
 2026-04-18,Michelle Lee,50m,4140,41,0
 2026-04-18,Paul Nguyen,25m,1540,15,0
 2026-04-18,Paul Nguyen,50m,3640,36,0
-2026-04-18,Peter Davidson,25m,1380,14,0
-2026-04-18,Peter Davidson,50m,3380,34,0
-2026-04-18,Rob Stewart,25m,1510,15,0
-2026-04-18,Rob Stewart,50m,3610,36,0
+2026-04-18,Peter Davidson,25m,1350,14,1
+2026-04-18,Peter Davidson,50m,3350,34,0
+2026-04-18,Rob Stewart,25m,1540,15,0
+2026-04-18,Rob Stewart,50m,3640,36,0
 2026-04-18,Sandra Blake,25m,2250,23,1
 2026-04-18,Sandra Blake,50m,4950,50,0
 2026-04-18,Steve Collins,25m,1680,17,0
 2026-04-18,Steve Collins,50m,3980,40,0
-2026-04-18,Sue Williams,25m,1950,20,1
-2026-04-18,Sue Williams,50m,4650,47,0
-2026-04-18,Tom Richards,25m,1310,13,0
-2026-04-18,Tom Richards,50m,3110,31,0
-2026-04-04,Andrew Barnes,25m,1640,16,0
-2026-04-04,Andrew Barnes,50m,3940,39,0
-2026-04-04,Ben Chandler,25m,1380,14,0
-2026-04-04,Ben Chandler,50m,3280,33,0
-2026-04-04,Bryan Hesketh,25m,1280,13,0
-2026-04-04,Bryan Hesketh,50m,3180,32,0
-2026-04-04,David Hughes,25m,1910,19,0
-2026-04-04,David Hughes,50m,4410,44,0
-2026-04-04,Diane Foster,25m,2050,21,1
-2026-04-04,Diane Foster,50m,4750,48,0
-2026-04-04,Extra Swimmer With A Fairly Long Name 24,25m,2180,22,0
-2026-04-04,Extra Swimmer With A Fairly Long Name 24,50m,4980,50,0
-2026-04-04,Extra Swimmer With A Fairly Long Name 25,25m,2210,22,0
-2026-04-04,Extra Swimmer With A Fairly Long Name 25,50m,5010,50,0
-2026-04-04,Extra Swimmer With A Fairly Long Name 26,25m,2240,22,0
-2026-04-04,Extra Swimmer With A Fairly Long Name 26,50m,5040,50,0
-2026-04-04,Extra Swimmer With A Fairly Long Name 27,25m,2210,22,0
-2026-04-04,Extra Swimmer With A Fairly Long Name 27,50m,5010,50,0
+2026-04-18,Sue Williams,25m,1980,20,0
+2026-04-18,Sue Williams,50m,4680,47,0
+2026-04-18,Tom Richards,25m,1280,13,0
+2026-04-18,Tom Richards,50m,3080,31,0
+2026-04-04,Andrew Barnes,25m,1580,16,0
+2026-04-04,Andrew Barnes,50m,3880,39,0
+2026-04-04,Ben Chandler,25m,1410,14,0
+2026-04-04,Ben Chandler,50m,3310,33,0
+2026-04-04,Bryan Hesketh,25m,1250,13,1
+2026-04-04,Bryan Hesketh,50m,3150,32,0
+2026-04-04,David Hughes,25m,1940,19,0
+2026-04-04,David Hughes,50m,4440,44,0
+2026-04-04,Diane Foster,25m,2110,21,0
+2026-04-04,Diane Foster,50m,4810,48,0
+2026-04-04,Extra Swimmer With A Fairly Long Name 24,25m,2150,22,1
+2026-04-04,Extra Swimmer With A Fairly Long Name 24,50m,4950,50,0
+2026-04-04,Extra Swimmer With A Fairly Long Name 25,25m,2150,22,1
+2026-04-04,Extra Swimmer With A Fairly Long Name 25,50m,4950,50,0
+2026-04-04,Extra Swimmer With A Fairly Long Name 26,25m,2150,22,1
+2026-04-04,Extra Swimmer With A Fairly Long Name 26,50m,4950,50,0
+2026-04-04,Extra Swimmer With A Fairly Long Name 27,25m,2180,22,0
+2026-04-04,Extra Swimmer With A Fairly Long Name 27,50m,4980,50,0
 2026-04-04,Extra Swimmer With A Fairly Long Name 28,25m,2210,22,0
 2026-04-04,Extra Swimmer With A Fairly Long Name 28,50m,5010,50,0
-2026-04-04,Extra Swimmer With A Fairly Long Name 29,25m,2150,22,1
-2026-04-04,Extra Swimmer With A Fairly Long Name 29,50m,4950,50,0
-2026-04-04,Extra Swimmer With A Fairly Long Name 30,25m,2180,22,0
-2026-04-04,Extra Swimmer With A Fairly Long Name 30,50m,4980,50,0
-2026-04-04,Felicia O'Brien,25m,1640,16,0
-2026-04-04,Felicia O'Brien,50m,3840,38,0
-2026-04-04,Glenne Murray,25m,2080,21,0
-2026-04-04,Glenne Murray,50m,4880,49,0
-2026-04-04,Greg Patterson,25m,1610,16,0
-2026-04-04,Greg Patterson,50m,3810,38,0
-2026-04-04,Helen Sharp,25m,1750,18,1
-2026-04-04,Helen Sharp,50m,4150,42,0
-2026-04-04,James Morton,25m,1440,14,0
-2026-04-04,James Morton,50m,3340,33,0
-2026-04-04,Jenny Walsh,25m,1750,18,1
-2026-04-04,Jenny Walsh,50m,4150,42,0
+2026-04-04,Extra Swimmer With A Fairly Long Name 29,25m,2180,22,0
+2026-04-04,Extra Swimmer With A Fairly Long Name 29,50m,4980,50,0
+2026-04-04,Extra Swimmer With A Fairly Long Name 30,25m,2240,22,0
+2026-04-04,Extra Swimmer With A Fairly Long Name 30,50m,5040,50,0
+2026-04-04,Felicia O'Brien,25m,1580,16,0
+2026-04-04,Felicia O'Brien,50m,3780,38,0
+2026-04-04,Glenne Murray,25m,2110,21,0
+2026-04-04,Glenne Murray,50m,4910,49,0
+2026-04-04,Greg Patterson,25m,1580,16,0
+2026-04-04,Greg Patterson,50m,3780,38,0
+2026-04-04,Helen Sharp,25m,1840,18,0
+2026-04-04,Helen Sharp,50m,4240,42,0
+2026-04-04,James Morton,25m,1410,14,0
+2026-04-04,James Morton,50m,3310,33,0
+2026-04-04,Jenny Walsh,25m,1780,18,0
+2026-04-04,Jenny Walsh,50m,4180,42,0
 2026-04-04,Karen Mitchell,25m,1950,20,1
 2026-04-04,Karen Mitchell,50m,4550,46,0
-2026-04-04,Lisa Chen,25m,1640,16,0
-2026-04-04,Lisa Chen,50m,3740,37,0
-2026-04-04,Mark Thompson,25m,1510,15,0
-2026-04-04,Mark Thompson,50m,3510,35,0
-2026-04-04,Michelle Lee,25m,1680,17,0
-2026-04-04,Michelle Lee,50m,4080,41,0
-2026-04-04,Paul Nguyen,25m,1450,15,1
-2026-04-04,Paul Nguyen,50m,3550,36,0
-2026-04-04,Peter Davidson,25m,1410,14,0
-2026-04-04,Peter Davidson,50m,3410,34,0
-2026-04-04,Rob Stewart,25m,1450,15,1
-2026-04-04,Rob Stewart,50m,3550,36,0
-2026-04-04,Sandra Blake,25m,2280,23,0
-2026-04-04,Sandra Blake,50m,4980,50,0
-2026-04-04,Steve Collins,25m,1650,17,1
-2026-04-04,Steve Collins,50m,3950,40,0
-2026-04-04,Sue Williams,25m,1980,20,0
-2026-04-04,Sue Williams,50m,4680,47,0
-2026-04-04,Tom Richards,25m,1310,13,0
-2026-04-04,Tom Richards,50m,3110,31,0
+2026-04-04,Lisa Chen,25m,1550,16,1
+2026-04-04,Lisa Chen,50m,3650,37,0
+2026-04-04,Mark Thompson,25m,1480,15,0
+2026-04-04,Mark Thompson,50m,3480,35,0
+2026-04-04,Michelle Lee,25m,1740,17,0
+2026-04-04,Michelle Lee,50m,4140,41,0
+2026-04-04,Paul Nguyen,25m,1510,15,0
+2026-04-04,Paul Nguyen,50m,3610,36,0
+2026-04-04,Peter Davidson,25m,1350,14,1
+2026-04-04,Peter Davidson,50m,3350,34,0
+2026-04-04,Rob Stewart,25m,1510,15,0
+2026-04-04,Rob Stewart,50m,3610,36,0
+2026-04-04,Sandra Blake,25m,2340,23,0
+2026-04-04,Sandra Blake,50m,5040,50,0
+2026-04-04,Steve Collins,25m,1710,17,0
+2026-04-04,Steve Collins,50m,4010,40,0
+2026-04-04,Sue Williams,25m,1950,20,1
+2026-04-04,Sue Williams,50m,4650,47,0
+2026-04-04,Tom Richards,25m,1280,13,0
+2026-04-04,Tom Richards,50m,3080,31,0

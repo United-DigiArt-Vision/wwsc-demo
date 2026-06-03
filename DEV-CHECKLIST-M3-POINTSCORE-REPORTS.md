@@ -15,7 +15,7 @@ Implemented on `dev/v2.10.0-m3-history-graphs` (engine commit `219bdd9`, package
 - **UI:** `🎯 Pointscore` screen — Per-Event / Monthly / Season / Swimmer tabs, rule-transparency banner, CSV export, print-friendly.
 - **Excel source:** `scripts/extract-pointscore.py` + `docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md`.
 - **Specs:** `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md`, `UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `REQUIREMENT-TEST-EVIDENCE-MATRIX-M3-POINTSCORE-REPORTS.md`.
-- **Evidence:** unit 11/0; isolation PASS; 120-case 111 PASS / 9 NA / 0 FAIL / 0 BLOCKED; M2 55/0 and 98/2/0/0; history-graphs 19/1/0. Artifacts under `docs/evidence/m3-user-interaction-v3.0.1/` and `docs/screenshots/m3-user-interaction-v3.0.1/` (62 PNGs).
+- **Evidence:** unit 12/0 (incl. UT9 unknown-race_type); isolation PASS; 120-case 114 PASS / 6 NA / 0 FAIL / 0 BLOCKED (after Balerion QA hardening); M2 55/0 and 98/2/0/0; history-graphs 19/1/0. Artifacts under `docs/evidence/m3-user-interaction-v3.0.1/` and `docs/screenshots/m3-user-interaction-v3.0.1/` (64 PNGs).
 
 The per-phase boxes below are kept as the original acceptance criteria; Phase 1 and Phase 4 are checked to current reality, the per-requirement gates are realized by the v3.0.1 120-case suite + unit/isolation/regression evidence above. The `docs/evidence/m3-user-interaction-v3.0.0/` paths in Phase 3 are superseded by the `v3.0.1/` directory.
 
