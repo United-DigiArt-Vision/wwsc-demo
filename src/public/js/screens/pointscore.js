@@ -102,7 +102,7 @@ async function psRenderEvent(body) {
 
 function psExportEvent() {
   const sel = document.getElementById('ps-event-select');
-  if (sel) window.location.href = '/api/events/' + sel.value + '/pointscore.csv';
+  if (sel) window.location.href = '/api/events/' + sel.value + '/pointscore/csv';
 }
 
 // ── Monthly ─────────────────────────────────────────────────────────
@@ -135,7 +135,7 @@ async function psRenderMonth(body) {
 
 function psExportMonth() {
   const sel = document.getElementById('ps-month-select');
-  if (sel) window.location.href = '/api/pointscore/month/' + sel.value + '.csv';
+  if (sel) window.location.href = '/api/pointscore/month/' + sel.value + '/csv';
 }
 
 // ── Season ──────────────────────────────────────────────────────────
@@ -169,7 +169,7 @@ async function psRenderSeason(body) {
 
 function psExportSeason() {
   const sel = document.getElementById('ps-season-select');
-  if (sel) window.location.href = '/api/pointscore/season/' + sel.value + '.csv';
+  if (sel) window.location.href = '/api/pointscore/season/' + sel.value + '/csv';
 }
 
 // ── Swimmer card ────────────────────────────────────────────────────

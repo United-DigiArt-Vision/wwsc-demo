@@ -1,5 +1,22 @@
 # CURRENT_STATE
 
+## CURRENT (2026-06-03) — M3 Pointscore Slice (authoritative top block)
+
+**Version (from `package.json`):** 2.10.0
+**Branch:** dev/v2.10.0-m3-history-graphs
+**Substantive anchors:** `219bdd9` (pointscore engine + event/monthly/season API + UI) and the immediately-following same-branch commit (CSV-route refactor + test suite + specs + this SSOT update). HEAD is dynamic — resolve with `git rev-parse --short HEAD`.
+**Date:** 2026-06-03
+**Timestamp:** 2026-06-03 07:35:00 Europe/Berlin
+**LastEditor:** Claude Code
+**Cache-bust:** `src/public/index.html` = `?v=2.10.0` (matches package.json).
+**WorkingTreeStatus:** M3 pointscore implemented under Bryan's 2026-06-02 working assumptions (event-separated; monthly/season by simple addition; Excel pointscore sheets as working source; adjustable later — NOT confirmed Constitution). First-hand re-verified in the resume session: unit 11 PASS / 0 FAIL; isolation PASS (accepted flow byte-identical with pointscore on/off; deterministic 46/46/6); 120-case browser suite 111 PASS / 9 NA / 0 FAIL / 0 BLOCKED; M2 regression 55/0 and 98/2/0/0; R-M3-05 history-graphs 19/1/0. Determinism boundary documented (per-swimmer attribution varies via the accepted v2.8.9 randomized heat builder; all assertions are structural invariants). Constitution-specific accumulation (R-M3-03) deferred and isolated.
+**Milestone status:** M2 v2.9.0 RELEASED/PAID and protected. M3 pointscore slice IMPLEMENTED + TESTED on the M3 branch; awaiting Balerion V0015 QA before any delivery/deploy. No push, no deploy, no tag, no Bryan/client contact, no live-data mutation.
+**M3 slice docs:** `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md`, `UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `REQUIREMENT-TEST-EVIDENCE-MATRIX-M3-POINTSCORE-REPORTS.md`, `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md`. Evidence: `docs/evidence/m3-user-interaction-v3.0.1/`, `docs/screenshots/m3-user-interaction-v3.0.1/` (62 PNGs), `docs/evidence/m3-pointscore/`.
+
+---
+
+## v2.9.0 / M2 baseline anchors (historical — delivered/paid baseline, still protected)
+
 **Version (from `package.json`):** 2.9.0
 **BaseBranch:** main / origin/main
 **BaseCommit:** eb87e11 (`docs: record v2.8.12 live verification`)

@@ -559,17 +559,24 @@ async function setupRelayEvent(date) {
     // ──────────────────────────────────────────────────────
     // UI-M2-G — No M3 leakage
     // ──────────────────────────────────────────────────────
-    // Scan every screen for pointscore/season-total/graph cues.
+    // Scan every M2 screen's CONTENT AREA (#content) for M3 feature cues.
+    // We deliberately exclude the global sidebar nav: once M3 ships (v2.10+)
+    // the "Pointscore" nav link is a legitimate, accepted entry point and is
+    // NOT leakage. The real leakage we guard against is M3 functionality
+    // appearing inside an M2 screen's body, which #content captures.
     const navTargets = ['dashboard','members','event-setup','heat-builder','results','breaker-report','calendar'];
     const leakHits = [];
     for (const nav of navTargets) {
       await page.evaluate((n) => navigate(n), nav);
       await sleep(300);
-      const text = await page.evaluate(() => document.body.innerText);
+      const text = await page.evaluate(() => {
+        const el = document.getElementById('content');
+        return el ? el.innerText : document.body.innerText;
+      });
       const banned = ['Pointscore', 'Season Total', 'Accumulated', 'Constitution Score', 'Trend graph'];
       banned.forEach(b => { if (new RegExp('\\b' + b + '\\b', 'i').test(text)) leakHits.push(nav + ':' + b); });
     }
-    record('UI-M2-G01', leakHits.length === 0, 'm3 leakage scan: ' + (leakHits.join(',') || 'clean'));
+    record('UI-M2-G01', leakHits.length === 0, 'm3 leakage scan (content area): ' + (leakHits.join(',') || 'clean'));
 
     // UI-M2-G02/G03 are sub-claims of G01: the banned string list covers
     // accumulated totals and reports/graphs/constitution explicitly.

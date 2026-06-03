@@ -1210,7 +1210,7 @@ function sendCsv(res, filename, headerRow, dataRows) {
 }
 
 // GET /api/events/:eventId/pointscore.csv
-app.get('/api/events/:eventId/pointscore.csv', (req, res) => {
+app.get('/api/events/:eventId/pointscore/csv', (req, res) => {
   try {
     const ev = db.prepare('SELECT id, date FROM event WHERE id = ?').get(req.params.eventId);
     if (!ev) return res.status(404).json({ error: 'Event not found' });
@@ -1229,7 +1229,7 @@ app.get('/api/events/:eventId/pointscore.csv', (req, res) => {
 });
 
 // GET /api/pointscore/month/:ym.csv
-app.get('/api/pointscore/month/:ym.csv', (req, res) => {
+app.get('/api/pointscore/month/:ym/csv', (req, res) => {
   try {
     const ym = req.params.ym;
     if (!/^\d{4}-\d{2}$/.test(ym)) return res.status(400).json({ error: 'month must be YYYY-MM' });
@@ -1242,7 +1242,7 @@ app.get('/api/pointscore/month/:ym.csv', (req, res) => {
 });
 
 // GET /api/pointscore/season/:year.csv
-app.get('/api/pointscore/season/:year.csv', (req, res) => {
+app.get('/api/pointscore/season/:year/csv', (req, res) => {
   try {
     const year = req.params.year;
     if (!/^\d{4}$/.test(year)) return res.status(400).json({ error: 'year must be YYYY' });
@@ -1255,7 +1255,7 @@ app.get('/api/pointscore/season/:year.csv', (req, res) => {
 });
 
 // GET /api/time-history.csv — full dated time-history export (M2 data).
-app.get('/api/time-history.csv', (req, res) => {
+app.get('/api/time-history/csv', (req, res) => {
   try {
     const rows = db.prepare(`
       SELECT e.date AS event_date, m.name AS member_name, th.stroke,

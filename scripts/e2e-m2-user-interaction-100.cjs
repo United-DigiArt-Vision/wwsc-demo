@@ -1514,14 +1514,17 @@ async function seedRelayEvent(date) {
         'Archive count after restore ' + restoreAfter + ' (returned to ' + archiveBefore + ')', '', 'R-M2-05');
     }
 
-    // TC-099 — No M3 leakage scan across screens
+    // TC-099 — No M3 leakage scan across screens.
+    // Scans the #content area only. The global sidebar "Pointscore" link is a
+    // legitimate accepted M3 entry point from v2.10+ and is not leakage; the
+    // guard is against M3 functionality appearing inside an M2 screen's body.
     const m3Banned = ['Pointscore', 'Season Total', 'Accumulated', 'Constitution Score', 'Trend graph'];
     const navTargets = ['dashboard', 'members', 'event-setup', 'heat-builder', 'results', 'breaker-report', 'calendar'];
     const leakHits = [];
     for (const nav of navTargets) {
       await pageR.evaluate((n) => navigate(n), nav);
       await sleep(300);
-      const text = await pageR.evaluate(() => document.body.innerText);
+      const text = await pageR.evaluate(() => { const el = document.getElementById('content'); return el ? el.innerText : document.body.innerText; });
       m3Banned.forEach(b => { if (new RegExp('\\b' + b + '\\b', 'i').test(text)) leakHits.push(nav + ':' + b); });
     }
     await pageR.evaluate(() => navigate('members'));

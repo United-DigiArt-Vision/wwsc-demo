@@ -5,6 +5,21 @@ Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned/authorized
 Schritt: R-M3-05 Individual Swimmer History Graphs is accepted PASS. Dino/Nedim sent Bryan the M3 Pointscore / Constitution clarification questions on 2026-05-29 ~22:15 Europe/Berlin. Bryan gave a partial answer on 2026-06-02: keep event points separate and combine by simple addition for monthly and season overall winners. Dino/Nedim then sent Bryan a transparent assumptions message: proceed using event-separated points, monthly/season totals by simple addition, existing Excel pointscore sheets as the working scoring source, and adjust later if a separate Constitution rule differs. Balerion remains orchestrator/quality gate; Claude Code implements only after scoped directives.
 Blockiert: Do not block on another Bryan clarification round. Implement M3 pointscore under the assumptions sent to Bryan, while keeping formula/season/Constitution behavior isolated and adjustable. Do not claim Constitution rules are confirmed. M1/M2/v2.9.0 accepted baseline behavior is protected.
 
+## 🆕 M3 POINTSCORE SLICE — IMPLEMENTED + TESTED (2026-06-03, awaiting Balerion QA)
+
+Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 working assumptions. Engine commit `219bdd9`; CSV-route refactor + test suite + specs + SSOT committed on `dev/v2.10.0-m3-history-graphs` (resolve HEAD dynamically). The prior session completed implementation + ran the evidence but hit its context limit mid-closure; this slice was re-verified first-hand and closed out in a fresh session.
+
+- [x] Isolated scoring engine `src/pointscore.js` (adjustable POINTSCORE_RULES 5/4/3/2 + 3/2/1; reads accepted results; writes only `pointscore_entry`; `WWSC_POINTSCORE_DISABLED` switch).
+- [x] Additive finalize hook + read APIs + CSV exports (`src/server.js`); `🎯 Pointscore` UI screen (`src/public/js/screens/pointscore.js`, nav in `sidebar.js`/`app.js`).
+- [x] Excel scoring source extracted + source-labeled: `scripts/extract-pointscore.py`, `docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md`.
+- [x] Specs: `DESIGN-SPEC` / `UNIT-TEST-SPEC` / `INTEGRATION-TEST-SPEC` / `REQUIREMENT-TEST-EVIDENCE-MATRIX` (M3 pointscore); `DEV-CHECKLIST-M3` → IMPLEMENTED.
+- [x] Unit/API: `scripts/test-m3-pointscore-unit.cjs` = 11 PASS / 0 FAIL (first-hand re-verified).
+- [x] Isolation proof: `scripts/e2e-m3-pointscore-isolation.cjs` = PASS (accepted flow byte-identical with pointscore on/off).
+- [x] 120-case browser suite: `scripts/e2e-m3-pointscore-120.cjs` = 111 PASS / 9 NA / 0 FAIL / 0 BLOCKED (clean-HEAD evidence in `docs/evidence/m3-user-interaction-v3.0.1/`, 62 screenshots).
+- [x] Regression: M2 55/0, M2 100 = 98/2/0/0, R-M3-05 history-graphs 19/1/0; out-of-scope guard clean.
+- [ ] Balerion V0015 QA of the evidence package — pending.
+- [ ] `STABLE.md` update + merge to `main` + deploy — only after Balerion sign-off.
+
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] M2 activated/funded evidence: `../messages/2026-05-18-Bryan-M2-active-funded.md`.
 - [x] M2 scope-confirmation sent/evidence: `../messages/2026-05-18-outgoing-to-bryan-m2-scope-confirmation-sent-confirmed.md`.

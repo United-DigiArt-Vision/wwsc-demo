@@ -1,10 +1,23 @@
 # DEV CHECKLIST — M3 Pointscore / Reports / Constitution Accumulation
 
-**Status:** PRD-phase checklist. None of the implementation tasks below may start until the corresponding open questions in `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md` are answered (or Balerion explicitly authorizes a working assumption).
+**Status:** IMPLEMENTED under working assumptions (2026-06-03). The pointscore engine, event/monthly/season APIs + UI, CSV/print reports, and the full evidence suite are built and passing. Constitution-specific accumulation (R-M3-03) stays deferred and adjustable until Bryan confirms the Constitution. Awaiting Balerion QA before any delivery/deploy.
 
 ## 2026-06-03 Gate Update
 
 Balerion has explicitly authorized the working assumptions Dino/Nedim sent Bryan on 2026-06-02. Pointscore implementation may proceed under those assumptions, with Formula / Season / Constitution logic isolated, source-labeled, and adjustable. The mandatory user-interaction proof spec is now `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md` with 120 cases.
+
+## 2026-06-03 Implementation Status (authoritative)
+
+Implemented on `dev/v2.10.0-m3-history-graphs` (engine commit `219bdd9`, package.json `2.10.0`):
+
+- **Engine:** `src/pointscore.js` — isolated, centralized adjustable `POINTSCORE_RULES` (individual 5/4/3/2, relay 3/2/1), reads accepted results, writes only `pointscore_entry`, `WWSC_POINTSCORE_DISABLED` switch.
+- **APIs:** `GET /api/pointscore/rules`, `/api/events/:id/pointscore`, `/api/pointscore/month/:ym`, `/api/pointscore/season/:year`, `/api/members/:id/pointscore`, `/api/pointscore/months`, + `/csv` exports (event/month/season/time-history).
+- **UI:** `🎯 Pointscore` screen — Per-Event / Monthly / Season / Swimmer tabs, rule-transparency banner, CSV export, print-friendly.
+- **Excel source:** `scripts/extract-pointscore.py` + `docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md`.
+- **Specs:** `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md`, `UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `REQUIREMENT-TEST-EVIDENCE-MATRIX-M3-POINTSCORE-REPORTS.md`.
+- **Evidence:** unit 11/0; isolation PASS; 120-case 111 PASS / 9 NA / 0 FAIL / 0 BLOCKED; M2 55/0 and 98/2/0/0; history-graphs 19/1/0. Artifacts under `docs/evidence/m3-user-interaction-v3.0.1/` and `docs/screenshots/m3-user-interaction-v3.0.1/` (62 PNGs).
+
+The per-phase boxes below are kept as the original acceptance criteria; Phase 1 and Phase 4 are checked to current reality, the per-requirement gates are realized by the v3.0.1 120-case suite + unit/isolation/regression evidence above. The `docs/evidence/m3-user-interaction-v3.0.0/` paths in Phase 3 are superseded by the `v3.0.1/` directory.
 
 ## Phase 0 — Project Truth (must complete before anything else)
 
@@ -19,12 +32,12 @@ Balerion has explicitly authorized the working assumptions Dino/Nedim sent Bryan
 - [x] PRD: `REQUIREMENTS-M3-POINTSCORE-REPORTS.md`.
 - [x] Acceptance checklist (this file).
 - [x] Questions / assumptions: `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md`.
-- [ ] **Bryan answers to QA-01 / QA-05 / QA-06 received** — blocking gate for any pointscore/constitution code.
-- [ ] Bryan answers to QA-02, QA-03, QA-04, QA-07, QA-08, QA-09, QA-10, QA-11, QA-12, QA-13 received.
-- [ ] Design spec: `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md`.
-- [ ] Unit test spec: `UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md`.
-- [ ] Integration test spec: `INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md`.
-- [ ] User-interaction test spec: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS.md`.
+- [~] **Bryan answers to QA-01 / QA-05 / QA-06** — superseded by the 2026-06-03 working-assumption override. QA-01 (formula) proceeds under the Excel-derived 5/4/3/2 + 3/2/1 working source; QA-05/QA-06 (Constitution) remain open and the engine keeps that logic isolated/adjustable (R-M3-03 deferred).
+- [~] Bryan answers to QA-02, QA-03, QA-04, QA-07, QA-08, QA-09, QA-10, QA-11, QA-12, QA-13 — proceeding under documented working defaults (calendar-year season, simple addition, archived excluded, pointscore/time-history CSV, print CSS); each is source-labeled and adjustable.
+- [x] Design spec: `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md`.
+- [x] Unit test spec: `UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md`.
+- [x] Integration test spec: `INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md`.
+- [x] User-interaction test spec: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md` (120 cases).
 
 ## Phase 2 — Per-Requirement Acceptance Gates
 

@@ -11,6 +11,23 @@
 
 ---
 
+## 2026-06-03 — feat+test: M3 pointscore slice implemented + full evidence suite (working assumption)
+- **Timestamp:** 2026-06-03 07:35:00 Europe/Berlin
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **RecordedCommit:** 219bdd9 (engine/API/UI substantive anchor) + this slice's CSV-route refactor, test suite, specs, and SSOT update committed together on the same branch — resolve HEAD with `git rev-parse --short HEAD`
+- **Editor:** Claude Code
+- **Trigger:** Balerion 2026-06-03 06:45 pointscore implementation directive. Implementation completed in the prior session through commit `219bdd9` + uncommitted tests/evidence; that session hit its context limit mid-closure. Resumed in a fresh session to re-verify first-hand, write the missing specs, sync the SSOT, and produce the clean-HEAD evidence package.
+- **Changes:**
+  - Engine `src/pointscore.js` (219bdd9): isolated scoring engine; centralized adjustable `POINTSCORE_RULES` (individual 5/4/3/2, relay 3/2/1); reads accepted `heat_lane`/`relay_team` results; writes only `pointscore_entry`; `WWSC_POINTSCORE_DISABLED` isolation switch.
+  - Server/API (219bdd9 + this commit): additive `writeEventPointscore()` inside the finalize transaction AFTER the accepted `time_history` write; new read APIs (`/api/pointscore/rules`, `/api/events/:id/pointscore`, `/api/pointscore/month/:ym`, `/api/pointscore/season/:year`, `/api/members/:id/pointscore`, `/api/pointscore/months`) + CSV exports. CSV routes use `/csv` path segments (not `.csv`) to avoid Express param-extension ambiguity (`src/server.js`, `src/public/js/screens/pointscore.js`).
+  - UI `🎯 Pointscore` screen (219bdd9): Per-Event / Monthly / Season / Swimmer tabs, rule-transparency banner, CSV export, print-friendly; nav entry in `sidebar.js`/`app.js`.
+  - Excel source (219bdd9): `scripts/extract-pointscore.py` + `docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md`.
+  - Tests (this commit): `scripts/test-m3-pointscore-unit.cjs` (11 PASS / 0 FAIL), `scripts/e2e-m3-pointscore-isolation.cjs` (PASS), `scripts/e2e-m3-pointscore-120.cjs` (111 PASS / 9 NA / 0 FAIL / 0 BLOCKED). M2 runners' no-M3-leakage scan scoped to `#content` so the legitimate new Pointscore nav link is not a false positive; banned-word list unchanged.
+  - Specs (this commit): `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md`, `UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `REQUIREMENT-TEST-EVIDENCE-MATRIX-M3-POINTSCORE-REPORTS.md`; `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md` updated to IMPLEMENTED.
+  - Scope held: Constitution-specific accumulation (R-M3-03) deferred and adjustable; no confirmed-Constitution claim.
+- **No release action:** no push, no deploy, no tag, no Bryan/client contact, no live-data mutation. Awaiting Balerion V0015 QA. Clean-HEAD evidence package recorded in the following CHANGELOG entry.
+
 ## 2026-06-03 — docs: M3 pointscore Claude directive and 120-case QA spec prepared
 - **Timestamp:** 2026-06-03 06:45:00 Europe/Berlin
 - **App Version (from package.json):** 2.10.0 development branch context / no release
