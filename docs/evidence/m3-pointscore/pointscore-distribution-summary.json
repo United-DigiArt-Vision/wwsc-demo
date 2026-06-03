@@ -1,0 +1,122 @@
+{
+  "25m Point score": {
+    "distinct_point_values": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "distribution": {
+      "2": 3,
+      "3": 2,
+      "4": 3,
+      "5": 3
+    }
+  },
+  "50m Point score": {
+    "distinct_point_values": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "distribution": {
+      "2": 7,
+      "3": 7,
+      "4": 8,
+      "5": 8
+    }
+  },
+  "75m Point score": {
+    "distinct_point_values": [],
+    "distribution": {}
+  },
+  "Relay Point score": {
+    "distinct_point_values": [
+      1,
+      2,
+      3
+    ],
+    "distribution": {
+      "1": 6,
+      "2": 8,
+      "3": 9
+    }
+  },
+  "Backstroke Pointscore": {
+    "distinct_point_values": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "distribution": {
+      "2": 9,
+      "3": 1,
+      "4": 1,
+      "5": 1
+    }
+  },
+  "Breaststroke Pointscore": {
+    "distinct_point_values": [],
+    "distribution": {}
+  },
+  "Butterfly Pointscore": {
+    "distinct_point_values": [],
+    "distribution": {}
+  },
+  "25m Brace Pointscore": {
+    "distinct_point_values": [],
+    "distribution": {}
+  },
+  "50m Brace Pointscore": {
+    "distinct_point_values": [],
+    "distribution": {}
+  },
+  "Medley Relay Pointscore": {
+    "distinct_point_values": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "distribution": {
+      "2": 3,
+      "3": 2,
+      "4": 2,
+      "5": 1
+    }
+  },
+  "Total Pointscore": {
+    "distinct_point_values": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "distribution": {
+      "2": 24,
+      "3": 15,
+      "4": 18,
+      "5": 16,
+      "6": 3,
+      "7": 4,
+      "8": 2,
+      "9": 2,
+      "10": 1,
+      "11": 1,
+      "12": 2
+    }
+  },
+  "Event Times & Pointscores": {
+    "distinct_point_values": [],
+    "distribution": {}
+  }
+}

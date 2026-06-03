@@ -8,6 +8,9 @@ const path = require('path');
 const { db, createBackup } = require('./db');
 
 const { seedIfEmpty, migrateToWholeSeconds } = require('./seed');
+// M3 isolated pointscore engine (reads accepted race data, writes only
+// pointscore_entry; never touches variance/breaker/ranking/time_history).
+const pointscore = require('./pointscore');
 seedIfEmpty();
 migrateToWholeSeconds();
 
@@ -768,6 +771,12 @@ app.post('/api/events/:eventId/finalize', (req, res) => {
         });
       });
 
+      // M3 (R-M3 pointscore): additive write of event-separated pointscore.
+      // Runs INSIDE the same finalize transaction, AFTER the accepted
+      // time_history write above. Reads only the accepted place values and
+      // writes only pointscore_entry — does not alter any M1/M2 output.
+      pointscore.writeEventPointscore(db, eventId);
+
       // Set event status to finalized
       db.prepare("UPDATE event SET status = 'finalized' WHERE id = ?").run(eventId);
     });
@@ -1050,6 +1059,215 @@ app.get('/api/members/:memberId/time-history', (req, res) => {
       ORDER BY e.date DESC, th.event_id DESC, th.stroke ASC
     `).all(memberId);
     res.json(entries);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════
+//  M3 POINTSCORE / REPORTS (read-only over pointscore_entry)
+//  All endpoints below READ the additively-written pointscore data.
+//  None of them recompute race results. Aggregation is "simple addition"
+//  per Bryan's 2026-06-02 working assumption.
+// ════════════════════════════════════════════════════════
+
+// GET /api/pointscore/rules — surface the working-assumption rule config so
+// the UI can render the rule-transparency banner (UIT-M3-021/022).
+app.get('/api/pointscore/rules', (req, res) => {
+  res.json({
+    source: pointscore.POINTSCORE_RULES.source,
+    version: pointscore.POINTSCORE_RULES.version,
+    categories: pointscore.POINTSCORE_RULES.categories,
+    aggregation: 'Each event keeps its own pointscore. Monthly and season overall winners are simple addition of the relevant event totals. Working assumption sent to Bryan 2026-06-02; not a confirmed Constitution rule.',
+    seasonBoundaryDefault: 'calendar year (working default, adjustable)',
+    monthBoundaryDefault: 'calendar month'
+  });
+});
+
+// GET /api/events/:eventId/pointscore — per-event, per-swimmer points.
+// Event-separated: this is one event's own pointscore only.
+app.get('/api/events/:eventId/pointscore', (req, res) => {
+  try {
+    const ev = db.prepare('SELECT id, date, status FROM event WHERE id = ?').get(req.params.eventId);
+    if (!ev) return res.status(404).json({ error: 'Event not found' });
+    const rows = db.prepare(`
+      SELECT pe.member_id, m.name AS member_name, er.race_type,
+             pe.points, er.id AS event_race_id
+      FROM pointscore_entry pe
+      JOIN event_race er ON pe.event_race_id = er.id
+      JOIN member m ON pe.member_id = m.id
+      WHERE er.event_id = ?
+      ORDER BY m.name ASC, er.race_type ASC
+    `).all(req.params.eventId);
+    // Per-swimmer event total (sum across that event's races).
+    const totals = {};
+    for (const r of rows) {
+      if (!totals[r.member_id]) totals[r.member_id] = { member_id: r.member_id, member_name: r.member_name, total: 0 };
+      totals[r.member_id].total += r.points;
+    }
+    const totalsArr = Object.values(totals).sort((a, b) => b.total - a.total || a.member_name.localeCompare(b.member_name));
+    res.json({ event: ev, rows, totals: totalsArr });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Internal helper: aggregate per-swimmer event totals across a set of events
+// by simple addition (the documented working rule). archived events excluded
+// by default (the calendar already hides archived events from the season).
+function aggregatePointscoreForEvents(eventIds) {
+  if (eventIds.length === 0) return [];
+  const placeholders = eventIds.map(() => '?').join(',');
+  const rows = db.prepare(`
+    SELECT pe.member_id, m.name AS member_name, SUM(pe.points) AS total,
+           COUNT(DISTINCT er.event_id) AS events_counted
+    FROM pointscore_entry pe
+    JOIN event_race er ON pe.event_race_id = er.id
+    JOIN member m ON pe.member_id = m.id
+    WHERE er.event_id IN (${placeholders})
+    GROUP BY pe.member_id, m.name
+    ORDER BY total DESC, m.name ASC
+  `).all(...eventIds);
+  return rows;
+}
+
+// GET /api/pointscore/month/:ym — monthly overall winners (YYYY-MM).
+// Simple addition of all non-archived completed/finalized events in that month.
+app.get('/api/pointscore/month/:ym', (req, res) => {
+  try {
+    const ym = req.params.ym; // e.g. 2026-04
+    if (!/^\d{4}-\d{2}$/.test(ym)) return res.status(400).json({ error: 'month must be YYYY-MM' });
+    const events = db.prepare(`
+      SELECT id, date FROM event
+      WHERE substr(date,1,7) = ? AND (archived = 0 OR archived IS NULL)
+        AND status IN ('finalized','completed')
+      ORDER BY date ASC
+    `).all(ym);
+    const standings = aggregatePointscoreForEvents(events.map(e => e.id));
+    res.json({ period: ym, periodType: 'month', events, standings });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/pointscore/season/:year — season overall winners.
+// Working default season = calendar year. Adjustable via the year param.
+app.get('/api/pointscore/season/:year', (req, res) => {
+  try {
+    const year = req.params.year;
+    if (!/^\d{4}$/.test(year)) return res.status(400).json({ error: 'year must be YYYY' });
+    const events = db.prepare(`
+      SELECT id, date FROM event
+      WHERE substr(date,1,4) = ? AND (archived = 0 OR archived IS NULL)
+        AND status IN ('finalized','completed')
+      ORDER BY date ASC
+    `).all(year);
+    const standings = aggregatePointscoreForEvents(events.map(e => e.id));
+    res.json({ period: year, periodType: 'season', seasonBoundary: 'calendar year (working default)', events, standings });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/members/:memberId/pointscore — per-swimmer contribution detail
+// across all their scored events (newest first).
+app.get('/api/members/:memberId/pointscore', (req, res) => {
+  try {
+    const memberId = Number(req.params.memberId);
+    const member = db.prepare('SELECT id, name FROM member WHERE id = ?').get(memberId);
+    if (!member) return res.status(404).json({ error: 'Member not found' });
+    const contributions = db.prepare(`
+      SELECT e.id AS event_id, e.date AS event_date, er.race_type, pe.points
+      FROM pointscore_entry pe
+      JOIN event_race er ON pe.event_race_id = er.id
+      JOIN event e ON er.event_id = e.id
+      WHERE pe.member_id = ?
+      ORDER BY e.date DESC, er.race_type ASC
+    `).all(memberId);
+    const total = contributions.reduce((s, c) => s + c.points, 0);
+    res.json({ member, total, contributions });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/pointscore/months — list of YYYY-MM that have scored events (for UI pickers).
+app.get('/api/pointscore/months', (req, res) => {
+  try {
+    const months = db.prepare(`
+      SELECT DISTINCT substr(e.date,1,7) AS ym
+      FROM pointscore_entry pe
+      JOIN event_race er ON pe.event_race_id = er.id
+      JOIN event e ON er.event_id = e.id
+      WHERE (e.archived = 0 OR e.archived IS NULL)
+      ORDER BY ym DESC
+    `).all();
+    res.json(months.map(m => m.ym));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// CSV exports. Content-Type text/csv, deterministic filename via header.
+function sendCsv(res, filename, headerRow, dataRows) {
+  const esc = (v) => {
+    if (v == null) return '';
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const lines = [headerRow.map(esc).join(',')].concat(dataRows.map(r => r.map(esc).join(',')));
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '"');
+  res.send(lines.join('\n') + '\n');
+}
+
+// GET /api/events/:eventId/pointscore.csv
+app.get('/api/events/:eventId/pointscore.csv', (req, res) => {
+  try {
+    const ev = db.prepare('SELECT id, date FROM event WHERE id = ?').get(req.params.eventId);
+    if (!ev) return res.status(404).json({ error: 'Event not found' });
+    const rows = db.prepare(`
+      SELECT m.name AS member_name, er.race_type, pe.points
+      FROM pointscore_entry pe
+      JOIN event_race er ON pe.event_race_id = er.id
+      JOIN member m ON pe.member_id = m.id
+      WHERE er.event_id = ?
+      ORDER BY m.name ASC, er.race_type ASC
+    `).all(req.params.eventId);
+    sendCsv(res, 'wwsc-event-pointscore-' + ev.date + '-v' + pkg.version + '.csv',
+      ['event_date', 'swimmer', 'race_type', 'points'],
+      rows.map(r => [ev.date, r.member_name, r.race_type, r.points]));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/pointscore/month/:ym.csv
+app.get('/api/pointscore/month/:ym.csv', (req, res) => {
+  try {
+    const ym = req.params.ym;
+    if (!/^\d{4}-\d{2}$/.test(ym)) return res.status(400).json({ error: 'month must be YYYY-MM' });
+    const events = db.prepare(`SELECT id FROM event WHERE substr(date,1,7)=? AND (archived=0 OR archived IS NULL) AND status IN ('finalized','completed')`).all(ym);
+    const standings = aggregatePointscoreForEvents(events.map(e => e.id));
+    sendCsv(res, 'wwsc-monthly-pointscore-' + ym + '-v' + pkg.version + '.csv',
+      ['month', 'rank', 'swimmer', 'total_points', 'events_counted'],
+      standings.map((s, i) => [ym, i + 1, s.member_name, s.total, s.events_counted]));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/pointscore/season/:year.csv
+app.get('/api/pointscore/season/:year.csv', (req, res) => {
+  try {
+    const year = req.params.year;
+    if (!/^\d{4}$/.test(year)) return res.status(400).json({ error: 'year must be YYYY' });
+    const events = db.prepare(`SELECT id FROM event WHERE substr(date,1,4)=? AND (archived=0 OR archived IS NULL) AND status IN ('finalized','completed')`).all(year);
+    const standings = aggregatePointscoreForEvents(events.map(e => e.id));
+    sendCsv(res, 'wwsc-season-pointscore-' + year + '-v' + pkg.version + '.csv',
+      ['season', 'rank', 'swimmer', 'total_points', 'events_counted'],
+      standings.map((s, i) => [year, i + 1, s.member_name, s.total, s.events_counted]));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/time-history.csv — full dated time-history export (M2 data).
+app.get('/api/time-history.csv', (req, res) => {
+  try {
+    const rows = db.prepare(`
+      SELECT e.date AS event_date, m.name AS member_name, th.stroke,
+             th.time, th.previous_best, th.is_break
+      FROM time_history th
+      JOIN member m ON th.member_id = m.id
+      JOIN event e ON th.event_id = e.id
+      ORDER BY e.date DESC, m.name ASC, th.stroke ASC
+    `).all();
+    sendCsv(res, 'wwsc-time-history-v' + pkg.version + '.csv',
+      ['event_date', 'swimmer', 'stroke', 'time_centiseconds', 'previous_best_seconds', 'is_break'],
+      rows.map(r => [r.event_date, r.member_name, r.stroke, r.time, r.previous_best, r.is_break]));
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

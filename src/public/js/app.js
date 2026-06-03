@@ -13,6 +13,7 @@ const screens = {
   'relays': renderRelays,
   'calendar': renderCalendar,
   'breaker-report': renderBreakerReport,
+  'pointscore': renderPointscore,
 };
 
 function navigate(path) {
