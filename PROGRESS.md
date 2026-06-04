@@ -15,10 +15,10 @@ Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 w
 - [x] Specs: `DESIGN-SPEC` / `UNIT-TEST-SPEC` / `INTEGRATION-TEST-SPEC` / `REQUIREMENT-TEST-EVIDENCE-MATRIX` (M3 pointscore); `DEV-CHECKLIST-M3` → IMPLEMENTED.
 - [x] Unit/API: `scripts/test-m3-pointscore-unit.cjs` = 12 PASS / 0 FAIL (incl. UT9 unknown-race_type → individual).
 - [x] Isolation proof: `scripts/e2e-m3-pointscore-isolation.cjs` = PASS (accepted flow byte-identical with pointscore on/off).
-- [x] 120-case browser suite: `scripts/e2e-m3-pointscore-120.cjs` = 114 PASS / 6 NA / 0 FAIL / 0 BLOCKED (clean-HEAD evidence in `docs/evidence/m3-user-interaction-v3.0.1/`, 64 screenshots).
+- [x] 120-case browser suite: `scripts/e2e-m3-pointscore-120.cjs` = 114 PASS / 6 NA / 0 FAIL / 0 BLOCKED (clean-HEAD evidence in `docs/evidence/m3-user-interaction-v3.0.1/`, 64 screenshots). Balerion found the prior UIT-M3-113 mobile screenshot still had an Event Details overlay despite a PASS note; fixed the harness cleanup in commit `711c66d` and refreshed clean evidence in commit `735f0b3`.
 - [x] Regression: M2 55/0, M2 100 = 98/2/0/0, R-M3-05 history-graphs 19/1/0; out-of-scope guard clean.
-- [ ] Balerion V0015 QA of the evidence package — pending.
-- [ ] `STABLE.md` update + merge to `main` + deploy — only after Balerion sign-off.
+- [x] Balerion V0015 QA of the evidence package — PASS after independent reproduction on 2026-06-04. Reproduced: Unit/API 12/0, isolation PASS, M2 55/0, M2 100 98/2/0/0, M3 120 114/6/0/0, R-M3-05 graphs 19/1/0. Visual re-check of `UIT-M3-113-resp-mobile.png` confirms no overlay after harness fix.
+- [ ] `STABLE.md` update + merge to `main` + deploy — only after Dino explicitly authorizes release/deploy/client communication.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] M2 activated/funded evidence: `../messages/2026-05-18-Bryan-M2-active-funded.md`.
