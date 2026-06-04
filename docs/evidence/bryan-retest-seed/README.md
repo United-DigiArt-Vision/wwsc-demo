@@ -83,3 +83,43 @@ BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-ret
 ```
 
 If the live DB unexpectedly contains events, stop and inspect them first. Only use `ALLOW_NON_EMPTY=1` after a deliberate review.
+
+## Hosted Demo Verification After Restart
+
+Date: 2026-06-04 14:06 Europe/Berlin
+
+The hosted demo already contained the four deterministic completed events when the post-restart check ran. The guard was intentionally tested with:
+
+```bash
+BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-retest-events.cjs
+```
+
+Result: the script refused to seed because it found 4 existing events. This is the expected safety behavior and prevents duplicate retest data.
+
+Read-only hosted verification then passed:
+
+- PASS `live-version-2.10.1`
+- PASS `four-completed-events-visible`
+- PASS `expected-april-dates-visible`
+- PASS `no-current-event-after-complete`
+- PASS `april-pointscore-visible`
+- PASS `season-pointscore-visible`
+- PASS `time-history-visible`
+
+Hosted evidence JSON:
+
+- `live-verify-2026-06-04T12-06-20-652Z.json`
+
+Verified live dataset:
+
+- 2026-04-04: completed, 16 present, 1 race
+- 2026-04-11: completed, 16 present, 2 races
+- 2026-04-18: completed, 16 present, 1 race
+- 2026-04-25: completed, 16 present, 2 races
+
+Pointscore and history checks:
+
+- `/api/pointscore/months` includes `2026-04`
+- April 2026 pointscore: 4 events, 16 standings
+- 2026 season pointscore: 4 events, 16 standings
+- first checked event time-history rows: 16

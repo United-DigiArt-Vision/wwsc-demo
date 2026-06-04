@@ -2,8 +2,8 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned, implemented, Balerion-verified, and deployed live as v2.10.1 on 2026-06-04.
-Schritt: Bryan replied asking where completed events are saved and whether the 4 completed events he created previously still exist in a DB. Reply archived 2026-06-04; readonly live API now shows no active/archived events. Balerion prepared and locally proved a reusable 4-completed-event retest seed path.
-Blockiert: M3 retest is blocked by test-data/persistence friction, not by a pointscore formula complaint. Direct Render disk/backups are not inspectable from current tooling (no Render CLI/API key or working logged-in browser session). No live data mutation or Bryan reply without Dino authorization.
+Schritt: Bryan replied asking where completed events are saved and whether the 4 completed events he created previously still exist in a DB. Reply archived 2026-06-04; initial readonly live API showed no active/archived events. Balerion prepared and locally proved a reusable 4-completed-event retest seed path. After restart/Dino instruction, hosted demo verification shows 4 completed retest events now visible live and pointscore/history checks passing.
+Blockiert: Technical retest-data blocker resolved for hosted demo retest. Direct Render disk/backups are still not inspectable from current tooling (no Render CLI/API key or working logged-in browser session), so do not claim the original old events were recovered. No Bryan reply by Balerion; Dino sends customer communication.
 
 ## 🚦 CURRENT GATE — BRYAN COMPLETED-EVENTS DB QUESTION (2026-06-04 12:25 Europe/Berlin)
 
@@ -35,9 +35,14 @@ Blockiert: M3 retest is blocked by test-data/persistence friction, not by a poin
   - Evidence: `docs/evidence/bryan-retest-seed/seed-2026-06-04T10-37-23-577Z.json`.
   - Summary: `docs/evidence/bryan-retest-seed/README.md`.
 - [x] Safety guard verified: script refuses `https://wwsc-demo.onrender.com` unless `APPLY_LIVE=1` is set.
-- [ ] After Dino approval, seed hosted demo with `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-retest-events.cjs`, then re-check live events/months/pointscore before drafting Bryan's final reply.
+- [x] Hosted demo post-restart verification:
+  - Live already contained 4 completed deterministic retest events created at 2026-06-04T12:02Z.
+  - Guard re-run with `APPLY_LIVE=1` refused because 4 events already existed; no duplicate seed was applied.
+  - Read-only verification passed 7/7 checks: live version 2.10.1, four completed events visible, expected April dates visible, no current event, April pointscore visible, season pointscore visible, time history visible.
+  - Evidence: `docs/evidence/bryan-retest-seed/live-verify-2026-06-04T12-06-20-652Z.json`.
+- [x] Final Bryan response draft prepared: `../messages/2026-06-04-draft-to-bryan-completed-events-db-question-final-after-live-seed.md`.
 
-Classification: M3 retest blocker / live-data persistence/test-data workflow question. Do not classify as M3 acceptance, formula mismatch, or Constitution-rule feedback yet. Dino explicitly does not want an interim Bryan message; hold all customer communication until checks/corrections are finished.
+Classification: M3 retest blocker / live-data persistence/test-data workflow question. Do not classify as M3 acceptance, formula mismatch, or Constitution-rule feedback yet. Customer-facing next step is Dino sending the prepared final reply; Balerion must not send externally unless Dino explicitly instructs it.
 
 ## 📤 BRYAN DELIVERY SENT — v2.10.1 / M3 (2026-06-04 09:53 Europe/Berlin)
 
@@ -143,9 +148,9 @@ Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 w
 - [x] Balerion prepared the mandatory 120-case M3 user-interaction test spec: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md`.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Resolve Bryan's completed-events persistence/test-data blocker before asking him to retest M3 pointscore.
+Was: Dino can send Bryan the prepared final reply and ask him to retest using the hosted demo's restored/reseeded completed-event dataset.
 
-Kriterium fertig (current gate): The old four events are either recovered from the hosted DB/backups or a reusable completed-event test dataset/reset/import path is prepared and evidenced; then Dino can send Bryan a precise response.
+Kriterium fertig (current gate): Bryan receives the precise storage + retest-data reply; next Bryan reply is archived and classified before any further code or client-response step.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Pointscore/reports/graphs/constitution scoring are M3, not retroactive M2. Bryan's 2026-06-02 answer partially clarified event-separated points plus monthly/season addition; Dino/Nedim then sent Bryan the working assumptions. Implementation is released under those sent assumptions, but Constitution-specific behavior remains "adjustable later" unless Bryan provides a separate Constitution document.
