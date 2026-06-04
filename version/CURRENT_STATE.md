@@ -4,7 +4,7 @@
 
 **Version (from `package.json`):** 2.10.0
 **Branch:** dev/v2.10.0-m3-history-graphs
-**Substantive anchors:** `219bdd9` (engine + API + UI), `b3f9a82` (CSV-route refactor + test suite + specs + SSOT), `b598648` (first clean-HEAD evidence), `a94c0fc` (Balerion-QA hardening: unknown-race_type fix + UT9, M2 HEAD-staleness gate, first mobile-screenshot cleanup, TC-069 wording, 75m/breaststroke/butterfly seeding), `711c66d` (Balerion V0015 harness fix: robustly remove Calendar's standalone fixed-position Event Details modal before UIT-M3-113 mobile screenshot), and `735f0b3` (refreshed clean M3-120 evidence after the overlay fix). HEAD is dynamic — resolve with `git rev-parse --short HEAD`.
+**Substantive anchors:** `219bdd9` (engine + API + UI), `b3f9a82` (CSV-route refactor + test suite + specs + SSOT), `b598648` (first clean-HEAD evidence), `a94c0fc` (Balerion-QA hardening: unknown-race_type fix + UT9, M2 HEAD-staleness gate, first mobile-screenshot cleanup, TC-069 wording, 75m/breaststroke/butterfly seeding), `711c66d` (Balerion V0015 harness fix: robustly remove Calendar's standalone fixed-position Event Details modal before UIT-M3-113 mobile screenshot), `735f0b3` (refreshed clean M3-120 evidence after the overlay fix), and `0096ecb` (Bryan-Expectation N/A closure: members CSV endpoint, UT10 brace/pogo→relay proof, 085/100→PASS, 076/077→CLIENT INPUT MISSING). Bryan-Expectation Proof: `BRYAN-M3-EXPECTATION-PROOF-2026-06-04.md` (verdict `PROVEN EXCEPT EXPLICIT CLIENT-MISSING CONSTITUTION INPUT`). HEAD is dynamic — resolve with `git rev-parse --short HEAD`.
 **Date:** 2026-06-03
 **Timestamp:** 2026-06-03 07:35:00 Europe/Berlin
 **LastEditor:** Claude Code

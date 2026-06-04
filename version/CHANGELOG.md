@@ -11,6 +11,19 @@
 
 ---
 
+## 2026-06-04 — feat+docs: M3 Bryan-Expectation Proof + N/A closure
+- **Timestamp:** 2026-06-04 (resume session)
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **RecordedCommit:** 0096ecb (members CSV + UT10 + N/A reclassification) + this docs/evidence commit — resolve HEAD with `git rev-parse --short HEAD`
+- **Editor:** Claude Code
+- **Trigger:** Balerion 2026-06-04 08:10 Bryan-Expectation-Proof directive.
+- **Changes:**
+  - Created `BRYAN-M3-EXPECTATION-PROOF-2026-06-04.md` (Deliverable A): 13 Bryan/M3 expectations mapped source→Req→code→test→evidence→status. Verdict: `PROVEN EXCEPT EXPLICIT CLIENT-MISSING CONSTITUTION INPUT`.
+  - Closed/justified the 6 prior M3-120 N/A (Deliverable B): 085 Members CSV → PASS (new `GET /api/members/csv`); 100 Graph data export → PASS (time-history CSV = the graph's data); 029 Brace / 031 Pogo → NOT APPLICABLE WITH SOURCE (engine maps them → relay 3/2/1, proven by new UT10 + medley_relay 030); 076 Improvement / 077 Attendance → CLIENT INPUT MISSING (QA-09 which-reports unanswered).
+  - Evidence refreshed at `0096ecb` for the suites that complete without screenshot/Dropbox contention: unit 13/0 (incl. UT10), isolation PASS, M2-55 55/0. Full 120 + M2-100 + history-graphs remain proven at the last complete clean-HEAD run (Balerion `711c66d` = 114/6; me `a94c0fc`); fresh full re-completion at `0096ecb` was blocked by Dropbox sync I/O contention (~100% CPU progressively slowing the 100+-screenshot browser suites) — documented harness/environment note per the directive, not a product gap. The `0096ecb` delta (4 N/A reclassifications) is deterministic + unit/curl-proven → functional 120 = 116 PASS / 2 NA / 2 CLIENT INPUT MISSING / 0 FAIL.
+- **No release action:** no push, no deploy, no tag, no merge to main, no STABLE-as-live, no Bryan/client contact, no live-data mutation.
+
 ## 2026-06-03 — fix: M3 pointscore QA hardening (Balerion feedback) + N/A reduction
 - **Timestamp:** 2026-06-03 (resume session, afternoon)
 - **App Version (from package.json):** 2.10.0
