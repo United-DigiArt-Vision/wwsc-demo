@@ -184,8 +184,10 @@ docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-021-rule-banner.png
 docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-022-aggregation-banner.png
 docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-023-event-25m-points.png
 docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-024-event-50m-points.png
-docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-025-event-75m-na.png
+docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-025-event-75m.png
 docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-026-event-backstroke.png
+docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-027-event-breaststroke.png
+docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-028-event-butterfly.png
 docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-030-event-medley.png
 docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-032-absent-not-scored.png
 docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-034-tie.png
