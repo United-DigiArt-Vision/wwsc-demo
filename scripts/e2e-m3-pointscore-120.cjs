@@ -344,7 +344,7 @@ async function finalizeEvent(date, raceTypes) {
     await page.evaluate(() => hideModal());
     await nav(page, 'calendar'); await page.evaluate((id) => viewEventDetails(id), evApr2); await sleep(700);
     rec('UIT-M3-110', /Time History/.test(await page.evaluate(() => document.body.innerText)) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-110', 'reg-m2-event-history'), 'M2 event time history intact');
-    await page.evaluate(() => { document.querySelectorAll('div[style*="position:fixed"]').forEach(n => n.remove()); });
+    await page.evaluate(() => { document.querySelectorAll('div[style*="position:fixed"],div[style*="position: fixed"]').forEach(n => n.remove()); });
     // M2 regression (111/112). The M2 suites are run STANDALONE before this suite
     // (each prints a "# Baseline ... commit=<HEAD>" header). This gate validates
     // that the /tmp log exists AND carries the CURRENT HEAD — so a stale
@@ -367,7 +367,7 @@ async function finalizeEvent(date, raceTypes) {
     // ── Responsiveness + a11y (113-117) ──
     // Dismiss any leftover modal/overlay (e.g. the UIT-M3-110 event-detail view)
     // so the mobile shot captures the clean Pointscore report, not an overlay.
-    await page.evaluate(() => { try { hideModal(); } catch (e) {} const m = document.getElementById('modal-overlay'); if (m) { m.style.display = 'none'; m.innerHTML = ''; } document.querySelectorAll('div[style*="position:fixed"]').forEach(n => n.remove()); });
+    await page.evaluate(() => { try { hideModal(); } catch (e) {} const m = document.getElementById('modal-overlay'); if (m) { m.style.display = 'none'; m.innerHTML = ''; } document.querySelectorAll('div[style*="position:fixed"],div[style*="position: fixed"]').forEach(n => n.remove()); });
     await page.setViewport({ width: 390, height: 844 }); await sleep(200); await nav(page, 'pointscore'); await page.evaluate(() => psSetTab('month')); await sleep(400);
     rec('UIT-M3-113', 'PASS', await shot(page, 'UIT-M3-113', 'resp-mobile', { full: true }), 'mobile pointscore report (month tab), no overlay');
     await page.setViewport({ width: 768, height: 1024 }); await sleep(200); await nav(page, 'pointscore'); await sleep(300);
