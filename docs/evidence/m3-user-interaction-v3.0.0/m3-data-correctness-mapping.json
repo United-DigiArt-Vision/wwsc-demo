@@ -1,0 +1,138 @@
+{
+  "memberId": 22,
+  "apiRows": [
+    {
+      "id": 116,
+      "member_id": 22,
+      "member_name": "Andrew Barnes",
+      "event_id": 6,
+      "event_date": "2026-05-09",
+      "stroke": "25m",
+      "time": 1500,
+      "previous_best": 16,
+      "is_break": 1
+    },
+    {
+      "id": 90,
+      "member_id": 22,
+      "member_name": "Andrew Barnes",
+      "event_id": 5,
+      "event_date": "2026-05-02",
+      "stroke": "25m",
+      "time": 1510,
+      "previous_best": 16,
+      "is_break": 1
+    },
+    {
+      "id": 71,
+      "member_id": 22,
+      "member_name": "Andrew Barnes",
+      "event_id": 4,
+      "event_date": "2026-04-26",
+      "stroke": "25m",
+      "time": 1520,
+      "previous_best": 16,
+      "is_break": 1
+    },
+    {
+      "id": 48,
+      "member_id": 22,
+      "member_name": "Andrew Barnes",
+      "event_id": 3,
+      "event_date": "2026-04-18",
+      "stroke": "25m",
+      "time": 1530,
+      "previous_best": 16,
+      "is_break": 1
+    },
+    {
+      "id": 39,
+      "member_id": 22,
+      "member_name": "Andrew Barnes",
+      "event_id": 2,
+      "event_date": "2026-04-11",
+      "stroke": "25m",
+      "time": 1540,
+      "previous_best": 16,
+      "is_break": 1
+    },
+    {
+      "id": 13,
+      "member_id": 22,
+      "member_name": "Andrew Barnes",
+      "event_id": 1,
+      "event_date": "2026-04-04",
+      "stroke": "25m",
+      "time": 1550,
+      "previous_best": 16,
+      "is_break": 1
+    }
+  ],
+  "rendered": [
+    {
+      "stroke": "25m",
+      "date": "2026-04-04",
+      "timeCs": 1550,
+      "timeText": "15.50",
+      "pbCs": 1600,
+      "isBreak": true
+    },
+    {
+      "stroke": "25m",
+      "date": "2026-04-11",
+      "timeCs": 1540,
+      "timeText": "15.40",
+      "pbCs": 1600,
+      "isBreak": true
+    },
+    {
+      "stroke": "25m",
+      "date": "2026-04-18",
+      "timeCs": 1530,
+      "timeText": "15.30",
+      "pbCs": 1600,
+      "isBreak": true
+    },
+    {
+      "stroke": "25m",
+      "date": "2026-04-26",
+      "timeCs": 1520,
+      "timeText": "15.20",
+      "pbCs": 1600,
+      "isBreak": true
+    },
+    {
+      "stroke": "25m",
+      "date": "2026-05-02",
+      "timeCs": 1510,
+      "timeText": "15.10",
+      "pbCs": 1600,
+      "isBreak": true
+    },
+    {
+      "stroke": "25m",
+      "date": "2026-05-09",
+      "timeCs": 1500,
+      "timeText": "15.00",
+      "pbCs": 1600,
+      "isBreak": true
+    }
+  ],
+  "apiKeys": [
+    "25m|2026-04-04|1550|1600|1",
+    "25m|2026-04-11|1540|1600|1",
+    "25m|2026-04-18|1530|1600|1",
+    "25m|2026-04-26|1520|1600|1",
+    "25m|2026-05-02|1510|1600|1",
+    "25m|2026-05-09|1500|1600|1"
+  ],
+  "renKeys": [
+    "25m|2026-04-04|1550|1600|1",
+    "25m|2026-04-11|1540|1600|1",
+    "25m|2026-04-18|1530|1600|1",
+    "25m|2026-04-26|1520|1600|1",
+    "25m|2026-05-02|1510|1600|1",
+    "25m|2026-05-09|1500|1600|1"
+  ],
+  "exactMatch": true
+}

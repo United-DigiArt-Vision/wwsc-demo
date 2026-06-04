@@ -1,0 +1,125 @@
+# Baseline branch=dev/v2.10.0-m3-history-graphs commit=d3d3ada pkg=2.10.0
+# /api/version={"version":"2.10.0","build":"2026-06-04T07:18:06.663Z"}
+# members=30
+# events=1,2,3,4,5,6,7,8
+UIT-M3-001  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-001-app-loads.png  |  app loads v2.10.0
+UIT-M3-002  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-002-dashboard.png  |  dashboard readable
+UIT-M3-003  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-003-pointscore-entry.png  |  Pointscore screen entry visible
+UIT-M3-004  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-004-nav-flow.png  |  nav flow, realErrors=0
+UIT-M3-005  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-005-back-forward.png  |  real browser back/forward, app present
+UIT-M3-006  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-006-refresh.png  |  refresh recovers
+UIT-M3-007  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-007-mobile-nav.png  |  mobile 390x844
+UIT-M3-008  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-008-tablet-nav.png  |  tablet 768x1024
+UIT-M3-009  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-009-desktop-nav.png  |  desktop 1440x900
+UIT-M3-010  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-010-keyboard.png  |  keyboard focus reaches controls=true
+UIT-M3-011  |  PASS  |  -  |  Excel sheets parsed + listed: docs/evidence/m3-pointscore/pointscore-extract-raw.json
+UIT-M3-012  |  PASS  |  -  |  extracted "25m Point score" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md
+UIT-M3-013  |  PASS  |  -  |  extracted "50m Point score" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md
+UIT-M3-014  |  PASS  |  -  |  extracted "75m Point score" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md
+UIT-M3-015  |  PASS  |  -  |  extracted "Backstroke Pointscore" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md
+UIT-M3-016  |  PASS  |  -  |  extracted "Breaststroke Pointscore" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md
+UIT-M3-017  |  PASS  |  -  |  extracted "Butterfly Pointscore" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md
+UIT-M3-018  |  PASS  |  -  |  extracted "25m Brace Pointscore" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md
+UIT-M3-019  |  PASS  |  -  |  extracted "50m Brace Pointscore" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md
+UIT-M3-020  |  PASS  |  -  |  extracted "Medley Relay Pointscore" → docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md
+UIT-M3-021  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-021-rule-banner.png  |  banner: Excel working source, not confirmed Constitution
+UIT-M3-022  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-022-aggregation-banner.png  |  banner: event-separated + monthly/season addition
+UIT-M3-023  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-023-event-25m-points.png  |  25m event pointscore rows=58
+UIT-M3-024  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-024-event-50m-points.png  |  50m points present (Excel-derived 5/4/3/2)
+UIT-M3-025  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-025-event-75m.png  |  75m individual points present (5/4/3/2), rows=22
+UIT-M3-026  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-026-event-backstroke.png  |  backstroke points present
+UIT-M3-027  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-027-event-breaststroke.png  |  breaststroke individual points present (5/4/3/2), rows=22
+UIT-M3-028  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-028-event-butterfly.png  |  butterfly individual points present (5/4/3/2), rows=22
+UIT-M3-029  |  NOT APPLICABLE  |  -  |  brace special-team UI not seeded in browser; engine maps 25m_brace/50m_brace → relay 3/2/1 (UT10) and the relay rule is exercised end-to-end by medley_relay (UIT-M3-030 PASS). See 
+UIT-M3-030  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-030-event-medley.png  |  medley relay team points present (3/2/1)
+UIT-M3-031  |  NOT APPLICABLE  |  -  |  pogo special-team UI not seeded in browser; engine maps pogo → relay 3/2/1 (UT10), relay rule proven via medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF.
+UIT-M3-032  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-032-absent-not-scored.png  |  absent/non-finishers carry no pointscore row
+UIT-M3-033  |  PASS  |  -  |  special-entry (medley stroke) swimmers scored via team place
+UIT-M3-034  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-034-tie.png  |  tie handling: equal place→equal points (same rule), documented
+UIT-M3-035  |  PASS  |  -  |  PB break: no bonus in pointscore (Total excludes Improvement/Attendance per artifact)
+UIT-M3-036  |  PASS  |  -  |  no false bonus: max individual points = 5
+UIT-M3-037  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-037-event-detail.png  |  per-swimmer/per-race auditable
+UIT-M3-038  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-038-event-separate.png  |  event keeps its own pointscore
+UIT-M3-039  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-039-two-events-separate.png  |  two same-month events stay separate
+UIT-M3-040  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-040-persist-refresh.png  |  pointscore persists after refresh
+UIT-M3-041  |  PASS  |  -  |  re-finalize unchanged: rows 58→58
+UIT-M3-042  |  PASS  |  -  |  change time + re-finalize replaces (proven in unit UT4)
+UIT-M3-043  |  PASS  |  -  |  change placement recalculates once (idempotent DELETE+INSERT)
+UIT-M3-044  |  PASS  |  -  |  server restart persistence proven by M2 C04 + DB-backed pointscore_entry
+UIT-M3-045  |  PASS  |  -  |  isolation proof: accepted-flow identical disabled/enabled; verdict=PASS
+UIT-M3-046  |  PASS  |  -  |  time_history identical with pointscore on/off (isolation proof)
+UIT-M3-047  |  PASS  |  -  |  breaker output identical (isolation proof)
+UIT-M3-048  |  PASS  |  -  |  ranking/place identical (isolation proof)
+UIT-M3-049  |  PASS  |  -  |  relay variance identical (isolation proof)
+UIT-M3-050  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-050-monthly-view.png  |  monthly winners by simple addition
+UIT-M3-051  |  PASS  |  -  |  May has 4 events; totals = sum
+UIT-M3-052  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-052-monthly-empty.png  |  empty month clean, no fake totals
+UIT-M3-053  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-053-monthly-switch.png  |  switch month updates, no stale rows
+UIT-M3-054  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-054-monthly-sort.png  |  standings sorted points desc
+UIT-M3-055  |  PASS  |  -  |  drill into monthly swimmer → contributing events (member pointscore API)
+UIT-M3-056  |  PASS  |  -  |  correct event in month → monthly total updates once (idempotent)
+UIT-M3-057  |  PASS  |  -  |  archived event excluded from month (WHERE archived=0)
+UIT-M3-058  |  PASS  |  -  |  restore event → returns to month total
+UIT-M3-059  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-059-monthly-print.png  |  print-friendly (print-hide on controls)
+UIT-M3-060  |  PASS  |  -  |  monthly CSV header+rows: docs/evidence/m3-user-interaction-v3.0.1/monthly-2026-05.csv
+UIT-M3-061  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-061-season-view.png  |  season winners by simple addition
+UIT-M3-062  |  PASS  |  -  |  season spans 11 events across 3 months (Apr/May/Jun); total=sum
+UIT-M3-063  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-063-season-filter.png  |  season boundary = calendar year (working default)
+UIT-M3-064  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-064-season-empty.png  |  empty season clean state
+UIT-M3-065  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-065-season-sort.png  |  season sorted points desc then name
+UIT-M3-066  |  PASS  |  -  |  tie season totals: equal points, name fallback (documented)
+UIT-M3-067  |  PASS  |  -  |  drill into season swimmer → per-event contributions
+UIT-M3-068  |  PASS  |  -  |  re-finalize → season total updates once
+UIT-M3-069  |  PASS  |  -  |  archive/restore → season follows archived=0 rule
+UIT-M3-070  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-070-season-print.png  |  season print readable
+UIT-M3-071  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-071-reports-landing.png  |  reports discoverable
+UIT-M3-072  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-072-report-event.png  |  event pointscore report
+UIT-M3-073  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-073-report-monthly.png  |  monthly winners report
+UIT-M3-074  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-074-report-season.png  |  season winners report
+UIT-M3-075  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-075-report-swimmer.png  |  swimmer card: total + event breakdown
+UIT-M3-076  |  CLIENT INPUT MISSING  |  -  |  improvement report: Bryan asked for "internal reports" (2026-05-23) but QA-09 (which specific reports + improvement criteria/period) is unanswered. Core pointscore reports (event/m
+UIT-M3-077  |  CLIENT INPUT MISSING  |  -  |  attendance report: attendance data exists in the app, but QA-09 (which reports + any attendance scoring) is unanswered by Bryan. Not a casual N/A — awaits client input. See BRYAN-M
+UIT-M3-078  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-078-report-empty.png  |  empty report filter clean state
+UIT-M3-079  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-079-report-filter.png  |  month/season filter narrows rows
+UIT-M3-080  |  PASS  |  -  |  clearing filter returns full data
+UIT-M3-081  |  PASS  |  -  |  event CSV header+rows
+UIT-M3-082  |  PASS  |  -  |  monthly CSV totals match UI
+UIT-M3-083  |  PASS  |  -  |  season CSV totals match UI
+UIT-M3-084  |  PASS  |  -  |  time-history CSV matches M2 data
+UIT-M3-085  |  PASS  |  -  |  members roster CSV header+rows (R-M3-07 member roster): docs/evidence/m3-user-interaction-v3.0.1/members.csv
+UIT-M3-086  |  PASS  |  -  |  export respects active month/season filter (per-period endpoint)
+UIT-M3-087  |  PASS  |  -  |  empty export = header only, clean
+UIT-M3-088  |  PASS  |  -  |  filename includes report/date/version
+UIT-M3-089  |  PASS  |  -  |  CSV parses, no malformed rows (30 lines)
+UIT-M3-090  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-090-mobile-export.png  |  mobile export controls reachable
+UIT-M3-091  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-091-graph-works.png  |  R-M3-05 graph still works
+UIT-M3-092  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-092-graph-switch.png  |  switch swimmer, no stale data
+UIT-M3-093  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-093-graph-stroke.png  |  graph stroke filter
+UIT-M3-094  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-094-graph-date.png  |  graph date filter
+UIT-M3-095  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-095-graph-empty.png  |  no/sparse-history graph clean state
+UIT-M3-096  |  PASS  |  -  |  sparse-history one-point state (proven in R-M3-05 UIT-M3-006)
+UIT-M3-097  |  PASS  |  -  |  graph values == API rows (proven in R-M3-05 UIT-M3-019 exact mapping)
+UIT-M3-098  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-098-graph-mobile.png  |  mobile graph no clipping
+UIT-M3-099  |  PASS  |  -  |  print graph/report readable (print CSS)
+UIT-M3-100  |  PASS  |  -  |  graph/history data export = time-history CSV: the individual graph plots time_history rows; /api/time-history/csv exports the same dated rows (header verified)
+UIT-M3-101  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-101-reg-members.png  |  members flow
+UIT-M3-102  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-102-reg-event-setup.png  |  event setup
+UIT-M3-103  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-103-reg-heat.png  |  heat builder
+UIT-M3-104  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-104-reg-results.png  |  results
+UIT-M3-105  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-105-reg-breaker.png  |  breaker report
+UIT-M3-106  |  PASS  |  -  |  special races smoke (medley relay finalized in fixture; ranking unchanged)
+UIT-M3-107  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-107-reg-relay.png  |  relay team/variance readout intact
+UIT-M3-108  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-108-reg-archive.png  |  archive/restore works
+UIT-M3-109  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-109-reg-m2-history.png  |  M2 member history modal intact
+UIT-M3-110  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-110-reg-m2-event-history.png  |  M2 event time history intact
+UIT-M3-111  |  PASS  |  -  |  M2 55-case runner — fresh log @d3d3ada (/tmp/m3p-m2-55.log)
+UIT-M3-112  |  PASS  |  -  |  M2 100-case runner — fresh log @d3d3ada (/tmp/m3p-m2-100.log)
+UIT-M3-113  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-113-resp-mobile.png  |  mobile pointscore report (month tab), no overlay
+UIT-M3-114  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-114-resp-tablet.png  |  tablet pointscore report
+UIT-M3-115  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-115-resp-desktop.png  |  desktop pointscore report polished
+UIT-M3-116  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-116-a11y-keyboard.png  |  keyboard focus reaches filters/export
+UIT-M3-117  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-117-long-names.png  |  long names wrap cleanly (extra swimmer long names in fixture)
+UIT-M3-118  |  PASS  |  -  |  no SaaS/commercial scope in diff (docs/evidence/.../out-of-scope-diff.txt)
+UIT-M3-119  |  PASS  |  -  |  screenshot inventory: 64 PNGs
+UIT-M3-120  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-120-final.png  |  119 prior classified, console errors=0
+# Tally {"PASS":116,"FAIL":0,"BLOCKED":0,"NOT APPLICABLE":2,"CLIENT INPUT MISSING":2}

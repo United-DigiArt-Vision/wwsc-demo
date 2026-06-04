@@ -1,0 +1,67 @@
+[
+  {
+    "id": "UT1-rule-individual",
+    "status": "PASS",
+    "note": "individual 5/4/3/2"
+  },
+  {
+    "id": "UT1-rule-relay",
+    "status": "PASS",
+    "note": "relay 3/2/1"
+  },
+  {
+    "id": "UT1-rule-source-labeled",
+    "status": "PASS",
+    "note": "source + aggregation labeled"
+  },
+  {
+    "id": "UT2-points-allocated",
+    "status": "PASS",
+    "note": "place 1->5, 3->3, finisher->2, no zero rows; rows=23"
+  },
+  {
+    "id": "UT3-idempotent",
+    "status": "PASS",
+    "note": "rows before=23 after=23"
+  },
+  {
+    "id": "UT4-no-dup-after-change",
+    "status": "PASS",
+    "note": "rows after change+refinalize=23 (was 23)"
+  },
+  {
+    "id": "UT5-monthly-addition",
+    "status": "PASS",
+    "note": "monthly total == event1+event2 for all swimmers; events=2"
+  },
+  {
+    "id": "UT6-season-addition",
+    "status": "PASS",
+    "note": "season total == sum of 3 events; events=3"
+  },
+  {
+    "id": "UT7-member-contribution",
+    "status": "PASS",
+    "note": "member total == sum of contributions=13"
+  },
+  {
+    "id": "UT8-months-list",
+    "status": "PASS",
+    "note": "months=2026-05,2026-04"
+  },
+  {
+    "id": "UT8-unknown-member-404",
+    "status": "PASS",
+    "note": "unknown member → 404"
+  },
+  {
+    "id": "UT9-unknown-racetype-individual",
+    "status": "PASS",
+    "note": "unknown type → individual place1=5 (rows=1, basis=individual-place)"
+  },
+  {
+    "id": "UT10-racetype-categorization",
+    "status": "PASS",
+    "note": "relay incl brace/pogo → relay 3/2/1; strokes → individual 5/4/3/2"
+  }
+]

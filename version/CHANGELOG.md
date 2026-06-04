@@ -11,6 +11,150 @@
 
 ---
 
+## 2026-06-04 — release: v2.10.1 M3 delivery prep
+- **Timestamp:** 2026-06-04 09:33:40 Europe/Berlin
+- **App Version (from package.json):** 2.10.1
+- **Branch:** dev/v2.10.0-m3-history-graphs -> main
+- **RecordedCommit:** resolve with `git rev-parse --short HEAD`
+- **Editor:** Balerion
+- **Trigger:** Dino authorized M3 deploy and Bryan delivery update preparation on 2026-06-04 09:28 Europe/Berlin.
+- **Changes:**
+  - Bumped release version from 2.10.0 to 2.10.1 and synchronized `package.json`, `package-lock.json`, and `src/public/index.html` cache-busting.
+  - Promoted the M3 pointscore/report/graph build from verified branch state to release-prep state.
+  - Recorded Balerion's independent V0015 proof verification: Unit/API 13 PASS / 0 FAIL; pointscore isolation PASS; M2 55 PASS / 0 FAIL; M2 100 = 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED; M3 120 = 116 PASS / 2 NOT APPLICABLE / 2 CLIENT INPUT MISSING / 0 FAIL / 0 BLOCKED; R-M3-05 graphs = 19 PASS / 1 NOT APPLICABLE / 0 FAIL.
+  - Kept the client-facing truth boundary explicit: M3 is proven under Bryan's sent working assumptions; unprovided Constitution-specific rules, Improvement report rules, and Attendance report rules remain client-input-missing rather than claimed complete.
+- **Release action:** merge to `main`, tag `v2.10.1`, push to `origin/main`, verify Render live `/api/version`, and record live-smoke evidence.
+
+## 2026-06-04 — feat+docs: M3 Bryan-Expectation Proof + N/A closure
+- **Timestamp:** 2026-06-04 (resume session)
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **RecordedCommit:** 0096ecb (members CSV + UT10 + N/A reclassification) + this docs/evidence commit — resolve HEAD with `git rev-parse --short HEAD`
+- **Editor:** Claude Code
+- **Trigger:** Balerion 2026-06-04 08:10 Bryan-Expectation-Proof directive.
+- **Changes:**
+  - Created `BRYAN-M3-EXPECTATION-PROOF-2026-06-04.md` (Deliverable A): 13 Bryan/M3 expectations mapped source→Req→code→test→evidence→status. Verdict: `PROVEN EXCEPT EXPLICIT CLIENT-MISSING CONSTITUTION INPUT`.
+  - Closed/justified the 6 prior M3-120 N/A (Deliverable B): 085 Members CSV → PASS (new `GET /api/members/csv`); 100 Graph data export → PASS (time-history CSV = the graph's data); 029 Brace / 031 Pogo → NOT APPLICABLE WITH SOURCE (engine maps them → relay 3/2/1, proven by new UT10 + medley_relay 030); 076 Improvement / 077 Attendance → CLIENT INPUT MISSING (QA-09 which-reports unanswered).
+  - Evidence refreshed at `0096ecb` for the suites that complete without screenshot/Dropbox contention: unit 13/0 (incl. UT10), isolation PASS, M2-55 55/0. Full 120 + M2-100 + history-graphs remain proven at the last complete clean-HEAD run (Balerion `711c66d` = 114/6; me `a94c0fc`); fresh full re-completion at `0096ecb` was blocked by Dropbox sync I/O contention (~100% CPU progressively slowing the 100+-screenshot browser suites) — documented harness/environment note per the directive, not a product gap. The `0096ecb` delta (4 N/A reclassifications) is deterministic + unit/curl-proven → functional 120 = 116 PASS / 2 NA / 2 CLIENT INPUT MISSING / 0 FAIL.
+- **No release action:** no push, no deploy, no tag, no merge to main, no STABLE-as-live, no Bryan/client contact, no live-data mutation.
+
+## 2026-06-03 — fix: M3 pointscore QA hardening (Balerion feedback) + N/A reduction
+- **Timestamp:** 2026-06-03 (resume session, afternoon)
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **RecordedCommit:** a94c0fc (source fixes) + the following clean-HEAD evidence commit — resolve HEAD with `git rev-parse --short HEAD`
+- **Editor:** Claude Code
+- **Trigger:** Balerion 2026-06-03 08:45 QA feedback — `QA VERIFIED CORE / NEEDS SMALL QA HARDENING BEFORE FINAL GATE`. Balerion independently reproduced all suites; required 4 fixes + offered an optional N/A reduction.
+- **Changes:**
+  - Fix #1 (bug Balerion found): unknown `race_type` is now scored as individual, not relay — `computeEventPointscoreRows` branches on the resolved `categoryKey`, not `raceTypes.includes()`. New UT9 (in-memory DB) proves it; unit 11→12.
+  - Fix #2: 120-suite `UIT-M3-111/112` validate the M2 log carries the current HEAD (`commit=`) and BLOCK on stale/missing logs; added a baseline header to the M2-55 runner (M2-100 already had one). In-process self-run was rejected — spawning the browser suites from inside the browser-driving 120 script deadlocks; standalone-then-validate is the contract.
+  - Fix #3: `UIT-M3-113` dismisses any leftover modal/overlay before the mobile screenshot (was capturing an event-detail overlay).
+  - Fix #4: `TC-069` description version-parametrized (was hardcoded "v2.9.0"); removed an adjacent dead v2.9.0 reference.
+  - N/A reduction (Balerion optional): seeded 75m/breaststroke/butterfly events (one optional stroke per event = proven backstroke pattern, inside existing Apr/May/Jun months); `UIT-M3-025/027/028` N/A→PASS; season event-count assertion 8→11. 120-suite now **114 PASS / 6 NA / 0 FAIL / 0 BLOCKED**. Brace/pogo stay N/A (relay 3/2/1 proven via medley_relay + documented).
+  - Infra note: `node_modules/better-sqlite3` is a native binary in the Dropbox-synced tree; Balerion's arm64 QA rebuild synced onto this Intel (x86_64) machine and broke local runs. Rebuilt for x86_64 to verify (gitignored — commits/evidence unaffected). Recommend excluding `node_modules` from Dropbox sync to end the cross-arch churn.
+- **No release action:** no push, no deploy, no tag, no client contact, no live-data mutation. Awaiting Balerion re-QA.
+
+## 2026-06-03 — docs: M3 pointscore clean-HEAD evidence package
+- **Timestamp:** 2026-06-03 08:20:00 Europe/Berlin
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **RecordedCommit:** evidence generated at clean HEAD `b3f9a82`; this docs-only commit stores it (resolve HEAD with `git rev-parse --short HEAD`)
+- **Editor:** Claude Code
+- **Trigger:** Resume-session clean-HEAD evidence rerun for Balerion V0015 QA of the M3 pointscore slice.
+- **Changes:**
+  - Re-ran the full suite first-hand from clean HEAD `b3f9a82` (working tree clean before/after): unit 11 PASS / 0 FAIL; isolation PASS (accepted flow byte-identical, deterministic 46/46/6); 120-case browser suite 111 PASS / 9 NA / 0 FAIL / 0 BLOCKED; M2 55 PASS / 0 FAIL; M2 100 = 98 PASS / 2 NA / 0 FAIL / 0 BLOCKED; R-M3-05 history-graphs 19 PASS / 1 NA / 0 FAIL.
+  - Integrity fix vs prior session: the 120-suite cases UIT-M3-111/112 only `grep` `/tmp/m3p-m2-*.log`; the M2 suites were re-run on `b3f9a82` so those logs are this run's output (copied into the evidence dir as `m2-regression-55.log` / `m2-regression-100.log`), and the 120-suite was re-run after, so its M2 citations are backed by this HEAD.
+  - Stored evidence under `docs/evidence/m3-user-interaction-v3.0.1/` (120 raw log + records, unit/isolation JSON, 4 CSVs, M2 + history-graphs regression logs, screenshot manifest, CSV sha256) + 62 screenshots under `docs/screenshots/m3-user-interaction-v3.0.1/`.
+  - Accepted v2.9.0 / R-M3-05 baseline screenshots and logs that the regression runs touched were restored to committed state — no accepted evidence mutated.
+- **No release action:** no push, no deploy, no tag, no client contact, no live-data mutation. Awaiting Balerion V0015 QA.
+
+## 2026-06-03 — feat+test: M3 pointscore slice implemented + full evidence suite (working assumption)
+- **Timestamp:** 2026-06-03 07:35:00 Europe/Berlin
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **RecordedCommit:** 219bdd9 (engine/API/UI substantive anchor) + this slice's CSV-route refactor, test suite, specs, and SSOT update committed together on the same branch — resolve HEAD with `git rev-parse --short HEAD`
+- **Editor:** Claude Code
+- **Trigger:** Balerion 2026-06-03 06:45 pointscore implementation directive. Implementation completed in the prior session through commit `219bdd9` + uncommitted tests/evidence; that session hit its context limit mid-closure. Resumed in a fresh session to re-verify first-hand, write the missing specs, sync the SSOT, and produce the clean-HEAD evidence package.
+- **Changes:**
+  - Engine `src/pointscore.js` (219bdd9): isolated scoring engine; centralized adjustable `POINTSCORE_RULES` (individual 5/4/3/2, relay 3/2/1); reads accepted `heat_lane`/`relay_team` results; writes only `pointscore_entry`; `WWSC_POINTSCORE_DISABLED` isolation switch.
+  - Server/API (219bdd9 + this commit): additive `writeEventPointscore()` inside the finalize transaction AFTER the accepted `time_history` write; new read APIs (`/api/pointscore/rules`, `/api/events/:id/pointscore`, `/api/pointscore/month/:ym`, `/api/pointscore/season/:year`, `/api/members/:id/pointscore`, `/api/pointscore/months`) + CSV exports. CSV routes use `/csv` path segments (not `.csv`) to avoid Express param-extension ambiguity (`src/server.js`, `src/public/js/screens/pointscore.js`).
+  - UI `🎯 Pointscore` screen (219bdd9): Per-Event / Monthly / Season / Swimmer tabs, rule-transparency banner, CSV export, print-friendly; nav entry in `sidebar.js`/`app.js`.
+  - Excel source (219bdd9): `scripts/extract-pointscore.py` + `docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md`.
+  - Tests (this commit): `scripts/test-m3-pointscore-unit.cjs` (11 PASS / 0 FAIL), `scripts/e2e-m3-pointscore-isolation.cjs` (PASS), `scripts/e2e-m3-pointscore-120.cjs` (111 PASS / 9 NA / 0 FAIL / 0 BLOCKED). M2 runners' no-M3-leakage scan scoped to `#content` so the legitimate new Pointscore nav link is not a false positive; banned-word list unchanged.
+  - Specs (this commit): `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md`, `UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `REQUIREMENT-TEST-EVIDENCE-MATRIX-M3-POINTSCORE-REPORTS.md`; `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md` updated to IMPLEMENTED.
+  - Scope held: Constitution-specific accumulation (R-M3-03) deferred and adjustable; no confirmed-Constitution claim.
+- **No release action:** no push, no deploy, no tag, no Bryan/client contact, no live-data mutation. Awaiting Balerion V0015 QA. Clean-HEAD evidence package recorded in the following CHANGELOG entry.
+
+## 2026-06-03 — docs: M3 pointscore Claude directive and 120-case QA spec prepared
+- **Timestamp:** 2026-06-03 06:45:00 Europe/Berlin
+- **App Version (from package.json):** 2.10.0 development branch context / no release
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **Editor:** Balerion
+- **Trigger:** Dino confirmed the working-assumptions message was sent to Bryan and asked Balerion to prepare the Claude Code implementation Auftrag, while Balerion remains QA gate.
+- **Changes:**
+  - Added Claude Code directive: `../messages/2026-06-03-0645-Balerion-To-Claude-WWSC-M3-Pointscore-Implementation-Directive.md`.
+  - Added mandatory 120-case proof spec: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md`.
+  - Updated `PROGRESS.md`, `version/CURRENT_STATE.md`, `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md`, `REQUIREMENTS-M3-POINTSCORE-REPORTS.md`, and `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md` so the operational gate is no longer "wait for another Bryan reply".
+  - Encoded current working assumptions: event-separated pointscore, monthly/season totals by simple addition, Excel pointscore sheets as working scoring source, later Constitution adjustment if Bryan sends a separate rule.
+  - Required evidence: Playwright/browser E2E, raw logs, screenshots, CSV artifacts, 120-case protocol, M2/M3 regressions, and pointscore isolation proof.
+- **No code/release action:** no app-source changes, no push, no deploy, no tag, no Bryan contact.
+
+## 2026-06-02 — docs: Bryan M3 pointscore partial answer mapped
+- **Timestamp:** 2026-06-02 21:20:00 Europe/Berlin
+- **App Version (from package.json):** 2.10.0 development branch context / no release
+- **Branch:** documentation/status update only
+- **Editor:** Balerion
+- **Trigger:** Dino relayed Bryan's partial M3 pointscore answer by screenshot.
+- **Changes:**
+  - Added inbound message record: `../messages/2026-06-02-Bryan-inbound-m3-event-separated-month-season-addition.md`.
+  - Updated `version/CURRENT_STATE.md`, `PROGRESS.md`, and `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md`.
+  - Classified Bryan's answer as M3 Pointscore / Accumulation partial clarification: event-separated points plus simple monthly/season addition for overall winners.
+  - Kept final pointscore code blocked pending actual formula, Constitution source/rules, exact season date range, bonus/special cases, eligibility, race weighting, and tie-breakers.
+- **No code/release action:** no app-source changes, no push, no deploy, no tag, no Bryan contact.
+
+## 2026-05-29 — fix: v2.10.0 M3 R-M3-05 QA corrections (Balerion CONDITIONAL PASS → fixes)
+- **Timestamp:** 2026-05-29 18:30:00
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **Editor:** Claude Code
+- **Trigger:** Balerion 2026-05-29 18:02 `R-M3-05 QA Fix Directive` — CONDITIONAL PASS on the narrow graph slice with 5 required evidence corrections.
+- **Fixes:**
+  1. **Date-range filter implemented** (`src/public/js/screens/member-graph.js`): new `mg-from` / `mg-to` date inputs + "Clear range" button; `memberGraphApplyDateRange()` filters plotted rows before time-trend / PB-progression rendering. UIT-M3-007 now narrows 6 rows → 4 (window 2026-04-11..2026-05-02, endpoints excluded); UIT-M3-008 clears and restores all 6. No more stroke-filter substitution.
+  2. **Real browser back/forward** (`scripts/e2e-m3-history-graphs.cjs` UIT-M3-015): actual `page.goBack()` + `page.goForward()` across full-page loads, with documented SPA behavior (no pushState router; both directions reload cleanly, no blank screen, no new console errors). No more nav-cycle substitution.
+  3. **Exact point→row mapping** (UIT-M3-019 + new `data-date` / `data-time-cs` / `data-pb-cs` / `data-is-break` attributes on each SVG circle): set-equality of rendered points vs API rows on `(stroke, date, time, previous_best, is_break)`; `exactMatch=true`; full mapping persisted to `docs/evidence/m3-user-interaction-v3.0.0/m3-data-correctness-mapping.json`.
+  4. **6 dated rows** for the UIT-M3-001 history-graph proof: seed extended from 4 → 6 weekly events; assertion ties dot count to the live API row count.
+  5. **Stale screenshots removed:** deleted `UIT-M3-015-back-forward.png`, the interim `UIT-M3-015-nav-cycle.png`, and the renamed `UIT-M3-001-graph-4-dates-ordered.png` / `UIT-M3-007-stroke-filter-25m.png` / `UIT-M3-008-stroke-filter-cleared.png`. The directory now holds exactly 20 PNGs — one per case, all current.
+- **Re-run result:** 19 PASS / 1 NOT APPLICABLE (UIT-M3-016 export, QA-10-blocked) / 0 FAIL / 0 BLOCKED / 0 PROVISIONAL. 0 console errors.
+- **Protocol Rev 2:** `docs/evidence/m3-user-interaction-v3.0.0/m3-history-graphs-protocol.md` documents each fix per case.
+- **Claude → Balerion evidence-correction handoff:** `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-R-M3-05-QA-Fix-Evidence.md`.
+- No app-source change beyond `member-graph.js`; `src/server.js`/`src/db.js`/`render.yaml` still zero diff (R-M3-12 holds).
+
+## 2026-05-29 — feat: v2.10.0 M3 R-M3-05 history-graphs slice (UNAMBIGUOUS items only)
+- **Timestamp:** 2026-05-29 12:35:00
+- **App Version (from package.json):** 2.10.0
+- **Branch:** dev/v2.10.0-m3-history-graphs
+- **Version bump commit:** 7712067 (`release: bump to v2.10.0 for M3 history-graphs slice`)
+- **Implementation commit:** 6283ce6 (`feat: M3 R-M3-05 individual swimmer history graph (SVG, vanilla JS)`)
+- **Test runner commit:** 7f7a0a3 (`test: M3 R-M3-05 e2e runner + member-graph circle-marker tweak`)
+- **RecordedCommit:** 6283ce6
+- **Editor:** Claude Code
+- **Trigger:** Balerion 2026-05-29 12:10 "You Are Next" implementation directive after my 11:23 PRD-phase handoff. Implements the M3 items that are unambiguous (do not require Bryan's pointscore/constitution answers).
+- **Delivered:**
+  - **R-M3-05** Individual swimmer history graph. New file `src/public/js/screens/member-graph.js` (SVG, no external chart lib). Two graph types: A) per-stroke time-trend line, B) PB progression step-down. Stroke filter, color-blind-safe palette, `<title>` tooltips, `role="img"` + `aria-label`, defensive null-PB handling. Entry point: new "📈 Graphs" button per row in `src/public/js/screens/members.js`. Wired in `src/public/index.html` with cache-bust `?v=2.10.0`.
+  - **R-M3-08** History retention policy — documentation-only working answer per QA-12: `docs/M3-HISTORY-RETENTION-POLICY.md`.
+  - **R-M3-11** M2 regression rerun on the M3 branch with `WWSC_E2E_EXPECTED_VERSION=2.10.0` env override: 55 PASS / 0 FAIL on `e2e-m2-time-history.cjs`, 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED on `e2e-m2-user-interaction-100.cjs`. Identical to the 2.9.0 baseline. Raw logs archived under `docs/evidence/m2-*-run.log.m3-regression`.
+  - **R-M3-12** Out-of-scope guard: `git diff main..HEAD` confirms zero changes to `src/server.js`, `src/db.js`, `src/seed.js`, `render.yaml`, `package-lock.json`. No multi-tenant / customer / access-control / commercial-deployment code.
+- **Test artifacts:**
+  - `scripts/e2e-m3-history-graphs.cjs` — UIT-M3-001..020 runner.
+  - `docs/evidence/m3-user-interaction-v3.0.0/m3-history-graphs-run.log` (raw line-per-case).
+  - `docs/evidence/m3-user-interaction-v3.0.0/m3-history-graphs-records.json` (records sidecar).
+  - `docs/evidence/m3-user-interaction-v3.0.0/m3-history-graphs-protocol.md` (Balerion's required protocol format).
+  - `docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-###-*.png` (20 PNGs).
+- **Result:** UIT-M3-001..020 → 19 PASS / 1 NOT APPLICABLE (UIT-M3-016 export deferred) / 0 FAIL / 0 BLOCKED / 0 PROVISIONAL. 0 console errors.
+- **Test infra delta:** `scripts/e2e-m2-time-history.cjs` and `scripts/e2e-m2-user-interaction-100.cjs` accept a `WWSC_E2E_EXPECTED_VERSION` env override; default stays `2.9.0` for back-compat. Required so the M2 runners can be re-executed on later branches without forking.
+- **Still BLOCKED on Bryan answers (NOT in this slice):** R-M3-01..R-M3-04 (Pointscore + Accumulation, QA-01/02/03), R-M3-03 (Constitution, QA-05/06), R-M3-06 (Reports list, QA-09), R-M3-07 (CSV, QA-10/11), R-M3-09 (PDF, QA-13), R-M3-10 (Rule banner, QA-01/06). PROVISIONAL UIT-M3 cases: 021..029, 035, 041, 044, 048, 051, 052, 063, 064, 071..080.
+- **Claude → Balerion handoff:** `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-History-Graphs-Delivery.md`.
+
 ## 2026-05-19 — release: v2.9.0 Render deploy + live smoke
 - **Timestamp:** 2026-05-19 13:42:00
 - **App Version (from package.json):** 2.9.0

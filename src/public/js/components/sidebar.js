@@ -11,6 +11,7 @@ function renderSidebar(activeScreen) {
     { id: 'heat-builder', icon: '🔧', label: 'Heat Builder' },
     { id: 'results', icon: '🏆', label: 'Results' },
     { id: 'breaker-report', icon: '🏅', label: 'Breaker Report' },
+    { id: 'pointscore', icon: '🎯', label: 'Pointscore' },
     { id: 'calendar', icon: '📅', label: 'Season Calendar' },
   ];
 

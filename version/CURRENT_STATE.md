@@ -1,5 +1,22 @@
 # CURRENT_STATE
 
+## CURRENT (2026-06-04) — v2.10.1 M3 Release Deploy (authoritative top block)
+
+**Version (from `package.json`):** 2.10.1
+**Branch:** dev/v2.10.0-m3-history-graphs
+**Substantive anchors:** `219bdd9` (engine + API + UI), `b3f9a82` (CSV-route refactor + test suite + specs + SSOT), `b598648` (first clean-HEAD evidence), `a94c0fc` (Balerion-QA hardening: unknown-race_type fix + UT9, M2 HEAD-staleness gate, first mobile-screenshot cleanup, TC-069 wording, 75m/breaststroke/butterfly seeding), `711c66d` (Balerion V0015 harness fix: robustly remove Calendar's standalone fixed-position Event Details modal before UIT-M3-113 mobile screenshot), `735f0b3` (refreshed clean M3-120 evidence after the overlay fix), `0096ecb` (Bryan-Expectation N/A closure: members CSV endpoint, UT10 brace/pogo->relay proof, 085/100->PASS, 076/077->CLIENT INPUT MISSING), `3630656` (Balerion independent proof verification), and the v2.10.1 release-prep commit.
+**Date:** 2026-06-04
+**Timestamp:** 2026-06-04 09:33:40 Europe/Berlin
+**LastEditor:** Balerion
+**Cache-bust:** `src/public/index.html` = `?v=2.10.1` (matches package.json/package-lock).
+**WorkingTreeStatus:** M3 pointscore is implemented under Bryan's 2026-06-02 working assumptions (event-separated; monthly/season by simple addition; Excel pointscore sheets as working source; adjustable later - NOT confirmed Constitution). Balerion independently reproduced the current evidence gate on 2026-06-04: unit/API 13 PASS / 0 FAIL, pointscore isolation PASS, M2 55 PASS / 0 FAIL, M2 100 = 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED, M3 120 = 116 PASS / 2 NOT APPLICABLE / 2 CLIENT INPUT MISSING / 0 FAIL / 0 BLOCKED, R-M3-05 history graphs = 19 PASS / 1 NOT APPLICABLE / 0 FAIL. Balerion visually confirmed the previously suspect `UIT-M3-113-resp-mobile.png` is clean after the harness fix. Determinism boundary documented (per-swimmer attribution varies via the accepted v2.8.9 randomized heat builder; all assertions are structural invariants). Constitution-specific accumulation/report rules that Bryan did not provide remain isolated and explicitly client-input-missing.
+**Milestone status:** M2 v2.9.0 RELEASED/PAID and protected. M3 v2.10.1 release is authorized by Dino on 2026-06-04 and being merged/deployed to `main`. No Bryan/client message is sent by Balerion; only a draft/update text is prepared for Dino unless Dino explicitly requests external sending.
+**M3 slice docs:** `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md`, `UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `REQUIREMENT-TEST-EVIDENCE-MATRIX-M3-POINTSCORE-REPORTS.md`, `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md`. Evidence: `docs/evidence/m3-user-interaction-v3.0.1/`, `docs/screenshots/m3-user-interaction-v3.0.1/` (62 PNGs), `docs/evidence/m3-pointscore/`.
+
+---
+
+## v2.9.0 / M2 baseline anchors (historical — delivered/paid baseline, still protected)
+
 **Version (from `package.json`):** 2.9.0
 **BaseBranch:** main / origin/main
 **BaseCommit:** eb87e11 (`docs: record v2.8.12 live verification`)
@@ -27,7 +44,15 @@
 
 ## Client / Milestone Status
 
-**Current client status:** M2 ACTIVE & FUNDED. Implementation is deployed live on Render as `v2.9.0`; local post-merge verification passed, expanded 100-case screenshot evidence gate passed, and live smoke passed. Dino confirmed the Bryan delivery/update message was sent on 2026-05-19 15:23 CEST. Bryan replied on 2026-05-20 asking whether individual graphs can be created from the history report/data. Classification: M3 / reports-graphs scope question, not an M2 bug and not explicit M2 acceptance. Recommended reply draft exists; current gate is Bryan response handling + M2 acceptance/payment boundary.
+**Current client status:** M2 RELEASED/PAID; M3 COMMISSIONED/AUTHORIZED. M2 remains protected and regression-tested. Dino authorized M3 deployment on 2026-06-04 after Balerion independently verified Claude's proof. M3 v2.10.1 is being released under the exact working assumptions sent to Bryan: event-separated pointscore, monthly/season totals by simple addition, and existing Excel pointscore sheets as the working scoring source, with later adjustment if Bryan provides separate Constitution rules. Client communication boundary: prepare a Bryan delivery update for Dino; do not send it externally from Balerion unless Dino explicitly instructs that.
+
+**M3 handoff:** `../messages/2026-05-29-1105-Balerion-To-Claude-WWSC-M3-Development-Handoff.md`
+
+**M3 mandatory user-interaction proof spec:** `docs/tests/M3-USER-INTERACTION-TEST-SPEC-v3.0.0.md` — original 100-case M3 matrix. Updated pointscore proof target prepared 2026-06-03: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md` (120 cases). Claude Code must implement/test against the updated v3.0.1 pointscore spec for the next M3 slice.
+
+**M3 pointscore implementation directive prepared 2026-06-03:** `../messages/2026-06-03-0645-Balerion-To-Claude-WWSC-M3-Pointscore-Implementation-Directive.md`. This supersedes older "wait for another Bryan reply" operational gates for pointscore implementation. Implementation proceeds under the assumptions Dino/Nedim sent Bryan on 2026-06-02, while keeping Constitution/formula/season logic source-labeled and adjustable.
+
+**Latest delivered M2 baseline verified on 2026-05-29:** `package.json=2.9.0`; `origin/main=3f225937247e797229cef77e2db224398b341469` (`docs: record v2.9.0 live smoke`); tag `v2.9.0=8d167fd` (`docs: mark v2.9.0 stable release candidate`). Local `main` is currently `7b4dcc5` (`docs: record Bryan graph scope question`) plus uncommitted continuity-doc updates; this is documentation-only on top of delivered v2.9.0 code. Claude must verify the exact repo/branch/commit before starting and should branch/worktree from the latest delivered M2 code truth, not from memory.
 
 ### Latest communication anchors
 
@@ -85,11 +110,107 @@
    - Screenshot: `../messages/attachments/2026-05-20-upwork-bryan-graphs-history-question.png`.
    - Draft response: `../messages/2026-05-20-draft-to-bryan-graphs-history-question.md`.
    - Classification: M3 / reports-graphs scope question. The M2 history data is a structured foundation for graphing, but graph UI/report views belong to the next reporting layer/M3 unless Dino explicitly chooses a different strategy or Bryan funds/starts M3.
+17. **2026-05-21 09:42 visible screenshot time:** Dino relayed Bryan's next Upwork question: "Hi Nedim What do you need from me now ?"
+   - Inbound record: `../messages/2026-05-21-Bryan-inbound-what-do-you-need-now.md`.
+   - Screenshot: `../messages/attachments/2026-05-21-upwork-bryan-what-do-you-need-now.png`.
+   - Draft response: `../messages/2026-05-21-draft-to-bryan-next-needed-m2-acceptance-m3-gate.md`.
+   - Classification: status / next-step clarification. Not an M2 bug and not explicit M2 acceptance. Recommended stance: ask Bryan to review/accept M2 or provide exact M2 reproduction details; keep graph/report views in M3.
+18. **2026-05-21 19:06 Europe/Berlin:** Dino confirmed he sent the M2 acceptance request / M3 gate reply to Bryan.
+   - Sent-confirmed record: `../messages/2026-05-21-outgoing-to-bryan-m2-acceptance-request-sent-confirmed.md`.
+   - Screenshot: `../messages/attachments/2026-05-21-upwork-outgoing-bryan-m2-acceptance-request-sent.png`.
+   - Exact visible ask: Bryan should review the current M2 update and confirm acceptance/close-release or provide a specific time-history issue; graph/report views are stated as the next reporting layer / M3 after M2 acceptance.
+   - Current gate: wait for Bryan's next reply; archive and classify before doing any new work.
+19. **2026-05-23 04:14 visible screenshot time:** Dino relayed Bryan's next Upwork reply.
+   - Inbound record: `../messages/2026-05-23-Bryan-inbound-m2-met-production-questions.md`.
+   - Screenshots: `../messages/attachments/2026-05-23-upwork-bryan-m2-met-production-questions-1.png`, `../messages/attachments/2026-05-23-upwork-bryan-m2-met-production-questions-2.png`.
+   - Draft response: `../messages/2026-05-23-draft-to-bryan-m2-release-production-questions.md`.
+   - Exact key signal: "Milestone 2 was quite simple and I think it is met."
+   - Classification: positive M2 acceptance signal + production/commercial questions. Not an M2 bug report and not authorization to start M3 implementation. Recommended stance: ask Bryan to formally release/accept M2 in Upwork; answer CSV/report/history-limit/production questions while preserving the M3 boundary.
+20. **2026-05-23 05:53 Europe/Berlin:** Dino confirmed he sent the final M2 release / commercial production boundary reply to Bryan.
+   - Sent-confirmed record: `../messages/2026-05-23-outgoing-to-bryan-commercial-scope-boundary-sent-confirmed.md`.
+   - Discord screenshot evidence filenames: `IMG_7068---55fece90-4e7e-4c22-b2e3-e184c18a95ce.png`, `IMG_7069---deeb1580-4fa3-4924-97cb-ddf007061fd0.png`.
+   - Exact sent boundary: commercial hosted version with multiple clubs, customer data separation, backups, access control, maintenance, and separate instances vs multi-customer platform is separate scope from the current three milestones and must be separately scoped/quoted.
+   - Current gate: wait for Bryan reply or formal Upwork M2 release/acceptance. Archive and classify the next inbound before doing any new work.
+21. **2026-05-29 11:04 Europe/Berlin:** Dino confirmed the commercial gate changed.
+   - Source: Dino direct confirmation in current OpenClaw/Balerion context.
+   - Exact operational signal: Bryan has paid Milestone 2 and commissioned Milestone 3.
+   - Classification: M2 released/paid + M3 authorized.
+   - Balerion role: orchestrate and quality-gate.
+   - Claude Code role: implement M3.
+   - Handoff: `../messages/2026-05-29-1105-Balerion-To-Claude-WWSC-M3-Development-Handoff.md`.
+   - Safety boundary: no origin push, deploy, tag, Bryan/client contact, or live data mutation without explicit authorization.
+22. **2026-05-29 11:12-11:35 Europe/Berlin:** Balerion QA spec hardening for M3.
+   - Created mandatory M3 user-interaction proof spec: `docs/tests/M3-USER-INTERACTION-TEST-SPEC-v3.0.0.md`.
+   - Spec contains 100 concrete user-interaction cases for reports/graphs, individual swimmer history graphs from M2 data, pointscore, yearly/season accumulation, constitution accumulation, event/report/export/print flows, filters, responsive/accessibility checks, and M1/M2 regressions.
+   - Updated Claude handoff to require this spec before implementation signoff and to require spec updates if the M3 PRD changes scope.
+23. **2026-05-29 ~11:50 Europe/Berlin:** Claude Code completed M3 Phase 1 (PRD-only, no code).
+   - Branch: `dev/m3-prd-planning` off `main@7b4dcc5`.
+   - Artifacts: `REQUIREMENTS-M3-POINTSCORE-REPORTS.md`, `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md`, `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md`.
+   - PRD covers R-M3-01..R-M3-12 + Cross-Reference table to UIT-M3-001..UIT-M3-100. Acceptance checklist's evidence layout follows the UIT-M3-v3.0.0 Required Final Protocol Format verbatim. Questions doc adds a "QA → UIT-M3 PROVISIONAL Unblock Map".
+   - Claude → Balerion handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-PRD-Handoff.md`.
+   - No code, no version bump, no push/deploy, no Bryan/client contact.
+   - Blocked on Bryan answers to QA-01 (pointscore formula), QA-05 (constitution doc location), QA-06 (constitution rules) before any pointscore/constitution code can start.
+24. **2026-05-29 12:10 Europe/Berlin:** Balerion "You Are Next" implementation directive.
+   - Handoff: `../messages/2026-05-29-1210-Balerion-To-Claude-WWSC-M3-You-Are-Next.md`.
+   - Authorizes Claude to begin M3 implementation immediately on the UNAMBIGUOUS items, while continuing to hold the PROVISIONAL pointscore/constitution items behind Bryan's answers. Balerion reserves the held-back final QA matrix until Claude reports implementation complete.
+25. **2026-05-29 ~12:35 Europe/Berlin:** Claude Code delivered the M3 R-M3-05 history-graphs slice (V0014 first commit on `dev/v2.10.0-m3-history-graphs`).
+   - Branch: `dev/v2.10.0-m3-history-graphs` off `dev/m3-prd-planning@f043dea`.
+   - Version: `2.10.0` (V0014 bump commit `7712067`).
+   - Implementation: `6283ce6` (`feat: M3 R-M3-05 individual swimmer history graph (SVG, vanilla JS)`).
+   - Test runner: `7f7a0a3` (`test: M3 R-M3-05 e2e runner + member-graph circle-marker tweak`).
+   - R-M3-05 UIT-M3-001..020: **19 PASS / 1 NOT APPLICABLE / 0 FAIL** under `WWSC_E2E_EXPECTED_VERSION=2.10.0`.
+   - R-M3-11 M2 regression on the same branch: **55 PASS / 0 FAIL** + **98 PASS / 2 NA / 0 FAIL** — identical to the 2.9.0 baseline.
+   - R-M3-08 documentation answer: `docs/M3-HISTORY-RETENTION-POLICY.md`.
+   - R-M3-12 review: clean (`src/server.js`, `src/db.js`, `render.yaml`, `package-lock.json` zero diff).
+   - Carry-overs explicitly preserved: every other R-M3 + every PROVISIONAL UIT-M3 case stays blocked on QA-01 / QA-05 / QA-06.
+   - Claude → Balerion delivery handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-History-Graphs-Delivery.md`.
+   - No push, no deploy, no tag, no Bryan/client contact.
+26. **2026-05-29 18:02 Europe/Berlin:** Balerion R-M3-05 QA Fix Directive — CONDITIONAL PASS with 5 required corrections.
+   - `../messages/2026-05-29-1802-Balerion-To-Claude-WWSC-M3-R-M3-05-QA-Fix-Directive.md`.
+27. **2026-05-29 ~18:35 Europe/Berlin:** Claude Code applied all 5 corrections (fix commit `95ce853`).
+   - (1) Real date-range filter in `member-graph.js`; (2) real browser back/forward in UIT-M3-015; (3) exact point→row mapping in UIT-M3-019 via `data-*` attributes + `m3-data-correctness-mapping.json`; (4) 6-event seed for UIT-M3-001; (5) stale screenshots removed (dir now 20 PNGs, one per case).
+   - Re-run: 19 PASS / 1 NOT APPLICABLE / 0 FAIL / 0 BLOCKED / 0 PROVISIONAL, 0 console errors.
+   - Protocol Rev 2 + evidence: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-R-M3-05-QA-Fix-Evidence.md`.
+   - R-M3-12 still clean (`src/server.js`/`src/db.js`/`render.yaml` unchanged). No push/deploy/tag/Bryan contact.
+28. **2026-05-29 21:21 Europe/Berlin:** Balerion Clean-HEAD Evidence Rerun directive — substantive fixes accepted, but evidence metadata still referenced baseline `06ec2da`; required a rerun from clean HEAD so records/log/protocol show the actual HEAD.
+   - `../messages/2026-05-29-2121-Balerion-To-Claude-WWSC-M3-R-M3-05-Clean-HEAD-Evidence-Rerun.md`.
+29. **2026-05-29 ~21:40 Europe/Berlin:** Claude Code reran the R-M3-05 gate from clean HEAD `1545ea7`.
+   - Working tree clean before and after. Evidence metadata now captures `1545ea7` (run.log, records.json, mapping.json, protocol Rev 3 with explicit HEAD field).
+   - Result reconfirmed: 19 PASS / 1 NOT APPLICABLE / 0 FAIL / 0 BLOCKED / 0 PROVISIONAL, 0 console errors. 20 screenshots (byte-identical, deterministic render).
+   - Evidence-refresh commit: `926e9aa`. Handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-R-M3-05-Clean-HEAD-Evidence.md`.
+   - No push/deploy/tag/Bryan contact/live-data mutation.
+30. **2026-05-29 21:47 Europe/Berlin:** Balerion accepted R-M3-05 as PASS and issued the forward-build guardrail (protect M1/M2/v2.9.0 baseline; pointscore from accepted app logic + Excel as candidate; constitution blocked).
+   - `../messages/2026-05-29-2147-Balerion-To-Claude-WWSC-M3-Accepted-Logic-Guardrail-And-Next-Scope.md`.
+31. **2026-05-29 ~22:05 Europe/Berlin:** Claude Code returned the four required guardrail lists (no code).
+   - Doc: `M3-FORWARD-BUILD-GUARDRAIL-2026-05-29.md`. Handoff: `../messages/2026-05-29-Claude-To-Balerion-WWSC-M3-Forward-Build-Guardrail-Response.md`.
+   - Audit finding: `pointscore_entry` is a stub table with NO write path / NO formula in code (db.js:110/134, server.js:371). The `bryan-excel-original.xlsm` carries 12 pointscore sheets (per-race + Total Pointscore + Total Improvement + Attendance) as a CANDIDATE, source-labeled basis only — not confirmed.
+   - Critical blockers restated: QA-01 (formula = Excel sheets?) + QA-05/06 (Constitution = Excel?). N1 pointscore write path is designed as additive + isolated, gated behind a new R5 isolation regression proof.
+   - No code/push/deploy/tag/Bryan contact.
+32. **2026-05-29 22:15-22:22 Europe/Berlin:** Dino/Nedim sent Bryan the M3 Pointscore / Constitution clarification questions.
+   - Sent-confirmed record: `../messages/2026-05-29-outgoing-to-bryan-m3-pointscore-constitution-questions-sent-confirmed.md`.
+   - Message thanked Bryan for M2 confirmation/payment and M3 funding, stated M3 work has started, and asked for exact club rules before further pointscore / accumulation implementation.
+   - Questions covered Excel pointscore confirmation (`5/4/3/2`, `Break=2`), whether Excel equals official Constitution rules, bonus/special cases, reset basis, and most important M3 report outputs.
+   - Current gate: wait for Bryan's reply. Do not guess missing Pointscore / Constitution rules. Archive and classify Bryan's answer before issuing the next Claude Code directive.
+33. **2026-06-02 09:34 visible message time / 21:02 Europe/Berlin relayed:** Dino relayed Bryan's partial M3 pointscore answer by screenshot.
+   - Inbound record: `../messages/2026-06-02-Bryan-inbound-m3-event-separated-month-season-addition.md`.
+   - Key substance: keep pointscore/points for each event separately; overall winners are computed by simple addition at the end of each month and season.
+   - Classification: M3 Pointscore / Accumulation partial clarification.
+   - Mapping: QA-01 PARTIAL (aggregation shape clarified, formula still blocked); QA-02/QA-03/QA-04 PARTIAL (month/season reporting periods indicated, exact season boundary/reset/filter still blocked); QA-05 BLOCKED; QA-06 PARTIAL; QA-07 PARTIAL.
+   - Current gate: do not implement final pointscore write logic yet. The data/reporting direction may be event-separated pointscore rows plus monthly/season aggregate views, but point values, Constitution source, season boundary, bonus/special cases, eligibility, race weighting, and tie-breakers are still unanswered.
+34. **2026-06-02 21:09-21:10 visible Discord context / confirmed 2026-06-03:** Dino decided not to chase Bryan for more detail and sent a transparent assumptions message to Bryan.
+   - Sent-confirmed record: `../messages/2026-06-02-outgoing-to-bryan-m3-pointscore-assumptions-sent-confirmed.md`.
+   - Exact operational stance: proceed with pointscore implementation under these assumptions: each event keeps its own pointscore separately; monthly overall winners are calculated by adding relevant event totals at month end; season overall winners are calculated by adding relevant event totals at season end; existing Excel pointscore sheets are the working source for the scoring formula; any separate Constitution rule can be adjusted afterwards once Bryan sends it.
+   - Current implementation gate: continue M3 pointscore under the sent assumptions, but keep formula/season/Constitution logic isolated and adjustable. Do not claim Constitution rules are confirmed.
+35. **2026-06-03 06:45 Europe/Berlin:** Balerion prepared the constrained Claude Code pointscore implementation package.
+   - Directive: `../messages/2026-06-03-0645-Balerion-To-Claude-WWSC-M3-Pointscore-Implementation-Directive.md`.
+   - Mandatory user-interaction proof spec: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md` with 120 cases covering Excel formula extraction, event-separated pointscore, monthly totals, season totals, reports, CSV/export, graphs, regression, responsiveness, accessibility, out-of-scope guard, and final evidence.
+   - Current implementation gate: hand the directive/spec to Claude Code. Claude must implement and test, then return evidence. Balerion remains QA gate before any delivery/deploy/client message.
 
 ## Current Boundary
 
 - M2 scope: "Generate solution for recording time changes and archiving historical times with dates."
-- Pointscore, accumulated season totals, reports/graphs, and constitution accumulation are **Milestone 3**, not M2.
+- Pointscore, accumulated season totals, reports/graphs, and constitution accumulation are **Milestone 3**, now commissioned/authorized after M2 payment. Bryan's 2026-06-02 answer partially clarified the aggregation shape, and Dino/Nedim then sent Bryan a working-assumptions message: keep event points separate, compute month/season overall winners by simple addition, use existing Excel pointscore sheets as the working scoring source, and adjust later if a separate Constitution rule differs. Implementation may proceed under those sent assumptions, with formula/season/Constitution logic isolated and adjustable. Do not claim Constitution rules are confirmed.
+- Commercial hosted version, multiple clubs/customer access, customer data isolation, backups, access control, maintenance, server operations, and multi-customer/SaaS productization are **not included in M1/M2/M3**. Treat as separate commercial production/productization scope requiring separate planning and quote.
 - M1/v2.8.12 stable code is protected by backup branch and file snapshot.
 - M2 is now merged into local `main`. Further release changes should happen through controlled commits, then deploy/live-smoke.
 
@@ -130,9 +251,14 @@ The SSOT completion commit is a documentation anchor per SR-VERSION-003. `Record
 ## Next Action
 
 Current quality sequence:
-- Bryan has asked whether individual graphs can be created from the history report/data.
-- Recommended next action: send the prepared short reply explaining that the data foundation is structured and graphable, while actual graph/report screens belong to the next reporting layer/M3.
-- Do not start M3/Pointscore/Reports/Constitution work unless Dino explicitly chooses that strategy or Bryan funds M3.
+- Dino confirmed on 2026-05-29 11:04 Europe/Berlin that Bryan paid/released M2 and commissioned M3.
+- R-M3-05 Individual Swimmer History Graphs is accepted PASS after the clean-HEAD evidence rerun.
+- Claude Code has returned the forward-build guardrail lists and should protect M1/M2/v2.9.0 accepted baseline behavior.
+- Dino/Nedim sent Bryan the M3 Pointscore / Constitution clarification questions on 2026-05-29 ~22:15 Europe/Berlin.
+- Bryan partially answered on 2026-06-02: event-separated points plus simple monthly/season addition for overall winners.
+- Next action: give Claude Code `../messages/2026-06-03-0645-Balerion-To-Claude-WWSC-M3-Pointscore-Implementation-Directive.md` and require execution against `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md`. Do not wait for another Bryan clarification round; implement under the sent assumptions and keep formula/season/Constitution behavior adjustable.
+- Balerion performs V0015 QA of Claude's claims/evidence before any delivery/deploy/client communication.
+- Do not start commercial webhost/SaaS/productization work unless separately scoped and quoted.
 
 ## SSOT Rule
 
@@ -141,3 +267,11 @@ Current quality sequence:
 - Status SSOT: `code/version/CURRENT_STATE.md`.
 - Messages/evidence: `messages/`.
 - Do not treat `~/wwsc-demo`, `projects/0004_swimming-app/`, daily notes, or chat memory as a second project truth.
+
+## 2026-05-29 22:30 Resume Note
+
+Bryan's 2026-06-02 reply is archived and mapped as a partial answer. Dino/Nedim then sent Bryan the working assumptions message. Balerion prepared the constrained Claude Code directive for M3 pointscore under those sent assumptions: event-separated points, monthly/season totals by simple addition, existing Excel pointscore sheets as working scoring source, and separate Constitution differences adjustable later. Do not invent Constitution rules or hard-code them as confirmed truth; keep formula/season/Constitution behavior isolated and adjustable.
+
+Protected baseline: accepted/paid/deployed `v2.9.0` / M1 / M2 behavior, especially Race/Heat/Breaker/Ranking/Time-History logic. Restore/comparison reference: `backups/2026-05-29-v2.9.0-accepted-paid-deployed/`, source `v2.9.0` commit `8d167fdcc787f663c7b4168d32096ff5baa66b35`.
+
+Last known Claude Code state: branch `dev/v2.10.0-m3-history-graphs`, HEAD `79751e6`, guardrail accepted, R-M3-05 PASS, no push/deploy/tag/Bryan contact. Next Claude work must use the 2026-06-03 directive and include a strict evidence gate: browser E2E flows, raw logs, screenshots/traces, 120-case protocol, pointscore isolation proof, and Requirement -> Test -> Evidence mapping.

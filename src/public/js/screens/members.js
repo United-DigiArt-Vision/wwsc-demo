@@ -61,6 +61,7 @@ function drawMembersList() {
             <td style="white-space:nowrap">
               <button class="btn btn-outline" onclick="showEditMemberModal(${m.id})">Edit</button>
               <button class="btn btn-outline" onclick="showMemberHistoryModal(${m.id})" title="View this swimmer's time history (M2)">📜 History</button>
+              <button class="btn btn-outline" onclick="showMemberGraphModal(${m.id})" title="View this swimmer's time-trend graph (M3 R-M3-05)">📈 Graphs</button>
             </td>
           </tr>
         `}).join('')}

@@ -273,7 +273,19 @@ async function setupRelayEvent(date) {
   const server = await startServer();
   try {
     const versionInfo = await waitForServer();
-    record('VERSION-OK', versionInfo.version === '2.9.0', '/api/version=' + JSON.stringify(versionInfo));
+    // Default M2 baseline is 2.9.0. For forward-regression on later branches
+    // (e.g. M3 work on 2.10.x), set WWSC_E2E_EXPECTED_VERSION to override.
+    const expectedVersion = process.env.WWSC_E2E_EXPECTED_VERSION || '2.9.0';
+    record('VERSION-OK', versionInfo.version === expectedVersion, '/api/version=' + JSON.stringify(versionInfo) + ' expected=' + expectedVersion);
+
+    // Baseline header (consumed by the 120-suite's M2-regression freshness/HEAD
+    // check so it cannot pass on a stale prior-session log).
+    try {
+      const _cp = require('child_process'), _root = path.resolve(__dirname, '..');
+      const _commit = _cp.execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: _root }).toString().trim();
+      const _branch = _cp.execFileSync('git', ['branch', '--show-current'], { cwd: _root }).toString().trim();
+      console.log('# Baseline branch=' + _branch + ' commit=' + _commit + ' pkg=' + versionInfo.version + ' generated=' + new Date().toISOString());
+    } catch (e) { /* git unavailable — header omitted */ }
 
     // ── Seed phase ──
     const members = await seedMembers();
@@ -556,17 +568,24 @@ async function setupRelayEvent(date) {
     // ──────────────────────────────────────────────────────
     // UI-M2-G — No M3 leakage
     // ──────────────────────────────────────────────────────
-    // Scan every screen for pointscore/season-total/graph cues.
+    // Scan every M2 screen's CONTENT AREA (#content) for M3 feature cues.
+    // We deliberately exclude the global sidebar nav: once M3 ships (v2.10+)
+    // the "Pointscore" nav link is a legitimate, accepted entry point and is
+    // NOT leakage. The real leakage we guard against is M3 functionality
+    // appearing inside an M2 screen's body, which #content captures.
     const navTargets = ['dashboard','members','event-setup','heat-builder','results','breaker-report','calendar'];
     const leakHits = [];
     for (const nav of navTargets) {
       await page.evaluate((n) => navigate(n), nav);
       await sleep(300);
-      const text = await page.evaluate(() => document.body.innerText);
+      const text = await page.evaluate(() => {
+        const el = document.getElementById('content');
+        return el ? el.innerText : document.body.innerText;
+      });
       const banned = ['Pointscore', 'Season Total', 'Accumulated', 'Constitution Score', 'Trend graph'];
       banned.forEach(b => { if (new RegExp('\\b' + b + '\\b', 'i').test(text)) leakHits.push(nav + ':' + b); });
     }
-    record('UI-M2-G01', leakHits.length === 0, 'm3 leakage scan: ' + (leakHits.join(',') || 'clean'));
+    record('UI-M2-G01', leakHits.length === 0, 'm3 leakage scan (content area): ' + (leakHits.join(',') || 'clean'));
 
     // UI-M2-G02/G03 are sub-claims of G01: the banned string list covers
     // accumulated totals and reports/graphs/constitution explicitly.
@@ -753,8 +772,12 @@ async function setupRelayEvent(date) {
   const expectedDates = ['2026-04-18', '2026-04-11', '2026-04-04'];
   const restartDates = restartHistory.map(r => r.event_date);
   const persistsOk = expectedDates.every(d => restartDates.includes(d));
-  record('UI-M2-C04', persistsOk && restartVersion && restartVersion.version === '2.9.0',
-    'after server restart member 22 history rows persisted with dates ' + restartDates.join(',') + ' (server reported version ' + (restartVersion && restartVersion.version) + ')');
+  // Cross-process restart preserves DB and reports the expected version.
+  // WWSC_E2E_EXPECTED_VERSION overrides the default 2.9.0 for forward-regression
+  // (e.g. when this M2 runner is re-run from an M3 branch).
+  const expectedVersionC04 = process.env.WWSC_E2E_EXPECTED_VERSION || '2.9.0';
+  record('UI-M2-C04', persistsOk && restartVersion && restartVersion.version === expectedVersionC04,
+    'after server restart member 22 history rows persisted with dates ' + restartDates.join(',') + ' (server reported version ' + (restartVersion && restartVersion.version) + ' / expected ' + expectedVersionC04 + ')');
 
   // ── Write evidence ──────────────────────────────────────
   const log = results.map(r => r.status + '  ' + r.id + '  ' + (r.note || '')).join('\n');
