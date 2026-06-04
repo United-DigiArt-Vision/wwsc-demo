@@ -4,13 +4,14 @@
 - **Tag:** v2.10.1
 - **Branch:** main
 - **Date:** 2026-06-04
-- **Release status:** prepared for Render deploy after Dino authorization.
+- **Release status:** live verified on Render.
+- **Deployed main tip:** 2154574 (`merge: v2.10.1 M3 delivery`)
 - **Implementation branch:** dev/v2.10.0-m3-history-graphs
 - **Implementation anchors:** `219bdd9` (M3 pointscore engine/API/UI), `a94c0fc` (Balerion QA hardening), `711c66d` + `735f0b3` (mobile screenshot overlay harness fix + refreshed evidence), `0096ecb` (Bryan-expectation N/A closure), `3630656` (Balerion independent proof verification).
 - **Local verification:** Unit/API 13 PASS / 0 FAIL; pointscore isolation PASS; M2 regression 55 PASS / 0 FAIL; M2 expanded regression 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED; M3 120-case proof 116 PASS / 2 NOT APPLICABLE / 2 CLIENT INPUT MISSING / 0 FAIL / 0 BLOCKED; R-M3-05 history graphs 19 PASS / 1 NOT APPLICABLE / 0 FAIL.
-- **Live Render verification:** pending after push to `origin/main`.
-- **Browser verification:** pending after Render build.
-- **Live smoke evidence:** pending after Render build.
+- **Live Render verification:** `/api/version` returned `2.10.1`, build `2026-06-04T07:38:56.179Z`.
+- **Browser verification:** read-only live smoke passed 8 PASS / 0 FAIL: dashboard/sidebar `v2.10.1`, Members screen with History + Graphs actions, Pointscore screen/rule-source banner, Season Calendar, Breaker Report, no relevant console/page/http errors. Only ignored HTTP error was missing `/favicon.ico`.
+- **Live smoke evidence:** `docs/evidence/live-smoke-v2.10.1-2026-06-04.json`, screenshots under `docs/screenshots/live-smoke-2026-06-04/`.
 
 ## What's in v2.10.1
 

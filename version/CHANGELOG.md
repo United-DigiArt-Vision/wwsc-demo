@@ -11,6 +11,23 @@
 
 ---
 
+## 2026-06-04 — release: v2.10.1 Render deploy + live smoke
+- **Timestamp:** 2026-06-04 09:41:00 Europe/Berlin
+- **App Version (from package.json):** 2.10.1
+- **Branch:** main
+- **RecordedCommit:** 2154574 (`merge: v2.10.1 M3 delivery`)
+- **Tag:** v2.10.1
+- **Editor:** Balerion
+- **Trigger:** Post-push Render live verification for the M3 delivery.
+- **Changes:**
+  - Pushed `main` from `3f22593` to `2154574` and pushed tag `v2.10.1`.
+  - Render live `/api/version` returned `{"version":"2.10.1","build":"2026-06-04T07:38:56.179Z"}`.
+  - Read-only Puppeteer live smoke passed 8 PASS / 0 FAIL: dashboard/sidebar version, Members History + Graphs actions, Pointscore + rule-source banner, Season Calendar, Breaker Report, no relevant console/page/http errors.
+  - Ignored one non-product HTTP 404 for `/favicon.ico`.
+  - Added live-smoke evidence JSON: `docs/evidence/live-smoke-v2.10.1-2026-06-04.json`.
+  - Added live-smoke screenshots: `docs/screenshots/live-smoke-2026-06-04/`.
+- **Live-data safety:** no live data was created, edited, finalized, archived, restored, or deleted.
+
 ## 2026-06-04 — release: v2.10.1 M3 delivery prep
 - **Timestamp:** 2026-06-04 09:33:40 Europe/Berlin
 - **App Version (from package.json):** 2.10.1

@@ -3,14 +3,14 @@
 ## CURRENT (2026-06-04) — v2.10.1 M3 Release Deploy (authoritative top block)
 
 **Version (from `package.json`):** 2.10.1
-**Branch:** dev/v2.10.0-m3-history-graphs
+**Branch:** main
 **Substantive anchors:** `219bdd9` (engine + API + UI), `b3f9a82` (CSV-route refactor + test suite + specs + SSOT), `b598648` (first clean-HEAD evidence), `a94c0fc` (Balerion-QA hardening: unknown-race_type fix + UT9, M2 HEAD-staleness gate, first mobile-screenshot cleanup, TC-069 wording, 75m/breaststroke/butterfly seeding), `711c66d` (Balerion V0015 harness fix: robustly remove Calendar's standalone fixed-position Event Details modal before UIT-M3-113 mobile screenshot), `735f0b3` (refreshed clean M3-120 evidence after the overlay fix), `0096ecb` (Bryan-Expectation N/A closure: members CSV endpoint, UT10 brace/pogo->relay proof, 085/100->PASS, 076/077->CLIENT INPUT MISSING), `3630656` (Balerion independent proof verification), and the v2.10.1 release-prep commit.
 **Date:** 2026-06-04
 **Timestamp:** 2026-06-04 09:33:40 Europe/Berlin
 **LastEditor:** Balerion
 **Cache-bust:** `src/public/index.html` = `?v=2.10.1` (matches package.json/package-lock).
 **WorkingTreeStatus:** M3 pointscore is implemented under Bryan's 2026-06-02 working assumptions (event-separated; monthly/season by simple addition; Excel pointscore sheets as working source; adjustable later - NOT confirmed Constitution). Balerion independently reproduced the current evidence gate on 2026-06-04: unit/API 13 PASS / 0 FAIL, pointscore isolation PASS, M2 55 PASS / 0 FAIL, M2 100 = 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED, M3 120 = 116 PASS / 2 NOT APPLICABLE / 2 CLIENT INPUT MISSING / 0 FAIL / 0 BLOCKED, R-M3-05 history graphs = 19 PASS / 1 NOT APPLICABLE / 0 FAIL. Balerion visually confirmed the previously suspect `UIT-M3-113-resp-mobile.png` is clean after the harness fix. Determinism boundary documented (per-swimmer attribution varies via the accepted v2.8.9 randomized heat builder; all assertions are structural invariants). Constitution-specific accumulation/report rules that Bryan did not provide remain isolated and explicitly client-input-missing.
-**Milestone status:** M2 v2.9.0 RELEASED/PAID and protected. M3 v2.10.1 release is authorized by Dino on 2026-06-04 and being merged/deployed to `main`. No Bryan/client message is sent by Balerion; only a draft/update text is prepared for Dino unless Dino explicitly requests external sending.
+**Milestone status:** M2 v2.9.0 RELEASED/PAID and protected. M3 v2.10.1 is deployed live on Render from `main` commit `2154574` and tag `v2.10.1`. Live `/api/version` returned `2.10.1`, build `2026-06-04T07:38:56.179Z`. Read-only live browser smoke passed 8 PASS / 0 FAIL with evidence in `docs/evidence/live-smoke-v2.10.1-2026-06-04.json` and `docs/screenshots/live-smoke-2026-06-04/`. No Bryan/client message is sent by Balerion; only a draft/update text is prepared for Dino unless Dino explicitly requests external sending.
 **M3 slice docs:** `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md`, `UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `REQUIREMENT-TEST-EVIDENCE-MATRIX-M3-POINTSCORE-REPORTS.md`, `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md`. Evidence: `docs/evidence/m3-user-interaction-v3.0.1/`, `docs/screenshots/m3-user-interaction-v3.0.1/` (62 PNGs), `docs/evidence/m3-pointscore/`.
 
 ---

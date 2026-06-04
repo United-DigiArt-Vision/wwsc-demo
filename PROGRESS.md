@@ -1,8 +1,8 @@
 # PROGRESS — WWSC v2.10.1 M3 Release Deploy
 
 ## 🎯 AKTUELLER STATUS
-Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned, implemented, Balerion-verified, and authorized by Dino for v2.10.1 deploy on 2026-06-04.
-Schritt: Prepare and push the v2.10.1 release to `main`, verify Render live, then give Dino a send-ready Bryan delivery update.
+Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned, implemented, Balerion-verified, and deployed live as v2.10.1 on 2026-06-04.
+Schritt: Give Dino the send-ready Bryan delivery update and wait for Dino's confirmation if/when sent.
 Blockiert: Nothing for deploy after Dino authorization. Honest scope boundary remains: M3 is proven under the assumptions sent to Bryan (event-separated points, monthly/season totals by simple addition, existing Excel pointscore sheets as working scoring source). Do not claim unprovided Constitution-specific rules, Improvement report rules, or Attendance report rules as complete.
 
 ## 🆕 M3 POINTSCORE SLICE — IMPLEMENTED + TESTED + RELEASE AUTHORIZED (2026-06-04)
@@ -21,7 +21,7 @@ Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 w
 - [x] Claude Code Bryan-expectation proof — Balerion sent `../messages/2026-06-04-0810-Balerion-To-Claude-WWSC-M3-Bryan-Expectation-Proof-Required.md`; Claude returned `../messages/2026-06-04-1030-Claude-To-Balerion-WWSC-M3-Bryan-Expectation-Proof.md`.
 - [x] Balerion V0015 verification of Claude's Bryan-expectation proof — PASS on 2026-06-04 at HEAD `d3d3ada`. Reproduced: Unit/API 13/0, isolation PASS, M2 55/0, M2 100 98/2/0/0, M3 120 116 PASS / 2 NA / 2 CLIENT INPUT MISSING / 0 FAIL / 0 BLOCKED, R-M3-05 graphs 19/1/0. Verification note: `../messages/2026-06-04-0920-Balerion-V0015-WWSC-M3-Bryan-Expectation-Proof-Verification.md`.
 - [x] Dino authorized release/deploy/client update preparation on 2026-06-04 09:28 Europe/Berlin.
-- [ ] `STABLE.md` update + merge to `main` + deploy + live smoke evidence.
+- [x] `STABLE.md` update + merge to `main` + deploy + live smoke evidence. `origin/main` = `2154574`, tag `v2.10.1`, `/api/version` = `2.10.1`, live smoke 8 PASS / 0 FAIL.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] M2 activated/funded evidence: `../messages/2026-05-18-Bryan-M2-active-funded.md`.
@@ -93,9 +93,9 @@ Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 w
 - [x] Balerion prepared the mandatory 120-case M3 user-interaction test spec: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md`.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Merge v2.10.1 to `main`, push/tag for Render deploy, poll live `/api/version`, run a read-only live browser smoke, record live evidence, then hand Dino the Bryan delivery draft.
+Was: Dino sends the prepared Bryan delivery update if he approves the wording. After sending, archive a sent-confirmed record in `../messages/`.
 
-Kriterium fertig (current gate): live URL returns `2.10.1`, sidebar/UI smoke passes without relevant console/page errors, `STABLE.md` records the verified live state, and the Bryan update draft is archived in `../messages/`.
+Kriterium fertig (current gate): sent-confirmed record exists, or Dino explicitly decides to revise/wait.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Pointscore/reports/graphs/constitution scoring are M3, not retroactive M2. Bryan's 2026-06-02 answer partially clarified event-separated points plus monthly/season addition; Dino/Nedim then sent Bryan the working assumptions. Implementation is released under those sent assumptions, but Constitution-specific behavior remains "adjustable later" unless Bryan provides a separate Constitution document.

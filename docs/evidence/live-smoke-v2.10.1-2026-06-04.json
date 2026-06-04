@@ -1,0 +1,67 @@
+{
+  "url": "https://wwsc-demo.onrender.com",
+  "executedAt": "2026-06-04T07:41:12.660Z",
+  "version": {
+    "version": "2.10.1",
+    "build": "2026-06-04T07:38:56.179Z"
+  },
+  "commit": "2154574",
+  "tag": "v2.10.1",
+  "mode": "read-only live smoke",
+  "checks": [
+    {
+      "name": "live version endpoint",
+      "status": "PASS",
+      "note": "{\"version\":\"2.10.1\",\"build\":\"2026-06-04T07:38:56.179Z\"}"
+    },
+    {
+      "name": "sidebar version visible",
+      "status": "PASS",
+      "note": "v2.10.1"
+    },
+    {
+      "name": "dashboard loaded",
+      "status": "PASS",
+      "note": "Dashboard 🏊 Ready for a New Event? Start here each week. Set the date, mark who is swimming, and build the heats. ▶ S"
+    },
+    {
+      "name": "members screen loads with M2/M3 actions",
+      "status": "PASS",
+      "note": "Members, History, Graphs visible"
+    },
+    {
+      "name": "pointscore screen loads",
+      "status": "PASS",
+      "note": "🎯 Pointscore & Reports ℹ️ How points are scored (working assumption) Scoring source: bryan-excel-original.xlsm pointscore sheets (working assumption, not confirmed Constitution). "
+    },
+    {
+      "name": "season calendar loads",
+      "status": "PASS",
+      "note": "📅 Season Calendar No events yet. 📋 Go to Times Sheet to create one"
+    },
+    {
+      "name": "breaker report loads",
+      "status": "PASS",
+      "note": "Breaker Report 🖨️ Print No record breakers yet."
+    },
+    {
+      "name": "no relevant console/page/http errors",
+      "status": "PASS",
+      "note": "ignored favicon 404 only; 1 console messages, 1 http>=400 observed"
+    }
+  ],
+  "consoleMessages": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 ()"
+    }
+  ],
+  "httpErrors": [
+    {
+      "status": 404,
+      "url": "https://wwsc-demo.onrender.com/favicon.ico"
+    }
+  ],
+  "pageErrors": [],
+  "screenshotsDir": "docs/screenshots/live-smoke-2026-06-04"
+}
