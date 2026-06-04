@@ -1,0 +1,108 @@
+{
+  "base": "http://127.0.0.1:3031",
+  "live": false,
+  "version": {
+    "version": "2.10.1",
+    "build": "2026-06-04T10:37:16.731Z"
+  },
+  "created": [
+    {
+      "id": 1,
+      "date": "2026-04-04",
+      "raceTypes": [
+        "25m"
+      ]
+    },
+    {
+      "id": 2,
+      "date": "2026-04-11",
+      "raceTypes": [
+        "25m",
+        "50m"
+      ]
+    },
+    {
+      "id": 3,
+      "date": "2026-04-18",
+      "raceTypes": [
+        "25m"
+      ]
+    },
+    {
+      "id": 4,
+      "date": "2026-04-25",
+      "raceTypes": [
+        "25m",
+        "50m"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "seed-created-four-events",
+      "pass": true
+    },
+    {
+      "id": "events-visible-after-seed",
+      "pass": true
+    },
+    {
+      "id": "current-event-null-after-complete",
+      "pass": true
+    },
+    {
+      "id": "pointscore-month-visible",
+      "pass": true
+    },
+    {
+      "id": "pointscore-season-visible",
+      "pass": true
+    },
+    {
+      "id": "time-history-written",
+      "pass": true
+    }
+  ],
+  "eventsAfter": [
+    {
+      "id": 4,
+      "date": "2026-04-25",
+      "status": "completed",
+      "archived": 0,
+      "present_count": 16,
+      "race_count": 2
+    },
+    {
+      "id": 3,
+      "date": "2026-04-18",
+      "status": "completed",
+      "archived": 0,
+      "present_count": 16,
+      "race_count": 1
+    },
+    {
+      "id": 2,
+      "date": "2026-04-11",
+      "status": "completed",
+      "archived": 0,
+      "present_count": 16,
+      "race_count": 2
+    },
+    {
+      "id": 1,
+      "date": "2026-04-04",
+      "status": "completed",
+      "archived": 0,
+      "present_count": 16,
+      "race_count": 1
+    }
+  ],
+  "months": [
+    "2026-04"
+  ],
+  "aprilEventCount": 4,
+  "aprilStandingsCount": 16,
+  "seasonEventCount": 4,
+  "seasonStandingsCount": 16,
+  "firstEventTimeHistoryRows": 16
+}

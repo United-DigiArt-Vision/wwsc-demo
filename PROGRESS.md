@@ -2,8 +2,8 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned, implemented, Balerion-verified, and deployed live as v2.10.1 on 2026-06-04.
-Schritt: Bryan replied asking where completed events are saved and whether the 4 completed events he created previously still exist in a DB. Reply archived 2026-06-04; readonly live API now shows no active/archived events.
-Blockiert: M3 retest is blocked by test-data/persistence friction, not by a pointscore formula complaint. Next technical step is to inspect Render persistent disk/backups or prepare a reusable completed-event test dataset/reset path. No live data mutation or Bryan reply without Dino authorization.
+Schritt: Bryan replied asking where completed events are saved and whether the 4 completed events he created previously still exist in a DB. Reply archived 2026-06-04; readonly live API now shows no active/archived events. Balerion prepared and locally proved a reusable 4-completed-event retest seed path.
+Blockiert: M3 retest is blocked by test-data/persistence friction, not by a pointscore formula complaint. Direct Render disk/backups are not inspectable from current tooling (no Render CLI/API key or working logged-in browser session). No live data mutation or Bryan reply without Dino authorization.
 
 ## 🚦 CURRENT GATE — BRYAN COMPLETED-EVENTS DB QUESTION (2026-06-04 12:25 Europe/Berlin)
 
@@ -20,11 +20,24 @@ Blockiert: M3 retest is blocked by test-data/persistence friction, not by a poin
   - Render default backup directory: `/var/data/backups`.
   - Local dev DB path: `src/data/wwsc.db`.
   - E2E tests use isolated `/tmp/...` DBs and are not Bryan's live data.
-- [ ] Inspect Render persistent disk/backups if access/tooling allows.
-- [ ] If old live events are recoverable: restore/copy them through a controlled, backed-up path after Dino approval.
-- [ ] If not recoverable: create a reusable completed-event test-data seed/import/reset flow so Bryan does not manually recreate events for each retest.
+- [x] Render access attempted:
+  - no local `render` CLI available.
+  - no Render API key/account found in `secrets/accounts.json`.
+  - OpenClaw managed browser reaches Render sign-in only.
+  - user Chrome relay remains unavailable (`127.0.0.1:9222/json/version` issue), so logged-in Render dashboard could not be inspected.
+- [x] Reusable retest seed path created: `scripts/seed-bryan-retest-events.cjs`.
+- [x] Local isolated verification passed:
+  - 4 completed events created.
+  - `/api/events?archived=1` shows all 4.
+  - `/api/events/current` returns `null`.
+  - April monthly pointscore and 2026 season pointscore are visible.
+  - Time History and Pointscore rows are written.
+  - Evidence: `docs/evidence/bryan-retest-seed/seed-2026-06-04T10-37-23-577Z.json`.
+  - Summary: `docs/evidence/bryan-retest-seed/README.md`.
+- [x] Safety guard verified: script refuses `https://wwsc-demo.onrender.com` unless `APPLY_LIVE=1` is set.
+- [ ] After Dino approval, seed hosted demo with `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-retest-events.cjs`, then re-check live events/months/pointscore before drafting Bryan's final reply.
 
-Classification: M3 retest blocker / live-data persistence/test-data workflow question. Do not classify as M3 acceptance, formula mismatch, or Constitution-rule feedback yet.
+Classification: M3 retest blocker / live-data persistence/test-data workflow question. Do not classify as M3 acceptance, formula mismatch, or Constitution-rule feedback yet. Dino explicitly does not want an interim Bryan message; hold all customer communication until checks/corrections are finished.
 
 ## 📤 BRYAN DELIVERY SENT — v2.10.1 / M3 (2026-06-04 09:53 Europe/Berlin)
 
