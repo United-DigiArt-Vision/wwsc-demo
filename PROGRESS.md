@@ -2,8 +2,29 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned, implemented, Balerion-verified, and deployed live as v2.10.1 on 2026-06-04.
-Schritt: Dino/Nedim sent the v2.10.1 / M3 delivery update to Bryan at 09:53 Europe/Berlin on 2026-06-04. Wait for Bryan's test response or exact Constitution/expected-result feedback.
-Blockiert: Nothing for deploy after Dino authorization. Honest scope boundary remains: M3 is proven under the assumptions sent to Bryan (event-separated points, monthly/season totals by simple addition, existing Excel pointscore sheets as working scoring source). Do not claim unprovided Constitution-specific rules, Improvement report rules, or Attendance report rules as complete.
+Schritt: Bryan replied asking where completed events are saved and whether the 4 completed events he created previously still exist in a DB. Reply archived 2026-06-04; readonly live API now shows no active/archived events.
+Blockiert: M3 retest is blocked by test-data/persistence friction, not by a pointscore formula complaint. Next technical step is to inspect Render persistent disk/backups or prepare a reusable completed-event test dataset/reset path. No live data mutation or Bryan reply without Dino authorization.
+
+## 🚦 CURRENT GATE — BRYAN COMPLETED-EVENTS DB QUESTION (2026-06-04 12:25 Europe/Berlin)
+
+- [x] Bryan inbound archived: `../messages/2026-06-04-Bryan-inbound-completed-events-db-question.md`.
+- [x] Draft response prepared: `../messages/2026-06-04-draft-to-bryan-completed-events-db-question.md`.
+- [x] Readonly live checks:
+  - `GET /api/version` → `2.10.1`.
+  - `GET /api/events` → `[]`.
+  - `GET /api/events?archived=1` → `[]`.
+  - `GET /api/pointscore/months` → `[]`.
+  - `GET /api/events/current` → `null`.
+- [x] Storage truth from code/config:
+  - Render production DB path: `WWSC_DB_PATH=/var/data/wwsc.db` via `render.yaml`.
+  - Render default backup directory: `/var/data/backups`.
+  - Local dev DB path: `src/data/wwsc.db`.
+  - E2E tests use isolated `/tmp/...` DBs and are not Bryan's live data.
+- [ ] Inspect Render persistent disk/backups if access/tooling allows.
+- [ ] If old live events are recoverable: restore/copy them through a controlled, backed-up path after Dino approval.
+- [ ] If not recoverable: create a reusable completed-event test-data seed/import/reset flow so Bryan does not manually recreate events for each retest.
+
+Classification: M3 retest blocker / live-data persistence/test-data workflow question. Do not classify as M3 acceptance, formula mismatch, or Constitution-rule feedback yet.
 
 ## 📤 BRYAN DELIVERY SENT — v2.10.1 / M3 (2026-06-04 09:53 Europe/Berlin)
 
@@ -109,9 +130,9 @@ Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 w
 - [x] Balerion prepared the mandatory 120-case M3 user-interaction test spec: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md`.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Wait for Bryan's response to the v2.10.1 / M3 delivery message sent by Dino on 2026-06-04 at 09:53 Europe/Berlin.
+Was: Resolve Bryan's completed-events persistence/test-data blocker before asking him to retest M3 pointscore.
 
-Kriterium fertig (current gate): Bryan's next reply is archived in `../messages/`, classified, and either converted into an acceptance/payment-close path or a narrow v2.10.x adjustment plan with evidence.
+Kriterium fertig (current gate): The old four events are either recovered from the hosted DB/backups or a reusable completed-event test dataset/reset/import path is prepared and evidenced; then Dino can send Bryan a precise response.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Pointscore/reports/graphs/constitution scoring are M3, not retroactive M2. Bryan's 2026-06-02 answer partially clarified event-separated points plus monthly/season addition; Dino/Nedim then sent Bryan the working assumptions. Implementation is released under those sent assumptions, but Constitution-specific behavior remains "adjustable later" unless Bryan provides a separate Constitution document.
