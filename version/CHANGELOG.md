@@ -11,6 +11,20 @@
 
 ---
 
+## 2026-06-04 — release: v2.10.1 M3 delivery prep
+- **Timestamp:** 2026-06-04 09:33:40 Europe/Berlin
+- **App Version (from package.json):** 2.10.1
+- **Branch:** dev/v2.10.0-m3-history-graphs -> main
+- **RecordedCommit:** resolve with `git rev-parse --short HEAD`
+- **Editor:** Balerion
+- **Trigger:** Dino authorized M3 deploy and Bryan delivery update preparation on 2026-06-04 09:28 Europe/Berlin.
+- **Changes:**
+  - Bumped release version from 2.10.0 to 2.10.1 and synchronized `package.json`, `package-lock.json`, and `src/public/index.html` cache-busting.
+  - Promoted the M3 pointscore/report/graph build from verified branch state to release-prep state.
+  - Recorded Balerion's independent V0015 proof verification: Unit/API 13 PASS / 0 FAIL; pointscore isolation PASS; M2 55 PASS / 0 FAIL; M2 100 = 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED; M3 120 = 116 PASS / 2 NOT APPLICABLE / 2 CLIENT INPUT MISSING / 0 FAIL / 0 BLOCKED; R-M3-05 graphs = 19 PASS / 1 NOT APPLICABLE / 0 FAIL.
+  - Kept the client-facing truth boundary explicit: M3 is proven under Bryan's sent working assumptions; unprovided Constitution-specific rules, Improvement report rules, and Attendance report rules remain client-input-missing rather than claimed complete.
+- **Release action:** merge to `main`, tag `v2.10.1`, push to `origin/main`, verify Render live `/api/version`, and record live-smoke evidence.
+
 ## 2026-06-04 — feat+docs: M3 Bryan-Expectation Proof + N/A closure
 - **Timestamp:** 2026-06-04 (resume session)
 - **App Version (from package.json):** 2.10.0

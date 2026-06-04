@@ -1,11 +1,11 @@
-# PROGRESS — WWSC v2.9.0 M2 Released / M3 Kickoff
+# PROGRESS — WWSC v2.10.1 M3 Release Deploy
 
 ## 🎯 AKTUELLER STATUS
-Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned/authorized
-Schritt: R-M3-05 Individual Swimmer History Graphs is accepted PASS. Dino/Nedim sent Bryan the M3 Pointscore / Constitution clarification questions on 2026-05-29 ~22:15 Europe/Berlin. Bryan gave a partial answer on 2026-06-02: keep event points separate and combine by simple addition for monthly and season overall winners. Dino/Nedim then sent Bryan a transparent assumptions message: proceed using event-separated points, monthly/season totals by simple addition, existing Excel pointscore sheets as the working scoring source, and adjust later if a separate Constitution rule differs. Balerion remains orchestrator/quality gate; Claude Code implements only after scoped directives.
-Blockiert: Do not block on another Bryan clarification round. Implement M3 pointscore under the assumptions sent to Bryan, while keeping formula/season/Constitution behavior isolated and adjustable. Do not claim Constitution rules are confirmed. M1/M2/v2.9.0 accepted baseline behavior is protected.
+Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned, implemented, Balerion-verified, and authorized by Dino for v2.10.1 deploy on 2026-06-04.
+Schritt: Prepare and push the v2.10.1 release to `main`, verify Render live, then give Dino a send-ready Bryan delivery update.
+Blockiert: Nothing for deploy after Dino authorization. Honest scope boundary remains: M3 is proven under the assumptions sent to Bryan (event-separated points, monthly/season totals by simple addition, existing Excel pointscore sheets as working scoring source). Do not claim unprovided Constitution-specific rules, Improvement report rules, or Attendance report rules as complete.
 
-## 🆕 M3 POINTSCORE SLICE — IMPLEMENTED + TESTED (2026-06-03, awaiting Balerion QA)
+## 🆕 M3 POINTSCORE SLICE — IMPLEMENTED + TESTED + RELEASE AUTHORIZED (2026-06-04)
 
 Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 working assumptions. Engine commit `219bdd9`; CSV-route refactor + test suite + specs + SSOT committed on `dev/v2.10.0-m3-history-graphs` (resolve HEAD dynamically). The prior session completed implementation + ran the evidence but hit its context limit mid-closure; this slice was re-verified first-hand and closed out in a fresh session.
 
@@ -18,9 +18,10 @@ Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 w
 - [x] 120-case browser suite: `scripts/e2e-m3-pointscore-120.cjs` = 114 PASS / 6 NA / 0 FAIL / 0 BLOCKED (clean-HEAD evidence in `docs/evidence/m3-user-interaction-v3.0.1/`, 64 screenshots). Balerion found the prior UIT-M3-113 mobile screenshot still had an Event Details overlay despite a PASS note; fixed the harness cleanup in commit `711c66d` and refreshed clean evidence in commit `735f0b3`.
 - [x] Regression: M2 55/0, M2 100 = 98/2/0/0, R-M3-05 history-graphs 19/1/0; out-of-scope guard clean.
 - [x] Balerion V0015 QA of the evidence package — PASS after independent reproduction on 2026-06-04. Reproduced: Unit/API 12/0, isolation PASS, M2 55/0, M2 100 98/2/0/0, M3 120 114/6/0/0, R-M3-05 graphs 19/1/0. Visual re-check of `UIT-M3-113-resp-mobile.png` confirms no overlay after harness fix.
-- [ ] Claude Code Bryan-expectation proof — Balerion sent `../messages/2026-06-04-0810-Balerion-To-Claude-WWSC-M3-Bryan-Expectation-Proof-Required.md`. Claude must prove every Bryan/M3 expectation via a source-to-requirement-to-code-to-test-to-evidence matrix, close or source-justify all 6 current M3-120 `NOT APPLICABLE` cases, and return an honest verdict before any release step.
+- [x] Claude Code Bryan-expectation proof — Balerion sent `../messages/2026-06-04-0810-Balerion-To-Claude-WWSC-M3-Bryan-Expectation-Proof-Required.md`; Claude returned `../messages/2026-06-04-1030-Claude-To-Balerion-WWSC-M3-Bryan-Expectation-Proof.md`.
 - [x] Balerion V0015 verification of Claude's Bryan-expectation proof — PASS on 2026-06-04 at HEAD `d3d3ada`. Reproduced: Unit/API 13/0, isolation PASS, M2 55/0, M2 100 98/2/0/0, M3 120 116 PASS / 2 NA / 2 CLIENT INPUT MISSING / 0 FAIL / 0 BLOCKED, R-M3-05 graphs 19/1/0. Verification note: `../messages/2026-06-04-0920-Balerion-V0015-WWSC-M3-Bryan-Expectation-Proof-Verification.md`.
-- [ ] `STABLE.md` update + merge to `main` + deploy — only after Dino explicitly authorizes release/deploy/client communication.
+- [x] Dino authorized release/deploy/client update preparation on 2026-06-04 09:28 Europe/Berlin.
+- [ ] `STABLE.md` update + merge to `main` + deploy + live smoke evidence.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)
 - [x] M2 activated/funded evidence: `../messages/2026-05-18-Bryan-M2-active-funded.md`.
@@ -92,19 +93,16 @@ Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 w
 - [x] Balerion prepared the mandatory 120-case M3 user-interaction test spec: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md`.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Claude Code must execute `../messages/2026-06-04-0810-Balerion-To-Claude-WWSC-M3-Bryan-Expectation-Proof-Required.md`. Required output: `BRYAN-M3-EXPECTATION-PROOF-2026-06-04.md` plus a Claude-to-Balerion proof handoff. It must prove that the M3 build matches Bryan's expectations under the sent assumptions, explicitly classify missing Constitution input, close or source-justify every current `NOT APPLICABLE`, rerun full evidence, and provide honest Dino/Bryan wording.
+Was: Merge v2.10.1 to `main`, push/tag for Render deploy, poll live `/api/version`, run a read-only live browser smoke, record live evidence, then hand Dino the Bryan delivery draft.
 
-Dateien zuerst lesen: `../messages/2026-06-03-0645-Balerion-To-Claude-WWSC-M3-Pointscore-Implementation-Directive.md`, `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md`, `../messages/2026-06-02-Bryan-inbound-m3-event-separated-month-season-addition.md`, `../messages/2026-06-02-outgoing-to-bryan-m3-pointscore-assumptions-sent-confirmed.md`, `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md`, `REQUIREMENTS-M3-POINTSCORE-REPORTS.md`, `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md`, `M3-FORWARD-BUILD-GUARDRAIL-2026-05-29.md`.
-Kriterium fertig (current gate): Claude receives and executes the directive; final handoff includes implementation evidence, 120-case UI protocol, raw logs, screenshot manifest, M2/M3 regression results, pointscore isolation proof, and explicit no-push/no-deploy/no-tag/no-client-contact statement.
+Kriterium fertig (current gate): live URL returns `2.10.1`, sidebar/UI smoke passes without relevant console/page errors, `STABLE.md` records the verified live state, and the Bryan update draft is archived in `../messages/`.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
-- M3 is now commissioned, but exact implementation must be scoped from project messages before coding. If acceptance criteria are incomplete, Claude's first deliverable is the PRD/acceptance checklist/questions list.
-- The 100-case M3 user-interaction spec is mandatory; if PRD scope changes, Claude must update the spec before final test execution.
-- Pointscore/reports/graphs/constitution scoring are M3, not retroactive M2. Bryan's 2026-06-02 answer partially clarified event-separated points plus monthly/season addition; Dino/Nedim then sent Bryan the working assumptions. Implementation may proceed under those sent assumptions, but Constitution-specific behavior remains "adjustable later" unless Bryan provides a separate Constitution document.
+- Pointscore/reports/graphs/constitution scoring are M3, not retroactive M2. Bryan's 2026-06-02 answer partially clarified event-separated points plus monthly/season addition; Dino/Nedim then sent Bryan the working assumptions. Implementation is released under those sent assumptions, but Constitution-specific behavior remains "adjustable later" unless Bryan provides a separate Constitution document.
 - Commercial hosted version / multiple clubs / customer isolation / backups / access control / maintenance remain separate commercial/productization scope, not automatic M3.
 - Stable M1/v2.8.12 unverändert (backup-Branch und File-Snapshot existieren).
 - **Keine Carry-overs mehr.** `UI-M2-F06` / `UI-M2-F08` / `UI-M2-C04` sind unter ausführbarer Browser-Evidenz geschlossen.
-- Safety: no push to origin, no deploy, no tag, no Bryan/client contact, no live data mutation unless explicitly authorized by Dino/Balerion.
+- Safety: Dino authorized push/deploy/tag for v2.10.1 on 2026-06-04. No live data mutation. No Bryan/client contact by Balerion unless Dino explicitly instructs sending.
 
 ## 📊 FORTSCHRITT
 Dev-loop preparation: 6/6 spec artifacts

@@ -1,21 +1,34 @@
 ## Current Stable Live Version
 
-- **Version:** v2.9.0
-- **Tag:** v2.9.0
+- **Version:** v2.10.1
+- **Tag:** v2.10.1
 - **Branch:** main
-- **Deployed main tip:** 8d167fd (`docs: mark v2.9.0 stable release candidate`)
-- **Version bump commit:** aa004be (`release: bump to v2.9.0 for M2 time history`)
-- **Implementation commit:** a864414 (`feat: v2.9.0 M2 time history implementation (T1-T7)`)
-- **Merge commit:** 1c01b10 (`merge: v2.9.0 M2 time history`)
-- **Evidence commit:** 14c3118 (`docs: M2 100-case screenshot evidence package (98 PASS / 2 NA / 0 FAIL)`)
-- **Balerion review commit:** 0e637eb (`docs: record M2 100-case screenshot review`)
-- **Date:** 2026-05-19
-- **Local verification:** 55 PASS / 0 FAIL post-merge, plus 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED expanded screenshot gate.
-- **Live Render verification:** `/api/version` returned `2.9.0`, build `2026-05-19T11:38:54.177Z`.
-- **Browser verification:** live sidebar shows `v2.9.0`; Members screen exposes History actions; member History modal opens and shows the correct no-history empty state on the current live DB; Season Calendar loads; no relevant console/page errors.
-- **Live smoke evidence:** `docs/evidence/live-smoke-v2.9.0-2026-05-19.json`, screenshots under `docs/screenshots/live-smoke-2026-05-19/`.
+- **Date:** 2026-06-04
+- **Release status:** prepared for Render deploy after Dino authorization.
+- **Implementation branch:** dev/v2.10.0-m3-history-graphs
+- **Implementation anchors:** `219bdd9` (M3 pointscore engine/API/UI), `a94c0fc` (Balerion QA hardening), `711c66d` + `735f0b3` (mobile screenshot overlay harness fix + refreshed evidence), `0096ecb` (Bryan-expectation N/A closure), `3630656` (Balerion independent proof verification).
+- **Local verification:** Unit/API 13 PASS / 0 FAIL; pointscore isolation PASS; M2 regression 55 PASS / 0 FAIL; M2 expanded regression 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED; M3 120-case proof 116 PASS / 2 NOT APPLICABLE / 2 CLIENT INPUT MISSING / 0 FAIL / 0 BLOCKED; R-M3-05 history graphs 19 PASS / 1 NOT APPLICABLE / 0 FAIL.
+- **Live Render verification:** pending after push to `origin/main`.
+- **Browser verification:** pending after Render build.
+- **Live smoke evidence:** pending after Render build.
 
-## What's in v2.9.0
+## What's in v2.10.1
+
+Milestone 3 delivery for Bryan under the working assumptions Dino/Nedim sent to Bryan on 2026-06-02:
+
+- Adds event-separated Pointscore generation during accepted-results finalization.
+- Adds Pointscore views for per-event, monthly, season, and swimmer totals.
+- Adds CSV exports for event, monthly, season, swimmer, time-history graph data, and members.
+- Adds individual swimmer history graphs from existing time-history data.
+- Uses existing Excel pointscore sheets as the working scoring source.
+- Uses monthly/season winner totals by simple addition, as Bryan described.
+- Keeps pointscore behavior isolated and adjustable if Bryan later provides a separate Constitution rule.
+- Preserves accepted M1/M2 behavior through M2 55-case and expanded 100-case regression gates.
+- Does not claim unprovided Constitution-specific rules, Improvement report rules, or Attendance report rules as complete; those are documented as client input missing.
+
+## Previous Stable
+
+### v2.9.0
 
 Milestone 2 Time History delivery for Bryan:
 
@@ -24,13 +37,11 @@ Milestone 2 Time History delivery for Bryan:
 - Adds dated event Time History in completed Calendar event details.
 - Preserves event dates in history API responses and UI.
 - Keeps re-finalize idempotent so the same event does not create duplicate history rows.
-- Keeps M2 scoped to time-history only; Pointscore, accumulated season totals, reports/graphs, and constitution scoring remain M3.
+- Kept M2 scoped to time-history only; Pointscore, accumulated season totals, reports/graphs, and constitution scoring were M3.
 - Preserves v2.8.12 M1 behavior through regression checks for members, event setup, heat builder, results, relays, breakers, calendar/archive/restore, and prior relay/report fixes.
 
-## Previous Stable
+### v2.8.12
 
-- **Version:** v2.8.12
-- **Tag:** v2.8.12
 - **Scope:** Bryan final M1 polish plus persistence hardening.
 - **Live Render verification before v2.9.0 deploy:** `/api/version` returned `2.8.12`, build `2026-05-06T12:15:38.380Z`.
 
