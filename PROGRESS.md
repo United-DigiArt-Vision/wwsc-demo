@@ -2,8 +2,24 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned, implemented, Balerion-verified, and deployed live as v2.10.1 on 2026-06-04.
-Schritt: Give Dino the send-ready Bryan delivery update and wait for Dino's confirmation if/when sent.
+Schritt: Dino/Nedim sent the v2.10.1 / M3 delivery update to Bryan at 09:53 Europe/Berlin on 2026-06-04. Wait for Bryan's test response or exact Constitution/expected-result feedback.
 Blockiert: Nothing for deploy after Dino authorization. Honest scope boundary remains: M3 is proven under the assumptions sent to Bryan (event-separated points, monthly/season totals by simple addition, existing Excel pointscore sheets as working scoring source). Do not claim unprovided Constitution-specific rules, Improvement report rules, or Attendance report rules as complete.
+
+## 📤 BRYAN DELIVERY SENT — v2.10.1 / M3 (2026-06-04 09:53 Europe/Berlin)
+
+- [x] Dino confirmed by Discord screenshot that he sent the Bryan delivery message.
+- [x] Sent-confirmed record: `../messages/2026-06-04-outgoing-to-bryan-v2101-m3-delivery-sent-confirmed.md`.
+- [x] Screenshot source: Discord attachment `IMG_7239---9a5755db-4d2c-4775-b796-b80dd248cc2a.png`, received 2026-06-04 09:54 Europe/Berlin.
+- [x] Recipient visible in screenshot: Bryan Hesketh / Bryan H.
+- [x] Sender visible in screenshot: Nedim Dino Agic.
+- [x] Visible sent message is shorter than the prepared draft: it does not show the separate release-testing paragraph or the explicit M2-regression bullet, so those should remain internal evidence rather than assumed client-facing wording.
+- [x] Current gate: **WAITING FOR BRYAN TEST / ACCEPTANCE / CONSTITUTION-RULE FEEDBACK**.
+
+Next Bryan reply handling:
+- Archive full reply before interpretation.
+- Classify as acceptance, calculation mismatch, Constitution rule input, bug report, scope expansion, or ambiguous feedback.
+- If Bryan provides exact Constitution rules or expected results, open a narrow v2.10.x adjustment loop and map rule -> code -> test -> evidence.
+- If Bryan accepts M3, prepare the M3 acceptance/payment-close path.
 
 ## 🆕 M3 POINTSCORE SLICE — IMPLEMENTED + TESTED + RELEASE AUTHORIZED (2026-06-04)
 
@@ -93,9 +109,9 @@ Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 w
 - [x] Balerion prepared the mandatory 120-case M3 user-interaction test spec: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md`.
 
 ## 📋 NÄCHSTER SCHRITT (sofort ausführbar)
-Was: Dino sends the prepared Bryan delivery update if he approves the wording. After sending, archive a sent-confirmed record in `../messages/`.
+Was: Wait for Bryan's response to the v2.10.1 / M3 delivery message sent by Dino on 2026-06-04 at 09:53 Europe/Berlin.
 
-Kriterium fertig (current gate): sent-confirmed record exists, or Dino explicitly decides to revise/wait.
+Kriterium fertig (current gate): Bryan's next reply is archived in `../messages/`, classified, and either converted into an acceptance/payment-close path or a narrow v2.10.x adjustment plan with evidence.
 
 ## ⚠️ OFFENE PUNKTE / SCOPE-GRENZEN
 - Pointscore/reports/graphs/constitution scoring are M3, not retroactive M2. Bryan's 2026-06-02 answer partially clarified event-separated points plus monthly/season addition; Dino/Nedim then sent Bryan the working assumptions. Implementation is released under those sent assumptions, but Constitution-specific behavior remains "adjustable later" unless Bryan provides a separate Constitution document.
@@ -109,7 +125,7 @@ Dev-loop preparation: 6/6 spec artifacts
 Implementation: 9/9 checklist tasks done
 Browser-E2E evidence: 55 PASS / 0 FAIL / 0 console errors (Full-Proof Rerun)
 Expanded user-interaction screenshot spec: 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED, 101 screenshots, Balerion V0015 review complete
-Quality gate: local `main` post-merge verification complete; 100-case screenshot proof accepted; Render live-smoke passed; Bryan update sent; Bryan M2 acceptance/payment now confirmed by Dino; M3 commissioned; R-M3-05 accepted PASS; M2 accepted/paid/deployed backup created; Bryan clarification questions sent; Bryan partial aggregation answer archived/mapped; Dino/Nedim sent the follow-up assumptions message; Balerion prepared constrained Claude Code pointscore directive plus 120-case v3.0.1 UI proof spec; next action is to hand this to Claude Code. Balerion QA remains required before any delivery/deploy/client communication.
+Quality gate: local `main` post-merge verification complete; 100-case screenshot proof accepted; Render live-smoke passed; Bryan update sent; Bryan M2 acceptance/payment now confirmed by Dino; M3 commissioned; R-M3-05 accepted PASS; M2 accepted/paid/deployed backup created; Bryan clarification questions sent; Bryan partial aggregation answer archived/mapped; Dino/Nedim sent the follow-up assumptions message; Claude Code implemented M3 pointscore/reports under those assumptions; Balerion independently verified M3 and M2 regression evidence; Dino authorized deploy; v2.10.1 was deployed/live-smoked; Dino sent the Bryan v2.10.1/M3 delivery update on 2026-06-04 09:53 Europe/Berlin. Current gate: wait for Bryan's response and archive/classify it before acting.
 
 ## 2026-05-29 22:30 Resume Note
 

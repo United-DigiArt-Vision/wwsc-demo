@@ -10,7 +10,7 @@
 **LastEditor:** Balerion
 **Cache-bust:** `src/public/index.html` = `?v=2.10.1` (matches package.json/package-lock).
 **WorkingTreeStatus:** M3 pointscore is implemented under Bryan's 2026-06-02 working assumptions (event-separated; monthly/season by simple addition; Excel pointscore sheets as working source; adjustable later - NOT confirmed Constitution). Balerion independently reproduced the current evidence gate on 2026-06-04: unit/API 13 PASS / 0 FAIL, pointscore isolation PASS, M2 55 PASS / 0 FAIL, M2 100 = 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED, M3 120 = 116 PASS / 2 NOT APPLICABLE / 2 CLIENT INPUT MISSING / 0 FAIL / 0 BLOCKED, R-M3-05 history graphs = 19 PASS / 1 NOT APPLICABLE / 0 FAIL. Balerion visually confirmed the previously suspect `UIT-M3-113-resp-mobile.png` is clean after the harness fix. Determinism boundary documented (per-swimmer attribution varies via the accepted v2.8.9 randomized heat builder; all assertions are structural invariants). Constitution-specific accumulation/report rules that Bryan did not provide remain isolated and explicitly client-input-missing.
-**Milestone status:** M2 v2.9.0 RELEASED/PAID and protected. M3 v2.10.1 is deployed live on Render from release merge `2154574` and tag `v2.10.1`; current `origin/main` after evidence/docs should be resolved dynamically with `git rev-parse --short origin/main`. Live `/api/version` returned `2.10.1`; latest verified build during release closure was `2026-06-04T07:43:22.067Z` (docs-only redeploys may advance the build timestamp without changing app version). Read-only live browser smoke passed 8 PASS / 0 FAIL with evidence in `docs/evidence/live-smoke-v2.10.1-2026-06-04.json` and `docs/screenshots/live-smoke-2026-06-04/`. No Bryan/client message is sent by Balerion; only a draft/update text is prepared for Dino unless Dino explicitly requests external sending.
+**Milestone status:** M2 v2.9.0 RELEASED/PAID and protected. M3 v2.10.1 is deployed live on Render from release merge `2154574` and tag `v2.10.1`; current `origin/main` after evidence/docs should be resolved dynamically with `git rev-parse --short origin/main` (last checked after deploy docs: `e47d2ae`). Live `/api/version` returned `2.10.1`; latest verified build during release closure was `2026-06-04T07:43:22.067Z` (docs-only redeploys may advance the build timestamp without changing app version). Read-only live browser smoke passed 8 PASS / 0 FAIL with evidence in `docs/evidence/live-smoke-v2.10.1-2026-06-04.json` and `docs/screenshots/live-smoke-2026-06-04/`. Dino/Nedim sent the v2.10.1 / M3 delivery update to Bryan at 09:53 Europe/Berlin on 2026-06-04; sent-confirmed record: `../messages/2026-06-04-outgoing-to-bryan-v2101-m3-delivery-sent-confirmed.md`. Current client gate: wait for Bryan test/acceptance or exact Constitution/expected-result feedback.
 **M3 slice docs:** `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md`, `UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md`, `REQUIREMENT-TEST-EVIDENCE-MATRIX-M3-POINTSCORE-REPORTS.md`, `DEV-CHECKLIST-M3-POINTSCORE-REPORTS.md`. Evidence: `docs/evidence/m3-user-interaction-v3.0.1/`, `docs/screenshots/m3-user-interaction-v3.0.1/` (62 PNGs), `docs/evidence/m3-pointscore/`.
 
 ---
@@ -44,7 +44,7 @@
 
 ## Client / Milestone Status
 
-**Current client status:** M2 RELEASED/PAID; M3 COMMISSIONED/AUTHORIZED. M2 remains protected and regression-tested. Dino authorized M3 deployment on 2026-06-04 after Balerion independently verified Claude's proof. M3 v2.10.1 is being released under the exact working assumptions sent to Bryan: event-separated pointscore, monthly/season totals by simple addition, and existing Excel pointscore sheets as the working scoring source, with later adjustment if Bryan provides separate Constitution rules. Client communication boundary: prepare a Bryan delivery update for Dino; do not send it externally from Balerion unless Dino explicitly instructs that.
+**Current client status:** M2 RELEASED/PAID; M3 COMMISSIONED/AUTHORIZED, DEPLOYED, and DELIVERED TO BRYAN by Dino/Nedim. M2 remains protected and regression-tested. Dino authorized M3 deployment on 2026-06-04 after Balerion independently verified Claude's proof. M3 v2.10.1 was released under the exact working assumptions sent to Bryan: event-separated pointscore, monthly/season totals by simple addition, and existing Excel pointscore sheets as the working scoring source, with later adjustment if Bryan provides separate Constitution rules. Dino/Nedim sent the delivery update at 09:53 Europe/Berlin on 2026-06-04. Next action is not implementation; it is waiting for Bryan's response, then archiving/classifying it before any code or client-response step.
 
 **M3 handoff:** `../messages/2026-05-29-1105-Balerion-To-Claude-WWSC-M3-Development-Handoff.md`
 
@@ -205,6 +205,12 @@
    - Directive: `../messages/2026-06-03-0645-Balerion-To-Claude-WWSC-M3-Pointscore-Implementation-Directive.md`.
    - Mandatory user-interaction proof spec: `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md` with 120 cases covering Excel formula extraction, event-separated pointscore, monthly totals, season totals, reports, CSV/export, graphs, regression, responsiveness, accessibility, out-of-scope guard, and final evidence.
    - Current implementation gate: hand the directive/spec to Claude Code. Claude must implement and test, then return evidence. Balerion remains QA gate before any delivery/deploy/client message.
+36. **2026-06-04 09:53 Europe/Berlin:** Dino/Nedim sent the v2.10.1 / M3 delivery update to Bryan.
+   - Sent-confirmed record: `../messages/2026-06-04-outgoing-to-bryan-v2101-m3-delivery-sent-confirmed.md`.
+   - Evidence source: Discord screenshot attachment `IMG_7239---9a5755db-4d2c-4775-b796-b80dd248cc2a.png` relayed by Dino at 09:54 Europe/Berlin.
+   - Message delivered live demo URL `https://wwsc-demo.onrender.com/`, the working assumptions, included M3 pointscore/report items, and asked Bryan to send exact Constitution rules or example expected results if the scoring should differ.
+   - Important evidence nuance: the visible sent message is shorter than the prepared draft and does not show the separate test paragraph/M2-regression bullet. Treat those as internal proof, not as confirmed client-facing wording.
+   - Current gate: **WAITING FOR BRYAN TEST / ACCEPTANCE / CONSTITUTION-RULE FEEDBACK**. Next Bryan reply must be archived and classified before code changes or another client response.
 
 ## Current Boundary
 
@@ -256,8 +262,8 @@ Current quality sequence:
 - Claude Code has returned the forward-build guardrail lists and should protect M1/M2/v2.9.0 accepted baseline behavior.
 - Dino/Nedim sent Bryan the M3 Pointscore / Constitution clarification questions on 2026-05-29 ~22:15 Europe/Berlin.
 - Bryan partially answered on 2026-06-02: event-separated points plus simple monthly/season addition for overall winners.
-- Next action: give Claude Code `../messages/2026-06-03-0645-Balerion-To-Claude-WWSC-M3-Pointscore-Implementation-Directive.md` and require execution against `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md`. Do not wait for another Bryan clarification round; implement under the sent assumptions and keep formula/season/Constitution behavior adjustable.
-- Balerion performs V0015 QA of Claude's claims/evidence before any delivery/deploy/client communication.
+- Current state: Claude Code implemented M3 pointscore/reports, Balerion verified the proof, Dino authorized release, v2.10.1 was deployed/live-smoked, and Dino/Nedim sent the M3 delivery update to Bryan on 2026-06-04 at 09:53 Europe/Berlin.
+- Next action: wait for Bryan's response. Archive and classify before any implementation, deploy, or client response. If Bryan gives Constitution rules/examples, map them to a narrow v2.10.x adjustment with fresh evidence. If Bryan accepts M3, prepare the M3 acceptance/payment-close path.
 - Do not start commercial webhost/SaaS/productization work unless separately scoped and quoted.
 
 ## SSOT Rule
