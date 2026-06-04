@@ -2,10 +2,10 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned, implemented, Balerion-verified, and deployed live as v2.10.1 on 2026-06-04.
-Schritt: Bryan replied asking where completed events are saved and whether the 4 completed events he created previously still exist in a DB. Reply archived 2026-06-04; initial readonly live API showed no active/archived events. Balerion prepared and locally proved a reusable 4-completed-event retest seed path. After restart/Dino instruction, hosted demo verification shows 4 completed retest events now visible live and pointscore/history checks passing.
+Schritt: Bryan replied asking where completed events are saved and whether the 4 completed events he created previously still exist in a DB. Reply archived 2026-06-04; initial readonly live API showed no active/archived events. Balerion prepared and locally proved a reusable 4-completed-event retest seed path. After restart/Dino instruction, hosted demo verification shows 4 completed retest events now visible live and pointscore/history checks passing. Dino sent the final completed-events/DB reply to Bryan on 2026-06-04 at 14:14 Europe/Berlin.
 Blockiert: Technical retest-data blocker resolved for hosted demo retest. Direct Render disk/backups are still not inspectable from current tooling (no Render CLI/API key or working logged-in browser session), so do not claim the original old events were recovered. No Bryan reply by Balerion; Dino sends customer communication.
 
-## 🚦 CURRENT GATE — BRYAN COMPLETED-EVENTS DB QUESTION (2026-06-04 12:25 Europe/Berlin)
+## 🚦 CURRENT GATE — WAITING FOR BRYAN RETEST / ACCEPTANCE / ISSUE DETAILS (2026-06-04 14:14 Europe/Berlin)
 
 - [x] Bryan inbound archived: `../messages/2026-06-04-Bryan-inbound-completed-events-db-question.md`.
 - [x] Draft response prepared: `../messages/2026-06-04-draft-to-bryan-completed-events-db-question.md`.
@@ -41,8 +41,16 @@ Blockiert: Technical retest-data blocker resolved for hosted demo retest. Direct
   - Read-only verification passed 7/7 checks: live version 2.10.1, four completed events visible, expected April dates visible, no current event, April pointscore visible, season pointscore visible, time history visible.
   - Evidence: `docs/evidence/bryan-retest-seed/live-verify-2026-06-04T12-06-20-652Z.json`.
 - [x] Final Bryan response draft prepared: `../messages/2026-06-04-draft-to-bryan-completed-events-db-question-final-after-live-seed.md`.
+- [x] Dino confirmed he sent the final Bryan reply exactly as prepared on 2026-06-04 at 14:14 Europe/Berlin.
+- [x] Sent-confirmed record: `../messages/2026-06-04-outgoing-to-bryan-completed-events-db-question-sent-confirmed.md`.
 
-Classification: M3 retest blocker / live-data persistence/test-data workflow question. Do not classify as M3 acceptance, formula mismatch, or Constitution-rule feedback yet. Customer-facing next step is Dino sending the prepared final reply; Balerion must not send externally unless Dino explicitly instructs it.
+Classification: M3 retest blocker / live-data persistence/test-data workflow question. Do not classify as M3 acceptance, formula mismatch, or Constitution-rule feedback yet. Customer-facing next step is waiting for Bryan's retest/acceptance/issue details. Balerion must not send externally unless Dino explicitly instructs it.
+
+Next Bryan reply handling:
+- Archive Bryan's complete reply first.
+- Classify before response/code: acceptance, retest issue, calculation mismatch, Constitution/rule input, data persistence issue, scope expansion, or ambiguous feedback.
+- If Bryan provides a defect, reproduce against the live demo with the four completed retest events before changing code.
+- If Bryan accepts M3, prepare the M3 acceptance/payment-close path.
 
 ## 📤 BRYAN DELIVERY SENT — v2.10.1 / M3 (2026-06-04 09:53 Europe/Berlin)
 
