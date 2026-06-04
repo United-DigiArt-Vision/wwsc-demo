@@ -19,6 +19,7 @@ Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 w
 - [x] Regression: M2 55/0, M2 100 = 98/2/0/0, R-M3-05 history-graphs 19/1/0; out-of-scope guard clean.
 - [x] Balerion V0015 QA of the evidence package — PASS after independent reproduction on 2026-06-04. Reproduced: Unit/API 12/0, isolation PASS, M2 55/0, M2 100 98/2/0/0, M3 120 114/6/0/0, R-M3-05 graphs 19/1/0. Visual re-check of `UIT-M3-113-resp-mobile.png` confirms no overlay after harness fix.
 - [ ] Claude Code Bryan-expectation proof — Balerion sent `../messages/2026-06-04-0810-Balerion-To-Claude-WWSC-M3-Bryan-Expectation-Proof-Required.md`. Claude must prove every Bryan/M3 expectation via a source-to-requirement-to-code-to-test-to-evidence matrix, close or source-justify all 6 current M3-120 `NOT APPLICABLE` cases, and return an honest verdict before any release step.
+- [x] Balerion V0015 verification of Claude's Bryan-expectation proof — PASS on 2026-06-04 at HEAD `d3d3ada`. Reproduced: Unit/API 13/0, isolation PASS, M2 55/0, M2 100 98/2/0/0, M3 120 116 PASS / 2 NA / 2 CLIENT INPUT MISSING / 0 FAIL / 0 BLOCKED, R-M3-05 graphs 19/1/0. Verification note: `../messages/2026-06-04-0920-Balerion-V0015-WWSC-M3-Bryan-Expectation-Proof-Verification.md`.
 - [ ] `STABLE.md` update + merge to `main` + deploy — only after Dino explicitly authorizes release/deploy/client communication.
 
 ## ✅ ERLEDIGT (mit Dateireferenz)

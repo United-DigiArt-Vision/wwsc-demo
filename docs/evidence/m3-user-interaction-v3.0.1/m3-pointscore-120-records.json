@@ -1,11 +1,11 @@
 {
   "baseline": {
     "branch": "dev/v2.10.0-m3-history-graphs",
-    "commit": "711c66d",
+    "commit": "d3d3ada",
     "pkg": "2.10.0",
     "apiVersion": {
       "version": "2.10.0",
-      "build": "2026-06-04T05:48:32.250Z"
+      "build": "2026-06-04T07:18:06.663Z"
     }
   },
   "records": [
@@ -181,7 +181,7 @@
       "id": "UIT-M3-029",
       "status": "NOT APPLICABLE",
       "shot": "",
-      "note": "brace not seeded; relay/team 3/2/1 rule proven via medley_relay + documented in artifact"
+      "note": "brace special-team UI not seeded in browser; engine maps 25m_brace/50m_brace → relay 3/2/1 (UT10) and the relay rule is exercised end-to-end by medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF."
     },
     {
       "id": "UIT-M3-030",
@@ -193,7 +193,7 @@
       "id": "UIT-M3-031",
       "status": "NOT APPLICABLE",
       "shot": "",
-      "note": "pogo not supported in current seed; rule documented (relay 3/2/1)"
+      "note": "pogo special-team UI not seeded in browser; engine maps pogo → relay 3/2/1 (UT10), relay rule proven via medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF."
     },
     {
       "id": "UIT-M3-032",
@@ -461,15 +461,15 @@
     },
     {
       "id": "UIT-M3-076",
-      "status": "NOT APPLICABLE",
+      "status": "CLIENT INPUT MISSING",
       "shot": "",
-      "note": "improvement report not in this slice (M2 graphs cover trend; documented)"
+      "note": "improvement report: Bryan asked for \"internal reports\" (2026-05-23) but QA-09 (which specific reports + improvement criteria/period) is unanswered. Core pointscore reports (event/monthly/season/swimmer) + existing breaker report are delivered; this specific report awaits Bryan input. See BRYAN-M3-EXPECTATION-PROOF."
     },
     {
       "id": "UIT-M3-077",
-      "status": "NOT APPLICABLE",
+      "status": "CLIENT INPUT MISSING",
       "shot": "",
-      "note": "attendance report not in this slice (out of pointscore total per artifact)"
+      "note": "attendance report: attendance data exists in the app, but QA-09 (which reports + any attendance scoring) is unanswered by Bryan. Not a casual N/A — awaits client input. See BRYAN-M3-EXPECTATION-PROOF."
     },
     {
       "id": "UIT-M3-078",
@@ -515,9 +515,9 @@
     },
     {
       "id": "UIT-M3-085",
-      "status": "NOT APPLICABLE",
+      "status": "PASS",
       "shot": "",
-      "note": "members CSV not in this slice (documented)"
+      "note": "members roster CSV header+rows (R-M3-07 member roster): docs/evidence/m3-user-interaction-v3.0.1/members.csv"
     },
     {
       "id": "UIT-M3-086",
@@ -605,9 +605,9 @@
     },
     {
       "id": "UIT-M3-100",
-      "status": "NOT APPLICABLE",
+      "status": "PASS",
       "shot": "",
-      "note": "graph data export not in this slice (CSV covers pointscore/time-history)"
+      "note": "graph/history data export = time-history CSV: the individual graph plots time_history rows; /api/time-history/csv exports the same dated rows (header verified)"
     },
     {
       "id": "UIT-M3-101",
@@ -673,13 +673,13 @@
       "id": "UIT-M3-111",
       "status": "PASS",
       "shot": "",
-      "note": "M2 55-case runner — fresh log @711c66d (/tmp/m3p-m2-55.log)"
+      "note": "M2 55-case runner — fresh log @d3d3ada (/tmp/m3p-m2-55.log)"
     },
     {
       "id": "UIT-M3-112",
       "status": "PASS",
       "shot": "",
-      "note": "M2 100-case runner — fresh log @711c66d (/tmp/m3p-m2-100.log)"
+      "note": "M2 100-case runner — fresh log @d3d3ada (/tmp/m3p-m2-100.log)"
     },
     {
       "id": "UIT-M3-113",
@@ -732,14 +732,15 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3011/?cb=1780552112856",
+      "url": "http://127.0.0.1:3011/?cb=1780557487291",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ],
   "tally": {
-    "PASS": 114,
+    "PASS": 116,
     "FAIL": 0,
     "BLOCKED": 0,
-    "NOT APPLICABLE": 6
+    "NOT APPLICABLE": 2,
+    "CLIENT INPUT MISSING": 2
   }
 }
