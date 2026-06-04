@@ -51,6 +51,22 @@ app.get('/api/members', (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// GET /api/members/csv — member roster export (R-M3-07 optional member roster).
+// Defined BEFORE /api/members/:id so the literal "csv" is not matched as an :id.
+// Read-only; touches no accepted logic. PB times are whole seconds per CLAUDE.md.
+app.get('/api/members/csv', (req, res) => {
+  try {
+    const rows = db.prepare(`
+      SELECT id, name, is_active, joined_date, time_25m, time_50m, time_75m,
+             time_backstroke, time_breaststroke, time_butterfly
+      FROM member ORDER BY name ASC
+    `).all();
+    sendCsv(res, 'wwsc-members-v' + pkg.version + '.csv',
+      ['id', 'name', 'is_active', 'joined_date', 'pb_25m_s', 'pb_50m_s', 'pb_75m_s', 'pb_backstroke_s', 'pb_breaststroke_s', 'pb_butterfly_s'],
+      rows.map(r => [r.id, r.name, r.is_active, r.joined_date || '', r.time_25m, r.time_50m, r.time_75m, r.time_backstroke, r.time_breaststroke, r.time_butterfly]));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.get('/api/members/:id', (req, res) => {
   try {
     const m = db.prepare('SELECT * FROM member WHERE id = ?').get(req.params.id);

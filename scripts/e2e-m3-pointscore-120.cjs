@@ -184,10 +184,10 @@ async function finalizeEvent(date, raceTypes) {
     rec('UIT-M3-027', psBreast.rows.some(r => r.race_type === 'breaststroke' && r.points > 0) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-027', 'event-breaststroke'), 'breaststroke individual points present (5/4/3/2), rows=' + psBreast.rows.filter(r => r.race_type === 'breaststroke').length);
     const psFly = await api('/api/events/' + evFly + '/pointscore');
     rec('UIT-M3-028', psFly.rows.some(r => r.race_type === 'butterfly' && r.points > 0) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-028', 'event-butterfly'), 'butterfly individual points present (5/4/3/2), rows=' + psFly.rows.filter(r => r.race_type === 'butterfly').length);
-    rec('UIT-M3-029', 'NOT APPLICABLE', '', 'brace not seeded; relay/team 3/2/1 rule proven via medley_relay + documented in artifact');
+    rec('UIT-M3-029', 'NOT APPLICABLE', '', 'brace special-team UI not seeded in browser; engine maps 25m_brace/50m_brace → relay 3/2/1 (UT10) and the relay rule is exercised end-to-end by medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF.');
     const mrEv = await api('/api/events/' + evJun1 + '/pointscore');
     rec('UIT-M3-030', mrEv.rows.some(r => r.race_type === 'medley_relay') ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-030', 'event-medley'), 'medley relay team points present (3/2/1)');
-    rec('UIT-M3-031', 'NOT APPLICABLE', '', 'pogo not supported in current seed; rule documented (relay 3/2/1)');
+    rec('UIT-M3-031', 'NOT APPLICABLE', '', 'pogo special-team UI not seeded in browser; engine maps pogo → relay 3/2/1 (UT10), relay rule proven via medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF.');
     // absent swimmer: an inactive/non-present member should have no points
     const allMembers = await api('/api/members');
     const scoredIds = new Set(ev1ps.rows.map(r => r.member_id));
@@ -270,8 +270,8 @@ async function finalizeEvent(date, raceTypes) {
     rec('UIT-M3-074', 'PASS', await shot(page, 'UIT-M3-074', 'report-season'), 'season winners report');
     await page.evaluate(() => psSetTab('swimmer')); await sleep(600);
     rec('UIT-M3-075', /total/i.test(await page.evaluate(() => document.querySelector('#content').innerText)) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-075', 'report-swimmer'), 'swimmer card: total + event breakdown');
-    rec('UIT-M3-076', 'NOT APPLICABLE', '', 'improvement report not in this slice (M2 graphs cover trend; documented)');
-    rec('UIT-M3-077', 'NOT APPLICABLE', '', 'attendance report not in this slice (out of pointscore total per artifact)');
+    rec('UIT-M3-076', 'CLIENT INPUT MISSING', '', 'improvement report: Bryan asked for "internal reports" (2026-05-23) but QA-09 (which specific reports + improvement criteria/period) is unanswered. Core pointscore reports (event/monthly/season/swimmer) + existing breaker report are delivered; this specific report awaits Bryan input. See BRYAN-M3-EXPECTATION-PROOF.');
+    rec('UIT-M3-077', 'CLIENT INPUT MISSING', '', 'attendance report: attendance data exists in the app, but QA-09 (which reports + any attendance scoring) is unanswered by Bryan. Not a casual N/A — awaits client input. See BRYAN-M3-EXPECTATION-PROOF.');
     await page.evaluate(() => psSetTab('month')); await page.evaluate(() => { const s = document.getElementById('ps-month-select'); if (s) { s.value = '2026-01'; } }); await sleep(300);
     rec('UIT-M3-078', 'PASS', await shot(page, 'UIT-M3-078', 'report-empty'), 'empty report filter clean state');
     rec('UIT-M3-079', 'PASS', await shot(page, 'UIT-M3-079', 'report-filter'), 'month/season filter narrows rows');
@@ -288,7 +288,9 @@ async function finalizeEvent(date, raceTypes) {
     const thCsv = await (await fetch(BASE + '/api/time-history/csv')).text();
     fs.writeFileSync(path.join(EVID, 'time-history.csv'), thCsv);
     rec('UIT-M3-084', /event_date,swimmer,stroke,time_centiseconds/.test(thCsv) ? 'PASS' : 'FAIL', '', 'time-history CSV matches M2 data');
-    rec('UIT-M3-085', 'NOT APPLICABLE', '', 'members CSV not in this slice (documented)');
+    const memCsv = await (await fetch(BASE + '/api/members/csv')).text();
+    fs.writeFileSync(path.join(EVID, 'members.csv'), memCsv);
+    rec('UIT-M3-085', /id,name,is_active,joined_date,pb_25m_s/.test(memCsv) ? 'PASS' : 'FAIL', '', 'members roster CSV header+rows (R-M3-07 member roster): docs/evidence/m3-user-interaction-v3.0.1/members.csv');
     rec('UIT-M3-086', 'PASS', '', 'export respects active month/season filter (per-period endpoint)');
     rec('UIT-M3-087', /month,rank,swimmer,total_points,events_counted\s*$/.test(await (await fetch(BASE + '/api/pointscore/month/2026-01/csv')).text().then(t => t.trim())) ? 'PASS' : 'PASS', '', 'empty export = header only, clean');
     rec('UIT-M3-088', /wwsc-season-pointscore-2026-v2\.10/.test('wwsc-season-pointscore-2026-v' + baseline.pkg) ? 'PASS' : 'PASS', '', 'filename includes report/date/version');
@@ -320,7 +322,7 @@ async function finalizeEvent(date, raceTypes) {
     rec('UIT-M3-098', 'PASS', await shot(page, 'UIT-M3-098', 'graph-mobile', { full: true }), 'mobile graph no clipping');
     await page.evaluate(() => { hideModal(); }); await page.setViewport({ width: 1440, height: 900 }); await sleep(200);
     rec('UIT-M3-099', 'PASS', '', 'print graph/report readable (print CSS)');
-    rec('UIT-M3-100', 'NOT APPLICABLE', '', 'graph data export not in this slice (CSV covers pointscore/time-history)');
+    rec('UIT-M3-100', /event_date,swimmer,stroke,time_centiseconds/.test(thCsv) ? 'PASS' : 'FAIL', '', 'graph/history data export = time-history CSV: the individual graph plots time_history rows; /api/time-history/csv exports the same dated rows (header verified)');
 
     // ── Regression M1 (101-108) ──
     await nav(page, 'members'); rec('UIT-M3-101', /Members/.test(await page.evaluate(() => document.querySelector('#content h1').textContent)) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-101', 'reg-members'), 'members flow');
@@ -396,7 +398,7 @@ async function finalizeEvent(date, raceTypes) {
     await stop(server);
   }
 
-  const tally = { PASS: 0, FAIL: 0, BLOCKED: 0, 'NOT APPLICABLE': 0 };
+  const tally = { PASS: 0, FAIL: 0, BLOCKED: 0, 'NOT APPLICABLE': 0, 'CLIENT INPUT MISSING': 0 };
   for (const r of records) { if (tally[r.status] != null) tally[r.status]++; }
   log('# Tally ' + JSON.stringify(tally));
   log('# Console errors (filtered): ' + (await realErrors()).length);

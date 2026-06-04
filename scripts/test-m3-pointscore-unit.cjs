@@ -159,6 +159,21 @@ async function finalize25m(date) {
         'unknown type → individual place1=5 (rows=' + rows.length + ', basis=' + (r && r.basis) + ')');
     }
 
+    // UT10 — race_type categorization. Relay/team types (incl. brace + pogo) map
+    // to the relay category (3/2/1); individual strokes map to individual (5/4/3/2).
+    // Proves brace (UIT-M3-029) and pogo (UIT-M3-031) get the correct relay rule
+    // at the engine level — the relay rule itself is exercised end-to-end by the
+    // medley_relay event (UIT-M3-030 PASS).
+    {
+      const ps2 = require('../src/pointscore.js');
+      const relayTypes = ['25m_relay', 'medley_relay', '25m_brace', '50m_brace', 'pogo'];
+      const indivTypes = ['25m', '50m', '75m', 'backstroke', 'breaststroke', 'butterfly'];
+      const relayOk = relayTypes.every(t => ps2.categoryForRaceType(t) === 'relay');
+      const indivOk = indivTypes.every(t => ps2.categoryForRaceType(t) === 'individual');
+      check('UT10-racetype-categorization', relayOk && indivOk,
+        'relay incl brace/pogo → relay 3/2/1; strokes → individual 5/4/3/2');
+    }
+
   } finally {
     await stop(server);
   }
