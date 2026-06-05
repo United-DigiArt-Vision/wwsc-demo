@@ -1,9 +1,10 @@
 {
   "name": "wwsc-swimming",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "description": "WWSC Swimming Event Management System",
   "main": "server.js",
   "scripts": {
+    "test": "node scripts/test-m3-pointscore-unit.cjs",
     "start": "node src/server.js",
     "dev": "node src/server.js"
   },
