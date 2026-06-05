@@ -175,7 +175,7 @@ async function finalizeEvent(date, raceTypes) {
     rec('UIT-M3-024', ev1ps.rows.some(r => r.race_type === '50m') ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-024', 'event-50m-points'), '50m points present (Excel-derived 5/4/3/2)');
     // 75m / breaststroke / butterfly now seeded end-to-end (one optional stroke
     // per event, the proven backstroke pattern). Brace/pogo stay N/A: the relay/
-    // team rule 3/2/1 is proven via medley_relay and documented in the artifact.
+    // team rule 5/4/3 is proven via medley_relay and documented in the artifact.
     const ps75 = await api('/api/events/' + ev75 + '/pointscore');
     rec('UIT-M3-025', ps75.rows.some(r => r.race_type === '75m' && r.points > 0) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-025', 'event-75m'), '75m individual points present (5/4/3/2), rows=' + ps75.rows.filter(r => r.race_type === '75m').length);
     const bsEv = await api('/api/events/' + evMay2 + '/pointscore');
@@ -184,10 +184,10 @@ async function finalizeEvent(date, raceTypes) {
     rec('UIT-M3-027', psBreast.rows.some(r => r.race_type === 'breaststroke' && r.points > 0) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-027', 'event-breaststroke'), 'breaststroke individual points present (5/4/3/2), rows=' + psBreast.rows.filter(r => r.race_type === 'breaststroke').length);
     const psFly = await api('/api/events/' + evFly + '/pointscore');
     rec('UIT-M3-028', psFly.rows.some(r => r.race_type === 'butterfly' && r.points > 0) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-028', 'event-butterfly'), 'butterfly individual points present (5/4/3/2), rows=' + psFly.rows.filter(r => r.race_type === 'butterfly').length);
-    rec('UIT-M3-029', 'NOT APPLICABLE', '', 'brace special-team UI not seeded in browser; engine maps 25m_brace/50m_brace → relay 3/2/1 (UT10) and the relay rule is exercised end-to-end by medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF.');
+    rec('UIT-M3-029', 'NOT APPLICABLE', '', 'brace special-team UI not seeded in browser; engine maps 25m_brace/50m_brace → relay 5/4/3 (UT10) and the relay rule is exercised end-to-end by medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF.');
     const mrEv = await api('/api/events/' + evJun1 + '/pointscore');
-    rec('UIT-M3-030', mrEv.rows.some(r => r.race_type === 'medley_relay') ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-030', 'event-medley'), 'medley relay team points present (3/2/1)');
-    rec('UIT-M3-031', 'NOT APPLICABLE', '', 'pogo special-team UI not seeded in browser; engine maps pogo → relay 3/2/1 (UT10), relay rule proven via medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF.');
+    rec('UIT-M3-030', mrEv.rows.some(r => r.race_type === 'medley_relay') ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-030', 'event-medley'), 'medley relay team points present (5/4/3)');
+    rec('UIT-M3-031', 'NOT APPLICABLE', '', 'pogo special-team UI not seeded in browser; engine maps pogo → relay 5/4/3 (UT10), relay rule proven via medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF.');
     // absent swimmer: an inactive/non-present member should have no points
     const allMembers = await api('/api/members');
     const scoredIds = new Set(ev1ps.rows.map(r => r.member_id));

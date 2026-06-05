@@ -57,6 +57,28 @@ async function finalize25m(date) {
   return ev.id;
 }
 
+// Build + finalize a relay/team-only event. Returns the event id plus final
+// event pointscore totals so aggregation can be compared exactly.
+async function finalizeRelay(date, raceType = '25m_relay') {
+  const ev = await api('/api/events', { method: 'POST', body: { date } });
+  await api('/api/events/' + ev.id + '/config', { method: 'PUT', body: { standard_event: 'ordinary_swim', special_event: raceType === 'medley_relay' ? 'medley_relay' : null } });
+  const att = await api('/api/events/' + ev.id + '/attendance');
+  await api('/api/events/' + ev.id + '/attendance', { method: 'PUT', body: { attendees: att.map(a => ({ member_id: a.member_id, present: 1, special_event_entry: null })) } });
+  await api('/api/events/' + ev.id + '/races', { method: 'PUT', body: { race_types: [raceType] } });
+  const races = await api('/api/events/' + ev.id + '/races');
+  const r = races.find(x => x.race_type === raceType);
+  const gen = await api('/api/races/' + r.id + '/generate-relay-teams', { method: 'POST', body: { forceReshuffle: true } });
+  await api('/api/races/' + r.id + '/save-relay-teams', { method: 'POST', body: { teams: gen.teams } });
+  const teams = await api('/api/races/' + r.id + '/relay-teams');
+  for (let i = 0; i < teams.length; i++) {
+    await api('/api/relay-teams/' + teams[i].id + '/time', { method: 'PUT', body: { total_time: 5000 + i * 1000 } });
+  }
+  await api('/api/races/' + r.id + '/rank-relay', { method: 'POST', body: {} });
+  await api('/api/events/' + ev.id + '/finalize', { method: 'POST', body: {} });
+  const pointscore = await api('/api/events/' + ev.id + '/pointscore');
+  return { eventId: ev.id, teams: await api('/api/races/' + r.id + '/relay-teams'), pointscore };
+}
+
 (async () => {
   const server = await startServer();
   try {
@@ -65,7 +87,7 @@ async function finalize25m(date) {
     // UT1 — rule config exposes the working-assumption formula
     const rules = await api('/api/pointscore/rules');
     check('UT1-rule-individual', rules.categories.individual.pointsByPlace['1'] === 5 && rules.categories.individual.pointsByPlace['2'] === 4 && rules.categories.individual.pointsByPlace['3'] === 3 && rules.categories.individual.finisherPoints === 2, 'individual 5/4/3/2');
-    check('UT1-rule-relay', rules.categories.relay.pointsByPlace['1'] === 3 && rules.categories.relay.pointsByPlace['2'] === 2 && rules.categories.relay.pointsByPlace['3'] === 1, 'relay 3/2/1');
+    check('UT1-rule-relay', rules.categories.relay.pointsByPlace['1'] === 5 && rules.categories.relay.pointsByPlace['2'] === 4 && rules.categories.relay.pointsByPlace['3'] === 3, 'relay 5/4/3');
     check('UT1-rule-source-labeled', /working assumption/i.test(rules.source) && /simple addition/i.test(rules.aggregation), 'source + aggregation labeled');
 
     // UT2 — finalize creates point rows; place 1 → 5, place 3 → 3, finisher → 2
@@ -160,7 +182,7 @@ async function finalize25m(date) {
     }
 
     // UT10 — race_type categorization. Relay/team types (incl. brace + pogo) map
-    // to the relay category (3/2/1); individual strokes map to individual (5/4/3/2).
+    // to the relay category (5/4/3); individual strokes map to individual (5/4/3/2).
     // Proves brace (UIT-M3-029) and pogo (UIT-M3-031) get the correct relay rule
     // at the engine level — the relay rule itself is exercised end-to-end by the
     // medley_relay event (UIT-M3-030 PASS).
@@ -171,7 +193,45 @@ async function finalize25m(date) {
       const relayOk = relayTypes.every(t => ps2.categoryForRaceType(t) === 'relay');
       const indivOk = indivTypes.every(t => ps2.categoryForRaceType(t) === 'individual');
       check('UT10-racetype-categorization', relayOk && indivOk,
-        'relay incl brace/pogo → relay 3/2/1; strokes → individual 5/4/3/2');
+        'relay incl brace/pogo → relay 5/4/3; strokes → individual 5/4/3/2');
+    }
+
+    // UT11 — exact relay/team scoring for places 1, 2 and 3.
+    {
+      const Database = require('better-sqlite3');
+      const ps3 = require('../src/pointscore.js');
+      const mem = new Database(':memory:');
+      mem.exec(`
+        CREATE TABLE event_race (id INTEGER PRIMARY KEY, event_id INTEGER, race_type TEXT);
+        CREATE TABLE heat (id INTEGER PRIMARY KEY, event_race_id INTEGER, heat_number INTEGER);
+        CREATE TABLE heat_lane (id INTEGER PRIMARY KEY, heat_id INTEGER, member_id INTEGER, finish_time INTEGER, place INTEGER, manual_place INTEGER);
+        CREATE TABLE relay_team (id INTEGER PRIMARY KEY, event_race_id INTEGER, place INTEGER, total_time INTEGER);
+        CREATE TABLE relay_team_member (id INTEGER PRIMARY KEY, relay_team_id INTEGER, member_id INTEGER);
+      `);
+      mem.prepare("INSERT INTO event_race (id, event_id, race_type) VALUES (1, 1, '25m_relay')").run();
+      mem.prepare('INSERT INTO relay_team (id, event_race_id, place, total_time) VALUES (11, 1, 1, 5000), (12, 1, 2, 6000), (13, 1, 3, 7000)').run();
+      mem.prepare('INSERT INTO relay_team_member (relay_team_id, member_id) VALUES (11, 101), (12, 102), (13, 103)').run();
+      const rows = ps3.computeEventPointscoreRows(mem, 1);
+      const byMember = Object.fromEntries(rows.map(r => [r.member_id, r.points]));
+      mem.close();
+      check('UT11-relay-team-543',
+        byMember[101] === 5 && byMember[102] === 4 && byMember[103] === 3 && rows.every(r => r.basis === 'relay-team-place'),
+        'relay/team place 1=5, 2=4, 3=3');
+    }
+
+    // UT12 — completed relay event rolls into monthly and season aggregation.
+    {
+      const relayRun = await finalizeRelay('2027-01-10', '25m_relay');
+      const relayEventTotals = Object.fromEntries(relayRun.pointscore.totals.map(t => [t.member_id, t.total]));
+      const monthRelay = await api('/api/pointscore/month/2027-01');
+      const seasonRelay = await api('/api/pointscore/season/2027');
+      const monthOk = monthRelay.events.length === 1 && monthRelay.standings.every(s => s.total === (relayEventTotals[s.member_id] || 0));
+      const seasonOk = seasonRelay.events.length === 1 && seasonRelay.standings.every(s => s.total === (relayEventTotals[s.member_id] || 0));
+      const hasRelay543 = relayRun.pointscore.rows.some(r => r.race_type === '25m_relay' && r.points === 5) &&
+        relayRun.pointscore.rows.some(r => r.race_type === '25m_relay' && r.points === 4) &&
+        (relayRun.teams.length < 3 || relayRun.pointscore.rows.some(r => r.race_type === '25m_relay' && r.points === 3));
+      check('UT12-relay-aggregation-api', monthOk && seasonOk && hasRelay543,
+        'relay event totals feed month+season; teams=' + relayRun.teams.length + ', rows=' + relayRun.pointscore.rows.length);
     }
 
   } finally {

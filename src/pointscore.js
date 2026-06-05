@@ -22,13 +22,14 @@
 
 // ── Centralized, adjustable rule config (WORKING ASSUMPTION) ─────────
 // Source: Excel pointscore sheets show individual races scored 5/4/3/2 by
-// place (1st/2nd/3rd/other finisher) and relay/team races scored 3/2/1.
+// place (1st/2nd/3rd/other finisher). Bryan clarified on 2026-06-05 that
+// relay/team races score 5/4/3 by place.
 // Change ONLY these numbers (or add race types) to adopt a confirmed
 // Constitution; nothing else in the app depends on the literals.
 const POINTSCORE_RULES = {
   // Working-assumption metadata surfaced in the UI/rule banner.
   source: 'bryan-excel-original.xlsm pointscore sheets (working assumption, not confirmed Constitution)',
-  version: '2026-06-03-working',
+  version: '2026-06-05-v2.10.2-relay-team-clarification',
   categories: {
     individual: {
       label: 'Individual race (place-based 5/4/3/2)',
@@ -38,9 +39,9 @@ const POINTSCORE_RULES = {
       nonFinisherPoints: 0 // no finish time / absent → no pointscore row
     },
     relay: {
-      label: 'Relay / team race (place-based 3/2/1)',
+      label: 'Relay / team race (place-based 5/4/3)',
       raceTypes: ['25m_relay', 'medley_relay', '25m_brace', '50m_brace', 'pogo'],
-      pointsByPlace: { 1: 3, 2: 2, 3: 1 },
+      pointsByPlace: { 1: 5, 2: 4, 3: 3 },
       finisherPoints: 0,
       nonFinisherPoints: 0
     }
