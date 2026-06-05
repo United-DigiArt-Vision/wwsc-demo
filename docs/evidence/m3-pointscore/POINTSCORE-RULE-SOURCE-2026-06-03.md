@@ -1,10 +1,11 @@
 # WWSC Pointscore Rule — Source-Labeled Working Artifact
 
 **Date:** 2026-06-03
+**Updated:** 2026-06-05 for Bryan's relay/team point clarification.
 **Source:** `bryan-excel-original.xlsm` pointscore sheets + `Instructions` sheet.
-**Status:** WORKING ASSUMPTION derived from the spreadsheet. **NOT a confirmed Constitution rule.** Adjustable via the centralized rule config in `src/pointscore.js`.
+**Status:** WORKING ASSUMPTION derived from the spreadsheet, with Bryan's 2026-06-05 clarification that Relay/Team events use 5/4/3. **NOT a confirmed full Constitution rule.** Adjustable via the centralized rule config in `src/pointscore.js`.
 
-> Balerion guardrail wording: "working assumptions sent to Bryan", not "Bryan confirmed final Constitution rules." Bryan's 2026-06-02 message confirmed the *aggregation* model (event-separated, monthly/season by simple addition) and that the Excel sheets are the working scoring source. The exact points-per-place values below are inferred from the spreadsheet data + Instructions, and are isolated + adjustable.
+> Balerion guardrail wording: "working assumptions sent to Bryan", not "Bryan confirmed final Constitution rules." Bryan's 2026-06-02 message confirmed the *aggregation* model (event-separated, monthly/season by simple addition) and that the Excel sheets are the working scoring source. Bryan's 2026-06-05 follow-up clarified the Relay/Team event scale as 5/4/3. The values below are isolated + adjustable.
 
 ## 1. How the Excel encodes pointscore (extracted facts)
 
@@ -31,8 +32,8 @@ From `docs/evidence/m3-pointscore/pointscore-distribution-summary.json` (compute
 - **Individual races** (25m / 50m / 75m / Backstroke / Breaststroke / Butterfly) use a **place-based 5 / 4 / 3 / 2** scale: 1st = 5, 2nd = 4, 3rd = 3, every other finisher = 2.
   - Backstroke (an *optional* event, 1 heat): 3 placed swimmers get 5/4/3, the other 9 finishers get 2. ✔ matches `2×9, 3×1, 4×1, 5×1`.
   - 50m (everyone swims, many heats): each heat awards its own 1st/2nd/3rd, so many 5s/4s/3s plus 2s. ✔ matches the even spread.
-- **Relay / team races** use a **place-based 3 / 2 / 1** scale: 1st = 3, 2nd = 2, 3rd = 1.
-  - ✔ matches `Relay Point score` distinct values {1, 2, 3}.
+- **Relay / team races** use a **place-based 5 / 4 / 3** scale per Bryan's 2026-06-05 clarification: 1st = 5, 2nd = 4, 3rd = 3.
+  - Note: the raw `Relay Point score` sheet distribution above showed {1, 2, 3}; Bryan's later clarification supersedes the original inferred working assumption for app scoring.
 - **Brace / Medley** placings are overall (variance-based) — already computed by the accepted ranking; the same individual or team scale is applied to that overall place.
 
 ## 3. Centralized working-assumption rule (what the engine implements)
@@ -48,9 +49,9 @@ INDIVIDUAL (25m, 50m, 75m, backstroke, breaststroke, butterfly):
   did not finish / absent → 0 (no row)
 
 RELAY / TEAM (25m_relay, medley_relay, 25m_brace, 50m_brace, pogo):
-  place 1 → 3
-  place 2 → 2
-  place 3 → 1
+  place 1 → 5
+  place 2 → 4
+  place 3 → 3
   other finishing teams/pairs → 0
 ```
 

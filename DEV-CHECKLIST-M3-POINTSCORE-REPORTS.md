@@ -10,7 +10,7 @@ Balerion has explicitly authorized the working assumptions Dino/Nedim sent Bryan
 
 Implemented on `dev/v2.10.0-m3-history-graphs` (engine commit `219bdd9`, package.json `2.10.0`):
 
-- **Engine:** `src/pointscore.js` — isolated, centralized adjustable `POINTSCORE_RULES` (individual 5/4/3/2, relay 3/2/1), reads accepted results, writes only `pointscore_entry`, `WWSC_POINTSCORE_DISABLED` switch.
+- **Engine:** `src/pointscore.js` — isolated, centralized adjustable `POINTSCORE_RULES` (individual 5/4/3/2, relay 5/4/3 — Bryan-confirmed 2026-06-05), reads accepted results, writes only `pointscore_entry`, `WWSC_POINTSCORE_DISABLED` switch.
 - **APIs:** `GET /api/pointscore/rules`, `/api/events/:id/pointscore`, `/api/pointscore/month/:ym`, `/api/pointscore/season/:year`, `/api/members/:id/pointscore`, `/api/pointscore/months`, + `/csv` exports (event/month/season/time-history).
 - **UI:** `🎯 Pointscore` screen — Per-Event / Monthly / Season / Swimmer tabs, rule-transparency banner, CSV export, print-friendly.
 - **Excel source:** `scripts/extract-pointscore.py` + `docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md`.
@@ -32,7 +32,7 @@ The per-phase boxes below are kept as the original acceptance criteria; Phase 1 
 - [x] PRD: `REQUIREMENTS-M3-POINTSCORE-REPORTS.md`.
 - [x] Acceptance checklist (this file).
 - [x] Questions / assumptions: `M3-QUESTIONS-AND-ASSUMPTIONS-2026-05-29.md`.
-- [~] **Bryan answers to QA-01 / QA-05 / QA-06** — superseded by the 2026-06-03 working-assumption override. QA-01 (formula) proceeds under the Excel-derived 5/4/3/2 + 3/2/1 working source; QA-05/QA-06 (Constitution) remain open and the engine keeps that logic isolated/adjustable (R-M3-03 deferred).
+- [~] **Bryan answers to QA-01 / QA-05 / QA-06** — superseded by the 2026-06-03 working-assumption override. QA-01 (formula) proceeds under the Excel-derived 5/4/3/2 individual scale + Bryan-confirmed 5/4/3 relay/team scale (2026-06-05); QA-05/QA-06 (Constitution) remain open and the engine keeps that logic isolated/adjustable (R-M3-03 deferred).
 - [~] Bryan answers to QA-02, QA-03, QA-04, QA-07, QA-08, QA-09, QA-10, QA-11, QA-12, QA-13 — proceeding under documented working defaults (calendar-year season, simple addition, archived excluded, pointscore/time-history CSV, print CSS); each is source-labeled and adjustable.
 - [x] Design spec: `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md`.
 - [x] Unit test spec: `UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md`.

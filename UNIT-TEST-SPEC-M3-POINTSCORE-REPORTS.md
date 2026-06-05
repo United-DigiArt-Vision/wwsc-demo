@@ -19,7 +19,7 @@ Every assertion below is a **structural invariant** (an equality between a total
 | Test ID | Target | Method | Expected | Maps to |
 |---|---|---|---|---|
 | UT1-rule-individual | `GET /api/pointscore/rules` → `categories.individual` | Assert `pointsByPlace` = `{1:5, 2:4, 3:3}` and `finisherPoints = 2` | Individual 5/4/3/2 working rule | R-M3-01, R-M3-10 |
-| UT1-rule-relay | `GET /api/pointscore/rules` → `categories.relay` | Assert `pointsByPlace` = `{1:3, 2:2, 3:1}` | Relay/team 3/2/1 working rule | R-M3-01, R-M3-10 |
+| UT1-rule-relay | `GET /api/pointscore/rules` → `categories.relay` | Assert `pointsByPlace` = `{1:5, 2:4, 3:3}` | Relay/team 5/4/3 (Bryan-confirmed 2026-06-05) | R-M3-01, R-M3-10 |
 | UT1-rule-source-labeled | `GET /api/pointscore/rules` → `source`, `aggregation` | Assert `source` matches /working assumption/i and `aggregation` matches /simple addition/i | Source-labeled, not confirmed Constitution | R-M3-10 |
 | UT2-points-allocated | Finalize a 25m event → `GET /api/events/:id/pointscore` | Rows contain a 5, a 3, and a 2; every row `points > 0` (no zero rows) | Place 1→5, 3→3, finisher→2 | R-M3-01 |
 | UT3-idempotent | Re-finalize the unchanged event | Row count after == row count before, and `> 0` | Re-finalize creates no duplicates | R-M3-01 |
@@ -30,6 +30,9 @@ Every assertion below is a **structural invariant** (an equality between a total
 | UT8-months-list | `GET /api/pointscore/months` | Includes `2026-04` and `2026-05` (the seeded months) | Month picker source | R-M3-04 |
 | UT8-unknown-member-404 | `GET /api/members/999999/pointscore` | Throws → response status 404 | Unknown-member error path | R-M3-02 |
 | UT9-unknown-racetype-individual | `computeEventPointscoreRows` on an in-memory DB with race_type `mystery_stroke` | Unknown type resolves to `individual`; one finished lane at place 1 → `points = 5`, `basis = individual-place` (NOT relay) | Unknown race_type defaults to individual (defensive) | R-M3-01 |
+| UT10-racetype-categorization | `categoryForRaceType` for all relay + individual race_types | Relay types (incl. `25m_brace`/`50m_brace`/`pogo`) resolve to `relay`; strokes resolve to `individual` | Relay incl brace/pogo → relay 5/4/3; strokes → individual 5/4/3/2 | R-M3-01 |
+| UT11-relay-team-543 | In-memory relay event, 3 teams placed 1/2/3 → `computeEventPointscoreRows` | Team place 1→5, 2→4, 3→3; every row `basis = relay-team-place` | Relay/team exact 5/4/3 (Bryan-confirmed 2026-06-05) | R-M3-01 |
+| UT12-relay-aggregation-api | Finalize a relay-only event → event / month / season pointscore | Relay event totals feed monthly + season standings; rows include a 5 and a 4 (and a 3 when ≥3 teams) | Relay events roll into month/season aggregation | R-M3-04 |
 
 ## Isolation unit assertions (engine purity)
 
@@ -40,7 +43,7 @@ Realized by `scripts/e2e-m3-pointscore-isolation.cjs` (documented in full in the
 
 ## Expected result
 
-`12 PASS / 0 FAIL` (unit, incl. UT9) plus isolation `VERDICT: PASS`. First-hand reproduced on 2026-06-03.
+`15 PASS / 0 FAIL` (unit, incl. UT9 unknown-race_type, UT10 categorization, UT11 relay 5/4/3, UT12 relay aggregation) plus isolation `VERDICT: PASS`. First-hand reproduced on 2026-06-05 (v2.10.2 relay/team 5/4/3 correction).
 
 > UT9 guards the regression Balerion's QA found: `computeEventPointscoreRows` branched on `raceTypes.includes(race_type)`, which routed an unknown type into the relay path even though `categoryForRaceType()` resolves it to `individual`. The fix branches on the resolved `categoryKey`.
 

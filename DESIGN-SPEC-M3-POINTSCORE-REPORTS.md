@@ -15,7 +15,7 @@
 
 | Export | Behavior |
 |---|---|
-| `POINTSCORE_RULES` | Config: `categories.individual` (5/4/3/2 by place), `categories.relay` (3/2/1), plus `source`, `version` metadata. |
+| `POINTSCORE_RULES` | Config: `categories.individual` (5/4/3/2 by place, Excel working assumption), `categories.relay` (5/4/3 by place, Bryan-confirmed 2026-06-05), plus `source`, `version` metadata. |
 | `categoryForRaceType(raceType)` | Maps a race_type to `individual` or `relay`. |
 | `pointsForPlace(cat, place, finished)` | Returns points for a place; finishers without a podium place get the category `finisherPoints`; non-finishers get 0. |
 | `computeEventPointscoreRows(db, eventId)` | Reads `heat_lane.place`/`manual_place` (individual) and `relay_team.place` + `relay_team_member` (relay). Returns rows, no writes. |
