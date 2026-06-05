@@ -1,8 +1,8 @@
-# Baseline branch=dev/v2.10.0-m3-history-graphs commit=d3d3ada pkg=2.10.0
-# /api/version={"version":"2.10.0","build":"2026-06-04T07:18:06.663Z"}
+# Baseline branch=dev/v2.10.2-relay-543 commit=cc7e67d pkg=2.10.2
+# /api/version={"version":"2.10.2","build":"2026-06-05T17:02:07.717Z"}
 # members=30
 # events=1,2,3,4,5,6,7,8
-UIT-M3-001  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-001-app-loads.png  |  app loads v2.10.0
+UIT-M3-001  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-001-app-loads.png  |  app loads v2.10.2
 UIT-M3-002  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-002-dashboard.png  |  dashboard readable
 UIT-M3-003  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-003-pointscore-entry.png  |  Pointscore screen entry visible
 UIT-M3-004  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-004-nav-flow.png  |  nav flow, realErrors=0
@@ -30,9 +30,9 @@ UIT-M3-025  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-025-e
 UIT-M3-026  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-026-event-backstroke.png  |  backstroke points present
 UIT-M3-027  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-027-event-breaststroke.png  |  breaststroke individual points present (5/4/3/2), rows=22
 UIT-M3-028  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-028-event-butterfly.png  |  butterfly individual points present (5/4/3/2), rows=22
-UIT-M3-029  |  NOT APPLICABLE  |  -  |  brace special-team UI not seeded in browser; engine maps 25m_brace/50m_brace → relay 3/2/1 (UT10) and the relay rule is exercised end-to-end by medley_relay (UIT-M3-030 PASS). See 
-UIT-M3-030  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-030-event-medley.png  |  medley relay team points present (3/2/1)
-UIT-M3-031  |  NOT APPLICABLE  |  -  |  pogo special-team UI not seeded in browser; engine maps pogo → relay 3/2/1 (UT10), relay rule proven via medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF.
+UIT-M3-029  |  NOT APPLICABLE  |  -  |  brace special-team UI not seeded in browser; engine maps 25m_brace/50m_brace → relay 5/4/3 (UT10) and the relay rule is exercised end-to-end by medley_relay (UIT-M3-030 PASS). See 
+UIT-M3-030  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-030-event-medley.png  |  medley relay team points present (5/4/3)
+UIT-M3-031  |  NOT APPLICABLE  |  -  |  pogo special-team UI not seeded in browser; engine maps pogo → relay 5/4/3 (UT10), relay rule proven via medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF.
 UIT-M3-032  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-032-absent-not-scored.png  |  absent/non-finishers carry no pointscore row
 UIT-M3-033  |  PASS  |  -  |  special-entry (medley stroke) swimmers scored via team place
 UIT-M3-034  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-034-tie.png  |  tie handling: equal place→equal points (same rule), documented
@@ -112,8 +112,8 @@ UIT-M3-107  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-107-r
 UIT-M3-108  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-108-reg-archive.png  |  archive/restore works
 UIT-M3-109  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-109-reg-m2-history.png  |  M2 member history modal intact
 UIT-M3-110  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-110-reg-m2-event-history.png  |  M2 event time history intact
-UIT-M3-111  |  PASS  |  -  |  M2 55-case runner — fresh log @d3d3ada (/tmp/m3p-m2-55.log)
-UIT-M3-112  |  PASS  |  -  |  M2 100-case runner — fresh log @d3d3ada (/tmp/m3p-m2-100.log)
+UIT-M3-111  |  PASS  |  -  |  M2 55-case runner — fresh log @cc7e67d (/tmp/m3p-m2-55.log)
+UIT-M3-112  |  BLOCKED  |  -  |  M2 100-case runner — log missing (/tmp/m3p-m2-100.log) — run the M2 suite on HEAD cc7e67d first
 UIT-M3-113  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-113-resp-mobile.png  |  mobile pointscore report (month tab), no overlay
 UIT-M3-114  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-114-resp-tablet.png  |  tablet pointscore report
 UIT-M3-115  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-115-resp-desktop.png  |  desktop pointscore report polished
@@ -122,4 +122,4 @@ UIT-M3-117  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-117-l
 UIT-M3-118  |  PASS  |  -  |  no SaaS/commercial scope in diff (docs/evidence/.../out-of-scope-diff.txt)
 UIT-M3-119  |  PASS  |  -  |  screenshot inventory: 64 PNGs
 UIT-M3-120  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-120-final.png  |  119 prior classified, console errors=0
-# Tally {"PASS":116,"FAIL":0,"BLOCKED":0,"NOT APPLICABLE":2,"CLIENT INPUT MISSING":2}
+# Tally {"PASS":115,"FAIL":0,"BLOCKED":1,"NOT APPLICABLE":2,"CLIENT INPUT MISSING":2}

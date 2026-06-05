@@ -7,7 +7,7 @@
   {
     "id": "UT1-rule-relay",
     "status": "PASS",
-    "note": "relay 3/2/1"
+    "note": "relay 5/4/3"
   },
   {
     "id": "UT1-rule-source-labeled",
@@ -42,7 +42,7 @@
   {
     "id": "UT7-member-contribution",
     "status": "PASS",
-    "note": "member total == sum of contributions=13"
+    "note": "member total == sum of contributions=15"
   },
   {
     "id": "UT8-months-list",
@@ -62,6 +62,16 @@
   {
     "id": "UT10-racetype-categorization",
     "status": "PASS",
-    "note": "relay incl brace/pogo → relay 3/2/1; strokes → individual 5/4/3/2"
+    "note": "relay incl brace/pogo → relay 5/4/3; strokes → individual 5/4/3/2"
+  },
+  {
+    "id": "UT11-relay-team-543",
+    "status": "PASS",
+    "note": "relay/team place 1=5, 2=4, 3=3"
+  },
+  {
+    "id": "UT12-relay-aggregation-api",
+    "status": "PASS",
+    "note": "relay event totals feed month+season; teams=3, rows=23"
   }
 ]

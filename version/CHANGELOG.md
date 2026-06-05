@@ -11,6 +11,23 @@
 
 ---
 
+## 2026-06-05 — fix: v2.10.2 relay/team pointscore 5/4/3 (Bryan 2026-06-05 correction)
+- **Date:** 2026-06-05
+- **Timestamp:** 2026-06-05 19:04:00 Europe/Berlin
+- **App Version (from package.json):** 2.10.2
+- **Branch:** dev/v2.10.2-relay-543 (feature branch off `main@9106eaf`; not merged)
+- **RecordedCommit:** `2501fff` (engine + tests) — anchors `c4ab774` (bump), `cc7e67d` (specs/docs); + this evidence/SSOT-close commit — resolve HEAD with `git rev-parse --short HEAD`
+- **Editor:** Claude Code
+- **Trigger:** Bryan 2026-06-05 "More info": "Relay should be 5 points for 1st, 4 for 2nd and 3 for 3rd." Overrides the prior 3/2/1 Excel working assumption (`../messages/2026-06-05-Bryan-inbound-more-info-relay-reports-db-graphs.md`). Claude took over Balerion's Dropbox-synced in-progress WIP onto a feature branch after Dino confirmed Balerion had stepped away; `main` left untouched at `9106eaf`.
+- **Changes:**
+  - Engine (`src/pointscore.js`): `POINTSCORE_RULES.categories.relay.pointsByPlace` 3/2/1 → **{1:5, 2:4, 3:3}**; `finisherPoints` stays 0; relay label + rule `version` metadata updated. Individual scale unchanged (5/4/3/2 working assumption). `src/server.js` finalize hook unchanged (rule fully centralized).
+  - Tests (`scripts/test-m3-pointscore-unit.cjs`): UT1-rule-relay now asserts 5/4/3; **+UT11** (exact relay/team 5/4/3 by place via `computeEventPointscoreRows`) and **+UT12** (finalize a relay-only event → totals roll into month + season aggregation). Unit 13→**15 PASS / 0 FAIL**.
+  - 120 runner notes + every current-truth spec/doc updated 3/2/1 → 5/4/3, source-labeled **Bryan-confirmed 2026-06-05** (DESIGN/UNIT/INTEGRATION/DEV-CHECKLIST specs, BRYAN-M3-EXPECTATION-PROOF, POINTSCORE-RULE-SOURCE). UNIT-TEST-SPEC now documents UT10/UT11/UT12 (suite = 15 checks). Historical CHANGELOG entries left intact (they record what the rule WAS at v2.10.0/2.10.1).
+  - Version: `package.json` + `package-lock.json` 2.10.1 → 2.10.2; `src/public/index.html` cache-bust → 2.10.2.
+  - **Evidence @ `cc7e67d`** (Intel MacBook, Dropbox clone): unit **15/0** (incl. UT11/UT12); isolation **VERDICT PASS**; M2-55 **55/0** @commit=cc7e67d; M3-120 **115 PASS / 0 FAIL / 1 BLOCKED / 2 NA / 2 CIM** — relay 5/4/3 proven end-to-end (UIT-M3-030 medley_relay "team points present (5/4/3)"); UIT-M3-029/031 brace/pogo NA (engine-proven via UT10); UIT-M3-112 BLOCKED = M2-100 deliberately delegated to Balerion; UIT-M3-076/077 CIM = improvement/attendance reports (Slice 2). 0 console errors.
+  - **Delegated to Balerion (Mac Mini, green env):** full M2-100 completion (reached TC-056/100, 0 FAIL here before Dropbox-sync I/O throttling killed the run) + R-M3-05 history-graphs regression. Documented environment limitation, not a product gap (same as the v2.10.1 prep entry).
+- **No release action:** no push, no deploy, no tag, no merge to `main`, no STABLE-as-live, no Bryan/client contact, no live-data mutation. `main` untouched at `9106eaf`. Awaiting Balerion QA + Dino Slice-2 decision.
+
 ## 2026-06-04 — release: v2.10.1 Render deploy + live smoke
 - **Timestamp:** 2026-06-04 09:41:00 Europe/Berlin
 - **App Version (from package.json):** 2.10.1

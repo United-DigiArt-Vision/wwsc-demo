@@ -1,11 +1,11 @@
 {
   "baseline": {
-    "branch": "dev/v2.10.0-m3-history-graphs",
-    "commit": "d3d3ada",
-    "pkg": "2.10.0",
+    "branch": "dev/v2.10.2-relay-543",
+    "commit": "cc7e67d",
+    "pkg": "2.10.2",
     "apiVersion": {
-      "version": "2.10.0",
-      "build": "2026-06-04T07:18:06.663Z"
+      "version": "2.10.2",
+      "build": "2026-06-05T17:02:07.717Z"
     }
   },
   "records": [
@@ -13,7 +13,7 @@
       "id": "UIT-M3-001",
       "status": "PASS",
       "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-001-app-loads.png",
-      "note": "app loads v2.10.0"
+      "note": "app loads v2.10.2"
     },
     {
       "id": "UIT-M3-002",
@@ -181,19 +181,19 @@
       "id": "UIT-M3-029",
       "status": "NOT APPLICABLE",
       "shot": "",
-      "note": "brace special-team UI not seeded in browser; engine maps 25m_brace/50m_brace → relay 3/2/1 (UT10) and the relay rule is exercised end-to-end by medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF."
+      "note": "brace special-team UI not seeded in browser; engine maps 25m_brace/50m_brace → relay 5/4/3 (UT10) and the relay rule is exercised end-to-end by medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF."
     },
     {
       "id": "UIT-M3-030",
       "status": "PASS",
       "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-030-event-medley.png",
-      "note": "medley relay team points present (3/2/1)"
+      "note": "medley relay team points present (5/4/3)"
     },
     {
       "id": "UIT-M3-031",
       "status": "NOT APPLICABLE",
       "shot": "",
-      "note": "pogo special-team UI not seeded in browser; engine maps pogo → relay 3/2/1 (UT10), relay rule proven via medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF."
+      "note": "pogo special-team UI not seeded in browser; engine maps pogo → relay 5/4/3 (UT10), relay rule proven via medley_relay (UIT-M3-030 PASS). See BRYAN-M3-EXPECTATION-PROOF."
     },
     {
       "id": "UIT-M3-032",
@@ -673,13 +673,13 @@
       "id": "UIT-M3-111",
       "status": "PASS",
       "shot": "",
-      "note": "M2 55-case runner — fresh log @d3d3ada (/tmp/m3p-m2-55.log)"
+      "note": "M2 55-case runner — fresh log @cc7e67d (/tmp/m3p-m2-55.log)"
     },
     {
       "id": "UIT-M3-112",
-      "status": "PASS",
+      "status": "BLOCKED",
       "shot": "",
-      "note": "M2 100-case runner — fresh log @d3d3ada (/tmp/m3p-m2-100.log)"
+      "note": "M2 100-case runner — log missing (/tmp/m3p-m2-100.log) — run the M2 suite on HEAD cc7e67d first"
     },
     {
       "id": "UIT-M3-113",
@@ -732,14 +732,14 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3011/?cb=1780557487291",
+      "url": "http://127.0.0.1:3011/?cb=1780678931142",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ],
   "tally": {
-    "PASS": 116,
+    "PASS": 115,
     "FAIL": 0,
-    "BLOCKED": 0,
+    "BLOCKED": 1,
     "NOT APPLICABLE": 2,
     "CLIENT INPUT MISSING": 2
   }

@@ -2,10 +2,55 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned, implemented, Balerion-verified, and deployed live as v2.10.1 on 2026-06-04.
-Schritt: Bryan replied asking where completed events are saved and whether the 4 completed events he created previously still exist in a DB. Reply archived 2026-06-04; initial readonly live API showed no active/archived events. Balerion prepared and locally proved a reusable 4-completed-event retest seed path. After restart/Dino instruction, hosted demo verification shows 4 completed retest events now visible live and pointscore/history checks passing. Dino sent the final completed-events/DB reply to Bryan on 2026-06-04 at 14:14 Europe/Berlin.
-Blockiert: Technical retest-data blocker resolved for hosted demo retest. Direct Render disk/backups are still not inspectable from current tooling (no Render CLI/API key or working logged-in browser session), so do not claim the original old events were recovered. No Bryan reply by Balerion; Dino sends customer communication.
+Schritt: Bryan replied again on 2026-06-05 asking whether his previous completed events were saved, where they went, whether they can be found, whether results exist for all event types, and what happens after go-live. Inbound archived: `../messages/2026-06-05-Bryan-inbound-persistence-all-event-results-followup.md`. Bryan then sent more info: relay should score 5/4/3, results are needed by each requested event/stroke type, he asks how to export the DB and how graphs are produced, and he wants break-count and total-improvement reports. Follow-up archived: `../messages/2026-06-05-Bryan-inbound-more-info-relay-reports-db-graphs.md`.
+Blockiert: Technical retest-data blocker resolved for hosted demo retest. Direct Render disk/backups are still not inspectable from current tooling (no Render CLI/API key or working logged-in browser session), so do not claim the original old events were recovered. New Bryan rule/report inputs require a narrow v2.10.x response/update plan: relay pointscore correction, broader all-event-types completed retest dataset, DB export/backup path, break-count report, and total-improvement report. No Bryan reply by Balerion; Dino sends customer communication.
 
-## 🚦 CURRENT GATE — WAITING FOR BRYAN RETEST / ACCEPTANCE / ISSUE DETAILS (2026-06-04 14:14 Europe/Berlin)
+## 🆕 v2.10.2 RELAY/TEAM POINTSCORE 5/4/3 — IMPLEMENTED + EVIDENCED (2026-06-05)
+
+Bryan 2026-06-05 clarified relay/team scoring = **5/4/3** (was 3/2/1 Excel working assumption). Claude took over Balerion's Dropbox-synced in-progress WIP onto feature branch `dev/v2.10.2-relay-543` after Dino confirmed Balerion had stepped away; `main` untouched at `9106eaf`.
+
+- [x] Engine `src/pointscore.js`: `categories.relay.pointsByPlace` → `{1:5,2:4,3:3}` (finisherPoints 0); individual scale unchanged; `src/server.js` finalize hook unchanged (centralized rule).
+- [x] Tests: UT1 asserts 5/4/3; **+UT11** (exact relay 5/4/3 by place) **+UT12** (relay → month/season aggregation). Unit **15/0**.
+- [x] All current-truth specs/docs 3/2/1 → 5/4/3, source-labeled Bryan-confirmed 2026-06-05; UT10/11/12 documented. Historical CHANGELOG untouched.
+- [x] Version 2.10.2 (package.json/-lock + index.html cache-bust). Commits: `c4ab774` bump → `2501fff` engine+tests → `cc7e67d` docs (+ evidence/SSOT-close).
+- [x] Evidence @ `cc7e67d`: unit **15/0**, isolation **PASS**, M2-55 **55/0** @cc7e67d, M3-120 **115 PASS / 0 FAIL / 1 BLOCKED / 2 NA / 2 CIM** (relay 5/4/3 end-to-end via UIT-M3-030 medley_relay; BLOCKED = M2-100 delegated; CIM = improvement/attendance = Slice 2). 0 console errors.
+- [~] Delegated to Balerion (Mac Mini, green env): full M2-100 completion (reached TC-056/100, 0 FAIL here before Dropbox I/O throttle) + R-M3-05 history-graphs. Environment limitation, not product gap.
+- [ ] Balerion independent QA → merge/deploy decision (Dino-authorized only).
+- [ ] Dino: Slice 2 scope (breaks-per-person + total-improvement reports; DB export; all-event retest dataset).
+
+Handoff: `../messages/2026-06-05-1910-Claude-To-Balerion-WWSC-v2.10.2-Relay-543.md`.
+
+## 🚦 CURRENT GATE — BRYAN PERSISTENCE / RELAY RULE / REPORT REQUIREMENTS FOLLOW-UP (2026-06-05 14:52 Europe/Berlin)
+
+- [x] Bryan follow-up archived: `../messages/2026-06-05-Bryan-inbound-persistence-all-event-results-followup.md`.
+- [x] Bryan "More info" follow-up archived: `../messages/2026-06-05-Bryan-inbound-more-info-relay-reports-db-graphs.md`.
+- [x] Classification: mixed data persistence + calculation/rule input + usage questions + concretized report requirements. Not acceptance.
+- [x] Current truth boundary:
+  - Completed/finalized events are intended to be saved in SQLite.
+  - Render hosted demo DB path remains `/var/data/wwsc.db`.
+  - The old four events Bryan created previously were not visible through the live app/API when checked on 2026-06-04; do not claim they were recovered.
+  - Four completed April 2026 retest events are visible live and support pointscore/history retesting.
+  - A current setup event may be visible, but it is not a completed result.
+  - Current `src/pointscore.js` uses relay/team 3/2/1; Bryan now says relay/team should be 5/4/3.
+  - Graphs currently exist as per-swimmer time/PB history graphs from saved `time_history` rows.
+  - CSV exports exist for report data; full raw SQLite DB download/export is not yet a customer-facing UI.
+  - Break-count per person overall/by event and total-improvement per person by event/overall are now concrete requested report outputs.
+- [x] Draft updated: `../messages/2026-06-05-draft-to-bryan-persistence-all-event-results-followup.md` (v3).
+- [x] Relay 5/4/3 rule correction IMPLEMENTED + evidenced as v2.10.2 on `dev/v2.10.2-relay-543` (see section above).
+- [ ] Balerion full browser gate (M2-100 + history-graphs) on Mac Mini + independent QA.
+- [ ] Dino decision on Slice 2 (breaks-per-person + total-improvement reports; DB export; all-event retest dataset) + Bryan response.
+
+Recommended next response:
+- Acknowledge the concern.
+- Be honest that the prior four old entries cannot be found/recovered through the app/API from current evidence.
+- Acknowledge relay/team rule correction to 5/4/3.
+- Offer/commit a completed retest dataset across the requested event/stroke categories so reports can be validated without manual recreation.
+- Explain CSV/report export vs full raw SQLite DB export honestly.
+- Explain graphs from saved time-history rows.
+- Treat break-count and total-improvement summaries as concrete report outputs to add/verify.
+- Explain production go-live behavior: persistent database + backups/restore policy, not demo-only assumptions.
+
+## Previous gate — WAITING FOR BRYAN RETEST / ACCEPTANCE / ISSUE DETAILS (2026-06-04 14:14 Europe/Berlin)
 
 - [x] Bryan inbound archived: `../messages/2026-06-04-Bryan-inbound-completed-events-db-question.md`.
 - [x] Draft response prepared: `../messages/2026-06-04-draft-to-bryan-completed-events-db-question.md`.
@@ -72,7 +117,7 @@ Next Bryan reply handling:
 
 Implemented per Balerion's 2026-06-03 06:45 directive under Bryan's 2026-06-02 working assumptions. Engine commit `219bdd9`; CSV-route refactor + test suite + specs + SSOT committed on `dev/v2.10.0-m3-history-graphs` (resolve HEAD dynamically). The prior session completed implementation + ran the evidence but hit its context limit mid-closure; this slice was re-verified first-hand and closed out in a fresh session.
 
-- [x] Isolated scoring engine `src/pointscore.js` (adjustable POINTSCORE_RULES 5/4/3/2 + 3/2/1; reads accepted results; writes only `pointscore_entry`; `WWSC_POINTSCORE_DISABLED` switch).
+- [x] Isolated scoring engine `src/pointscore.js` (adjustable POINTSCORE_RULES: 5/4/3/2 indiv + 5/4/3 relay; reads accepted results; writes only `pointscore_entry`; `WWSC_POINTSCORE_DISABLED` switch).
 - [x] Additive finalize hook + read APIs + CSV exports (`src/server.js`); `🎯 Pointscore` UI screen (`src/public/js/screens/pointscore.js`, nav in `sidebar.js`/`app.js`).
 - [x] Excel scoring source extracted + source-labeled: `scripts/extract-pointscore.py`, `docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md`.
 - [x] Specs: `DESIGN-SPEC` / `UNIT-TEST-SPEC` / `INTEGRATION-TEST-SPEC` / `REQUIREMENT-TEST-EVIDENCE-MATRIX` (M3 pointscore); `DEV-CHECKLIST-M3` → IMPLEMENTED.
