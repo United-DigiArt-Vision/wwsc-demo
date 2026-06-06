@@ -2,8 +2,23 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned; v2.11.0 deployed live on Render on 2026-06-06 after Balerion re-proved Bryan's 2026-06-05 latest expectations.
-Schritt: Bryan's 2026-06-05 latest expectations are closed with proof, live deployment, and a seeded live retest event so Bryan does not land in an empty demo.
-Blockiert: Nothing is NOT PROVEN for Bryan's 2026-06-05 latest expectations. Direct Render disk/backups remain not inspectable from current tooling, so do not claim original old demo events were recovered. Bryan/client contact has not been sent by Balerion; Dino/Nedim sends the customer update and then the sent confirmation must be archived.
+Schritt: Bryan's 2026-06-05 latest expectations are closed with proof, live deployment, seeded live retest data, and Dino/Nedim sent the v2.11.0 delivery update to Bryan on 2026-06-06 18:58 Europe/Berlin.
+Blockiert: Nothing is NOT PROVEN for Bryan's 2026-06-05 latest expectations. Direct Render disk/backups remain not inspectable from current tooling, so do not claim original old demo events were recovered. Current gate: wait for Bryan's retest/acceptance/issue details and archive the full reply before interpretation.
+
+## 📤 BRYAN DELIVERY SENT — v2.11.0 / M3 Slice 2 (2026-06-06 18:58 Europe/Berlin)
+
+- [x] Dino confirmed by Discord screenshot that he sent Bryan the v2.11.0 update.
+- [x] Sent-confirmed record: `../messages/2026-06-06-outgoing-to-bryan-v2110-m3-slice2-sent-confirmed.md`.
+- [x] Screenshot source archived: `../messages/attachments/2026-06-06-v2110-sent-to-bryan-confirmation/01-upwork-outgoing-v2110-visible.png`.
+- [x] Visible sent message states: v2.11.0 live URL, relay/team scoring 5/4/3, completed-category report, DB export, graph source from `time_history`, break-count report, and total-improvement report.
+- [x] Important nuance: the visible screenshot does not show the optional prepared paragraph explicitly mentioning the seeded completed retest event, though the live demo is seeded and ready for Bryan to test.
+- [x] Current gate: **WAITING FOR BRYAN RETEST / ACCEPTANCE / ISSUE DETAILS**.
+
+Next Bryan reply handling:
+- Archive full reply and screenshot(s) first.
+- Classify as acceptance, retest defect, calculation mismatch, Constitution/rule input, seeded-data confusion, scope expansion, or ambiguous feedback.
+- If Bryan reports a defect, reproduce against live v2.11.0 and the seeded completed event before changing code.
+- If Bryan accepts, prepare M3 acceptance/payment-close path.
 
 ## 🧪 v2.11.0 LIVE RETEST DATA SEEDED FOR BRYAN (2026-06-06 17:52 Europe/Berlin)
 
@@ -25,8 +40,8 @@ Blockiert: Nothing is NOT PROVEN for Bryan's 2026-06-05 latest expectations. Dir
 - [x] Render live `/api/version` returns `2.11.0`.
 - [x] Read-only live smoke passed for `/api/reports/event-coverage`, `/api/reports/break-counts`, `/api/reports/improvements`, and `/api/export/db`.
 - [x] Live DB export returns 200 `application/octet-stream`, `content-length: 94208`, filename `wwsc-sqlite-db-v2.11.0-...db`.
-- [ ] Dino/Nedim sends Bryan the prepared update.
-- [ ] Archive Dino's sent confirmation in `messages/`.
+- [x] Dino/Nedim sends Bryan the prepared update.
+- [x] Archive Dino's sent confirmation in `messages/`.
 
 ## 🆕 v2.11.0 M3 SLICE 2 — REPORTS / DB EXPORT / ALL EVENT CATEGORIES PROVEN (2026-06-06)
 
