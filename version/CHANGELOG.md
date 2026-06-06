@@ -11,6 +11,25 @@
 
 ---
 
+## 2026-06-06 — feat: v2.11.0 M3 Slice 2 reports / DB export / all-event proof
+- **Date:** 2026-06-06
+- **Timestamp:** 2026-06-06 11:35:00 Europe/Berlin
+- **App Version (from package.json):** 2.11.0
+- **Branch:** dev/v2.11.0-m3-slice2-reports-export (off `dev/v2.10.2-relay-543@cea5d39`; not merged)
+- **RecordedCommit:** resolve with `git rev-parse --short HEAD`
+- **Editor:** Claude Code
+- **Trigger:** Balerion/Dino Slice 2 directive to finish Bryan's 2026-06-05 latest expectations with proof.
+- **Changes:**
+  - Added completed-results category report (`/api/reports/event-coverage` + CSV + Reports UI tab) covering 25m, 50m, relay, medley relay, 75m, 25m brace, 50m brace, breaststroke/backstroke/butterfly.
+  - Added break-count reports overall + by event (`/api/reports/break-counts` + CSV + UI), sourced from `time_history.is_break` on finalized/completed non-archived events.
+  - Added total-time-improvement reports overall + by event (`/api/reports/improvements` + CSV + UI), sourced from `time_history.time` and `previous_best`, counted only when current time is faster than previous best.
+  - Added raw SQLite DB export route (`GET /api/export/db`) using SQLite backup API; Reports UI `DB & Graphs` tab exposes the download and explains graph source rows.
+  - Updated 120-case M3 runner to prove improvement and break-count report cases; no CLIENT INPUT MISSING remains in the current 120 gate.
+  - Added focused Slice 2 Unit/API and Browser/UI/File proof runners plus evidence package `docs/evidence/m3-slice2/` and screenshots `docs/screenshots/m3-slice2/`.
+  - Proof results: Slice2 Unit/API 7/0; Slice2 Browser 13/0; pointscore Unit/API 15/0; M2-55 55/0; M2-100 98/2NA/0/0; history graphs 19/1NA/0; M3-120 118/2NA/0/0/0CIM.
+  - Proof matrix and customer draft: `docs/evidence/m3-slice2/V2.11.0-BRYAN-REPORTS-EXPORT-ALL-EVENTS-PROOF.md`.
+- **No release action:** no push, no deploy, no tag, no merge to `main`, no Bryan/client contact, no live-data mutation.
+
 ## 2026-06-06 — proof: v2.10.2 relay/team 5/4/3 full gate GREEN on both systems @ 50844a0
 - **Date:** 2026-06-06
 - **Timestamp:** 2026-06-06 09:17:00 Europe/Berlin

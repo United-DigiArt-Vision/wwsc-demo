@@ -1,0 +1,116 @@
+{
+  "baseline": {
+    "branch": "dev/v2.11.0-m3-slice2-reports-export",
+    "commit": "cea5d39",
+    "version": "2.11.0"
+  },
+  "apiVersion": {
+    "version": "2.11.0",
+    "build": "2026-06-06T09:24:56.832Z"
+  },
+  "fixture": {
+    "event": 1,
+    "alice": 24,
+    "bob": 25,
+    "cara": 26,
+    "raceTypes": [
+      "25m",
+      "50m",
+      "25m_relay",
+      "medley_relay",
+      "75m",
+      "25m_brace",
+      "50m_brace",
+      "breaststroke",
+      "backstroke",
+      "butterfly"
+    ]
+  },
+  "records": [
+    {
+      "id": "S2-UI1-reports-landing",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/m3-slice2/S2-UI1-reports-landing.png",
+      "note": "new reports tabs discoverable"
+    },
+    {
+      "id": "S2-UI2-completed-categories",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/m3-slice2/S2-UI2-completed-categories.png",
+      "note": "all requested categories visible; 75m covered once"
+    },
+    {
+      "id": "S2-UI3-break-counts",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/m3-slice2/S2-UI3-break-counts.png",
+      "note": "overall and by-event break counts visible"
+    },
+    {
+      "id": "S2-UI4-improvements",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/m3-slice2/S2-UI4-improvements.png",
+      "note": "overall and by-event improvements visible"
+    },
+    {
+      "id": "S2-UI5-db-graph-explanation",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/m3-slice2/S2-UI5-db-graphs.png",
+      "note": "DB export action + graph explanation visible"
+    },
+    {
+      "id": "S2-UI6-csv-match-api",
+      "status": "PASS",
+      "screenshot": "",
+      "note": "CSV exports parse and match seeded API totals/categories"
+    },
+    {
+      "id": "S2-UI7-db-download-valid",
+      "status": "PASS",
+      "screenshot": "",
+      "note": "browser fetch downloaded valid SQLite DB"
+    },
+    {
+      "id": "S2-UI8-graph-entry-point",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/m3-slice2/S2-UI8-graph-entry.png",
+      "note": "Members screen exposes Graphs action"
+    },
+    {
+      "id": "S2-UI9-graph-data-mapping",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/m3-slice2/S2-UI9-graph-modal.png",
+      "note": "graph modal rendered from member time_history rows=2"
+    },
+    {
+      "id": "S2-UI10-mobile",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/m3-slice2/S2-UI10-mobile-breaks.png",
+      "note": "mobile reports sanity"
+    },
+    {
+      "id": "S2-UI11-tablet",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/m3-slice2/S2-UI11-tablet-improvements.png",
+      "note": "tablet reports sanity"
+    },
+    {
+      "id": "S2-UI12-desktop",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/m3-slice2/S2-UI12-desktop-coverage.png",
+      "note": "desktop reports sanity"
+    },
+    {
+      "id": "S2-UI13-console-clean",
+      "status": "PASS",
+      "screenshot": "",
+      "note": "console/page errors=0"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "url": "http://127.0.0.1:3012/?cb=1780737897320",
+      "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ],
+  "screenshotCount": 10
+}

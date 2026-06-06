@@ -24,6 +24,10 @@ Implementation may proceed on:
 
 Do not represent these assumptions as final separate Constitution confirmation.
 
+## 2026-06-06 Slice 2 Clarification
+
+Bryan's 2026-06-05 follow-up concretized additional M3 report/export outputs: results by requested event/stroke categories, raw DB export, graph explanation, break-count reports overall/by event, and total-time-improvement reports overall/by event. These are implemented and evidenced in v2.11.0 as additive read-only reports/export surfaces; they do not add Constitution scoring, attendance scoring, multi-club hosting, access control, or live-data mutation.
+
 ---
 
 ## 1. Source of Truth for M3 Scope

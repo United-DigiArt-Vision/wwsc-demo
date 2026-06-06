@@ -1,6 +1,19 @@
 # CURRENT_STATE
 
-## CURRENT (2026-06-06) — v2.10.2 Relay/Team Pointscore 5/4/3 — FULLY PROVEN both systems (authoritative top block)
+## CURRENT (2026-06-06) — v2.11.0 M3 Slice 2 Reports / DB Export / All Event Categories — PROVEN locally (authoritative top block)
+
+**Version (from `package.json`):** 2.11.0
+**Branch:** dev/v2.11.0-m3-slice2-reports-export (off `dev/v2.10.2-relay-543@cea5d39`; NOT merged/deployed)
+**Date:** 2026-06-06
+**Timestamp:** 2026-06-06 11:35:00 Europe/Berlin
+**LastEditor:** Claude Code
+**Cache-bust:** `src/public/index.html` = `?v=2.11.0` (matches package.json/package-lock).
+**WorkingTreeStatus:** Bryan's 2026-06-05 latest Slice 2 expectations are implemented and proven on isolated local DBs: completed-category report for 25m, 50m, relay, medley relay, 75m, 25m brace, 50m brace, breaststroke/backstroke/butterfly; break-count report overall + by event from `time_history.is_break`; total-time-improvement report overall + by event from `time_history.time` and `previous_best` where current time is faster; raw SQLite DB export at `GET /api/export/db` using SQLite backup API; Reports UI `DB & Graphs` tab explains DB export and graph source rows; graph entry/data mapping re-proven from `time_history`. Evidence: `docs/evidence/m3-slice2/V2.11.0-BRYAN-REPORTS-EXPORT-ALL-EVENTS-PROOF.md`. Gate results: Slice2 Unit/API **7 PASS / 0 FAIL**; Slice2 Browser/UI/File **13 PASS / 0 FAIL** with 10 screenshots; pointscore Unit/API **15 PASS / 0 FAIL**; M2-55 **55 PASS / 0 FAIL**; M2-100 **98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED**; history graphs **19 PASS / 1 NOT APPLICABLE / 0 FAIL**; M3-120 **118 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED / 0 CLIENT INPUT MISSING**. No NOT PROVEN items remain for Bryan's 2026-06-05 latest expectations; duplicate `75m` is NOT APPLICABLE WITH SOURCE because there is one supported 75m race type. No hosted/live data mutation; no push/deploy/merge/tag/Bryan contact.
+**Milestone status:** M2 v2.9.0 remains released/paid and protected. M3 v2.10.1 remains the latest deployed live version; v2.10.2 and v2.11.0 are feature branches not merged/deployed. Awaiting Balerion/Dino QA/merge/deploy/customer-message decision.
+
+---
+
+## PREVIOUS (2026-06-06) — v2.10.2 Relay/Team Pointscore 5/4/3 — FULLY PROVEN both systems
 
 **Version (from `package.json`):** 2.10.2
 **Branch:** dev/v2.10.2-relay-543 (feature branch off `main@9106eaf`; NOT merged/deployed)

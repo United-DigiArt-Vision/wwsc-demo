@@ -51,3 +51,16 @@ Realized by `scripts/e2e-m3-pointscore-isolation.cjs` (documented in full in the
 
 - Constitution-specific accumulation, PB-break bonus, attendance points — out of the working-assumption scope; the engine is structured so these become config/strategy additions (see `DESIGN-SPEC-M3-POINTSCORE-REPORTS.md` §7).
 - Visual rendering, responsiveness, print, CSV download UX — covered by the browser layer (see `INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md` and `USER-INTERACTION-TEST-SPEC-M3-POINTSCORE-REPORTS-v3.0.1.md`).
+
+## v2.11.0 Slice 2 Unit/API Addendum
+
+`scripts/test-m3-slice2-reports-export.cjs` covers Bryan's 2026-06-05 concrete report/export asks:
+
+- completed-result category API covers 25m, 50m, relay, medley relay, 75m, 25m brace, 50m brace, breaststroke, backstroke and butterfly;
+- break-count API overall + by event from `time_history.is_break`;
+- total-time-improvement API overall + by event from `time_history.time` and `previous_best`, counted only when current time is faster;
+- report CSV exports parse and include expected headers/categories;
+- graph source rows come from member `time_history`;
+- raw SQLite DB export downloads and opens as a valid SQLite database.
+
+Expected result: `7 PASS / 0 FAIL`.

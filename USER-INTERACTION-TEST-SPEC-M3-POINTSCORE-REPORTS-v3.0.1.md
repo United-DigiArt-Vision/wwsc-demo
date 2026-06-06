@@ -124,7 +124,7 @@ Do not claim that a separate Constitution document has been confirmed. The corre
 | UIT-M3-074 | Reports | Open season winners report | Season aggregation visible | Screenshot |
 | UIT-M3-075 | Reports | Open swimmer pointscore card | Swimmer total plus event breakdown visible | Screenshot |
 | UIT-M3-076 | Reports | Open improvement report if implemented | Values trace to time_history | Screenshot, API rows |
-| UIT-M3-077 | Reports | Open attendance report if implemented | Values trace to attendance data | Screenshot, API rows |
+| UIT-M3-077 | Reports | Open break-count report | Values trace to time_history.is_break overall and by event | Screenshot, API rows |
 | UIT-M3-078 | Reports | Open empty report filter | Clean empty state | Screenshot |
 | UIT-M3-079 | Reports | Use report date/month filter | Included rows match filter | Screenshot, API URL |
 | UIT-M3-080 | Reports | Clear report filters | Full data returns | Screenshot |

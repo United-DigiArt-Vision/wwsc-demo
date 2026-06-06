@@ -1,9 +1,23 @@
-# PROGRESS — WWSC v2.10.1 M3 Release Deploy
+# PROGRESS — WWSC v2.11.0 M3 Slice 2 Reports / Export
 
 ## 🎯 AKTUELLER STATUS
-Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned, implemented, Balerion-verified, and deployed live as v2.10.1 on 2026-06-04.
-Schritt: Bryan replied again on 2026-06-05 asking whether his previous completed events were saved, where they went, whether they can be found, whether results exist for all event types, and what happens after go-live. Inbound archived: `../messages/2026-06-05-Bryan-inbound-persistence-all-event-results-followup.md`. Bryan then sent more info: relay should score 5/4/3, results are needed by each requested event/stroke type, he asks how to export the DB and how graphs are produced, and he wants break-count and total-improvement reports. Follow-up archived: `../messages/2026-06-05-Bryan-inbound-more-info-relay-reports-db-graphs.md`.
-Blockiert: Technical retest-data blocker resolved for hosted demo retest. Direct Render disk/backups are still not inspectable from current tooling (no Render CLI/API key or working logged-in browser session), so do not claim the original old events were recovered. New Bryan rule/report inputs require a narrow v2.10.x response/update plan: relay pointscore correction, broader all-event-types completed retest dataset, DB export/backup path, break-count report, and total-improvement report. No Bryan reply by Balerion; Dino sends customer communication.
+Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned and v2.10.1 deployed live on 2026-06-04; v2.10.2 relay 5/4/3 proven but not merged/deployed; v2.11.0 Slice 2 now implemented/proven locally on feature branch.
+Schritt: Bryan's 2026-06-05 latest expectations are closed with proof: completed results by requested event/stroke categories, break-count reports overall/by event, total-time-improvement reports overall/by event, raw SQLite DB export, graph explanation/source proof, and customer-facing draft.
+Blockiert: Nothing is NOT PROVEN for Bryan's 2026-06-05 latest expectations. Direct Render disk/backups remain not inspectable from current tooling, so do not claim original old demo events were recovered. No push/deploy/merge/tag/Bryan contact/live-data mutation was performed; Dino/Balerion decide QA and release/customer path.
+
+## 🆕 v2.11.0 M3 SLICE 2 — REPORTS / DB EXPORT / ALL EVENT CATEGORIES PROVEN (2026-06-06)
+
+- [x] Branch `dev/v2.11.0-m3-slice2-reports-export` created from `dev/v2.10.2-relay-543@cea5d39`; version/cache-bust bumped to `2.11.0`.
+- [x] New completed-result category report: `GET /api/reports/event-coverage` + CSV + UI tab `Completed Categories`; proof covers 25m, 50m, relay, medley relay, 75m, 25m brace, 50m brace, breaststroke/backstroke/butterfly. Bryan's duplicate `75m` is documented as NOT APPLICABLE WITH SOURCE.
+- [x] New break-count reports: `GET /api/reports/break-counts` + CSV + UI tab `Break Counts`; source = `time_history.is_break`, finalized/completed non-archived events only; overall and by-event views.
+- [x] New total-time-improvement reports: `GET /api/reports/improvements` + CSV + UI tab `Improvements`; source = `time_history.time` and `previous_best`, counted only when previous best exists and current time is faster; centiseconds internally, human-readable UI.
+- [x] New raw SQLite DB export: `GET /api/export/db`; uses SQLite backup API, filename includes `v2.11.0` + date, verified as valid SQLite DB by `better-sqlite3` after download.
+- [x] Reports UI `DB & Graphs` tab explains DB export and graph source; graph entry point and graph API/time-history mapping re-proven.
+- [x] Evidence matrix + customer-facing draft: `docs/evidence/m3-slice2/V2.11.0-BRYAN-REPORTS-EXPORT-ALL-EVENTS-PROOF.md`.
+- [x] Proof: Slice2 Unit/API **7/0**, Slice2 Browser/UI/File **13/0** (10 screenshots), pointscore Unit/API **15/0**, M2-55 **55/0**, M2-100 **98/2NA/0/0**, history graphs **19/1NA/0**, M3-120 **118/2NA/0/0/0CIM**.
+- [x] Boundaries held: no push, no deploy, no merge to main, no tag, no Bryan/client contact, no hosted/live data mutation.
+
+## 🆕 v2.10.2 RELAY/TEAM POINTSCORE 5/4/3 — IMPLEMENTED + EVIDENCED (2026-06-05)
 
 ## 🆕 v2.10.2 RELAY/TEAM POINTSCORE 5/4/3 — IMPLEMENTED + EVIDENCED (2026-06-05)
 

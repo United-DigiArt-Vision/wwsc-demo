@@ -1,11 +1,11 @@
 {
   "baseline": {
-    "branch": "dev/v2.10.2-relay-543",
-    "commit": "50844a0",
-    "pkg": "2.10.2",
+    "branch": "dev/v2.11.0-m3-slice2-reports-export",
+    "commit": "cea5d39",
+    "pkg": "2.11.0",
     "apiVersion": {
-      "version": "2.10.2",
-      "build": "2026-06-06T07:13:02.826Z"
+      "version": "2.11.0",
+      "build": "2026-06-06T09:34:33.367Z"
     }
   },
   "records": [
@@ -13,7 +13,7 @@
       "id": "UIT-M3-001",
       "status": "PASS",
       "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-001-app-loads.png",
-      "note": "app loads v2.10.2"
+      "note": "app loads v2.11.0"
     },
     {
       "id": "UIT-M3-002",
@@ -461,15 +461,15 @@
     },
     {
       "id": "UIT-M3-076",
-      "status": "CLIENT INPUT MISSING",
-      "shot": "",
-      "note": "improvement report: Bryan asked for \"internal reports\" (2026-05-23) but QA-09 (which specific reports + improvement criteria/period) is unanswered. Core pointscore reports (event/monthly/season/swimmer) + existing breaker report are delivered; this specific report awaits Bryan input. See BRYAN-M3-EXPECTATION-PROOF."
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-076-report-improvements.png",
+      "note": "total-time-improvement report by swimmer overall + by event, sourced from time_history previous_best/time"
     },
     {
       "id": "UIT-M3-077",
-      "status": "CLIENT INPUT MISSING",
-      "shot": "",
-      "note": "attendance report: attendance data exists in the app, but QA-09 (which reports + any attendance scoring) is unanswered by Bryan. Not a casual N/A — awaits client input. See BRYAN-M3-EXPECTATION-PROOF."
+      "status": "PASS",
+      "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-077-report-break-counts.png",
+      "note": "break-count report by swimmer overall + by event, sourced from time_history.is_break"
     },
     {
       "id": "UIT-M3-078",
@@ -673,13 +673,13 @@
       "id": "UIT-M3-111",
       "status": "PASS",
       "shot": "",
-      "note": "M2 55-case runner — fresh log @50844a0 (/tmp/m3p-m2-55.log)"
+      "note": "M2 55-case runner — fresh log @cea5d39 (/tmp/m3p-m2-55.log)"
     },
     {
       "id": "UIT-M3-112",
       "status": "PASS",
       "shot": "",
-      "note": "M2 100-case runner — fresh log @50844a0 (/tmp/m3p-m2-100.log)"
+      "note": "M2 100-case runner — fresh log @cea5d39 (/tmp/m3p-m2-100.log)"
     },
     {
       "id": "UIT-M3-113",
@@ -721,7 +721,7 @@
       "id": "UIT-M3-119",
       "status": "PASS",
       "shot": "",
-      "note": "screenshot inventory: 64 PNGs"
+      "note": "screenshot inventory: 66 PNGs"
     },
     {
       "id": "UIT-M3-120",
@@ -732,15 +732,15 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3011/?cb=1780729986040",
+      "url": "http://127.0.0.1:3011/?cb=1780738474148",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ],
   "tally": {
-    "PASS": 116,
+    "PASS": 118,
     "FAIL": 0,
     "BLOCKED": 0,
     "NOT APPLICABLE": 2,
-    "CLIENT INPUT MISSING": 2
+    "CLIENT INPUT MISSING": 0
   }
 }

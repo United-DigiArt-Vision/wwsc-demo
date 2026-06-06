@@ -5,6 +5,7 @@ INTEGRATION-TEST-SPEC-M3-POINTSCORE-REPORTS.md
 PROGRESS.md
 UNIT-TEST-SPEC-M3-POINTSCORE-REPORTS.md
 docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md
+docs/evidence/m3-pointscore/V2.10.2-BRYAN-RELAY-543-PROOF.md
 docs/evidence/m3-user-interaction-v3.0.1/event-pointscore.csv
 docs/evidence/m3-user-interaction-v3.0.1/m3-pointscore-120-raw.log
 docs/evidence/m3-user-interaction-v3.0.1/m3-pointscore-120-records.json

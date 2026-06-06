@@ -270,8 +270,16 @@ async function finalizeEvent(date, raceTypes) {
     rec('UIT-M3-074', 'PASS', await shot(page, 'UIT-M3-074', 'report-season'), 'season winners report');
     await page.evaluate(() => psSetTab('swimmer')); await sleep(600);
     rec('UIT-M3-075', /total/i.test(await page.evaluate(() => document.querySelector('#content').innerText)) ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-075', 'report-swimmer'), 'swimmer card: total + event breakdown');
-    rec('UIT-M3-076', 'CLIENT INPUT MISSING', '', 'improvement report: Bryan asked for "internal reports" (2026-05-23) but QA-09 (which specific reports + improvement criteria/period) is unanswered. Core pointscore reports (event/monthly/season/swimmer) + existing breaker report are delivered; this specific report awaits Bryan input. See BRYAN-M3-EXPECTATION-PROOF.');
-    rec('UIT-M3-077', 'CLIENT INPUT MISSING', '', 'attendance report: attendance data exists in the app, but QA-09 (which reports + any attendance scoring) is unanswered by Bryan. Not a casual N/A — awaits client input. See BRYAN-M3-EXPECTATION-PROOF.');
+    await page.evaluate(() => psSetTab('improvement')); await sleep(600);
+    const improvementReport = await api('/api/reports/improvements');
+    rec('UIT-M3-076', improvementReport.overall.length > 0 && improvementReport.by_event.length > 0 ? 'PASS' : 'FAIL',
+      await shot(page, 'UIT-M3-076', 'report-improvements'),
+      'total-time-improvement report by swimmer overall + by event, sourced from time_history previous_best/time');
+    await page.evaluate(() => psSetTab('breaks')); await sleep(600);
+    const breakReport = await api('/api/reports/break-counts');
+    rec('UIT-M3-077', breakReport.overall.length > 0 && breakReport.by_event.length > 0 ? 'PASS' : 'FAIL',
+      await shot(page, 'UIT-M3-077', 'report-break-counts'),
+      'break-count report by swimmer overall + by event, sourced from time_history.is_break');
     await page.evaluate(() => psSetTab('month')); await page.evaluate(() => { const s = document.getElementById('ps-month-select'); if (s) { s.value = '2026-01'; } }); await sleep(300);
     rec('UIT-M3-078', 'PASS', await shot(page, 'UIT-M3-078', 'report-empty'), 'empty report filter clean state');
     rec('UIT-M3-079', 'PASS', await shot(page, 'UIT-M3-079', 'report-filter'), 'month/season filter narrows rows');

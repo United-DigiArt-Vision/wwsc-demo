@@ -49,7 +49,7 @@
 ## 5. UI — `src/public/js/screens/pointscore.js`
 
 - New `🎯 Pointscore` sidebar entry + `pointscore` route (`sidebar.js`, `app.js`).
-- Four tabs: **Per-Event**, **Monthly Winners**, **Season Winners**, **Swimmer Card**.
+- v2.11.0 tabs: **Per-Event**, **Monthly Winners**, **Season Winners**, **Swimmer Card**, **Break Counts**, **Improvements**, **Completed Categories**, **DB & Graphs**.
 - Every tab shows the rule-transparency banner (Excel working source; not a confirmed Constitution; event-separated + simple-addition aggregation; calendar-year season default).
 - Each tab: a selector (event / month / season / swimmer), a sortable standings/detail table, a CSV export button, and a Print button. Controls carry `print-hide`; the table is inside a `print-area`.
 
@@ -64,7 +64,7 @@
 
 - Constitution-specific accumulation (break-reallocation, eligibility, weighting) — blocked until Bryan confirms the Constitution. The engine is structured so these become config/strategy additions.
 - PB-break bonus / attendance points — the Excel `Total Pointscore` excludes the Improvement/Attendance sheets, so the working assumption is no bonus.
-- Members CSV / improvement report / attendance report — not required by the working assumption; can be added later.
+- Attendance scoring/reporting remains outside the current working assumption. Bryan's 2026-06-05 concrete break-count and total-time-improvement reports are implemented in v2.11.0 as read-only reports from `time_history`.
 
 ## 8. Regression protection
 
@@ -73,3 +73,4 @@
 - `scripts/e2e-m2-time-history.cjs` (55) + `scripts/e2e-m2-user-interaction-100.cjs` (100) re-run green on the M3 branch (the M3-leakage scan was scoped to `#content` so the legitimate Pointscore nav link is not a false positive).
 - `scripts/e2e-m3-history-graphs.cjs` (20) confirms R-M3-05 still passes.
 - `scripts/e2e-m3-pointscore-120.cjs` executes the mandatory 120-case v3.0.1 spec.
+- `scripts/test-m3-slice2-reports-export.cjs` and `scripts/e2e-m3-slice2-reports-export.cjs` prove Bryan's 2026-06-05 Slice 2 reports/export/all-event expectations.

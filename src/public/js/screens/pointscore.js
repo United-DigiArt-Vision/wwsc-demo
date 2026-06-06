@@ -12,7 +12,7 @@
  * (UIT-M3-021/022). CSV export + print-friendly per view.
  */
 
-let psTab = 'event';        // 'event' | 'month' | 'season' | 'swimmer'
+let psTab = 'event';        // event | month | season | swimmer | breaks | improvement | coverage | export
 let psRules = null;         // cached /api/pointscore/rules
 
 async function renderPointscore() {
@@ -24,7 +24,7 @@ async function renderPointscore() {
   const banner = psRuleBanner();
   const tabs = `
     <div class="toolbar" style="gap:6px;flex-wrap:wrap">
-      ${['event', 'month', 'season', 'swimmer'].map(t => `
+      ${['event', 'month', 'season', 'swimmer', 'breaks', 'improvement', 'coverage', 'export'].map(t => `
         <button class="btn ${psTab === t ? 'btn-primary' : 'btn-outline'}" style="min-height:40px"
           onclick="psSetTab('${t}')">${psTabLabel(t)}</button>`).join('')}
     </div>`;
@@ -33,7 +33,16 @@ async function renderPointscore() {
 }
 
 function psTabLabel(t) {
-  return { event: '📋 Per-Event', month: '🗓️ Monthly Winners', season: '🏆 Season Winners', swimmer: '🏊 Swimmer Card' }[t];
+  return {
+    event: '📋 Per-Event',
+    month: '🗓️ Monthly Winners',
+    season: '🏆 Season Winners',
+    swimmer: '🏊 Swimmer Card',
+    breaks: '🏅 Break Counts',
+    improvement: '📉 Improvements',
+    coverage: '✅ Completed Categories',
+    export: '⬇️ DB & Graphs'
+  }[t];
 }
 
 function psRuleBanner() {
@@ -60,6 +69,10 @@ async function psRenderBody() {
     if (psTab === 'month') return await psRenderMonth(body);
     if (psTab === 'season') return await psRenderSeason(body);
     if (psTab === 'swimmer') return await psRenderSwimmer(body);
+    if (psTab === 'breaks') return await psRenderBreaks(body);
+    if (psTab === 'improvement') return await psRenderImprovement(body);
+    if (psTab === 'coverage') return await psRenderCoverage(body);
+    if (psTab === 'export') return await psRenderExport(body);
   } catch (e) {
     body.innerHTML = `<div class="card" style="color:#dc3545">Error: ${e.message}</div>`;
   }
@@ -194,4 +207,105 @@ async function psRenderSwimmer(body) {
   body.innerHTML = sel + `<h2>${data.member.name} — total ${data.total} points</h2>
     <p style="color:var(--text-secondary);font-size:13px">Per-event contribution detail.</p>` + table;
   const s2 = document.getElementById('ps-swimmer-select'); if (s2) s2.value = memberId;
+}
+
+// ── Break counts ───────────────────────────────────────────────────
+async function psRenderBreaks(body) {
+  const data = await API.get('/api/reports/break-counts');
+  const controls = `
+    <div class="toolbar print-hide">
+      <button class="btn btn-outline" onclick="window.location.href='/api/reports/break-counts/csv'">⬇️ CSV</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>`;
+  const overall = data.overall.length === 0
+    ? '<div class="card">No PB breaks recorded in finalized events yet.</div>'
+    : `<table class="data-table"><thead><tr><th>Rank</th><th>Swimmer</th><th>Breaks</th></tr></thead>
+      <tbody>${data.overall.map((r, i) => `<tr><td>${i + 1}</td><td>${r.member_name}</td><td style="font-weight:700">${r.break_count}</td></tr>`).join('')}</tbody></table>`;
+  const byEvent = data.by_event.length === 0
+    ? ''
+    : `<h3 style="margin-top:16px">By event</h3><table class="data-table"><thead><tr><th>Date</th><th>Stroke</th><th>Swimmer</th><th>Breaks</th></tr></thead>
+      <tbody>${data.by_event.map(r => `<tr><td>${formatDate(r.event_date)}</td><td>${r.stroke}</td><td>${r.member_name}</td><td>${r.break_count}</td></tr>`).join('')}</tbody></table>`;
+  body.innerHTML = controls + `<h2>Break counts</h2>
+    <p style="color:var(--text-secondary);font-size:13px">${data.source}</p>
+    <h3>Overall</h3>` + overall + byEvent;
+}
+
+// ── Total improvements ─────────────────────────────────────────────
+async function psRenderImprovement(body) {
+  const data = await API.get('/api/reports/improvements');
+  const controls = `
+    <div class="toolbar print-hide">
+      <button class="btn btn-outline" onclick="window.location.href='/api/reports/improvements/csv'">⬇️ CSV</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>`;
+  const overall = data.overall.length === 0
+    ? '<div class="card">No faster-than-previous-best rows recorded in finalized events yet.</div>'
+    : `<table class="data-table"><thead><tr><th>Rank</th><th>Swimmer</th><th>Total improvement</th><th>Rows</th></tr></thead>
+      <tbody>${data.overall.map((r, i) => `<tr><td>${i + 1}</td><td>${r.member_name}</td><td style="font-weight:700">${formatTime(r.total_improvement_cs)}</td><td>${r.improvement_count}</td></tr>`).join('')}</tbody></table>`;
+  const byEvent = data.by_event.length === 0
+    ? ''
+    : `<h3 style="margin-top:16px">By event</h3><table class="data-table"><thead><tr><th>Date</th><th>Stroke</th><th>Swimmer</th><th>Improvement</th><th>Rows</th></tr></thead>
+      <tbody>${data.by_event.map(r => `<tr><td>${formatDate(r.event_date)}</td><td>${r.stroke}</td><td>${r.member_name}</td><td>${formatTime(r.total_improvement_cs)}</td><td>${r.improvement_count}</td></tr>`).join('')}</tbody></table>`;
+  body.innerHTML = controls + `<h2>Total time improvement</h2>
+    <p style="color:var(--text-secondary);font-size:13px">${data.source}</p>
+    <h3>Overall</h3>` + overall + byEvent;
+}
+
+// ── Completed result categories ────────────────────────────────────
+async function psRenderCoverage(body) {
+  const data = await API.get('/api/reports/event-coverage');
+  const requested = ['25m', '50m', '25m_relay', 'medley_relay', '75m', '25m_brace', '50m_brace', 'breaststroke', 'backstroke', 'butterfly'];
+  const summaryByType = {};
+  data.summary.forEach(s => { summaryByType[s.race_type] = s; });
+  const controls = `
+    <div class="toolbar print-hide">
+      <button class="btn btn-outline" onclick="window.location.href='/api/reports/event-coverage/csv'">⬇️ CSV</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>`;
+  const summary = `<table class="data-table"><thead><tr><th>Requested category</th><th>Status</th><th>Completed races</th><th>Saved result rows</th></tr></thead>
+    <tbody>${requested.map(rt => {
+      const s = summaryByType[rt];
+      return `<tr><td>${categoryDisplay(rt)}</td><td>${s && s.result_count > 0 ? 'Covered' : 'Not present'}</td><td>${s ? s.completed_races : 0}</td><td>${s ? s.result_count : 0}</td></tr>`;
+    }).join('')}</tbody></table>`;
+  const rows = data.rows.length === 0
+    ? '<div class="card">No completed result categories yet.</div>'
+    : `<h3 style="margin-top:16px">Completed event result rows</h3><table class="data-table"><thead><tr><th>Date</th><th>Race type</th><th>Category</th><th>Result rows</th><th>Teams</th></tr></thead>
+      <tbody>${data.rows.map(r => `<tr><td>${formatDate(r.event_date)}</td><td>${r.race_type}</td><td>${r.category}</td><td>${r.result_count}</td><td>${r.team_count}</td></tr>`).join('')}</tbody></table>`;
+  body.innerHTML = controls + `<h2>Completed event categories</h2>
+    <p style="color:var(--text-secondary);font-size:13px">${data.source}. Bryan listed 75m twice; this report covers the single supported 75m race type once.</p>` + summary + rows;
+}
+
+function categoryDisplay(rt) {
+  return {
+    '25m': '25m',
+    '50m': '50m',
+    '25m_relay': 'relay',
+    'medley_relay': 'medley relay',
+    '75m': '75m',
+    '25m_brace': '25m brace',
+    '50m_brace': '50m brace',
+    'breaststroke': 'breast / breaststroke',
+    'backstroke': 'back / backstroke',
+    'butterfly': 'butterfly'
+  }[rt] || rt;
+}
+
+// ── DB export + graph explanation ──────────────────────────────────
+async function psRenderExport(body) {
+  body.innerHTML = `
+    <div class="toolbar print-hide">
+      <button class="btn btn-primary" onclick="window.location.href='/api/export/db'">⬇️ Download SQLite DB</button>
+      <button class="btn btn-outline" onclick="window.location.href='/api/time-history/csv'">⬇️ Time History CSV</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>
+    <h2>DB export and graphs</h2>
+    <div class="card">
+      <h3>Database export</h3>
+      <p>The SQLite download button creates a safe snapshot of the configured WWSC database and downloads the raw <code>.db</code> file. The filename includes the app version and export date.</p>
+    </div>
+    <div class="card">
+      <h3>How graphs are produced</h3>
+      <p>Individual graphs are produced from saved <code>time_history</code> rows after events are finalized. Each row stores swimmer, event date, stroke, current time, previous best, and whether it was a break.</p>
+      <p>Open Members, choose a swimmer, then use Graphs to view the same time-history rows as a trend graph. The Time History CSV exports those graph source rows.</p>
+    </div>`;
 }

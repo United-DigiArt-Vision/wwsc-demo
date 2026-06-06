@@ -1,0 +1,11 @@
+event_date,event_id,race_type,category,result_count,team_count
+2026-07-04,1,25m,25m,3,0
+2026-07-04,1,25m_brace,25m brace,3,2
+2026-07-04,1,25m_relay,relay,3,2
+2026-07-04,1,50m,50m,3,0
+2026-07-04,1,50m_brace,50m brace,3,2
+2026-07-04,1,75m,75m,3,0
+2026-07-04,1,backstroke,back / backstroke,3,0
+2026-07-04,1,breaststroke,breast / breaststroke,3,0
+2026-07-04,1,butterfly,butterfly,3,0
+2026-07-04,1,medley_relay,medley relay,3,2

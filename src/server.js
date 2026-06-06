@@ -5,7 +5,8 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const { db, createBackup } = require('./db');
+const fs = require('fs');
+const { db, createBackup, DB_PATH } = require('./db');
 
 const { seedIfEmpty, migrateToWholeSeconds } = require('./seed');
 // M3 isolated pointscore engine (reads accepted race data, writes only
@@ -869,6 +870,150 @@ app.get('/api/reports/breakers', (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+function completedEventWhere(alias = 'e') {
+  return `${alias}.status IN ('finalized','completed') AND (${alias}.archived = 0 OR ${alias}.archived IS NULL)`;
+}
+
+function categoryLabel(raceType) {
+  const labels = {
+    '25m': '25m',
+    '50m': '50m',
+    '75m': '75m',
+    '25m_relay': 'relay',
+    'medley_relay': 'medley relay',
+    '25m_brace': '25m brace',
+    '50m_brace': '50m brace',
+    'breaststroke': 'breast / breaststroke',
+    'backstroke': 'back / backstroke',
+    'butterfly': 'butterfly',
+    'pogo': 'pogo'
+  };
+  return labels[raceType] || raceType;
+}
+
+function getCompletedResultCoverageRows() {
+  const rows = db.prepare(`
+    SELECT e.id AS event_id, e.date AS event_date, er.id AS event_race_id, er.race_type,
+      (
+        SELECT COUNT(DISTINCT hl.member_id)
+        FROM heat h
+        JOIN heat_lane hl ON hl.heat_id = h.id
+        WHERE h.event_race_id = er.id AND hl.net_time IS NOT NULL
+      ) AS individual_results,
+      (
+        SELECT COUNT(DISTINCT rtm.member_id)
+        FROM relay_team rt
+        JOIN relay_team_member rtm ON rtm.relay_team_id = rt.id
+        WHERE rt.event_race_id = er.id AND rt.total_time IS NOT NULL
+      ) AS relay_members,
+      (
+        SELECT COUNT(*)
+        FROM relay_team rt2
+        WHERE rt2.event_race_id = er.id AND rt2.total_time IS NOT NULL
+      ) AS relay_teams
+    FROM event_race er
+    JOIN event e ON e.id = er.event_id
+    WHERE ${completedEventWhere('e')}
+    ORDER BY er.race_type ASC, e.date ASC, er.id ASC
+  `).all();
+  return rows.map(r => ({
+    event_id: r.event_id,
+    event_date: r.event_date,
+    event_race_id: r.event_race_id,
+    race_type: r.race_type,
+    category: categoryLabel(r.race_type),
+    result_count: Number(r.individual_results || 0) + Number(r.relay_members || 0),
+    team_count: Number(r.relay_teams || 0)
+  }));
+}
+
+function getBreakCountReport() {
+  const overall = db.prepare(`
+    SELECT th.member_id, m.name AS member_name, COUNT(*) AS break_count
+    FROM time_history th
+    JOIN member m ON m.id = th.member_id
+    JOIN event e ON e.id = th.event_id
+    WHERE th.is_break = 1 AND ${completedEventWhere('e')}
+    GROUP BY th.member_id, m.name
+    ORDER BY break_count DESC, m.name ASC
+  `).all();
+  const byEvent = db.prepare(`
+    SELECT e.id AS event_id, e.date AS event_date, th.stroke,
+           th.member_id, m.name AS member_name, COUNT(*) AS break_count
+    FROM time_history th
+    JOIN member m ON m.id = th.member_id
+    JOIN event e ON e.id = th.event_id
+    WHERE th.is_break = 1 AND ${completedEventWhere('e')}
+    GROUP BY e.id, e.date, th.stroke, th.member_id, m.name
+    ORDER BY e.date ASC, e.id ASC, th.stroke ASC, break_count DESC, m.name ASC
+  `).all();
+  return {
+    source: 'time_history.is_break from finalized/completed, non-archived events only',
+    overall,
+    by_event: byEvent
+  };
+}
+
+function getImprovementReport() {
+  const where = `th.previous_best IS NOT NULL AND (th.previous_best * 100) > th.time AND ${completedEventWhere('e')}`;
+  const overall = db.prepare(`
+    SELECT th.member_id, m.name AS member_name,
+           SUM((th.previous_best * 100) - th.time) AS total_improvement_cs,
+           COUNT(*) AS improvement_count
+    FROM time_history th
+    JOIN member m ON m.id = th.member_id
+    JOIN event e ON e.id = th.event_id
+    WHERE ${where}
+    GROUP BY th.member_id, m.name
+    ORDER BY total_improvement_cs DESC, m.name ASC
+  `).all();
+  const byEvent = db.prepare(`
+    SELECT e.id AS event_id, e.date AS event_date, th.stroke,
+           th.member_id, m.name AS member_name,
+           SUM((th.previous_best * 100) - th.time) AS total_improvement_cs,
+           COUNT(*) AS improvement_count
+    FROM time_history th
+    JOIN member m ON m.id = th.member_id
+    JOIN event e ON e.id = th.event_id
+    WHERE ${where}
+    GROUP BY e.id, e.date, th.stroke, th.member_id, m.name
+    ORDER BY e.date ASC, e.id ASC, th.stroke ASC, total_improvement_cs DESC, m.name ASC
+  `).all();
+  return {
+    source: 'time_history.time and time_history.previous_best; counted only when previous_best exists and current time is faster',
+    unit: 'centiseconds',
+    overall,
+    by_event: byEvent
+  };
+}
+
+// GET /api/reports/event-coverage — completed result categories Bryan asked to inspect.
+app.get('/api/reports/event-coverage', (req, res) => {
+  try {
+    const rows = getCompletedResultCoverageRows();
+    const summary = {};
+    for (const r of rows) {
+      if (!summary[r.race_type]) summary[r.race_type] = { race_type: r.race_type, category: r.category, completed_races: 0, result_count: 0, team_count: 0 };
+      summary[r.race_type].completed_races += 1;
+      summary[r.race_type].result_count += r.result_count;
+      summary[r.race_type].team_count += r.team_count;
+    }
+    res.json({ source: 'event_race rows for finalized/completed, non-archived events with saved heat/relay results', rows, summary: Object.values(summary).sort((a, b) => a.race_type.localeCompare(b.race_type)) });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/reports/break-counts — Bryan Slice 2 break-count report.
+app.get('/api/reports/break-counts', (req, res) => {
+  try { res.json(getBreakCountReport()); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/reports/improvements — Bryan Slice 2 total-time-improvement report.
+app.get('/api/reports/improvements', (req, res) => {
+  try { res.json(getImprovementReport()); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // BF2.6-20: GET /api/reports/exceeded — all swimmers exceeding PB by >2s across all events
 app.get('/api/reports/exceeded', (req, res) => {
   try {
@@ -1224,6 +1369,64 @@ function sendCsv(res, filename, headerRow, dataRows) {
   res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '"');
   res.send(lines.join('\n') + '\n');
 }
+
+// GET /api/reports/event-coverage.csv
+app.get('/api/reports/event-coverage/csv', (req, res) => {
+  try {
+    const rows = getCompletedResultCoverageRows();
+    sendCsv(res, 'wwsc-completed-result-categories-v' + pkg.version + '.csv',
+      ['event_date', 'event_id', 'race_type', 'category', 'result_count', 'team_count'],
+      rows.map(r => [r.event_date, r.event_id, r.race_type, r.category, r.result_count, r.team_count]));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/reports/break-counts.csv
+app.get('/api/reports/break-counts/csv', (req, res) => {
+  try {
+    const report = getBreakCountReport();
+    const rows = []
+      .concat(report.overall.map(r => ['overall', '', '', '', r.member_name, r.member_id, r.break_count]))
+      .concat(report.by_event.map(r => ['by_event', r.event_date, r.event_id, r.stroke, r.member_name, r.member_id, r.break_count]));
+    sendCsv(res, 'wwsc-break-counts-v' + pkg.version + '.csv',
+      ['scope', 'event_date', 'event_id', 'stroke', 'swimmer', 'member_id', 'break_count'],
+      rows);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/reports/improvements.csv
+app.get('/api/reports/improvements/csv', (req, res) => {
+  try {
+    const report = getImprovementReport();
+    const rows = []
+      .concat(report.overall.map(r => ['overall', '', '', '', r.member_name, r.member_id, r.total_improvement_cs, r.improvement_count]))
+      .concat(report.by_event.map(r => ['by_event', r.event_date, r.event_id, r.stroke, r.member_name, r.member_id, r.total_improvement_cs, r.improvement_count]));
+    sendCsv(res, 'wwsc-total-improvements-v' + pkg.version + '.csv',
+      ['scope', 'event_date', 'event_id', 'stroke', 'swimmer', 'member_id', 'total_improvement_centiseconds', 'improvement_count'],
+      rows);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/export/db — raw SQLite DB download.
+// Uses SQLite's backup API instead of streaming the live DB file directly.
+app.get('/api/export/db', async (req, res) => {
+  try {
+    if (!DB_PATH) return res.status(500).json({ error: 'SQLite DB path is not configured' });
+    const exportDir = path.join(path.dirname(DB_PATH), 'exports');
+    fs.mkdirSync(exportDir, { recursive: true });
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    const filename = 'wwsc-sqlite-db-v' + pkg.version + '-' + stamp + '.db';
+    const exportPath = path.join(exportDir, filename);
+    const backup = db.backup(exportPath);
+    if (backup && typeof backup.then === 'function') await backup;
+    if (!fs.existsSync(exportPath)) return res.status(500).json({ error: 'DB export file was not created' });
+    res.download(exportPath, filename, (err) => {
+      try { fs.unlinkSync(exportPath); } catch (e) {}
+      if (err && !res.headersSent) res.status(500).json({ error: err.message });
+    });
+  } catch (e) {
+    if (!res.headersSent) res.status(500).json({ error: e.message });
+  }
+});
 
 // GET /api/events/:eventId/pointscore.csv
 app.get('/api/events/:eventId/pointscore/csv', (req, res) => {

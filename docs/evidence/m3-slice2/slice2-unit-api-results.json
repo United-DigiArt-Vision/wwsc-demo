@@ -1,0 +1,64 @@
+{
+  "fixture": {
+    "event": 1,
+    "members": {
+      "alice": 24,
+      "bob": 25,
+      "cara": 26
+    },
+    "raceTypes": [
+      "25m",
+      "50m",
+      "25m_relay",
+      "medley_relay",
+      "75m",
+      "25m_brace",
+      "50m_brace",
+      "breaststroke",
+      "backstroke",
+      "butterfly"
+    ]
+  },
+  "results": [
+    {
+      "id": "S2-UT1-version",
+      "status": "PASS",
+      "note": "version=2.11.0"
+    },
+    {
+      "id": "S2-UT2-completed-categories-api",
+      "status": "PASS",
+      "note": "covered=25m,25m_brace,25m_relay,50m,50m_brace,75m,backstroke,breaststroke,butterfly,medley_relay"
+    },
+    {
+      "id": "S2-UT3-break-counts-api",
+      "status": "PASS",
+      "note": "overall Alice=2 Cara=1; by_event=3"
+    },
+    {
+      "id": "S2-UT4-improvements-api",
+      "status": "PASS",
+      "note": "Alice=150cs Cara=100cs; by_event=3"
+    },
+    {
+      "id": "S2-UT5-csv-exports-parse",
+      "status": "PASS",
+      "note": "CSV exports parse and include expected headers/categories"
+    },
+    {
+      "id": "S2-UT6-graph-source-time-history",
+      "status": "PASS",
+      "note": "member graph source rows=2"
+    },
+    {
+      "id": "S2-UT7-db-export-valid-sqlite",
+      "status": "PASS",
+      "note": "download bytes=94208, memberCount=3",
+      "file": "docs/evidence/m3-slice2/downloaded-sqlite-db.db"
+    }
+  ],
+  "tally": {
+    "pass": 7,
+    "fail": 0
+  }
+}

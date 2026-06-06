@@ -1,0 +1,6 @@
+scope,event_date,event_id,stroke,swimmer,member_id,break_count
+overall,,,,Slice2 Alice,24,2
+overall,,,,Slice2 Cara,26,1
+by_event,2026-07-04,1,25m,Slice2 Alice,24,1
+by_event,2026-07-04,1,50m,Slice2 Alice,24,1
+by_event,2026-07-04,1,butterfly,Slice2 Cara,26,1
