@@ -1,9 +1,19 @@
 # PROGRESS — WWSC v2.11.0 M3 Slice 2 Reports / Export
 
 ## 🎯 AKTUELLER STATUS
-Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned and v2.10.1 deployed live on 2026-06-04; v2.10.2 relay 5/4/3 proven but not merged/deployed; v2.11.0 Slice 2 now implemented/proven locally on feature branch.
-Schritt: Bryan's 2026-06-05 latest expectations are closed with proof: completed results by requested event/stroke categories, break-count reports overall/by event, total-time-improvement reports overall/by event, raw SQLite DB export, graph explanation/source proof, and customer-facing draft.
-Blockiert: Nothing is NOT PROVEN for Bryan's 2026-06-05 latest expectations. Direct Render disk/backups remain not inspectable from current tooling, so do not claim original old demo events were recovered. No push/deploy/merge/tag/Bryan contact/live-data mutation was performed; Dino/Balerion decide QA and release/customer path.
+Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned; v2.11.0 deployed live on Render on 2026-06-06 after Balerion re-proved Bryan's 2026-06-05 latest expectations.
+Schritt: Bryan's 2026-06-05 latest expectations are closed with proof and live deployment: completed results by requested event/stroke categories, break-count reports overall/by event, total-time-improvement reports overall/by event, raw SQLite DB export, graph explanation/source proof, and customer-facing draft.
+Blockiert: Nothing is NOT PROVEN for Bryan's 2026-06-05 latest expectations. Direct Render disk/backups remain not inspectable from current tooling, so do not claim original old demo events were recovered. Bryan/client contact has not been sent by Balerion; Dino/Nedim sends the customer update and then the sent confirmation must be archived.
+
+## 🚀 v2.11.0 LIVE DEPLOYED (2026-06-06 17:38 Europe/Berlin)
+
+- [x] Balerion re-proved the full current gate on Mac Mini before deploy: Slice2 Unit/API **7/0**, Slice2 Browser/UI/File **13/0**, pointscore Unit/API **15/0**, M2-55 **55/0**, M2-100 **98/2NA/0/0**, history graphs **19/1NA/0**, final M3-120 **118/2NA/0/0/0CIM**.
+- [x] Pushed `641aa0e` to `main` and pushed tag `v2.11.0`.
+- [x] Render live `/api/version` returns `2.11.0`.
+- [x] Read-only live smoke passed for `/api/reports/event-coverage`, `/api/reports/break-counts`, `/api/reports/improvements`, and `/api/export/db`.
+- [x] Live DB export returns 200 `application/octet-stream`, `content-length: 94208`, filename `wwsc-sqlite-db-v2.11.0-...db`.
+- [ ] Dino/Nedim sends Bryan the prepared update.
+- [ ] Archive Dino's sent confirmation in `messages/`.
 
 ## 🆕 v2.11.0 M3 SLICE 2 — REPORTS / DB EXPORT / ALL EVENT CATEGORIES PROVEN (2026-06-06)
 

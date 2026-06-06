@@ -11,6 +11,23 @@
 
 ---
 
+## 2026-06-06 — release: v2.11.0 Render deploy + live smoke
+- **Date:** 2026-06-06
+- **Timestamp:** 2026-06-06 17:38:00 Europe/Berlin
+- **App Version (from package.json):** 2.11.0
+- **Branch:** main
+- **RecordedCommit:** `641aa0e`
+- **Tag:** `v2.11.0`
+- **Editor:** Balerion
+- **Trigger:** Dino authorized deploy after Balerion independently re-proved Bryan's 2026-06-05 M3 expectations.
+- **Changes:**
+  - Pushed `main` from `e47d2ae` to `641aa0e` and pushed tag `v2.11.0`.
+  - Render live `/api/version` returned `{"version":"2.11.0","build":"2026-06-06T15:36:48.195Z"}`.
+  - Read-only live smoke passed for new endpoints: `/api/reports/event-coverage`, `/api/reports/break-counts`, `/api/reports/improvements`, and `/api/export/db`.
+  - DB export live smoke returned 200 `application/octet-stream`, `content-length: 94208`, filename `wwsc-sqlite-db-v2.11.0-...db`.
+  - Pre-deploy Balerion QA rerun: Slice2 Unit/API 7/0, Slice2 Browser 13/0, pointscore Unit/API 15/0, M2-55 55/0, M2-100 98/2NA/0/0, history graphs 19/1NA/0, final M3-120 118/2NA/0/0/0CIM.
+  - No Bryan/client contact by Balerion; customer update remains Dino/Nedim-only.
+
 ## 2026-06-06 — feat: v2.11.0 M3 Slice 2 reports / DB export / all-event proof
 - **Date:** 2026-06-06
 - **Timestamp:** 2026-06-06 11:35:00 Europe/Berlin
