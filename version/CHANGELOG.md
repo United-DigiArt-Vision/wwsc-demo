@@ -11,6 +11,24 @@
 
 ---
 
+## 2026-06-06 — data: seed v2.11.0 live Bryan retest event
+- **Date:** 2026-06-06
+- **Timestamp:** 2026-06-06 17:52:00 Europe/Berlin
+- **App Version (from package.json):** 2.11.0
+- **Branch:** main
+- **RecordedCommit:** resolve with `git rev-parse --short HEAD`
+- **Editor:** Balerion
+- **Trigger:** Dino noticed that Bryan would otherwise land in an empty demo after the v2.11.0 deploy, repeating the previous retest-data complaint pattern.
+- **Changes:**
+  - Added guarded seeder `scripts/seed-bryan-m3-slice2-live-retest.cjs`.
+  - Locally verified the seeder against an isolated DB before live mutation.
+  - Ran live with Dino authorization: `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-m3-slice2-live-retest.cjs`.
+  - Created one completed live retest event (`id=1`, date `2026-06-06`, 18 present swimmers, 10 race categories).
+  - Live coverage now includes 25m, 50m, 75m, backstroke, breaststroke, butterfly, 25m relay, medley relay, 25m brace, and 50m brace.
+  - Live break-count report, total-improvement report, graph/time-history source rows, season pointscore, and DB export checks all PASS.
+  - Evidence: `docs/evidence/bryan-v2110-live-retest-seed/seed-2026-06-06T15-50-55-798Z.json`.
+  - No Bryan/client contact by Balerion; customer update remains Dino/Nedim-only.
+
 ## 2026-06-06 — release: v2.11.0 Render deploy + live smoke
 - **Date:** 2026-06-06
 - **Timestamp:** 2026-06-06 17:38:00 Europe/Berlin

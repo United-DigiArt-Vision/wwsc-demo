@@ -2,8 +2,21 @@
 
 ## 🎯 AKTUELLER STATUS
 Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned; v2.11.0 deployed live on Render on 2026-06-06 after Balerion re-proved Bryan's 2026-06-05 latest expectations.
-Schritt: Bryan's 2026-06-05 latest expectations are closed with proof and live deployment: completed results by requested event/stroke categories, break-count reports overall/by event, total-time-improvement reports overall/by event, raw SQLite DB export, graph explanation/source proof, and customer-facing draft.
+Schritt: Bryan's 2026-06-05 latest expectations are closed with proof, live deployment, and a seeded live retest event so Bryan does not land in an empty demo.
 Blockiert: Nothing is NOT PROVEN for Bryan's 2026-06-05 latest expectations. Direct Render disk/backups remain not inspectable from current tooling, so do not claim original old demo events were recovered. Bryan/client contact has not been sent by Balerion; Dino/Nedim sends the customer update and then the sent confirmation must be archived.
+
+## 🧪 v2.11.0 LIVE RETEST DATA SEEDED FOR BRYAN (2026-06-06 17:52 Europe/Berlin)
+
+- [x] New guarded seed script: `scripts/seed-bryan-m3-slice2-live-retest.cjs`.
+- [x] Local isolated proof passed before live mutation.
+- [x] Dino authorized live seed; ran `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-m3-slice2-live-retest.cjs`.
+- [x] Live completed event created: event `1`, date `2026-06-06`, status `completed`, 18 present swimmers, 10 race categories.
+- [x] Live category coverage now includes: 25m, 50m, 75m, backstroke, breaststroke, butterfly, 25m relay, medley relay, 25m brace, 50m brace.
+- [x] Live break-count report populated.
+- [x] Live total-improvement report populated.
+- [x] Live time-history rows populated for graph testing.
+- [x] Live DB export still returns 200 with `wwsc-sqlite-db-v2.11.0-...db`.
+- [x] Evidence: `docs/evidence/bryan-v2110-live-retest-seed/seed-2026-06-06T15-50-55-798Z.json`.
 
 ## 🚀 v2.11.0 LIVE DEPLOYED (2026-06-06 17:38 Europe/Berlin)
 
