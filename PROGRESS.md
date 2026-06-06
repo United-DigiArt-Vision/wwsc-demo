@@ -13,9 +13,10 @@ Bryan 2026-06-05 clarified relay/team scoring = **5/4/3** (was 3/2/1 Excel worki
 - [x] Tests: UT1 asserts 5/4/3; **+UT11** (exact relay 5/4/3 by place) **+UT12** (relay → month/season aggregation). Unit **15/0**.
 - [x] All current-truth specs/docs 3/2/1 → 5/4/3, source-labeled Bryan-confirmed 2026-06-05; UT10/11/12 documented. Historical CHANGELOG untouched.
 - [x] Version 2.10.2 (package.json/-lock + index.html cache-bust). Commits: `c4ab774` bump → `2501fff` engine+tests → `cc7e67d` docs (+ evidence/SSOT-close).
-- [x] Evidence @ `cc7e67d`: unit **15/0**, isolation **PASS**, M2-55 **55/0** @cc7e67d, M3-120 **115 PASS / 0 FAIL / 1 BLOCKED / 2 NA / 2 CIM** (relay 5/4/3 end-to-end via UIT-M3-030 medley_relay; BLOCKED = M2-100 delegated; CIM = improvement/attendance = Slice 2). 0 console errors.
-- [~] Delegated to Balerion (Mac Mini, green env): full M2-100 completion (reached TC-056/100, 0 FAIL here before Dropbox I/O throttle) + R-M3-05 history-graphs. Environment limitation, not product gap.
-- [ ] Balerion independent QA → merge/deploy decision (Dino-authorized only).
+- [x] **Full gate GREEN @ `50844a0` on BOTH systems** (2026-06-06): unit **15/0**, isolation **PASS**, M2-55 **55/0**, M2-100 **98/2/0/0**, M3-120 **116/0/0/2NA/2CIM** (UIT-M3-111/112 PASS; UIT-M3-030 relay 5/4/3), history-graphs **19/1/0**; 0 console errors. Proof matrix: `docs/evidence/m3-pointscore/V2.10.2-BRYAN-RELAY-543-PROOF.md`.
+- [x] Root cause of last session's blocked browser gates = Dropbox `better-sqlite3` arch ping-pong (arm64 clobbered local x86_64 → `ERR_DLOPEN_FAILED`), NOT ENOSPC/throttle. Fix = `npm rebuild better-sqlite3` before each local run.
+- [x] Balerion **independent QA**: reproduced identical results (Mac Mini, temp copy outside Dropbox) + screenshot-sanity-checked. Verdict **v2.10.2 scope PROVEN** (`../messages/2026-06-06-0909-Balerion-To-Claude-WWSC-v2102-QA-Proof-Boundary.md`).
+- [ ] Dino merge/deploy decision for v2.10.2 (Dino-authorized only).
 - [ ] Dino: Slice 2 scope (breaks-per-person + total-improvement reports; DB export; all-event retest dataset).
 
 Handoff: `../messages/2026-06-05-1910-Claude-To-Balerion-WWSC-v2.10.2-Relay-543.md`.

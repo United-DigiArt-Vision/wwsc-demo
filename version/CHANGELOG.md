@@ -11,6 +11,23 @@
 
 ---
 
+## 2026-06-06 — proof: v2.10.2 relay/team 5/4/3 full gate GREEN on both systems @ 50844a0
+- **Date:** 2026-06-06
+- **Timestamp:** 2026-06-06 09:17:00 Europe/Berlin
+- **App Version (from package.json):** 2.10.2
+- **Branch:** dev/v2.10.2-relay-543 (off `main@9106eaf`; not merged)
+- **RecordedCommit:** `50844a0` (substantive) + this full-proof evidence/SSOT commit — resolve HEAD with `git rev-parse --short HEAD`
+- **Editor:** Claude Code (local) + Balerion (independent QA)
+- **Trigger:** Balerion 2026-06-05 directive to fully prove Bryan's relay/team 5/4/3 and close the open browser gates; Balerion 2026-06-06 QA verdict.
+- **Changes:**
+  - Closed the browser gates that were environment-blocked last session. **Root cause was NOT the "ENOSPC/Dropbox-throttle" first suspected** — running the suite plain-foreground (the established way) surfaced the real error: the Dropbox-synced `better-sqlite3` native binary ping-pong. Balerion's **arm64** rebuild on the Mac Mini synced onto this **x86_64** host mid-session and clobbered the local build → server-restart cases crashed with `ERR_DLOPEN_FAILED (have 'arm64', need 'x86_64')`. Fix = `npm rebuild better-sqlite3` before each local run (gitignored; commits/evidence unaffected).
+  - Full gate re-run @ `50844a0`, GREEN locally: unit **15/0**, isolation **VERDICT PASS**, M2-55 **55/0**, M2-100 **98/2/0/0**, M3-120 **116/0/0/2NA/2CIM** (UIT-M3-111/112 PASS with both M2 logs @50844a0; UIT-M3-030 relay 5/4/3), history-graphs **19/1/0**; 0 console errors throughout.
+  - Balerion **independently reproduced** identical results on the Mac Mini (QA temp copy outside Dropbox) + screenshot-sanity-checked UIT-M3-030/050/075/113/001. Verdict: **v2.10.2 scope PROVEN**. Records: `../messages/2026-06-06-0909-Balerion-To-Claude-WWSC-v2102-QA-Proof-Boundary.md` + `2026-06-06-Balerion-QA-v2102-proof-boundary.md`.
+  - New artifact `docs/evidence/m3-pointscore/V2.10.2-BRYAN-RELAY-543-PROOF.md`: maps Bryan's exact 5/4/3 expectation → evidence (PROVEN by Unit/API + Browser/UI), with per-screenshot proves/does-not and the Slice-2 scope boundary.
+  - SSOT: CURRENT_STATE top block + this entry updated to the fully-proven state.
+  - **Scope boundary (Balerion):** Bryan's breaks-per-person, total-improvement, raw DB export, and all-event retest dataset = **NEXT SLICE / NEEDS DINO DECISION**, not part of v2.10.2. Do NOT tell Bryan "everything finished."
+- **No release action:** no push, no deploy, no tag, no merge to main, no STABLE-as-live, no Bryan/client contact, no live-data mutation. `main` untouched at `9106eaf`.
+
 ## 2026-06-05 — fix: v2.10.2 relay/team pointscore 5/4/3 (Bryan 2026-06-05 correction)
 - **Date:** 2026-06-05
 - **Timestamp:** 2026-06-05 19:04:00 Europe/Berlin
