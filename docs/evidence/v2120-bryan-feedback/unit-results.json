@@ -1,0 +1,127 @@
+{
+  "when": "2026-06-10T18:47:35.483Z",
+  "pass": 24,
+  "fail": 0,
+  "results": [
+    {
+      "id": "UT-V12-00-version",
+      "status": "PASS",
+      "note": "live version 2.12.0"
+    },
+    {
+      "id": "UT-V12-01-r1-weeks",
+      "status": "PASS",
+      "note": "weeks=[\"2026-03-07\",\"2026-03-14\"]"
+    },
+    {
+      "id": "UT-V12-02-r1-all-members-listed",
+      "status": "PASS",
+      "note": "23 rows vs 23 active members"
+    },
+    {
+      "id": "UT-V12-03-r1-cells-match-event-pointscore",
+      "status": "PASS",
+      "note": "46 cells compared, totals = row sums"
+    },
+    {
+      "id": "UT-V12-04-r1-csv",
+      "status": "PASS",
+      "note": "header=swimmer,2026-03-07,2026-03-14,total rows=23"
+    },
+    {
+      "id": "UT-V12-05-r1-empty-racetype",
+      "status": "PASS",
+      "note": "butterfly weeks=0"
+    },
+    {
+      "id": "UT-V12-06-r2-race-types",
+      "status": "PASS",
+      "note": "raceTypes=25m,25m_relay,25m_brace"
+    },
+    {
+      "id": "UT-V12-07-r2-totals-match-season-standings",
+      "status": "PASS",
+      "note": "23 scoring members cross-checked"
+    },
+    {
+      "id": "UT-V12-08-r2-all-members",
+      "status": "PASS",
+      "note": "23 rows"
+    },
+    {
+      "id": "UT-V12-09-r2-csv",
+      "status": "PASS",
+      "note": "header=swimmer,25m,relay,25m brace,total"
+    },
+    {
+      "id": "UT-V12-10-brace-has-non-podium-team",
+      "status": "PASS",
+      "note": "12 teams, places 1,2,3,4,5,6,7,8,9,10,11,12"
+    },
+    {
+      "id": "UT-V12-11-swimmer-card-lists-0-point-brace",
+      "status": "PASS",
+      "note": "Rob Stewart brace row: {\"event_id\":2,\"event_date\":\"2026-03-14\",\"race_type\":\"25m_brace\",\"points\":0}"
+    },
+    {
+      "id": "UT-V12-12-swimmer-card-podium-brace-points",
+      "status": "PASS",
+      "note": "Lisa Chen brace row: {\"event_id\":2,\"event_date\":\"2026-03-14\",\"race_type\":\"25m_brace\",\"points\":5}"
+    },
+    {
+      "id": "UT-V12-13-swimmer-card-total-consistent",
+      "status": "PASS",
+      "note": "total=11 sum=11"
+    },
+    {
+      "id": "UT-V12-14-r3-count-two-reductions",
+      "status": "PASS",
+      "note": "{\"member_id\":22,\"member_name\":\"Andrew Barnes\",\"stroke\":\"25m\",\"season_start\":16,\"current_pb\":14,\"times_lowered\":2,\"amount_lowered\":2}"
+    },
+    {
+      "id": "UT-V12-15-r3-amount-season-start-minus-current",
+      "status": "PASS",
+      "note": "{\"member_id\":22,\"member_name\":\"Andrew Barnes\",\"stroke\":\"25m\",\"season_start\":16,\"current_pb\":14,\"times_lowered\":2,\"amount_lowered\":2}"
+    },
+    {
+      "id": "UT-V12-16-r3-raise-not-counted",
+      "status": "PASS",
+      "note": "{\"member_id\":22,\"member_name\":\"Andrew Barnes\",\"stroke\":\"50m\",\"season_start\":39,\"current_pb\":40,\"times_lowered\":0,\"amount_lowered\":-1}"
+    },
+    {
+      "id": "UT-V12-17-r3-member-totals",
+      "status": "PASS",
+      "note": "{\"member_id\":22,\"member_name\":\"Andrew Barnes\",\"times_lowered\":2,\"amount_lowered\":1}"
+    },
+    {
+      "id": "UT-V12-18-r3-csv",
+      "status": "PASS",
+      "note": "header=swimmer,stroke,season_start_s,current_pb_s,times_lowered,amount_lowered_s"
+    },
+    {
+      "id": "UT-V12-19-report-lane-fields",
+      "status": "PASS",
+      "note": "lane fields: [\"id\",\"heat_id\",\"lane_number\",\"member_id\",\"handicap_time\",\"start_delay\",\"finish_time\",\"net_time\",\"variance\",\"place\",\"is_break\",\"manual_place\",\"finish_time_2\",\"name\"]"
+    },
+    {
+      "id": "UT-V12-20-report-team-start-delay",
+      "status": "PASS",
+      "note": "relay teams expose start_delay"
+    },
+    {
+      "id": "UT-V12-21-member-delete-with-points",
+      "status": "PASS",
+      "note": "deleted member who scored in event 3"
+    },
+    {
+      "id": "UT-V12-22-per-event-pointscore-shape",
+      "status": "PASS",
+      "note": "rows=46"
+    },
+    {
+      "id": "UT-V12-23-months-listed",
+      "status": "PASS",
+      "note": "2026-03"
+    }
+  ]
+}

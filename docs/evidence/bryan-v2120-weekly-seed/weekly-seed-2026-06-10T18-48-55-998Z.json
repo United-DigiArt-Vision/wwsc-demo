@@ -1,0 +1,141 @@
+{
+  "base": "http://127.0.0.1:3015",
+  "live": false,
+  "version": {
+    "version": "2.12.0",
+    "build": "2026-06-10T18:48:39.869Z"
+  },
+  "weeks": [
+    {
+      "date": "2026-04-18",
+      "standard": "ordinary_swim",
+      "special": "75m"
+    },
+    {
+      "date": "2026-04-25",
+      "standard": "25m_brace",
+      "special": "backstroke"
+    },
+    {
+      "date": "2026-05-02",
+      "standard": "ordinary_swim",
+      "special": "medley_relay"
+    },
+    {
+      "date": "2026-05-09",
+      "standard": "50m_brace",
+      "special": "breaststroke"
+    },
+    {
+      "date": "2026-05-16",
+      "standard": "ordinary_swim",
+      "special": "butterfly"
+    },
+    {
+      "date": "2026-05-23",
+      "standard": "25m_brace",
+      "special": "75m"
+    },
+    {
+      "date": "2026-05-30",
+      "standard": "ordinary_swim",
+      "special": "medley_relay"
+    }
+  ],
+  "created": [],
+  "skipped": [
+    {
+      "date": "2026-04-18",
+      "reason": "date already exists — never touched"
+    },
+    {
+      "date": "2026-04-25",
+      "reason": "date already exists — never touched"
+    },
+    {
+      "date": "2026-05-02",
+      "reason": "date already exists — never touched"
+    },
+    {
+      "date": "2026-05-09",
+      "reason": "date already exists — never touched"
+    },
+    {
+      "date": "2026-05-16",
+      "reason": "date already exists — never touched"
+    },
+    {
+      "date": "2026-05-23",
+      "reason": "date already exists — never touched"
+    },
+    {
+      "date": "2026-05-30",
+      "reason": "date already exists — never touched"
+    }
+  ],
+  "manualPbUpdates": [],
+  "verification": {
+    "events": 7,
+    "current": null,
+    "r1Weeks": 5,
+    "r2Types": [
+      "25m",
+      "50m",
+      "75m",
+      "backstroke",
+      "breaststroke",
+      "butterfly",
+      "25m_relay",
+      "medley_relay",
+      "25m_brace",
+      "50m_brace"
+    ],
+    "r3Totals": 22,
+    "months": [
+      "2026-05",
+      "2026-04"
+    ],
+    "checks": [
+      {
+        "id": "all-created-weeks-completed",
+        "pass": true
+      },
+      {
+        "id": "no-current-event-left-behind",
+        "pass": true
+      },
+      {
+        "id": "report1-weekly-columns>=4",
+        "pass": true,
+        "note": "5 weeks"
+      },
+      {
+        "id": "report1-lists-all-members",
+        "pass": true,
+        "note": "23 members"
+      },
+      {
+        "id": "report2-multiple-race-types",
+        "pass": true,
+        "note": "25m,50m,75m,backstroke,breaststroke,butterfly,25m_relay,medley_relay,25m_brace,50m_brace"
+      },
+      {
+        "id": "report2-grand-totals-positive",
+        "pass": true
+      },
+      {
+        "id": "report3-manual-reductions-counted",
+        "pass": true
+      },
+      {
+        "id": "report3-amounts-positive",
+        "pass": true
+      },
+      {
+        "id": "multiple-months-for-monthly-report",
+        "pass": true,
+        "note": "2026-05,2026-04"
+      }
+    ]
+  }
+}

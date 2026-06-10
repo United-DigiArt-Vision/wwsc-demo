@@ -1,0 +1,855 @@
+{
+  "base": "http://127.0.0.1:3015",
+  "live": false,
+  "version": {
+    "version": "2.12.0",
+    "build": "2026-06-10T18:48:39.869Z"
+  },
+  "weeks": [
+    {
+      "date": "2026-04-18",
+      "standard": "ordinary_swim",
+      "special": "75m"
+    },
+    {
+      "date": "2026-04-25",
+      "standard": "25m_brace",
+      "special": "backstroke"
+    },
+    {
+      "date": "2026-05-02",
+      "standard": "ordinary_swim",
+      "special": "medley_relay"
+    },
+    {
+      "date": "2026-05-09",
+      "standard": "50m_brace",
+      "special": "breaststroke"
+    },
+    {
+      "date": "2026-05-16",
+      "standard": "ordinary_swim",
+      "special": "butterfly"
+    },
+    {
+      "date": "2026-05-23",
+      "standard": "25m_brace",
+      "special": "75m"
+    },
+    {
+      "date": "2026-05-30",
+      "standard": "ordinary_swim",
+      "special": "medley_relay"
+    }
+  ],
+  "created": [
+    {
+      "event_id": 1,
+      "date": "2026-04-18",
+      "standard": "ordinary_swim",
+      "special": "75m",
+      "present": 21,
+      "races": [
+        {
+          "race_type": "25m",
+          "heats": 6
+        },
+        {
+          "race_type": "50m",
+          "heats": 6
+        },
+        {
+          "race_type": "25m_relay",
+          "teams": 3
+        },
+        {
+          "race_type": "75m",
+          "heats": 5
+        }
+      ]
+    },
+    {
+      "event_id": 2,
+      "date": "2026-04-25",
+      "standard": "25m_brace",
+      "special": "backstroke",
+      "present": 20,
+      "races": [
+        {
+          "race_type": "25m_brace",
+          "teams": 10
+        },
+        {
+          "race_type": "50m",
+          "heats": 5
+        },
+        {
+          "race_type": "25m_relay",
+          "teams": 3
+        },
+        {
+          "race_type": "backstroke",
+          "heats": 5
+        }
+      ]
+    },
+    {
+      "event_id": 3,
+      "date": "2026-05-02",
+      "standard": "ordinary_swim",
+      "special": "medley_relay",
+      "present": 19,
+      "races": [
+        {
+          "race_type": "25m",
+          "heats": 5
+        },
+        {
+          "race_type": "50m",
+          "heats": 5
+        },
+        {
+          "race_type": "25m_relay",
+          "teams": 3
+        },
+        {
+          "race_type": "medley_relay",
+          "teams": 7
+        }
+      ]
+    },
+    {
+      "event_id": 4,
+      "date": "2026-05-09",
+      "standard": "50m_brace",
+      "special": "breaststroke",
+      "present": 21,
+      "races": [
+        {
+          "race_type": "25m",
+          "heats": 6
+        },
+        {
+          "race_type": "50m_brace",
+          "teams": 11
+        },
+        {
+          "race_type": "25m_relay",
+          "teams": 3
+        },
+        {
+          "race_type": "breaststroke",
+          "heats": 5
+        }
+      ]
+    },
+    {
+      "event_id": 5,
+      "date": "2026-05-16",
+      "standard": "ordinary_swim",
+      "special": "butterfly",
+      "present": 20,
+      "races": [
+        {
+          "race_type": "25m",
+          "heats": 5
+        },
+        {
+          "race_type": "50m",
+          "heats": 5
+        },
+        {
+          "race_type": "25m_relay",
+          "teams": 3
+        },
+        {
+          "race_type": "butterfly",
+          "heats": 5
+        }
+      ]
+    },
+    {
+      "event_id": 6,
+      "date": "2026-05-23",
+      "standard": "25m_brace",
+      "special": "75m",
+      "present": 19,
+      "races": [
+        {
+          "race_type": "25m_brace",
+          "teams": 10
+        },
+        {
+          "race_type": "50m",
+          "heats": 5
+        },
+        {
+          "race_type": "25m_relay",
+          "teams": 3
+        },
+        {
+          "race_type": "75m",
+          "heats": 4
+        }
+      ]
+    },
+    {
+      "event_id": 7,
+      "date": "2026-05-30",
+      "standard": "ordinary_swim",
+      "special": "medley_relay",
+      "present": 21,
+      "races": [
+        {
+          "race_type": "25m",
+          "heats": 6
+        },
+        {
+          "race_type": "50m",
+          "heats": 6
+        },
+        {
+          "race_type": "25m_relay",
+          "teams": 3
+        },
+        {
+          "race_type": "medley_relay",
+          "teams": 7
+        }
+      ]
+    }
+  ],
+  "skipped": [],
+  "manualPbUpdates": [
+    {
+      "event_id": 1,
+      "member": "Andrew Barnes",
+      "stroke": "25m",
+      "lowered_to": 15
+    },
+    {
+      "event_id": 1,
+      "member": "Andrew Barnes",
+      "stroke": "50m",
+      "lowered_to": 38
+    },
+    {
+      "event_id": 1,
+      "member": "James Morton",
+      "stroke": "25m",
+      "lowered_to": 13
+    },
+    {
+      "event_id": 1,
+      "member": "Mark Thompson",
+      "stroke": "25m",
+      "lowered_to": 14
+    },
+    {
+      "event_id": 1,
+      "member": "Peter Davidson",
+      "stroke": "25m",
+      "lowered_to": 13
+    },
+    {
+      "event_id": 1,
+      "member": "Peter Davidson",
+      "stroke": "50m",
+      "lowered_to": 33
+    },
+    {
+      "event_id": 1,
+      "member": "Steve Collins",
+      "stroke": "25m",
+      "lowered_to": 16
+    },
+    {
+      "event_id": 1,
+      "member": "Steve Collins",
+      "stroke": "50m",
+      "lowered_to": 39
+    },
+    {
+      "event_id": 1,
+      "member": "Wendy Cooper",
+      "stroke": "25m",
+      "lowered_to": 18
+    },
+    {
+      "event_id": 1,
+      "member": "Ben Chandler",
+      "stroke": "75m",
+      "lowered_to": 53
+    },
+    {
+      "event_id": 1,
+      "member": "Greg Patterson",
+      "stroke": "75m",
+      "lowered_to": 60
+    },
+    {
+      "event_id": 1,
+      "member": "Jenny Walsh",
+      "stroke": "75m",
+      "lowered_to": 66
+    },
+    {
+      "event_id": 2,
+      "member": "Ben Chandler",
+      "stroke": "50m",
+      "lowered_to": 32
+    },
+    {
+      "event_id": 2,
+      "member": "Bryan Hesketh",
+      "stroke": "50m",
+      "lowered_to": 31
+    },
+    {
+      "event_id": 2,
+      "member": "Bryan Hesketh",
+      "stroke": "backstroke",
+      "lowered_to": 35
+    },
+    {
+      "event_id": 2,
+      "member": "Helen Sharp",
+      "stroke": "50m",
+      "lowered_to": 41
+    },
+    {
+      "event_id": 2,
+      "member": "Sue Williams",
+      "stroke": "50m",
+      "lowered_to": 46
+    },
+    {
+      "event_id": 2,
+      "member": "Tom Richards",
+      "stroke": "50m",
+      "lowered_to": 30
+    },
+    {
+      "event_id": 2,
+      "member": "Andrew Barnes",
+      "stroke": "backstroke",
+      "lowered_to": 43
+    },
+    {
+      "event_id": 2,
+      "member": "Glenne Murray",
+      "stroke": "backstroke",
+      "lowered_to": 54
+    },
+    {
+      "event_id": 2,
+      "member": "Mark Thompson",
+      "stroke": "backstroke",
+      "lowered_to": 39
+    },
+    {
+      "event_id": 2,
+      "member": "Wendy Cooper",
+      "stroke": "backstroke",
+      "lowered_to": 48
+    },
+    {
+      "event_id": 3,
+      "member": "Bryan Hesketh",
+      "stroke": "25m",
+      "lowered_to": 12
+    },
+    {
+      "event_id": 3,
+      "member": "David Hughes",
+      "stroke": "25m",
+      "lowered_to": 18
+    },
+    {
+      "event_id": 3,
+      "member": "David Hughes",
+      "stroke": "50m",
+      "lowered_to": 43
+    },
+    {
+      "event_id": 3,
+      "member": "Felicia O'Brien",
+      "stroke": "25m",
+      "lowered_to": 15
+    },
+    {
+      "event_id": 3,
+      "member": "Greg Patterson",
+      "stroke": "25m",
+      "lowered_to": 15
+    },
+    {
+      "event_id": 3,
+      "member": "Greg Patterson",
+      "stroke": "50m",
+      "lowered_to": 37
+    },
+    {
+      "event_id": 3,
+      "member": "Mark Thompson",
+      "stroke": "25m",
+      "lowered_to": 13
+    },
+    {
+      "event_id": 3,
+      "member": "Mark Thompson",
+      "stroke": "50m",
+      "lowered_to": 34
+    },
+    {
+      "event_id": 3,
+      "member": "Michelle Lee",
+      "stroke": "25m",
+      "lowered_to": 16
+    },
+    {
+      "event_id": 3,
+      "member": "Michelle Lee",
+      "stroke": "50m",
+      "lowered_to": 40
+    },
+    {
+      "event_id": 3,
+      "member": "Paul Nguyen",
+      "stroke": "25m",
+      "lowered_to": 14
+    },
+    {
+      "event_id": 3,
+      "member": "Sue Williams",
+      "stroke": "25m",
+      "lowered_to": 19
+    },
+    {
+      "event_id": 3,
+      "member": "Sue Williams",
+      "stroke": "50m",
+      "lowered_to": 45
+    },
+    {
+      "event_id": 3,
+      "member": "Jenny Walsh",
+      "stroke": "25m",
+      "raised_to": 19,
+      "note": "exceeding adjustment (must NOT count as breaker)"
+    },
+    {
+      "event_id": 4,
+      "member": "Bryan Hesketh",
+      "stroke": "25m",
+      "lowered_to": 10
+    },
+    {
+      "event_id": 4,
+      "member": "Diane Foster",
+      "stroke": "25m",
+      "lowered_to": 20
+    },
+    {
+      "event_id": 4,
+      "member": "Diane Foster",
+      "stroke": "breaststroke",
+      "lowered_to": 52
+    },
+    {
+      "event_id": 4,
+      "member": "Helen Sharp",
+      "stroke": "25m",
+      "lowered_to": 17
+    },
+    {
+      "event_id": 4,
+      "member": "Helen Sharp",
+      "stroke": "breaststroke",
+      "lowered_to": 45
+    },
+    {
+      "event_id": 4,
+      "member": "Karen Mitchell",
+      "stroke": "25m",
+      "lowered_to": 19
+    },
+    {
+      "event_id": 4,
+      "member": "Lisa Chen",
+      "stroke": "25m",
+      "lowered_to": 15
+    },
+    {
+      "event_id": 4,
+      "member": "Lisa Chen",
+      "stroke": "breaststroke",
+      "lowered_to": 41
+    },
+    {
+      "event_id": 4,
+      "member": "Paul Nguyen",
+      "stroke": "25m",
+      "lowered_to": 12
+    },
+    {
+      "event_id": 4,
+      "member": "Peter Davidson",
+      "stroke": "25m",
+      "lowered_to": 12
+    },
+    {
+      "event_id": 4,
+      "member": "Peter Davidson",
+      "stroke": "breaststroke",
+      "lowered_to": 38
+    },
+    {
+      "event_id": 4,
+      "member": "Steve Collins",
+      "stroke": "25m",
+      "lowered_to": 14
+    },
+    {
+      "event_id": 4,
+      "member": "James Morton",
+      "stroke": "breaststroke",
+      "lowered_to": 37
+    },
+    {
+      "event_id": 5,
+      "member": "Ben Chandler",
+      "stroke": "25m",
+      "lowered_to": 13
+    },
+    {
+      "event_id": 5,
+      "member": "Ben Chandler",
+      "stroke": "50m",
+      "lowered_to": 31
+    },
+    {
+      "event_id": 5,
+      "member": "Ben Chandler",
+      "stroke": "butterfly",
+      "lowered_to": 42
+    },
+    {
+      "event_id": 5,
+      "member": "David Hughes",
+      "stroke": "25m",
+      "lowered_to": 17
+    },
+    {
+      "event_id": 5,
+      "member": "David Hughes",
+      "stroke": "50m",
+      "lowered_to": 42
+    },
+    {
+      "event_id": 5,
+      "member": "Felicia O'Brien",
+      "stroke": "25m",
+      "lowered_to": 14
+    },
+    {
+      "event_id": 5,
+      "member": "Glenne Murray",
+      "stroke": "25m",
+      "lowered_to": 20
+    },
+    {
+      "event_id": 5,
+      "member": "Glenne Murray",
+      "stroke": "50m",
+      "lowered_to": 48
+    },
+    {
+      "event_id": 5,
+      "member": "James Morton",
+      "stroke": "25m",
+      "lowered_to": 12
+    },
+    {
+      "event_id": 5,
+      "member": "James Morton",
+      "stroke": "50m",
+      "lowered_to": 32
+    },
+    {
+      "event_id": 5,
+      "member": "James Morton",
+      "stroke": "butterfly",
+      "lowered_to": 42
+    },
+    {
+      "event_id": 5,
+      "member": "Mark Thompson",
+      "stroke": "25m",
+      "lowered_to": 12
+    },
+    {
+      "event_id": 5,
+      "member": "Mark Thompson",
+      "stroke": "50m",
+      "lowered_to": 33
+    },
+    {
+      "event_id": 5,
+      "member": "Sandra Blake",
+      "stroke": "25m",
+      "lowered_to": 22
+    },
+    {
+      "event_id": 5,
+      "member": "Steve Collins",
+      "stroke": "25m",
+      "lowered_to": 13
+    },
+    {
+      "event_id": 5,
+      "member": "Steve Collins",
+      "stroke": "50m",
+      "lowered_to": 38
+    },
+    {
+      "event_id": 5,
+      "member": "Greg Patterson",
+      "stroke": "butterfly",
+      "lowered_to": 49
+    },
+    {
+      "event_id": 5,
+      "member": "Michelle Lee",
+      "stroke": "butterfly",
+      "lowered_to": 52
+    },
+    {
+      "event_id": 5,
+      "member": "Tom Richards",
+      "stroke": "butterfly",
+      "lowered_to": 40
+    },
+    {
+      "event_id": 6,
+      "member": "Bryan Hesketh",
+      "stroke": "50m",
+      "lowered_to": 30
+    },
+    {
+      "event_id": 6,
+      "member": "Diane Foster",
+      "stroke": "50m",
+      "lowered_to": 47
+    },
+    {
+      "event_id": 6,
+      "member": "James Morton",
+      "stroke": "50m",
+      "lowered_to": 31
+    },
+    {
+      "event_id": 6,
+      "member": "Lisa Chen",
+      "stroke": "50m",
+      "lowered_to": 36
+    },
+    {
+      "event_id": 6,
+      "member": "Wendy Cooper",
+      "stroke": "50m",
+      "lowered_to": 42
+    },
+    {
+      "event_id": 6,
+      "member": "Andrew Barnes",
+      "stroke": "75m",
+      "lowered_to": 61
+    },
+    {
+      "event_id": 6,
+      "member": "David Hughes",
+      "stroke": "75m",
+      "lowered_to": 69
+    },
+    {
+      "event_id": 6,
+      "member": "Peter Davidson",
+      "stroke": "75m",
+      "lowered_to": 54
+    },
+    {
+      "event_id": 6,
+      "member": "Sue Williams",
+      "stroke": "75m",
+      "lowered_to": 74
+    },
+    {
+      "event_id": 6,
+      "member": "Jenny Walsh",
+      "stroke": "50m",
+      "raised_to": 43,
+      "note": "exceeding adjustment (must NOT count as breaker)"
+    },
+    {
+      "event_id": 7,
+      "member": "David Hughes",
+      "stroke": "25m",
+      "lowered_to": 16
+    },
+    {
+      "event_id": 7,
+      "member": "David Hughes",
+      "stroke": "50m",
+      "lowered_to": 41
+    },
+    {
+      "event_id": 7,
+      "member": "Diane Foster",
+      "stroke": "25m",
+      "lowered_to": 19
+    },
+    {
+      "event_id": 7,
+      "member": "Diane Foster",
+      "stroke": "50m",
+      "lowered_to": 46
+    },
+    {
+      "event_id": 7,
+      "member": "Jenny Walsh",
+      "stroke": "25m",
+      "lowered_to": 18
+    },
+    {
+      "event_id": 7,
+      "member": "Jenny Walsh",
+      "stroke": "50m",
+      "lowered_to": 42
+    },
+    {
+      "event_id": 7,
+      "member": "Mark Thompson",
+      "stroke": "25m",
+      "lowered_to": 11
+    },
+    {
+      "event_id": 7,
+      "member": "Mark Thompson",
+      "stroke": "50m",
+      "lowered_to": 32
+    },
+    {
+      "event_id": 7,
+      "member": "Michelle Lee",
+      "stroke": "25m",
+      "lowered_to": 15
+    },
+    {
+      "event_id": 7,
+      "member": "Michelle Lee",
+      "stroke": "50m",
+      "lowered_to": 39
+    },
+    {
+      "event_id": 7,
+      "member": "Paul Nguyen",
+      "stroke": "25m",
+      "lowered_to": 11
+    },
+    {
+      "event_id": 7,
+      "member": "Paul Nguyen",
+      "stroke": "50m",
+      "lowered_to": 35
+    },
+    {
+      "event_id": 7,
+      "member": "Sandra Blake",
+      "stroke": "25m",
+      "lowered_to": 21
+    },
+    {
+      "event_id": 7,
+      "member": "Sandra Blake",
+      "stroke": "50m",
+      "lowered_to": 49
+    },
+    {
+      "event_id": 7,
+      "member": "Sue Williams",
+      "stroke": "25m",
+      "lowered_to": 18
+    },
+    {
+      "event_id": 7,
+      "member": "Sue Williams",
+      "stroke": "50m",
+      "lowered_to": 44
+    }
+  ],
+  "verification": {
+    "events": 7,
+    "current": null,
+    "r1Weeks": 5,
+    "r2Types": [
+      "25m",
+      "50m",
+      "75m",
+      "backstroke",
+      "breaststroke",
+      "butterfly",
+      "25m_relay",
+      "medley_relay",
+      "25m_brace",
+      "50m_brace"
+    ],
+    "r3Totals": 22,
+    "months": [
+      "2026-05",
+      "2026-04"
+    ],
+    "checks": [
+      {
+        "id": "all-created-weeks-completed",
+        "pass": true
+      },
+      {
+        "id": "no-current-event-left-behind",
+        "pass": true
+      },
+      {
+        "id": "report1-weekly-columns>=4",
+        "pass": true,
+        "note": "5 weeks"
+      },
+      {
+        "id": "report1-lists-all-members",
+        "pass": true,
+        "note": "23 members"
+      },
+      {
+        "id": "report2-multiple-race-types",
+        "pass": true,
+        "note": "25m,50m,75m,backstroke,breaststroke,butterfly,25m_relay,medley_relay,25m_brace,50m_brace"
+      },
+      {
+        "id": "report2-grand-totals-positive",
+        "pass": true
+      },
+      {
+        "id": "report3-manual-reductions-counted",
+        "pass": true
+      },
+      {
+        "id": "report3-amounts-positive",
+        "pass": true
+      },
+      {
+        "id": "multiple-months-for-monthly-report",
+        "pass": true,
+        "note": "2026-05,2026-04"
+      }
+    ]
+  }
+}

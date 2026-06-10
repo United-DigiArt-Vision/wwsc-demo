@@ -1,11 +1,11 @@
 {
   "baseline": {
-    "branch": "dev/v2.11.0-m3-slice2-reports-export",
-    "commit": "641aa0e",
-    "pkg": "2.11.0",
+    "branch": "dev/v2.12.0-bryan-feedback",
+    "commit": "0a1a76e",
+    "pkg": "2.12.0",
     "apiVersion": {
-      "version": "2.11.0",
-      "build": "2026-06-06T15:34:19.134Z"
+      "version": "2.12.0",
+      "build": "2026-06-10T18:55:06.550Z"
     }
   },
   "records": [
@@ -13,7 +13,7 @@
       "id": "UIT-M3-001",
       "status": "PASS",
       "shot": "docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-001-app-loads.png",
-      "note": "app loads v2.11.0"
+      "note": "app loads v2.12.0"
     },
     {
       "id": "UIT-M3-002",
@@ -671,15 +671,15 @@
     },
     {
       "id": "UIT-M3-111",
-      "status": "PASS",
+      "status": "BLOCKED",
       "shot": "",
-      "note": "M2 55-case runner — fresh log @641aa0e (/tmp/m3p-m2-55.log)"
+      "note": "M2 55-case runner — stale log: no commit=0a1a76e header — re-run the M2 suite on this HEAD"
     },
     {
       "id": "UIT-M3-112",
-      "status": "PASS",
+      "status": "BLOCKED",
       "shot": "",
-      "note": "M2 100-case runner — fresh log @641aa0e (/tmp/m3p-m2-100.log)"
+      "note": "M2 100-case runner — stale log: no commit=0a1a76e header — re-run the M2 suite on this HEAD"
     },
     {
       "id": "UIT-M3-113",
@@ -732,14 +732,14 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3011/?cb=1780760059732",
+      "url": "http://127.0.0.1:3011/?cb=1781117711772",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ],
   "tally": {
-    "PASS": 118,
+    "PASS": 116,
     "FAIL": 0,
-    "BLOCKED": 0,
+    "BLOCKED": 2,
     "NOT APPLICABLE": 2,
     "CLIENT INPUT MISSING": 0
   }

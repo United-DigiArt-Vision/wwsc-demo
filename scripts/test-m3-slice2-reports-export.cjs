@@ -154,7 +154,10 @@ function parseCsv(text) {
     fixture = seedFixture();
 
     const version = await api('/api/version');
-    check('S2-UT1-version', version.version === '2.11.0', 'version=' + version.version);
+    // v2.12.0: assert against package.json instead of a hardcoded literal so
+    // version bumps cannot fail the suite without a real product change.
+    const expectedVersion = require(path.join(PROJECT_ROOT, 'package.json')).version;
+    check('S2-UT1-version', version.version === expectedVersion, 'version=' + version.version + ' expected=' + expectedVersion);
 
     const coverage = await api('/api/reports/event-coverage');
     const coveredTypes = new Set(coverage.summary.filter(s => s.result_count > 0).map(s => s.race_type));

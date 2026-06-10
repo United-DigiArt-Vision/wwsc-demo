@@ -1,0 +1,79 @@
+{
+  "baseline": {
+    "branch": "dev/v2.12.0-bryan-feedback",
+    "commit": "0a1a76e",
+    "version": "2.12.0"
+  },
+  "apiVersion": {
+    "version": "2.12.0",
+    "build": "2026-06-10T18:52:40.880Z"
+  },
+  "records": [
+    {
+      "id": "UI-V12-01-select-all-defaults-Y",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-01-times-sheet-select-all-Y.png",
+      "note": "23 entry selects, values: Y"
+    },
+    {
+      "id": "UI-V12-02-tap-placing-assigns-1-2",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-02-tap-placing-1-2.png",
+      "note": "banner=true badges=[\"1\\tJenny Walsh\\t18\\t5\\t23\\t—\\t—\\t—\\t—\\t—\\t1\",\"2\\tDiane Foster\\t21\\t2\\t23\\t—\\t—\\t—\\t—\\t—\\t2\"]"
+    },
+    {
+      "id": "UI-V12-03-tap-again-removes-place",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-03-tap-placing-removed.png",
+      "note": "first row place cell now: 1\tJenny Walsh\t18\t5\t23\t—\t—\t—\t—\t—\t—"
+    },
+    {
+      "id": "UI-V12-04-relay-teams-grid",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-04-relay-grid-side-by-side.png",
+      "note": "grid={\"columns\":3,\"cards\":3} (teams 3)"
+    },
+    {
+      "id": "UI-V12-05-three-main-reports-default-r1",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-05-pointscore-3-main-reports.png",
+      "note": "rows=23 active=23"
+    },
+    {
+      "id": "UI-V12-06-report2-total-pointscore",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-06-report2-total.png",
+      "note": "columns include 25m brace + TOTAL"
+    },
+    {
+      "id": "UI-V12-07-report3-breakers",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-07-report3-breakers.png",
+      "note": "count + amount on a single report"
+    },
+    {
+      "id": "UI-V12-08-swimmer-card-0-point-brace",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-08-swimmer-card-brace-0.png",
+      "note": "James Morton card shows 25m brace (non-podium team, 0 points)"
+    },
+    {
+      "id": "UI-V12-09-event-report-details",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-09-event-report-start-break.png",
+      "note": "Start/Net/Variance/BREAK columns=true, manual place 4 shown for Paul Nguyen=true"
+    },
+    {
+      "id": "UI-V12-10-zero-console-errors",
+      "status": "PASS",
+      "screenshot": "",
+      "note": "0 errors []"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "url": "http://127.0.0.1:3014/?cb=1",
+      "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ]
+}

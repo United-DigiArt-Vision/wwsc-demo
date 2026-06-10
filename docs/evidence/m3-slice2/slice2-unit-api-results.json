@@ -23,7 +23,7 @@
     {
       "id": "S2-UT1-version",
       "status": "PASS",
-      "note": "version=2.11.0"
+      "note": "version=2.12.0 expected=2.12.0"
     },
     {
       "id": "S2-UT2-completed-categories-api",
@@ -53,7 +53,7 @@
     {
       "id": "S2-UT7-db-export-valid-sqlite",
       "status": "PASS",
-      "note": "download bytes=94208, memberCount=3",
+      "note": "download bytes=102400, memberCount=3",
       "file": "docs/evidence/m3-slice2/downloaded-sqlite-db.db"
     }
   ],
