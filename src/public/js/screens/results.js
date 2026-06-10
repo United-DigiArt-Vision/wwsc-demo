@@ -240,11 +240,18 @@ function renderBreakersSection(race) {
   </div>`;
 }
 
+// Bryan 2026-06-10: "work out a better way for the manual placings" — Quick
+// Tap Placing. Activate per heat, then tap swimmers in finish order: 1st tap
+// = 1st place, 2nd tap = 2nd, ... Tapping an already-placed swimmer removes
+// that place. The dropdown column stays as fallback for corrections.
+let resTapPlacingHeatId = null;
+
 function renderResultsTable(race) {
   let html = '';
 
   for (const heat of race.heats) {
     const maxTime = heat.max_time || 0;
+    const tapMode = resTapPlacingHeatId === heat.id && !resFinalized;
     // Rank by finish_time within heat for live places — with tie handling
     const rankedLanes = heat.lanes
       .filter(l => l.finish_time != null)
@@ -269,7 +276,9 @@ function renderResultsTable(race) {
       const autoPlace = livePlaces[lane.id] || lane.place || null;
 
       let finishCell;
-      if (resFinalized) {
+      if (resFinalized || tapMode) {
+        // Tap-placing mode: the whole row is the tap target for placing, so
+        // the finish cell is static to avoid the numpad opening mid-placing.
         finishCell = `<td class="time-cell" style="font-weight:700">${hasTime ? formatTime(lane.finish_time) : '—'}</td>`;
       } else {
         finishCell = `<td class="time-input" onclick="enterFinishTime(${heat.id}, ${lane.id}, ${lane.finish_time || 0})" style="cursor:pointer;font-weight:700">${hasTime ? formatTime(lane.finish_time) : '⏱️ Tap'}</td>`;
@@ -292,7 +301,7 @@ function renderResultsTable(race) {
       }
 
       let manualPlaceCell;
-      if (resFinalized) {
+      if (resFinalized || tapMode) {
         manualPlaceCell = `<td style="text-align:center">${lane.manual_place ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#e53935;color:white;font-weight:700;font-size:13px">${lane.manual_place}</span>` : '—'}</td>`;
       } else {
         manualPlaceCell = `<td>
@@ -314,7 +323,10 @@ function renderResultsTable(race) {
       // BF2.6-03: Total = PB + Delay (expected finish time)
       const totalTime = (lane.handicap_time != null && lane.start_delay != null) ? lane.handicap_time + lane.start_delay : null;
 
-      rows += `<tr class="${rowClass}"${rowStyle}>
+      const tapAttrs = tapMode
+        ? ` onclick="tapPlaceLane(${heat.id}, ${lane.id})" style="cursor:pointer"`
+        : '';
+      rows += `<tr class="${rowClass}"${tapMode ? tapAttrs : rowStyle}>
         <td>${lane.lane_number}</td>
         <td class="name-cell" style="font-size:18px">${lane.name}</td>
         <td class="time-cell">${formatWhole(lane.handicap_time)}</td>
@@ -329,12 +341,32 @@ function renderResultsTable(race) {
       </tr>`;
     }
 
+    // Quick Tap Placing controls (Bryan 2026-06-10 manual-placing rework)
+    let tapControls = '';
+    if (!resFinalized) {
+      if (tapMode) {
+        tapControls = `
+          <button class="btn print-hide" style="min-height:34px;padding:4px 12px;font-size:13px;background:#fff;color:#0b3d91;font-weight:700" onclick="event.stopPropagation();toggleTapPlacing(${heat.id})">✅ Done</button>
+          <button class="btn print-hide" style="min-height:34px;padding:4px 12px;font-size:13px;background:rgba(255,255,255,0.25);color:#fff" onclick="event.stopPropagation();clearHeatPlaces(${heat.id})">↺ Clear places</button>`;
+      } else {
+        tapControls = `<button class="btn print-hide" style="min-height:34px;padding:4px 12px;font-size:13px;background:#e53935;color:#fff;font-weight:700" onclick="event.stopPropagation();toggleTapPlacing(${heat.id})">🏁 Tap Placing</button>`;
+      }
+    }
+    const nextPlace = nextTapPlace(heat);
+    const tapBanner = tapMode ? `
+      <div class="print-hide" style="background:#fdecea;border-bottom:2px solid #e53935;padding:8px 16px;font-size:14px;color:#b71c1c;text-align:center">
+        <strong>🏁 Tap Placing active:</strong> tap swimmers in finish order —
+        ${nextPlace ? `next tap = <strong>${ordinal(nextPlace)} place</strong>.` : '<strong>all placed ✓</strong> — tap Done.'}
+        Tap a placed swimmer to remove their place.
+      </div>` : '';
+
     html += `
       <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91">
-        <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91;display:flex;justify-content:space-between;align-items:center">
+        <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
           <span>Heat ${heat.heat_number}</span>
-          <span style="font-weight:400;font-size:13px;opacity:0.8">Expected finish: ${formatWhole(maxTime)}</span>
+          <span style="display:flex;align-items:center;gap:8px">${tapControls}<span style="font-weight:400;font-size:13px;opacity:0.8">Expected finish: ${formatWhole(maxTime)}</span></span>
         </div>
+        ${tapBanner}
         <div style="overflow-x:auto">
           <table class="spreadsheet-table">
             <thead>
@@ -539,6 +571,55 @@ async function setManualPlace(laneId, place) {
     return;
   }
   renderResults();
+}
+
+// ── Quick Tap Placing (Bryan 2026-06-10) ────────────────────────────
+// Lowest place number (1..lanes) not yet assigned in this heat, or null when
+// every lane is placed.
+function nextTapPlace(heat) {
+  const used = new Set((heat.lanes || []).map(l => l.manual_place).filter(p => p != null));
+  const maxPlace = Math.min(4, (heat.lanes || []).length);
+  for (let p = 1; p <= maxPlace; p++) {
+    if (!used.has(p)) return p;
+  }
+  return null;
+}
+
+function toggleTapPlacing(heatId) {
+  resTapPlacingHeatId = resTapPlacingHeatId === heatId ? null : heatId;
+  drawResults();
+}
+
+async function tapPlaceLane(heatId, laneId) {
+  const heat = (resSelectedRace.heats || []).find(h => h.id === heatId);
+  if (!heat) return;
+  const lane = heat.lanes.find(l => l.id === laneId);
+  if (!lane) return;
+
+  // Tapping a placed swimmer removes that place; otherwise assign the next
+  // free place (1st, then 2nd, ...).
+  const newPlace = lane.manual_place != null ? null : nextTapPlace(heat);
+  if (lane.manual_place == null && newPlace == null) return; // all placed
+  const result = await API.setManualPlace(laneId, newPlace);
+  if (result.error) {
+    alert('Error: ' + result.error);
+    return;
+  }
+  lane.manual_place = newPlace;
+  drawResults();
+}
+
+async function clearHeatPlaces(heatId) {
+  const heat = (resSelectedRace.heats || []).find(h => h.id === heatId);
+  if (!heat) return;
+  for (const lane of heat.lanes) {
+    if (lane.manual_place != null) {
+      const result = await API.setManualPlace(lane.id, null);
+      if (result.error) { alert('Error: ' + result.error); return; }
+      lane.manual_place = null;
+    }
+  }
+  drawResults();
 }
 
 async function calculateResults() {
@@ -1035,7 +1116,8 @@ function renderRelayResultsInline(race) {
     }
   }
 
-  let html = actionsHtml + r27ResultsBanner;
+  // Bryan 2026-06-10: relay details on a single page — teams side by side.
+  let html = actionsHtml + r27ResultsBanner + '<div class="relay-teams-grid">';
   for (const team of teams) {
     const members = team.members || [];
     // BF2.6-15: RED + BOLD + LARGER place display for relay results
@@ -1132,6 +1214,7 @@ function renderRelayResultsInline(race) {
 
     html += '<div class="card relay-team-card" style="margin-bottom:12px;padding:0;overflow:hidden;border:4px solid #0b3d91"><div class="relay-team-header" style="background:' + headerBg + ';padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid #0b3d91"><span class="relay-team-title">' + teamHeader + placeBadge + '</span><span class="relay-team-meta" style="display:flex;align-items:center;gap:12px"><span style="background:rgba(11,61,145,0.15);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;color:#0b3d91">' + startDisplay + '</span><span style="font-weight:400;font-size:13px;color:#666">' + (totalPBDisplay ? totalPBDisplay + ' ' : '') + (targetCalcDisplay ? '• ' + targetCalcDisplay : '') + '</span></span></div>' + rankingBanner + '<table class="spreadsheet-table" style="margin:0"><thead><tr><th style="width:50px">Leg</th><th style="text-align:left;min-width:140px">Swimmer</th>' + (showStroke ? '<th>Stroke</th>' : '') + '<th>PB</th>' + splitHeader + pogoHeaders + '</tr></thead><tbody>' + rows + teamTotalRow + rankingRow + '</tbody></table></div>';
   }
+  html += '</div>';
 
   return html;
 }

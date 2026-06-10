@@ -575,3 +575,25 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
   /* Hide non-essential elements in print */
   [style*="border:4px solid"] { border-width: 1px !important; }
 }
+
+/* ── v2.12.0 Bryan 2026-06-10: relay details on a single page ─────────────
+   Relay/medley team cards sit side by side (3 across on a normal screen and
+   in print) instead of stacking full-width, so the whole relay fits one page. */
+.relay-teams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+.relay-teams-grid .relay-team-card { margin-bottom: 0 !important; }
+
+@media print {
+  .relay-teams-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 4px !important; }
+  .relay-teams-grid .relay-team-card { break-inside: avoid; }
+  .relay-teams-grid .relay-team-header { padding: 3px 6px !important; }
+  .relay-teams-grid .relay-team-title { font-size: 11px !important; }
+  .relay-teams-grid .relay-team-meta { font-size: 8px !important; gap: 4px !important; }
+  .relay-teams-grid .relay-team-meta [style*="border-radius:20px"] { padding: 1px 6px !important; font-size: 9px !important; }
+  .relay-teams-grid .spreadsheet-table td,
+  .relay-teams-grid .spreadsheet-table th { padding: 1px 3px !important; font-size: 8px !important; }
+}

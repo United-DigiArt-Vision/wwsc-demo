@@ -54,7 +54,19 @@ async function renderEventSetup() {
     eventConfig = { standard_event: 'ordinary_swim', special_event: null };
   }
 
+  applyDefaultEntryY();
   drawEventSetup();
+}
+
+// Bryan 2026-06-10: the entry default for present swimmers is "Y" (entered
+// into ALL events incl. the Special Event), not "N". Present swimmers without
+// an explicit entry get 'Y'; explicit N/Back/Breast/Free choices are kept.
+// In-memory only — persisted with the rest of attendance on Build Heats.
+function applyDefaultEntryY() {
+  if (!eventConfig.special_event) return;
+  attendanceData.forEach(a => {
+    if (a.present && !a.special_event_entry) a.special_event_entry = 'Y';
+  });
 }
 
 function drawEventSetup() {
@@ -293,6 +305,8 @@ function toggleAllAttendance(present) {
     a.present = present ? 1 : 0;
     if (!present) a.special_event_entry = null;
   });
+  // Bryan 2026-06-10: Select All defaults every swimmer to "Y" (all events).
+  if (present) applyDefaultEntryY();
   drawEventSetup();
 }
 
@@ -314,6 +328,9 @@ function setEntry(memberId, value) {
 async function onConfigChange() {
   eventConfig.standard_event = document.getElementById('sel-standard').value;
   eventConfig.special_event = document.getElementById('sel-special').value || null;
+  // Bryan 2026-06-10: swimmers already marked present default to "Y" when a
+  // special event is picked afterwards (explicit N/stroke choices are kept).
+  applyDefaultEntryY();
   await API.updateEventConfig(currentEvent.id, eventConfig);
   
   // F32: Also update races when config changes (so Heat Builder shows correct races)

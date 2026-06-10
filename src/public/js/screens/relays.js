@@ -179,7 +179,8 @@ function renderRelayTable(teams, race) {
   const showPogoTimes = isPogo; // v2.7.3: Pogo shows 2 timekeeper columns + average
   const showStroke = isMedley || isBrace; // BF2.6-07: Hide Stroke column for 25m relay (always Freestyle)
 
-  let html = '';
+  // Bryan 2026-06-10: relay details on a single page — teams side by side.
+  let html = '<div class="relay-teams-grid">';
   const teamColors = ['#1565c0', '#c62828', '#2e7d32', '#e65100', '#6a1b9a'];
   const medleyOrder = ['back', 'breast', 'fly', 'free'];
   const medleyColors = {
@@ -314,9 +315,9 @@ function renderRelayTable(teams, race) {
     let startDisplay = '⏱️ Start: ' + formatWhole(team.start_delay || 0) + ' s';
 
     html += `
-      <div class="card" style="margin-bottom:12px;padding:0;overflow:hidden;border-left:5px solid ${teamColor}">
-        <div style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-          <span>${teamHeader}${needsManual ? ' ⚠️ Manual Entry' : ''}</span>
+      <div class="card relay-team-card" style="margin-bottom:12px;padding:0;overflow:hidden;border-left:5px solid ${teamColor}">
+        <div class="relay-team-header" style="background:#e0f2f1;padding:8px 16px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <span class="relay-team-title">${teamHeader}${needsManual ? ' ⚠️ Manual Entry' : ''}</span>
           <span><span style="background:#0b3d91;color:#fff;padding:4px 10px;border-radius:12px;font-weight:700;font-size:18px">${startDisplay}</span> <span style="font-weight:400;font-size:13px;color:#666">${targetDisplay ? '• ' + targetDisplay + ' ' : ''}${tooltip('Relay starting time is fixed at 2s. Enter only Team Total time; splits are not required.')}</span></span>
         </div>
         <table class="spreadsheet-table" style="margin:0">
@@ -343,6 +344,7 @@ function renderRelayTable(teams, race) {
       </div>
     `;
   }
+  html += '</div>';
 
   return html;
 }
