@@ -1,4 +1,29 @@
-# PROGRESS — WWSC v2.11.0 M3 Slice 2 Reports / Export
+# PROGRESS — WWSC v2.12.0 Bryan-Feedback (3 Hauptreports, Defaults, Tap Placing, Relay-Grid)
+
+## 🆕 v2.12.0 BRYAN-FEEDBACK 2026-06-10 — IMPLEMENTIERT + LOKAL VOLL VERIFIZIERT (2026-06-10 21:30 CEST)
+
+- [x] Bryans Inbound verbatim archiviert: `../messages/2026-06-10-Bryan-inbound-v2110-feedback-defaults-relay-pointscore-simplification.md` (Klassifikation: Retest-Defekt + UX-Änderungen + Pointscore-Vereinfachung + Testdaten-Anfrage; KEINE Acceptance).
+- [x] Live-Zustand read-only reproduziert: Event 1 (Seed, 10 Kategorien) + Bryans eigenes Event 2 (2026-06-10, 22 Schwimmer, 4 Kategorien) sind completed; 25m-brace-Daten VORHANDEN (9 Teams, Plätze 1–9) — Root Cause = nur Podium-Teams bekommen Punkte, Rest war in Swimmer Card unsichtbar.
+- [x] Branch `dev/v2.12.0-bryan-feedback` (von v2.11.0 `1d965ef` + Balerion-Evidence-Sync `9e0abc7`); Version-Bump `98ba44f` als erster Commit; Gate-Commit `c69ec0a`.
+- [x] R-V12-02 Select-All-Default **Y** (event-setup.js `applyDefaultEntryY()`; explizite N/Back/Breast/Free bleiben).
+- [x] R-V12-03 **Quick Tap Placing** pro Heat (Reihenfolge tippen = Platz 1..4, nochmal tippen = entfernen, Clear; Dropdowns als Fallback).
+- [x] R-V12-04 **Relay-Grid**: Teams nebeneinander (Screen auto-fit, Print 3 Spalten kompakt) in Results + Relays.
+- [x] R-V12-05..07 **Bryans 3 Hauptreports** (API+CSV+UI): by-race-type Wochenmatrix, Total-Pointscore Single Page, Breakers Count+Amount aus `pb_change_log` (neu; PUT /api/members/:id loggt jede manuelle Zeitänderung transaktional) + season_start vs current. Alte Ansichten unter "More reports" erhalten.
+- [x] R-V12-08 **Swimmer Card** zeigt jede Teilnahme inkl. 0 Punkte (Fix "25m brace does not list in any results").
+- [x] R-V12-09 **Event-Report** mit PB/Start/Finish/Net/Variance/BREAK/Place + Relay-Start/Target; Manual-Place-Präzedenz gefixt (Report + Season Calendar — Pattern-Audit, kein Punkt-Fix).
+- [x] Member-DELETE räumt jetzt `pointscore_entry` + `pb_change_log` (FK-Crash-Fix).
+- [x] R-V12-01 **Wochen-Seeder** `scripts/seed-bryan-weekly-events.cjs`: 7 abgeschlossene Sa-Events 18.04.–30.05.2026, rotierende Konfigurationen, Breaks + manuelle PB-Updates nach jedem Event (befüllt Report 3), variierende Anwesenheit. Niemals löschen, vorhandene Daten übersprungen (2. Lauf: 0/7), Abbruch bei unfertigem Event, APPLY_LIVE-Guard. Selbstverifikation **9/0**.
+- [x] Traceability: `REQUIREMENTS-V2.12.0-BRYAN-FEEDBACK.md` (10 Requirements, 0 FEHL); Abnahmeprotokoll: `docs/evidence/v2120-bryan-feedback/V2.12.0-ABNAHMEPROTOKOLL.md`.
+- [x] Gates @ `c69ec0a` (Roh-Log `docs/evidence/v2120-bryan-feedback/gate-run-c69ec0a.log`): v2120-Unit **24/0** • Pointscore-Unit **15/0** • Slice2-Unit **7/0** • Isolation **PASS** • v2120-Browser **10/0**, 0 Console-Errors • M2-55 **55/0** • M2-100 **98/2NA/0** • Graphs **19/1NA/0** • Slice2-Browser **13/0** • M3-120 **118/2NA/0/0**.
+- [x] Bryan-Antwort-Draft: `../messages/2026-06-10-draft-to-bryan-v2120-feedback-response.md` (senden ERST nach Live-Deploy + Live-Seed).
+- [ ] Balerion: Branch-Übernahme + ReQA auf Mac Mini (Handoff: `../messages/2026-06-10-2*-Claude-To-Balerion-WWSC-v2.12.0-Bryan-Feedback-Handoff.md`).
+- [ ] Dino-Freigabe: merge → deploy → Live-Wochen-Seed → Bryan-Versand.
+
+Boundaries gehalten: kein Push, kein Deploy, kein Live-Mutieren, kein Bryan-Kontakt; Bryans Event 2 unangetastet.
+
+---
+
+# PROGRESS (vorher) — WWSC v2.11.0 M3 Slice 2 Reports / Export
 
 ## ✅ LIVE DEMO DATA CORRECTED FOR BRYAN RETEST (2026-06-09 17:55 CEST)
 

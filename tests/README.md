@@ -101,11 +101,13 @@ node scripts/e2e-m3-pointscore-isolation.cjs      # Isolation PASS (Regression)
 ### Browser (puppeteer-core + Chrome, einmalig: `bash scripts/setup-m2-harness.sh`)
 ```bash
 node scripts/e2e-v2120-bryan-feedback.cjs                                  # 10 Checks v2.12.0 UI
-WWSC_E2E_EXPECTED_VERSION=2.12.0 node scripts/e2e-m2-time-history.cjs      # M2-55
-WWSC_E2E_EXPECTED_VERSION=2.12.0 node scripts/e2e-m2-user-interaction-100.cjs  # M2-100
+WWSC_E2E_EXPECTED_VERSION=2.12.0 node scripts/e2e-m2-time-history.cjs 2>&1 | tee /tmp/m3p-m2-55.log         # M2-55
+WWSC_E2E_EXPECTED_VERSION=2.12.0 node scripts/e2e-m2-user-interaction-100.cjs 2>&1 | tee /tmp/m3p-m2-100.log # M2-100
 WWSC_E2E_EXPECTED_VERSION=2.12.0 node scripts/e2e-m3-history-graphs.cjs    # Graph-Gate
 WWSC_E2E_EXPECTED_VERSION=2.12.0 node scripts/e2e-m3-pointscore-120.cjs    # M3-120 — ALS LETZTES (prüft Frische der M2-Logs gegen HEAD)
 ```
+WICHTIG: M3-120 (UIT-M3-111/112) liest die M2-Konsolen-Logs aus `/tmp/m3p-m2-55.log` und `/tmp/m3p-m2-100.log` und verlangt darin die `# Baseline ... commit=<HEAD>`-Zeile — deshalb die `tee`-Aufrufe oben, alles am selben Commit.
+Bekannte Harness-Eigenheit (macOS): die M2-100-Suite kann ihren gespawnten Server als Orphan hinterlassen, der die stdout-Pipe offen hält (Suite-Evidence ist zu dem Zeitpunkt bereits vollständig geschrieben). Falls eine Pipe-Kette danach "hängt": verwaiste `node src/server.js`-Prozesse (PPID tot) killen — Ergebnisse bleiben gültig.
 
 ### Wochen-Seeder (Testdaten für Bryan, 7 Wochen Apr–Mai 2026)
 ```bash

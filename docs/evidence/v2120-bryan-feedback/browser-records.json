@@ -1,12 +1,12 @@
 {
   "baseline": {
     "branch": "dev/v2.12.0-bryan-feedback",
-    "commit": "7d4e057",
+    "commit": "c69ec0a",
     "version": "2.12.0"
   },
   "apiVersion": {
     "version": "2.12.0",
-    "build": "2026-06-10T19:09:26.684Z"
+    "build": "2026-06-10T19:13:07.024Z"
   },
   "records": [
     {
@@ -19,13 +19,13 @@
       "id": "UI-V12-02-tap-placing-assigns-1-2",
       "status": "PASS",
       "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-02-tap-placing-1-2.png",
-      "note": "banner=true badges=[\"1\\tJenny Walsh\\t18\\t2\\t20\\t—\\t—\\t—\\t—\\t—\\t1\",\"2\\tGreg Patterson\\t16\\t4\\t20\\t—\\t—\\t—\\t—\\t—\\t2\"]"
+      "note": "banner=true badges=[\"1\\tJames Morton\\t14\\t4\\t18\\t—\\t—\\t—\\t—\\t—\\t1\",\"2\\tFelicia O'Brien\\t16\\t2\\t18\\t—\\t—\\t—\\t—\\t—\\t2\"]"
     },
     {
       "id": "UI-V12-03-tap-again-removes-place",
       "status": "PASS",
       "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-03-tap-placing-removed.png",
-      "note": "first row place cell now: 1\tJenny Walsh\t18\t2\t20\t—\t—\t—\t—\t—\t—"
+      "note": "first row place cell now: 1\tJames Morton\t14\t4\t18\t—\t—\t—\t—\t—\t—"
     },
     {
       "id": "UI-V12-04-relay-teams-grid",
@@ -61,7 +61,7 @@
       "id": "UI-V12-09-event-report-details",
       "status": "PASS",
       "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-09-event-report-start-break.png",
-      "note": "Start/Net/Variance/BREAK columns=true, manual place 4 shown for James Morton=true"
+      "note": "Start/Net/Variance/BREAK columns=true, manual place 4 shown for David Hughes=true"
     },
     {
       "id": "UI-V12-10-zero-console-errors",

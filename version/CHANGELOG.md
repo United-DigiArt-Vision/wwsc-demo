@@ -11,6 +11,29 @@
 
 ---
 
+## 2026-06-10 — feat: v2.12.0 Bryan feedback (3 main reports, defaults, tap placing, relay grid, report details)
+- **Date:** 2026-06-10
+- **Timestamp:** 2026-06-10 21:30:00 Europe/Berlin
+- **App Version (from package.json):** 2.12.0
+- **Branch:** dev/v2.12.0-bryan-feedback
+- **RecordedCommit:** c69ec0a (gate commit; final SSOT-close commit follows)
+- **Editor:** Claude
+- **Trigger:** Bryan's 2026-06-10 feedback on v2.11.0 (archived: `../messages/2026-06-10-Bryan-inbound-v2110-feedback-defaults-relay-pointscore-simplification.md`).
+- **Changes:**
+  - Times Sheet: Select All (and late special-event pick) defaults entries to **Y**; explicit N/stroke choices preserved (`applyDefaultEntryY()`).
+  - Results: **Quick Tap Placing** per heat — tap swimmers in finish order for manual places, tap again to remove, Clear resets; dropdowns remain as fallback.
+  - Relays/Results: relay & medley team cards in a responsive **side-by-side grid**, print = 3 columns compact → relay fits one page (`.relay-teams-grid`).
+  - Pointscore screen leads with **Bryan's 3 main reports**: 1) per-race-type weekly matrix `GET /api/pointscore/by-race-type/:rt` (+CSV), 2) total pointscore `GET /api/pointscore/total` (+CSV), 3) breakers summary `GET /api/reports/breakers-summary` (+CSV). Previous views collapsed under "More reports" (nothing removed).
+  - New **`pb_change_log`** table; `PUT /api/members/:id` logs every manual stroke-time change in a transaction. Breaker count = manual reductions since season start; breaker amount = season-start PB − current PB ("uses the manually changed times").
+  - **Swimmer Card** lists every participation (individual lanes with finish, relay teams with time) with 0 points where none awarded → fixes "25m brace does not list in any results".
+  - **Event completion report**: heat tables now PB/Start/Finish/Net/Variance/BREAK/Place; relay team headers show Start + Target; manual place wins over auto place (also fixed in Season Calendar event details).
+  - Member DELETE now clears `pointscore_entry` + `pb_change_log` (FK-violation fix).
+  - New guarded seeder `scripts/seed-bryan-weekly-events.cjs`: 7 completed weekly events Apr–May 2026 incl. post-event manual PB updates; skips existing dates, never deletes, APPLY_LIVE-guard. Bryan's own 2026-06-10 event untouched.
+  - Tests: new `scripts/test-v2120-bryan-feedback.cjs` (24 checks) + `scripts/e2e-v2120-bryan-feedback.cjs` (10 browser checks); slice2 suite version pin now reads package.json; tests/README updated.
+- **Proof:** `docs/evidence/v2120-bryan-feedback/` (unit-results.json, browser-records.json, gate-run-c69ec0a.log, V2.12.0-ABNAHMEPROTOKOLL.md, screenshots).
+
+---
+
 ## 2026-06-06 — data: seed v2.11.0 live Bryan retest event
 - **Date:** 2026-06-06
 - **Timestamp:** 2026-06-06 17:52:00 Europe/Berlin

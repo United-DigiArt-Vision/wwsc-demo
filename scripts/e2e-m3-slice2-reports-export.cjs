@@ -175,8 +175,17 @@ async function gotoReports(page) {
     page.on('pageerror', e => consoleErrors.push({ url: page.url(), msg: 'pageerror: ' + e.message }));
 
     await gotoReports(page);
+    // v2.12.0: the screen leads with Bryan's 3 main reports; the previous
+    // report tabs live under "More reports". The user-visible contract is:
+    // main reports on the landing, old tabs one click away.
+    const landingMain = await page.evaluate(() => document.body.innerText);
+    await page.evaluate(() => {
+      const btn = [...document.querySelectorAll('button')].find(b => b.textContent.includes('More reports'));
+      if (btn) btn.click();
+    });
+    await sleep(400);
     const landing = await page.evaluate(() => document.body.innerText);
-    rec('S2-UI1-reports-landing', /Break Counts/.test(landing) && /DB & Graphs/.test(landing), await shot(page, 'S2-UI1', 'reports-landing'), 'new reports tabs discoverable');
+    rec('S2-UI1-reports-landing', /Total Pointscore/.test(landingMain) && /Break Counts/.test(landing) && /DB & Graphs/.test(landing), await shot(page, 'S2-UI1', 'reports-landing'), 'main reports on landing; previous tabs discoverable via More reports');
 
     await page.evaluate(() => psSetTab('coverage'));
     await sleep(300);
@@ -222,7 +231,9 @@ async function gotoReports(page) {
     const exported = new Database(downloaded, { readonly: true });
     const validDb = exported.prepare("SELECT COUNT(*) AS n FROM time_history").get().n === 5;
     exported.close();
-    rec('S2-UI7-db-download-valid', dbRes.ok && /wwsc-sqlite-db-v2\.11\.0/.test(dbRes.cd || '') && validDb, '', 'browser fetch downloaded valid SQLite DB');
+    // v2.12.0: filename version comes from package.json (no hardcoded literal).
+    const pkgVersionEsc = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'))).version.replace(/\./g, '\\.');
+    rec('S2-UI7-db-download-valid', dbRes.ok && new RegExp('wwsc-sqlite-db-v' + pkgVersionEsc).test(dbRes.cd || '') && validDb, '', 'browser fetch downloaded valid SQLite DB');
 
     await page.evaluate(() => navigate('members'));
     await sleep(300);

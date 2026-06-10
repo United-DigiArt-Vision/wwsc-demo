@@ -1,12 +1,12 @@
 {
   "baseline": {
-    "branch": "dev/v2.11.0-m3-slice2-reports-export",
-    "commit": "641aa0e",
-    "version": "2.11.0"
+    "branch": "dev/v2.12.0-bryan-feedback",
+    "commit": "c69ec0a",
+    "version": "2.12.0"
   },
   "apiVersion": {
-    "version": "2.11.0",
-    "build": "2026-06-06T15:23:01.428Z"
+    "version": "2.12.0",
+    "build": "2026-06-10T20:11:08.614Z"
   },
   "fixture": {
     "event": 1,
@@ -29,7 +29,7 @@
   "records": [
     {
       "id": "S2-UI1-reports-landing",
-      "status": "PASS",
+      "status": "FAIL",
       "screenshot": "docs/screenshots/m3-slice2/S2-UI1-reports-landing.png",
       "note": "new reports tabs discoverable"
     },
@@ -65,7 +65,7 @@
     },
     {
       "id": "S2-UI7-db-download-valid",
-      "status": "PASS",
+      "status": "FAIL",
       "screenshot": "",
       "note": "browser fetch downloaded valid SQLite DB"
     },
@@ -108,7 +108,7 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3012/?cb=1780759383021",
+      "url": "http://127.0.0.1:3012/?cb=1781122270017",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ],

@@ -1,11 +1,11 @@
 {
   "baseline": {
     "branch": "dev/v2.12.0-bryan-feedback",
-    "commit": "0a1a76e",
+    "commit": "c69ec0a",
     "pkg": "2.12.0",
     "apiVersion": {
       "version": "2.12.0",
-      "build": "2026-06-10T18:55:06.550Z"
+      "build": "2026-06-10T20:11:21.561Z"
     }
   },
   "records": [
@@ -673,13 +673,13 @@
       "id": "UIT-M3-111",
       "status": "BLOCKED",
       "shot": "",
-      "note": "M2 55-case runner — stale log: no commit=0a1a76e header — re-run the M2 suite on this HEAD"
+      "note": "M2 55-case runner — stale log: no commit=c69ec0a header — re-run the M2 suite on this HEAD"
     },
     {
       "id": "UIT-M3-112",
       "status": "BLOCKED",
       "shot": "",
-      "note": "M2 100-case runner — stale log: no commit=0a1a76e header — re-run the M2 suite on this HEAD"
+      "note": "M2 100-case runner — stale log: no commit=c69ec0a header — re-run the M2 suite on this HEAD"
     },
     {
       "id": "UIT-M3-113",
@@ -732,7 +732,7 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3011/?cb=1781117711772",
+      "url": "http://127.0.0.1:3011/?cb=1781122284380",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ],
