@@ -768,23 +768,42 @@ async function showSeasonReport(eventIdArg) {
     report.attendance.map(a => '<tr><td>' + a.name + '</td><td>' + (a.special_event_entry || 'N') + '</td></tr>').join('') +
     '</tbody></table></div>';
 
+  // v2.12.0 (Bryan 2026-06-10): the completion report was missing details —
+  // start time (handicap delay) and breaker info are now part of every table.
   for (const race of report.races) {
     html += '<div class="card"><h2>' + (RACE_LABELS[race.race_type] || race.race_type) + '</h2>';
     if (race.teams) {
       for (const team of race.teams) {
         const teamVariance = team.variance != null ? ' • Variance: ' + formatSignedTime(team.variance) : '';
         const teamTotal = team.total_time != null ? ' • Total: ' + formatTime(team.total_time) : '';
-        html += '<h3>' + team.team_name + (team.place ? ' — ' + ordinal(team.place) : '') + teamTotal + teamVariance + '</h3>';
+        const teamStart = ' • Start: ' + formatWhole(team.start_delay || 0) + 's';
+        const teamTarget = team.target_time != null ? ' • Target: ' + formatWhole(team.target_time) : '';
+        html += '<h3>' + team.team_name + (team.place ? ' — ' + ordinal(team.place) : '') + teamStart + teamTarget + teamTotal + teamVariance + '</h3>';
         html += '<table><thead><tr><th>Leg</th><th>Swimmer</th><th>Stroke</th><th>Total</th><th>Variance</th></tr></thead><tbody>' +
           team.members.map(m => '<tr><td>' + m.leg_order + '</td><td>' + m.name + '</td><td>' + (m.stroke || '—') + '</td><td></td><td></td></tr>').join('') +
-          '<tr><td colspan="3"><strong>Team Result</strong></td><td>' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td><td>' + (team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—') + '</td></tr>' +
+          '<tr><td colspan="3"><strong>Team Result</strong> (start ' + formatWhole(team.start_delay || 0) + 's)</td><td>' + (team.total_time != null ? formatTime(team.total_time) : '—') + '</td><td>' + (team.variance != null ? ((team.variance >= 0 ? '+' : '') + formatTime(team.variance)) : '—') + '</td></tr>' +
           '</tbody></table>';
       }
     } else if (race.heats) {
       for (const heat of race.heats) {
-        html += '<h3>Heat ' + heat.heat_number + '</h3>';
-        html += '<table><thead><tr><th>Lane</th><th>Swimmer</th><th>PB</th><th>Finish</th><th>Place</th></tr></thead><tbody>' +
-          heat.lanes.map(l => '<tr><td>' + l.lane_number + '</td><td>' + l.name + '</td><td>' + formatWhole(l.handicap_time) + '</td><td>' + (l.finish_time != null ? formatTime(l.finish_time) : '—') + '</td><td>' + (l.place || l.manual_place || '—') + '</td></tr>').join('') +
+        const heatMax = heat.lanes && heat.lanes.length > 0
+          ? Math.max(...heat.lanes.map(l => l.handicap_time || 0)) + 2 : null;
+        html += '<h3>Heat ' + heat.heat_number + (heatMax != null ? ' <span style="font-weight:400;font-size:12px;color:#666">(expected finish ' + heatMax + 's)</span>' : '') + '</h3>';
+        html += '<table><thead><tr><th>Lane</th><th>Swimmer</th><th>PB</th><th>Start</th><th>Finish</th><th>Net</th><th>Variance</th><th>Break</th><th>Place</th></tr></thead><tbody>' +
+          heat.lanes.map(l => {
+            const isBreak = l.is_break === 1;
+            const place = l.manual_place || l.place || '—';
+            return '<tr' + (isBreak ? ' style="background:#e8f5e9"' : '') + '>' +
+              '<td>' + l.lane_number + '</td>' +
+              '<td>' + l.name + '</td>' +
+              '<td>' + formatWhole(l.handicap_time) + '</td>' +
+              '<td>' + formatWhole(l.start_delay) + '</td>' +
+              '<td>' + (l.finish_time != null ? formatTime(l.finish_time) : '—') + '</td>' +
+              '<td>' + (l.net_time != null ? formatTime(l.net_time) : '—') + '</td>' +
+              '<td' + (l.variance != null && l.variance < 0 ? ' style="color:#2e7d32;font-weight:700"' : '') + '>' + (l.variance != null ? ((l.variance >= 0 ? '+' : '') + formatTime(l.variance)) : '—') + '</td>' +
+              '<td>' + (isBreak ? '<strong style="color:#2e7d32">BREAK</strong>' : '—') + '</td>' +
+              '<td>' + place + '</td></tr>';
+          }).join('') +
           '</tbody></table>';
       }
     }

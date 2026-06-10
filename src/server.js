@@ -93,13 +93,35 @@ app.post('/api/members', (req, res) => {
 app.put('/api/members/:id', (req, res) => {
   try {
     const { name, is_active, time_25m, time_50m, time_75m, time_backstroke, time_breaststroke, time_butterfly } = req.body;
-    db.prepare(`
-      UPDATE member SET name=?, is_active=?, time_25m=?, time_50m=?, time_75m=?, time_backstroke=?, time_breaststroke=?, time_butterfly=?
-      WHERE id=?
-    `).run(name, is_active ?? 1,
-      time_25m ?? null, time_50m ?? null, time_75m ?? null,
-      time_backstroke ?? null, time_breaststroke ?? null, time_butterfly ?? null,
-      req.params.id);
+
+    // v2.12.0 (Bryan 2026-06-10 report 3): PBs are maintained manually in the
+    // Members screen. Every changed stroke time is logged to pb_change_log so
+    // the Breakers report can count how often a time "came down" this season.
+    const before = db.prepare('SELECT * FROM member WHERE id = ?').get(req.params.id);
+    if (!before) return res.status(404).json({ error: 'Member not found' });
+    const incoming = {
+      time_25m: time_25m ?? null, time_50m: time_50m ?? null, time_75m: time_75m ?? null,
+      time_backstroke: time_backstroke ?? null, time_breaststroke: time_breaststroke ?? null,
+      time_butterfly: time_butterfly ?? null
+    };
+    const logIns = db.prepare('INSERT INTO pb_change_log (member_id, stroke, old_value, new_value, changed_at) VALUES (?, ?, ?, ?, ?)');
+    const now = new Date().toISOString();
+    const update = db.transaction(() => {
+      for (const [col, newVal] of Object.entries(incoming)) {
+        const oldVal = before[col];
+        if (oldVal !== newVal && !(oldVal == null && newVal == null)) {
+          logIns.run(req.params.id, col.replace('time_', ''), oldVal, newVal, now);
+        }
+      }
+      db.prepare(`
+        UPDATE member SET name=?, is_active=?, time_25m=?, time_50m=?, time_75m=?, time_backstroke=?, time_breaststroke=?, time_butterfly=?
+        WHERE id=?
+      `).run(name, is_active ?? 1,
+        incoming.time_25m, incoming.time_50m, incoming.time_75m,
+        incoming.time_backstroke, incoming.time_breaststroke, incoming.time_butterfly,
+        req.params.id);
+    });
+    update();
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -114,6 +136,10 @@ app.delete('/api/members/:id', (req, res) => {
     db.prepare('DELETE FROM time_history WHERE member_id = ?').run(req.params.id);
     db.prepare('DELETE FROM heat_lane WHERE member_id = ?').run(req.params.id);
     db.prepare('DELETE FROM relay_team_member WHERE member_id = ?').run(req.params.id);
+    db.prepare('DELETE FROM pb_change_log WHERE member_id = ?').run(req.params.id);
+    // v2.12.0: pointscore_entry references member too — without this the
+    // delete fails with a FK violation once the member has scored points.
+    db.prepare('DELETE FROM pointscore_entry WHERE member_id = ?').run(req.params.id);
     db.prepare('DELETE FROM member WHERE id = ?').run(req.params.id);
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -1322,21 +1348,57 @@ app.get('/api/pointscore/season/:year', (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// GET /api/members/:memberId/pointscore — per-swimmer contribution detail
-// across all their scored events (newest first).
+// GET /api/members/:memberId/pointscore — per-swimmer contribution detail.
+// v2.12.0 (Bryan 2026-06-10 "25m brace does not list in any results"): the
+// card lists EVERY race the swimmer took part in (individual lanes with a
+// finish time, relay teams with a team time), with 0 points where the race
+// awarded none (e.g. relay teams outside 1st-3rd) — not only the scored rows.
 app.get('/api/members/:memberId/pointscore', (req, res) => {
   try {
     const memberId = Number(req.params.memberId);
     const member = db.prepare('SELECT id, name FROM member WHERE id = ?').get(memberId);
     if (!member) return res.status(404).json({ error: 'Member not found' });
-    const contributions = db.prepare(`
-      SELECT e.id AS event_id, e.date AS event_date, er.race_type, pe.points
+
+    // Participations: individual races (a finish time was recorded).
+    const individual = db.prepare(`
+      SELECT DISTINCT e.id AS event_id, e.date AS event_date, er.race_type
+      FROM heat_lane hl
+      JOIN heat h ON hl.heat_id = h.id
+      JOIN event_race er ON h.event_race_id = er.id
+      JOIN event e ON er.event_id = e.id
+      WHERE hl.member_id = ? AND hl.finish_time IS NOT NULL AND ${completedEventWhere('e')}
+    `).all(memberId);
+    // Participations: relay/team races (the team recorded a total time).
+    const relay = db.prepare(`
+      SELECT DISTINCT e.id AS event_id, e.date AS event_date, er.race_type
+      FROM relay_team_member rtm
+      JOIN relay_team rt ON rtm.relay_team_id = rt.id
+      JOIN event_race er ON rt.event_race_id = er.id
+      JOIN event e ON er.event_id = e.id
+      WHERE rtm.member_id = ? AND rt.total_time IS NOT NULL AND ${completedEventWhere('e')}
+    `).all(memberId);
+    // Scored points per event/race type.
+    const scored = db.prepare(`
+      SELECT e.id AS event_id, e.date AS event_date, er.race_type, SUM(pe.points) AS points
       FROM pointscore_entry pe
       JOIN event_race er ON pe.event_race_id = er.id
       JOIN event e ON er.event_id = e.id
-      WHERE pe.member_id = ?
-      ORDER BY e.date DESC, er.race_type ASC
+      WHERE pe.member_id = ? AND ${completedEventWhere('e')}
+      GROUP BY e.id, e.date, er.race_type
     `).all(memberId);
+
+    const byKey = new Map();
+    for (const p of individual.concat(relay)) {
+      byKey.set(p.event_id + ':' + p.race_type, { event_id: p.event_id, event_date: p.event_date, race_type: p.race_type, points: 0 });
+    }
+    for (const s of scored) {
+      const key = s.event_id + ':' + s.race_type;
+      const row = byKey.get(key) || { event_id: s.event_id, event_date: s.event_date, race_type: s.race_type, points: 0 };
+      row.points = s.points;
+      byKey.set(key, row);
+    }
+    const contributions = [...byKey.values()].sort((a, b) =>
+      b.event_date.localeCompare(a.event_date) || a.race_type.localeCompare(b.race_type));
     const total = contributions.reduce((s, c) => s + c.points, 0);
     res.json({ member, total, contributions });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -1354,6 +1416,228 @@ app.get('/api/pointscore/months', (req, res) => {
       ORDER BY ym DESC
     `).all();
     res.json(months.map(m => m.ym));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════
+//  BRYAN'S 3 MAIN POINTSCORE REPORTS (2026-06-10, "as per the spreadsheet")
+//  1. Per race type: all members × weeks, points per week + total.
+//  2. Total pointscore: all members × race types, totals + grand total.
+//  3. Breakers: manual PB reductions — count + amount per swimmer/stroke.
+//  Read-only over pointscore_entry / member / pb_change_log.
+// ════════════════════════════════════════════════════════
+
+// Canonical column/selector order for race types.
+const RACE_TYPE_ORDER = ['25m', '50m', '75m', 'backstroke', 'breaststroke', 'butterfly', '25m_relay', 'medley_relay', '25m_brace', '50m_brace', 'pogo'];
+function raceTypeSortIndex(rt) {
+  const i = RACE_TYPE_ORDER.indexOf(rt);
+  return i === -1 ? 999 : i;
+}
+
+function completedEventYears() {
+  return db.prepare(`
+    SELECT DISTINCT substr(date,1,4) AS y FROM event
+    WHERE status IN ('finalized','completed') AND (archived = 0 OR archived IS NULL)
+    ORDER BY y DESC
+  `).all().map(r => r.y);
+}
+
+function resolveReportYear(reqYear) {
+  if (reqYear && /^\d{4}$/.test(String(reqYear))) return String(reqYear);
+  const years = completedEventYears();
+  return years[0] || new Date().toISOString().slice(0, 4);
+}
+
+// Roster = every active member, plus any extra ids that scored points
+// (covers deactivated members with historical points). Sorted by name.
+function reportRoster(extraIds = []) {
+  const members = db.prepare('SELECT id, name FROM member WHERE is_active = 1').all();
+  const have = new Set(members.map(m => m.id));
+  const missing = [...new Set(extraIds)].filter(id => !have.has(id));
+  if (missing.length > 0) {
+    const ph = missing.map(() => '?').join(',');
+    members.push(...db.prepare(`SELECT id, name FROM member WHERE id IN (${ph})`).all(...missing));
+  }
+  members.sort((a, b) => a.name.localeCompare(b.name));
+  return members;
+}
+
+function completedRaceTypesForYear(year) {
+  return db.prepare(`
+    SELECT DISTINCT er.race_type
+    FROM event_race er JOIN event e ON e.id = er.event_id
+    WHERE substr(e.date,1,4) = ? AND ${completedEventWhere('e')}
+  `).all(year).map(r => r.race_type).sort((a, b) => raceTypeSortIndex(a) - raceTypeSortIndex(b));
+}
+
+// Report 1: one race type, all members, points per week (= per event) + total.
+function getRaceTypeWeeklyReport(raceType, year) {
+  const weeks = db.prepare(`
+    SELECT DISTINCT e.id AS event_id, e.date
+    FROM event e JOIN event_race er ON er.event_id = e.id
+    WHERE er.race_type = ? AND substr(e.date,1,4) = ? AND ${completedEventWhere('e')}
+    ORDER BY e.date ASC, e.id ASC
+  `).all(raceType, year);
+  const points = db.prepare(`
+    SELECT er.event_id, pe.member_id, SUM(pe.points) AS pts
+    FROM pointscore_entry pe
+    JOIN event_race er ON pe.event_race_id = er.id
+    JOIN event e ON e.id = er.event_id
+    WHERE er.race_type = ? AND substr(e.date,1,4) = ? AND ${completedEventWhere('e')}
+    GROUP BY er.event_id, pe.member_id
+  `).all(raceType, year);
+  const roster = reportRoster(points.map(p => p.member_id));
+  const rows = new Map(roster.map(m => [m.id, { member_id: m.id, member_name: m.name, points: {}, total: 0 }]));
+  for (const p of points) {
+    const row = rows.get(p.member_id);
+    if (!row) continue;
+    row.points[p.event_id] = p.pts;
+    row.total += p.pts;
+  }
+  return {
+    race_type: raceType,
+    category: categoryLabel(raceType),
+    year,
+    weeks,
+    members: [...rows.values()],
+    availableRaceTypes: completedRaceTypesForYear(year),
+    availableYears: completedEventYears()
+  };
+}
+
+// Report 2: all members × race types, season totals + grand total.
+function getTotalPointscoreReport(year) {
+  const cells = db.prepare(`
+    SELECT pe.member_id, er.race_type, SUM(pe.points) AS pts
+    FROM pointscore_entry pe
+    JOIN event_race er ON pe.event_race_id = er.id
+    JOIN event e ON e.id = er.event_id
+    WHERE substr(e.date,1,4) = ? AND ${completedEventWhere('e')}
+    GROUP BY pe.member_id, er.race_type
+  `).all(year);
+  const raceTypes = completedRaceTypesForYear(year);
+  const roster = reportRoster(cells.map(c => c.member_id));
+  const rows = new Map(roster.map(m => [m.id, { member_id: m.id, member_name: m.name, byType: {}, total: 0 }]));
+  for (const c of cells) {
+    const row = rows.get(c.member_id);
+    if (!row) continue;
+    row.byType[c.race_type] = c.pts;
+    row.total += c.pts;
+  }
+  return { year, raceTypes, members: [...rows.values()], availableYears: completedEventYears() };
+}
+
+// Report 3: breaker counts + amounts from manually changed PBs.
+// count = manual reductions logged in pb_change_log this season;
+// amount = season-start PB (member.season_start_*, else the oldest logged
+// old_value, else the current PB) minus the current PB. Whole seconds.
+const BREAKER_STROKES = ['25m', '50m', '75m', 'backstroke', 'breaststroke', 'butterfly'];
+function getBreakersSummaryReport(year) {
+  const members = db.prepare('SELECT * FROM member WHERE is_active = 1 ORDER BY name').all();
+  const logRows = db.prepare(`
+    SELECT member_id, stroke, old_value, new_value
+    FROM pb_change_log
+    WHERE substr(changed_at,1,4) = ?
+    ORDER BY changed_at ASC, id ASC
+  `).all(year);
+  const counts = new Map();      // member:stroke -> reductions
+  const earliestOld = new Map(); // member:stroke -> oldest logged old_value
+  for (const r of logRows) {
+    const key = r.member_id + ':' + r.stroke;
+    if (!earliestOld.has(key) && r.old_value != null) earliestOld.set(key, r.old_value);
+    if (r.old_value != null && r.new_value != null && r.new_value < r.old_value) {
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+  }
+  const rows = [];
+  const totals = [];
+  for (const m of members) {
+    let memberCount = 0;
+    let memberAmount = 0;
+    for (const stroke of BREAKER_STROKES) {
+      const current = m['time_' + stroke];
+      const key = m.id + ':' + stroke;
+      const count = counts.get(key) || 0;
+      if (current == null && count === 0) continue; // no PB, nothing logged
+      const baseline = m['season_start_' + stroke] != null
+        ? m['season_start_' + stroke]
+        : (earliestOld.get(key) != null ? earliestOld.get(key) : current);
+      const amount = (baseline != null && current != null) ? baseline - current : null;
+      rows.push({
+        member_id: m.id, member_name: m.name, stroke,
+        season_start: baseline ?? null, current_pb: current ?? null,
+        times_lowered: count, amount_lowered: amount
+      });
+      memberCount += count;
+      memberAmount += amount != null ? amount : 0;
+    }
+    totals.push({ member_id: m.id, member_name: m.name, times_lowered: memberCount, amount_lowered: memberAmount });
+  }
+  return {
+    source: 'Manually changed PB times (Members screen edits logged in pb_change_log) + season-start PB vs current PB. Whole seconds.',
+    year,
+    rows,
+    totals,
+    availableYears: completedEventYears()
+  };
+}
+
+// GET /api/pointscore/by-race-type/:raceType — Bryan report 1.
+app.get('/api/pointscore/by-race-type/:raceType', (req, res) => {
+  try {
+    const year = resolveReportYear(req.query.year);
+    res.json(getRaceTypeWeeklyReport(req.params.raceType, year));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/pointscore/by-race-type/:raceType/csv
+app.get('/api/pointscore/by-race-type/:raceType/csv', (req, res) => {
+  try {
+    const year = resolveReportYear(req.query.year);
+    const report = getRaceTypeWeeklyReport(req.params.raceType, year);
+    const header = ['swimmer'].concat(report.weeks.map(w => w.date)).concat(['total']);
+    const rows = report.members.map(m =>
+      [m.member_name].concat(report.weeks.map(w => m.points[w.event_id] ?? 0)).concat([m.total]));
+    sendCsv(res, 'wwsc-pointscore-' + report.race_type + '-' + year + '-v' + pkg.version + '.csv', header, rows);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/pointscore/total — Bryan report 2.
+app.get('/api/pointscore/total', (req, res) => {
+  try {
+    const year = resolveReportYear(req.query.year);
+    res.json(getTotalPointscoreReport(year));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/pointscore/total/csv
+app.get('/api/pointscore/total/csv', (req, res) => {
+  try {
+    const year = resolveReportYear(req.query.year);
+    const report = getTotalPointscoreReport(year);
+    const header = ['swimmer'].concat(report.raceTypes.map(rt => categoryLabel(rt))).concat(['total']);
+    const rows = report.members.map(m =>
+      [m.member_name].concat(report.raceTypes.map(rt => m.byType[rt] ?? 0)).concat([m.total]));
+    sendCsv(res, 'wwsc-total-pointscore-' + year + '-v' + pkg.version + '.csv', header, rows);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/reports/breakers-summary — Bryan report 3.
+app.get('/api/reports/breakers-summary', (req, res) => {
+  try {
+    const year = resolveReportYear(req.query.year);
+    res.json(getBreakersSummaryReport(year));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/reports/breakers-summary/csv
+app.get('/api/reports/breakers-summary/csv', (req, res) => {
+  try {
+    const year = resolveReportYear(req.query.year);
+    const report = getBreakersSummaryReport(year);
+    sendCsv(res, 'wwsc-breakers-summary-' + year + '-v' + pkg.version + '.csv',
+      ['swimmer', 'stroke', 'season_start_s', 'current_pb_s', 'times_lowered', 'amount_lowered_s'],
+      report.rows.map(r => [r.member_name, r.stroke, r.season_start, r.current_pb, r.times_lowered, r.amount_lowered]));
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

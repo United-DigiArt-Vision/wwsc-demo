@@ -125,6 +125,19 @@ function initSchema() {
       previous_best INTEGER
     );
 
+    -- v2.12.0 (Bryan 2026-06-10 report 3): audit log of manual PB changes
+    -- made in the Members screen. "Breaker count" = number of reductions
+    -- (new_value < old_value) per swimmer/stroke since season start.
+    -- Values are whole seconds, like the member time columns.
+    CREATE TABLE IF NOT EXISTS pb_change_log (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      member_id  INTEGER NOT NULL REFERENCES member(id),
+      stroke     TEXT NOT NULL,
+      old_value  INTEGER,
+      new_value  INTEGER,
+      changed_at TEXT NOT NULL
+    );
+
     -- Indexes
     CREATE INDEX IF NOT EXISTS idx_attendance_event ON attendance(event_id);
     CREATE INDEX IF NOT EXISTS idx_attendance_member ON attendance(member_id);
@@ -133,6 +146,7 @@ function initSchema() {
     CREATE INDEX IF NOT EXISTS idx_event_race_event ON event_race(event_id);
     CREATE INDEX IF NOT EXISTS idx_pointscore_member ON pointscore_entry(member_id);
     CREATE INDEX IF NOT EXISTS idx_time_history_member ON time_history(member_id);
+    CREATE INDEX IF NOT EXISTS idx_pb_change_member ON pb_change_log(member_id);
   `);
 }
 

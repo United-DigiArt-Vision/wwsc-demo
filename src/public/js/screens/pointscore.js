@@ -12,8 +12,16 @@
  * (UIT-M3-021/022). CSV export + print-friendly per view.
  */
 
-let psTab = 'event';        // event | month | season | swimmer | breaks | improvement | coverage | export
+// Bryan 2026-06-10 ("we have over engineered the pointscore — there are 3
+// main reports, as per the spreadsheet"): the screen now leads with exactly
+// those 3 main reports. The earlier detail views stay available, collapsed
+// under "More reports", so nothing previously accepted is lost.
+let psTab = 'r1';           // r1 | r2 | r3 | event | month | season | swimmer | breaks | improvement | coverage | export
 let psRules = null;         // cached /api/pointscore/rules
+let psMoreOpen = false;     // "More reports" group expanded?
+
+const PS_MAIN_TABS = ['r1', 'r2', 'r3'];
+const PS_MORE_TABS = ['event', 'month', 'season', 'swimmer', 'breaks', 'improvement', 'coverage', 'export'];
 
 async function renderPointscore() {
   const el = document.getElementById('content');
@@ -22,18 +30,35 @@ async function renderPointscore() {
     try { psRules = await API.get('/api/pointscore/rules'); } catch (e) { psRules = null; }
   }
   const banner = psRuleBanner();
-  const tabs = `
-    <div class="toolbar" style="gap:6px;flex-wrap:wrap">
-      ${['event', 'month', 'season', 'swimmer', 'breaks', 'improvement', 'coverage', 'export'].map(t => `
-        <button class="btn ${psTab === t ? 'btn-primary' : 'btn-outline'}" style="min-height:40px"
+  const mainTabs = PS_MAIN_TABS.map(t => `
+    <button class="btn ${psTab === t ? 'btn-primary' : 'btn-outline'}" style="min-height:48px;font-weight:700"
+      onclick="psSetTab('${t}')">${psTabLabel(t)}</button>`).join('');
+  const moreOpen = psMoreOpen || PS_MORE_TABS.includes(psTab);
+  const moreTabs = `
+    <div class="toolbar print-hide" style="gap:6px;flex-wrap:wrap">
+      ${mainTabs}
+      <button class="btn btn-outline" style="min-height:48px;color:var(--text-secondary)" onclick="psToggleMore()">${moreOpen ? '▴ Less' : '▾ More reports'}</button>
+    </div>
+    ${moreOpen ? `<div class="toolbar print-hide" style="gap:6px;flex-wrap:wrap;border-top:1px dashed #ccc;padding-top:8px">
+      ${PS_MORE_TABS.map(t => `
+        <button class="btn ${psTab === t ? 'btn-primary' : 'btn-outline'}" style="min-height:36px;font-size:13px;padding:4px 12px"
           onclick="psSetTab('${t}')">${psTabLabel(t)}</button>`).join('')}
-    </div>`;
-  el.innerHTML = `<h1>🎯 Pointscore & Reports</h1>${banner}${tabs}<div id="ps-body" class="print-area"><p>Loading…</p></div>`;
+    </div>` : ''}`;
+  el.innerHTML = `<h1>🎯 Pointscore & Reports</h1>${banner}${moreTabs}<div id="ps-body" class="print-area"><p>Loading…</p></div>`;
   await psRenderBody();
+}
+
+function psToggleMore() {
+  psMoreOpen = !(psMoreOpen || PS_MORE_TABS.includes(psTab));
+  if (!psMoreOpen && PS_MORE_TABS.includes(psTab)) psTab = 'r1';
+  renderPointscore();
 }
 
 function psTabLabel(t) {
   return {
+    r1: '1️⃣ Event Points (weekly)',
+    r2: '2️⃣ Total Pointscore',
+    r3: '3️⃣ Breakers',
     event: '📋 Per-Event',
     month: '🗓️ Monthly Winners',
     season: '🏆 Season Winners',
@@ -65,6 +90,9 @@ async function psRenderBody() {
   const body = document.getElementById('ps-body');
   if (!body) return;
   try {
+    if (psTab === 'r1') return await psRenderReport1(body);
+    if (psTab === 'r2') return await psRenderReport2(body);
+    if (psTab === 'r3') return await psRenderReport3(body);
     if (psTab === 'event') return await psRenderEvent(body);
     if (psTab === 'month') return await psRenderMonth(body);
     if (psTab === 'season') return await psRenderSeason(body);
@@ -76,6 +104,172 @@ async function psRenderBody() {
   } catch (e) {
     body.innerHTML = `<div class="card" style="color:#dc3545">Error: ${e.message}</div>`;
   }
+}
+
+// ── Bryan's 3 main reports (2026-06-10, as per the spreadsheet) ──────
+
+function psShortDate(d) {
+  const dt = new Date(d + 'T12:00:00');
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return dt.getDate() + ' ' + months[dt.getMonth()];
+}
+
+function psYearSelect(id, years, current) {
+  const list = (years && years.length > 0) ? years : [current];
+  return `<label>Season</label>
+    <select id="${id}" class="form-control" style="max-width:120px" onchange="psRenderBody()">
+      ${list.map(y => `<option value="${y}" ${y === current ? 'selected' : ''}>${y}</option>`).join('')}
+    </select>`;
+}
+
+// Report 1: pick a race type → all members, points per week + total.
+async function psRenderReport1(body) {
+  const typeSel = document.getElementById('ps-r1-type');
+  const yearSel = document.getElementById('ps-r1-year');
+  const rt = typeSel ? typeSel.value : '25m';
+  const yearQ = yearSel ? '?year=' + yearSel.value : '';
+  const data = await API.get('/api/pointscore/by-race-type/' + rt + yearQ);
+  const types = (data.availableRaceTypes && data.availableRaceTypes.length > 0) ? data.availableRaceTypes : [rt];
+  const controls = `
+    <div class="toolbar print-hide">
+      <label>Event</label>
+      <select id="ps-r1-type" class="form-control" style="max-width:220px" onchange="psRenderBody()">
+        ${types.map(t => `<option value="${t}" ${t === data.race_type ? 'selected' : ''}>${categoryDisplay(t)}</option>`).join('')}
+      </select>
+      ${psYearSelect('ps-r1-year', data.availableYears, data.year)}
+      <button class="btn btn-outline" onclick="psExportR1()">⬇️ CSV</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>`;
+  let table;
+  if (data.weeks.length === 0) {
+    table = `<div class="card">No completed ${categoryDisplay(data.race_type)} races in ${data.year} yet.</div>`;
+  } else {
+    table = `<div style="overflow-x:auto"><table class="data-table">
+      <thead><tr><th style="text-align:left">Swimmer</th>
+        ${data.weeks.map(w => `<th title="${w.date}">${psShortDate(w.date)}</th>`).join('')}
+        <th style="background:#0b3d91;color:#fff">Total</th></tr></thead>
+      <tbody>${data.members.map(m => `
+        <tr><td style="text-align:left;font-weight:600">${m.member_name}</td>
+          ${data.weeks.map(w => `<td style="text-align:center">${m.points[w.event_id] != null ? m.points[w.event_id] : ''}</td>`).join('')}
+          <td style="text-align:center;font-weight:700;background:#e3f2fd">${m.total}</td></tr>`).join('')}
+      </tbody></table></div>`;
+  }
+  body.innerHTML = controls + `<h2>Report 1 — ${categoryDisplay(data.race_type)} points per week (${data.year})</h2>
+    <p style="color:var(--text-secondary);font-size:13px">All members, points scored each week, season total. Empty cell = no points that week.</p>` + table;
+  const t2 = document.getElementById('ps-r1-type'); if (t2) t2.value = data.race_type;
+  const y2 = document.getElementById('ps-r1-year'); if (y2) y2.value = data.year;
+}
+
+function psExportR1() {
+  const rt = document.getElementById('ps-r1-type');
+  const y = document.getElementById('ps-r1-year');
+  if (rt) window.location.href = '/api/pointscore/by-race-type/' + rt.value + '/csv' + (y ? '?year=' + y.value : '');
+}
+
+// Report 2: single page — all members × event types, totals + grand total.
+async function psRenderReport2(body) {
+  const yearSel = document.getElementById('ps-r2-year');
+  const yearQ = yearSel ? '?year=' + yearSel.value : '';
+  const data = await API.get('/api/pointscore/total' + yearQ);
+  const controls = `
+    <div class="toolbar print-hide">
+      ${psYearSelect('ps-r2-year', data.availableYears, data.year)}
+      <button class="btn btn-outline" onclick="psExportR2()">⬇️ CSV</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>`;
+  let table;
+  if (data.raceTypes.length === 0) {
+    table = `<div class="card">No completed events in ${data.year} yet.</div>`;
+  } else {
+    // Season standing order: highest total first, zero rows alphabetical at the end.
+    const members = data.members.slice().sort((a, b) => b.total - a.total || a.member_name.localeCompare(b.member_name));
+    table = `<div style="overflow-x:auto"><table class="data-table">
+      <thead><tr><th>Rank</th><th style="text-align:left">Swimmer</th>
+        ${data.raceTypes.map(rt => `<th>${categoryDisplay(rt)}</th>`).join('')}
+        <th style="background:#0b3d91;color:#fff">TOTAL</th></tr></thead>
+      <tbody>${members.map((m, i) => `
+        <tr><td style="text-align:center">${i + 1}</td>
+          <td style="text-align:left;font-weight:600">${m.member_name}</td>
+          ${data.raceTypes.map(rt => `<td style="text-align:center">${m.byType[rt] != null ? m.byType[rt] : ''}</td>`).join('')}
+          <td style="text-align:center;font-weight:700;background:#e3f2fd">${m.total}</td></tr>`).join('')}
+      </tbody></table></div>`;
+  }
+  body.innerHTML = controls + `<h2>Report 2 — Total pointscore ${data.year}</h2>
+    <p style="color:var(--text-secondary);font-size:13px">All members, season total per event type and grand total of all events. Single page.</p>` + table;
+  const y2 = document.getElementById('ps-r2-year'); if (y2) y2.value = data.year;
+}
+
+function psExportR2() {
+  const y = document.getElementById('ps-r2-year');
+  window.location.href = '/api/pointscore/total/csv' + (y ? '?year=' + y.value : '');
+}
+
+// Report 3: breaker counts + breaker amounts on one report.
+async function psRenderReport3(body) {
+  const yearSel = document.getElementById('ps-r3-year');
+  const yearQ = yearSel ? '?year=' + yearSel.value : '';
+  const data = await API.get('/api/reports/breakers-summary' + yearQ);
+  const controls = `
+    <div class="toolbar print-hide">
+      ${psYearSelect('ps-r3-year', data.availableYears, data.year)}
+      <button class="btn btn-outline" onclick="psExportR3()">⬇️ CSV</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>`;
+  const anyLogged = data.rows.some(r => r.times_lowered > 0);
+  const hint = anyLogged ? '' : `
+    <div class="card print-hide" style="border-left:4px solid #1565c0;background:#e3f2fd">
+      <strong>ℹ️ No manual PB changes recorded yet in ${data.year}.</strong><br>
+      <span style="font-size:13px">This report tracks the manually changed times: when you lower a swimmer's PB in
+      Members → edit time, the change is counted here. The amount is the season-start PB minus the current PB.</span>
+    </div>`;
+  let main;
+  if (data.rows.length === 0) {
+    main = '<div class="card">No members with PB times yet.</div>';
+  } else {
+    let lastMember = null;
+    const rowsHtml = data.rows.map(r => {
+      const first = r.member_id !== lastMember;
+      lastMember = r.member_id;
+      return `<tr${first ? ' style="border-top:2px solid #90a4ae"' : ''}>
+        <td style="text-align:left;font-weight:${first ? 700 : 400};color:${first ? '#111' : '#999'}">${first ? r.member_name : '〃'}</td>
+        <td>${categoryDisplay(r.stroke)}</td>
+        <td style="text-align:center">${r.season_start != null ? formatWhole(r.season_start) : '—'}</td>
+        <td style="text-align:center">${r.current_pb != null ? formatWhole(r.current_pb) : '—'}</td>
+        <td style="text-align:center;font-weight:700;${r.times_lowered > 0 ? 'color:#2e7d32' : 'color:#bbb'}">${r.times_lowered}</td>
+        <td style="text-align:center;font-weight:700;${r.amount_lowered > 0 ? 'color:#2e7d32' : 'color:#bbb'}">${r.amount_lowered != null ? r.amount_lowered + 's' : '—'}</td>
+      </tr>`;
+    }).join('');
+    const totalsHtml = data.totals.map(t => `
+      <tr><td style="text-align:left;font-weight:600">${t.member_name}</td>
+        <td style="text-align:center;font-weight:700">${t.times_lowered}</td>
+        <td style="text-align:center;font-weight:700">${t.amount_lowered}s</td></tr>`).join('');
+    main = `
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <div style="flex:2;min-width:380px;overflow-x:auto">
+          <h3>Per stroke</h3>
+          <table class="data-table">
+            <thead><tr><th style="text-align:left">Swimmer</th><th>Stroke</th><th>Season Start</th><th>Current PB</th><th>Breaker Count</th><th>Breaker Amount</th></tr></thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </div>
+        <div style="flex:1;min-width:240px">
+          <h3>Totals per swimmer</h3>
+          <table class="data-table">
+            <thead><tr><th style="text-align:left">Swimmer</th><th>Count</th><th>Amount</th></tr></thead>
+            <tbody>${totalsHtml}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+  body.innerHTML = controls + `<h2>Report 3 — Breaker counts &amp; amounts (${data.year})</h2>
+    <p style="color:var(--text-secondary);font-size:13px">Count = how many times the PB came down (manual time changes) since season start.
+    Amount = season-start PB minus current PB. Whole seconds.</p>` + hint + main;
+  const y2 = document.getElementById('ps-r3-year'); if (y2) y2.value = data.year;
+}
+
+function psExportR3() {
+  const y = document.getElementById('ps-r3-year');
+  window.location.href = '/api/reports/breakers-summary/csv' + (y ? '?year=' + y.value : '');
 }
 
 // ── Per-event ───────────────────────────────────────────────────────
@@ -201,11 +395,12 @@ async function psRenderSwimmer(body) {
   if (!memberId) { body.innerHTML = sel + '<div class="card">No members.</div>'; return; }
   const data = await API.get('/api/members/' + memberId + '/pointscore');
   const table = data.contributions.length === 0
-    ? '<div class="card">No pointscore contributions yet for this swimmer.</div>'
+    ? '<div class="card">No race participations recorded yet for this swimmer.</div>'
     : `<table class="data-table"><thead><tr><th>Date</th><th>Race</th><th>Points</th></tr></thead>
-        <tbody>${data.contributions.map(c => `<tr><td>${formatDate(c.event_date)}</td><td>${c.race_type}</td><td>${c.points}</td></tr>`).join('')}</tbody></table>`;
+        <tbody>${data.contributions.map(c => `<tr><td>${formatDate(c.event_date)}</td><td>${categoryDisplay(c.race_type) || c.race_type}</td><td style="${c.points === 0 ? 'color:#999' : 'font-weight:700'}">${c.points}</td></tr>`).join('')}</tbody></table>`;
   body.innerHTML = sel + `<h2>${data.member.name} — total ${data.total} points</h2>
-    <p style="color:var(--text-secondary);font-size:13px">Per-event contribution detail.</p>` + table;
+    <p style="color:var(--text-secondary);font-size:13px">Every race this swimmer took part in.
+    0 points = swam, but no points awarded (e.g. relay/brace/medley teams outside 1st–3rd).</p>` + table;
   const s2 = document.getElementById('ps-swimmer-select'); if (s2) s2.value = memberId;
 }
 
