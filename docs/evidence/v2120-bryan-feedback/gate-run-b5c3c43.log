@@ -1,0 +1,47 @@
+=== FINAL GATE RUN @ b5c3c43 Wed Jun 10 22:15:16 CEST 2026 ===
+--- 1: v2120 unit ---
+
+24 PASS / 0 FAIL → docs/evidence/v2120-bryan-feedback/unit-results.json
+--- 2: pointscore unit ---
+
+=== UNIT TALLY: 15 PASS / 0 FAIL ===
+--- 3: slice2 unit ---
+
+=== M3 SLICE 2 UNIT/API TALLY: 7 PASS / 0 FAIL ===
+--- 4: isolation ---
+Pointscore rows only in enabled run: true
+VERDICT: PASS
+--- 5: v2120 browser ---
+
+=== V2.12.0 BROWSER TALLY: 10 PASS / 0 FAIL ===
+--- 6: M2-55 ---
+Total FAIL: 0
+Screenshots: /Users/dino/Library/CloudStorage/Dropbox/Dino-Balerion-Claude-Code/Projekte/0004_swimming-app/code/docs/screenshots/m2-time-history
+Evidence:    /Users/dino/Library/CloudStorage/Dropbox/Dino-Balerion-Claude-Code/Projekte/0004_swimming-app/code/docs/evidence
+--- 7: M2-100 ---
+=== TALLY ===
+PASS:           98
+NOT APPLICABLE: 2
+FAIL:           0
+BLOCKED:        0
+--- 8: history graphs ---
+  "NOT APPLICABLE": 1,
+  "FAIL": 0,
+  "BLOCKED": 0,
+  "PROVISIONAL": 0
+}
+--- 9: slice2 browser ---
+PASS  S2-UI13-console-clean  -  console/page errors=0
+
+=== M3 SLICE 2 BROWSER TALLY: 13 PASS / 0 FAIL ===
+--- 10: M3-120 FINAL ---
+
+=== TALLY ===
+{
+  "PASS": 118,
+  "FAIL": 0,
+  "BLOCKED": 0,
+  "NOT APPLICABLE": 2,
+  "CLIENT INPUT MISSING": 0
+}
+=== FINAL GATE RUN COMPLETE Wed Jun 10 23:10:21 CEST 2026 ===

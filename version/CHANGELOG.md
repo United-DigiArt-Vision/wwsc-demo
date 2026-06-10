@@ -16,7 +16,7 @@
 - **Timestamp:** 2026-06-10 21:30:00 Europe/Berlin
 - **App Version (from package.json):** 2.12.0
 - **Branch:** dev/v2.12.0-bryan-feedback
-- **RecordedCommit:** c69ec0a (gate commit; final SSOT-close commit follows)
+- **RecordedCommit:** b5c3c43 (gate commit; final SSOT-close commit follows)
 - **Editor:** Claude
 - **Trigger:** Bryan's 2026-06-10 feedback on v2.11.0 (archived: `../messages/2026-06-10-Bryan-inbound-v2110-feedback-defaults-relay-pointscore-simplification.md`).
 - **Changes:**
@@ -30,7 +30,7 @@
   - Member DELETE now clears `pointscore_entry` + `pb_change_log` (FK-violation fix).
   - New guarded seeder `scripts/seed-bryan-weekly-events.cjs`: 7 completed weekly events Apr–May 2026 incl. post-event manual PB updates; skips existing dates, never deletes, APPLY_LIVE-guard. Bryan's own 2026-06-10 event untouched.
   - Tests: new `scripts/test-v2120-bryan-feedback.cjs` (24 checks) + `scripts/e2e-v2120-bryan-feedback.cjs` (10 browser checks); slice2 suite version pin now reads package.json; tests/README updated.
-- **Proof:** `docs/evidence/v2120-bryan-feedback/` (unit-results.json, browser-records.json, gate-run-c69ec0a.log, V2.12.0-ABNAHMEPROTOKOLL.md, screenshots).
+- **Proof:** `docs/evidence/v2120-bryan-feedback/` (unit-results.json, browser-records.json, gate-run-b5c3c43.log, V2.12.0-ABNAHMEPROTOKOLL.md, screenshots).
 
 ---
 

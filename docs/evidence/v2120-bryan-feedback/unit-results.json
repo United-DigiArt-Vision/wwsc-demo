@@ -1,5 +1,5 @@
 {
-  "when": "2026-06-10T19:13:04.068Z",
+  "when": "2026-06-10T20:15:17.599Z",
   "pass": 24,
   "fail": 0,
   "results": [
@@ -61,17 +61,17 @@
     {
       "id": "UT-V12-11-swimmer-card-lists-0-point-brace",
       "status": "PASS",
-      "note": "Andrew Barnes brace row: {\"event_id\":2,\"event_date\":\"2026-03-14\",\"race_type\":\"25m_brace\",\"points\":0}"
+      "note": "Lisa Chen brace row: {\"event_id\":2,\"event_date\":\"2026-03-14\",\"race_type\":\"25m_brace\",\"points\":0}"
     },
     {
       "id": "UT-V12-12-swimmer-card-podium-brace-points",
       "status": "PASS",
-      "note": "Jenny Walsh brace row: {\"event_id\":2,\"event_date\":\"2026-03-14\",\"race_type\":\"25m_brace\",\"points\":5}"
+      "note": "Rob Stewart brace row: {\"event_id\":2,\"event_date\":\"2026-03-14\",\"race_type\":\"25m_brace\",\"points\":5}"
     },
     {
       "id": "UT-V12-13-swimmer-card-total-consistent",
       "status": "PASS",
-      "note": "total=10 sum=10"
+      "note": "total=12 sum=12"
     },
     {
       "id": "UT-V12-14-r3-count-two-reductions",

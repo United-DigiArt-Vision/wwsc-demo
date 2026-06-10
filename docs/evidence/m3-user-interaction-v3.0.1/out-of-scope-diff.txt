@@ -24,6 +24,8 @@ docs/evidence/m3-slice2/break-counts.csv
 docs/evidence/m3-slice2/browser-break-counts.csv
 docs/evidence/m3-slice2/browser-completed-categories.csv
 docs/evidence/m3-slice2/browser-downloaded-sqlite-db.db
+docs/evidence/m3-slice2/browser-downloaded-sqlite-db.db-shm
+docs/evidence/m3-slice2/browser-downloaded-sqlite-db.db-wal
 docs/evidence/m3-slice2/browser-total-improvements.csv
 docs/evidence/m3-slice2/completed-result-categories.csv
 docs/evidence/m3-slice2/downloaded-sqlite-db.db
@@ -53,6 +55,7 @@ docs/evidence/m3-user-interaction-v3.0.1/season-2026.csv
 docs/evidence/m3-user-interaction-v3.0.1/time-history.csv
 docs/evidence/v2120-bryan-feedback/V2.12.0-ABNAHMEPROTOKOLL.md
 docs/evidence/v2120-bryan-feedback/browser-records.json
+docs/evidence/v2120-bryan-feedback/gate-run-c69ec0a.log
 docs/evidence/v2120-bryan-feedback/unit-results.json
 docs/screenshots/m2-time-history/breaker-report-screen.png
 docs/screenshots/m2-time-history/calendar-after-archive.png
@@ -195,7 +198,6 @@ docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-013-desktop-graph.png
 docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-014-after-refresh.png
 docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-015-browser-back-forward.png
 docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-016-export-na.png
-docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-017-print-view.png
 docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-018-null-pb-row.png
 docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-019-data-correctness.png
 docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-020-a11y.png

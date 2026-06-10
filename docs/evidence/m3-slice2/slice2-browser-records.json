@@ -1,12 +1,12 @@
 {
   "baseline": {
     "branch": "dev/v2.12.0-bryan-feedback",
-    "commit": "c69ec0a",
+    "commit": "b5c3c43",
     "version": "2.12.0"
   },
   "apiVersion": {
     "version": "2.12.0",
-    "build": "2026-06-10T20:11:08.614Z"
+    "build": "2026-06-10T21:09:24.360Z"
   },
   "fixture": {
     "event": 1,
@@ -29,9 +29,9 @@
   "records": [
     {
       "id": "S2-UI1-reports-landing",
-      "status": "FAIL",
+      "status": "PASS",
       "screenshot": "docs/screenshots/m3-slice2/S2-UI1-reports-landing.png",
-      "note": "new reports tabs discoverable"
+      "note": "main reports on landing; previous tabs discoverable via More reports"
     },
     {
       "id": "S2-UI2-completed-categories",
@@ -65,7 +65,7 @@
     },
     {
       "id": "S2-UI7-db-download-valid",
-      "status": "FAIL",
+      "status": "PASS",
       "screenshot": "",
       "note": "browser fetch downloaded valid SQLite DB"
     },
@@ -108,7 +108,7 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3012/?cb=1781122270017",
+      "url": "http://127.0.0.1:3012/?cb=1781125765741",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ],

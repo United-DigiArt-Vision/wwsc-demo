@@ -1,11 +1,11 @@
 {
   "baseline": {
     "branch": "dev/v2.12.0-bryan-feedback",
-    "commit": "c69ec0a",
+    "commit": "b5c3c43",
     "pkgVersion": "2.12.0",
     "apiVersion": {
       "version": "2.12.0",
-      "build": "2026-06-10T19:14:05.281Z"
+      "build": "2026-06-10T20:16:19.741Z"
     }
   },
   "records": [
@@ -912,15 +912,15 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3004/?cb=1781118847197",
+      "url": "http://127.0.0.1:3004/?cb=1781122581826",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     },
     {
-      "url": "http://127.0.0.1:3004/?cb=1781118909256",
+      "url": "http://127.0.0.1:3004/?cb=1781122643060",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     },
     {
-      "url": "http://127.0.0.1:3004/?cb=1781118923576",
+      "url": "http://127.0.0.1:3004/?cb=1781122657867",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ]

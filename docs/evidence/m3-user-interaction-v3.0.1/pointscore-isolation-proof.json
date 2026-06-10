@@ -14,6 +14,6 @@
     "pointscoreOnlyInB": true,
     "verdict": "PASS"
   },
-  "canonADigestLen": 4495,
-  "canonBDigestLen": 4495
+  "canonADigestLen": 4489,
+  "canonBDigestLen": 4489
 }
