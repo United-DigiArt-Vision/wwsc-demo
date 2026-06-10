@@ -42,7 +42,7 @@
   {
     "id": "UT7-member-contribution",
     "status": "PASS",
-    "note": "member total == sum of contributions=12"
+    "note": "member total == sum of contributions=13"
   },
   {
     "id": "UT8-months-list",

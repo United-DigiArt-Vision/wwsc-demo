@@ -1,11 +1,11 @@
 {
   "baseline": {
     "branch": "dev/v2.11.0-m3-slice2-reports-export",
-    "commit": "cea5d39",
+    "commit": "641aa0e",
     "pkgVersion": "2.11.0",
     "apiVersion": {
       "version": "2.11.0",
-      "build": "2026-06-06T09:26:15.815Z"
+      "build": "2026-06-06T15:28:48.483Z"
     }
   },
   "records": [
@@ -192,7 +192,7 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3005/?cb=1780737976288",
+      "url": "http://127.0.0.1:3005/?cb=1780759729345",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ],

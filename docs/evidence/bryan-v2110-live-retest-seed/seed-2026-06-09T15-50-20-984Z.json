@@ -1,0 +1,1122 @@
+{
+  "base": "https://wwsc-demo.onrender.com",
+  "live": true,
+  "version": {
+    "version": "2.11.0",
+    "build": "2026-06-06T15:54:39.874Z"
+  },
+  "raceTypes": [
+    "25m",
+    "50m",
+    "75m",
+    "backstroke",
+    "breaststroke",
+    "butterfly",
+    "25m_relay",
+    "medley_relay",
+    "25m_brace",
+    "50m_brace"
+  ],
+  "created": {
+    "event_id": 1,
+    "date": "2026-06-06",
+    "races": [
+      {
+        "id": 1,
+        "race_type": "25m"
+      },
+      {
+        "id": 2,
+        "race_type": "50m"
+      },
+      {
+        "id": 3,
+        "race_type": "75m"
+      },
+      {
+        "id": 4,
+        "race_type": "backstroke"
+      },
+      {
+        "id": 5,
+        "race_type": "breaststroke"
+      },
+      {
+        "id": 6,
+        "race_type": "butterfly"
+      },
+      {
+        "id": 7,
+        "race_type": "25m_relay"
+      },
+      {
+        "id": 8,
+        "race_type": "medley_relay"
+      },
+      {
+        "id": 9,
+        "race_type": "25m_brace"
+      },
+      {
+        "id": 10,
+        "race_type": "50m_brace"
+      }
+    ],
+    "selectedMembers": [
+      {
+        "member_id": 22,
+        "name": "Andrew Barnes"
+      },
+      {
+        "member_id": 4,
+        "name": "Ben Chandler"
+      },
+      {
+        "member_id": 1,
+        "name": "Bryan Hesketh"
+      },
+      {
+        "member_id": 10,
+        "name": "David Hughes"
+      },
+      {
+        "member_id": 19,
+        "name": "Diane Foster"
+      },
+      {
+        "member_id": 2,
+        "name": "Felicia O'Brien"
+      },
+      {
+        "member_id": 3,
+        "name": "Glenne Murray"
+      },
+      {
+        "member_id": 16,
+        "name": "Greg Patterson"
+      },
+      {
+        "member_id": 21,
+        "name": "Helen Sharp"
+      },
+      {
+        "member_id": 18,
+        "name": "James Morton"
+      },
+      {
+        "member_id": 7,
+        "name": "Jenny Walsh"
+      },
+      {
+        "member_id": 11,
+        "name": "Karen Mitchell"
+      },
+      {
+        "member_id": 9,
+        "name": "Lisa Chen"
+      },
+      {
+        "member_id": 5,
+        "name": "Mark Thompson"
+      },
+      {
+        "member_id": 15,
+        "name": "Michelle Lee"
+      },
+      {
+        "member_id": 20,
+        "name": "Paul Nguyen"
+      },
+      {
+        "member_id": 8,
+        "name": "Peter Davidson"
+      },
+      {
+        "member_id": 12,
+        "name": "Rob Stewart"
+      }
+    ]
+  },
+  "verification": {
+    "coverage": {
+      "source": "event_race rows for finalized/completed, non-archived events with saved heat/relay results",
+      "rows": [
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "event_race_id": 1,
+          "race_type": "25m",
+          "category": "25m",
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "event_race_id": 9,
+          "race_type": "25m_brace",
+          "category": "25m brace",
+          "result_count": 18,
+          "team_count": 9
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "event_race_id": 7,
+          "race_type": "25m_relay",
+          "category": "relay",
+          "result_count": 18,
+          "team_count": 3
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "event_race_id": 2,
+          "race_type": "50m",
+          "category": "50m",
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "event_race_id": 10,
+          "race_type": "50m_brace",
+          "category": "50m brace",
+          "result_count": 18,
+          "team_count": 9
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "event_race_id": 3,
+          "race_type": "75m",
+          "category": "75m",
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "event_race_id": 4,
+          "race_type": "backstroke",
+          "category": "back / backstroke",
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "event_race_id": 5,
+          "race_type": "breaststroke",
+          "category": "breast / breaststroke",
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "event_race_id": 6,
+          "race_type": "butterfly",
+          "category": "butterfly",
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "event_race_id": 8,
+          "race_type": "medley_relay",
+          "category": "medley relay",
+          "result_count": 18,
+          "team_count": 6
+        }
+      ],
+      "summary": [
+        {
+          "race_type": "25m",
+          "category": "25m",
+          "completed_races": 1,
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "race_type": "25m_brace",
+          "category": "25m brace",
+          "completed_races": 1,
+          "result_count": 18,
+          "team_count": 9
+        },
+        {
+          "race_type": "25m_relay",
+          "category": "relay",
+          "completed_races": 1,
+          "result_count": 18,
+          "team_count": 3
+        },
+        {
+          "race_type": "50m",
+          "category": "50m",
+          "completed_races": 1,
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "race_type": "50m_brace",
+          "category": "50m brace",
+          "completed_races": 1,
+          "result_count": 18,
+          "team_count": 9
+        },
+        {
+          "race_type": "75m",
+          "category": "75m",
+          "completed_races": 1,
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "race_type": "backstroke",
+          "category": "back / backstroke",
+          "completed_races": 1,
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "race_type": "breaststroke",
+          "category": "breast / breaststroke",
+          "completed_races": 1,
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "race_type": "butterfly",
+          "category": "butterfly",
+          "completed_races": 1,
+          "result_count": 18,
+          "team_count": 0
+        },
+        {
+          "race_type": "medley_relay",
+          "category": "medley relay",
+          "completed_races": 1,
+          "result_count": 18,
+          "team_count": 6
+        }
+      ]
+    },
+    "breaks": {
+      "source": "time_history.is_break from finalized/completed, non-archived events only",
+      "overall": [
+        {
+          "member_id": 1,
+          "member_name": "Bryan Hesketh",
+          "break_count": 1
+        },
+        {
+          "member_id": 10,
+          "member_name": "David Hughes",
+          "break_count": 1
+        },
+        {
+          "member_id": 2,
+          "member_name": "Felicia O'Brien",
+          "break_count": 1
+        },
+        {
+          "member_id": 21,
+          "member_name": "Helen Sharp",
+          "break_count": 1
+        },
+        {
+          "member_id": 18,
+          "member_name": "James Morton",
+          "break_count": 1
+        },
+        {
+          "member_id": 9,
+          "member_name": "Lisa Chen",
+          "break_count": 1
+        }
+      ],
+      "by_event": [
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 1,
+          "member_name": "Bryan Hesketh",
+          "break_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 10,
+          "member_name": "David Hughes",
+          "break_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 2,
+          "member_name": "Felicia O'Brien",
+          "break_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 21,
+          "member_name": "Helen Sharp",
+          "break_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 18,
+          "member_name": "James Morton",
+          "break_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 9,
+          "member_name": "Lisa Chen",
+          "break_count": 1
+        }
+      ]
+    },
+    "improvements": {
+      "source": "time_history.time and time_history.previous_best; counted only when previous_best exists and current time is faster",
+      "unit": "centiseconds",
+      "overall": [
+        {
+          "member_id": 15,
+          "member_name": "Michelle Lee",
+          "total_improvement_cs": 270,
+          "improvement_count": 4
+        },
+        {
+          "member_id": 8,
+          "member_name": "Peter Davidson",
+          "total_improvement_cs": 250,
+          "improvement_count": 5
+        },
+        {
+          "member_id": 2,
+          "member_name": "Felicia O'Brien",
+          "total_improvement_cs": 245,
+          "improvement_count": 4
+        },
+        {
+          "member_id": 21,
+          "member_name": "Helen Sharp",
+          "total_improvement_cs": 245,
+          "improvement_count": 4
+        },
+        {
+          "member_id": 9,
+          "member_name": "Lisa Chen",
+          "total_improvement_cs": 245,
+          "improvement_count": 4
+        },
+        {
+          "member_id": 1,
+          "member_name": "Bryan Hesketh",
+          "total_improvement_cs": 215,
+          "improvement_count": 3
+        },
+        {
+          "member_id": 22,
+          "member_name": "Andrew Barnes",
+          "total_improvement_cs": 190,
+          "improvement_count": 3
+        },
+        {
+          "member_id": 19,
+          "member_name": "Diane Foster",
+          "total_improvement_cs": 190,
+          "improvement_count": 3
+        },
+        {
+          "member_id": 4,
+          "member_name": "Ben Chandler",
+          "total_improvement_cs": 170,
+          "improvement_count": 4
+        },
+        {
+          "member_id": 10,
+          "member_name": "David Hughes",
+          "total_improvement_cs": 160,
+          "improvement_count": 2
+        },
+        {
+          "member_id": 5,
+          "member_name": "Mark Thompson",
+          "total_improvement_cs": 160,
+          "improvement_count": 2
+        },
+        {
+          "member_id": 3,
+          "member_name": "Glenne Murray",
+          "total_improvement_cs": 110,
+          "improvement_count": 2
+        },
+        {
+          "member_id": 18,
+          "member_name": "James Morton",
+          "total_improvement_cs": 110,
+          "improvement_count": 2
+        },
+        {
+          "member_id": 7,
+          "member_name": "Jenny Walsh",
+          "total_improvement_cs": 90,
+          "improvement_count": 3
+        },
+        {
+          "member_id": 16,
+          "member_name": "Greg Patterson",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "member_id": 20,
+          "member_name": "Paul Nguyen",
+          "total_improvement_cs": 60,
+          "improvement_count": 2
+        }
+      ],
+      "by_event": [
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 1,
+          "member_name": "Bryan Hesketh",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 10,
+          "member_name": "David Hughes",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 2,
+          "member_name": "Felicia O'Brien",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 21,
+          "member_name": "Helen Sharp",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 18,
+          "member_name": "James Morton",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 9,
+          "member_name": "Lisa Chen",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 4,
+          "member_name": "Ben Chandler",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "25m",
+          "member_id": 8,
+          "member_name": "Peter Davidson",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "50m",
+          "member_id": 1,
+          "member_name": "Bryan Hesketh",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "50m",
+          "member_id": 10,
+          "member_name": "David Hughes",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "50m",
+          "member_id": 2,
+          "member_name": "Felicia O'Brien",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "50m",
+          "member_id": 21,
+          "member_name": "Helen Sharp",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "50m",
+          "member_id": 18,
+          "member_name": "James Morton",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "50m",
+          "member_id": 9,
+          "member_name": "Lisa Chen",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "50m",
+          "member_id": 4,
+          "member_name": "Ben Chandler",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "50m",
+          "member_id": 8,
+          "member_name": "Peter Davidson",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "75m",
+          "member_id": 22,
+          "member_name": "Andrew Barnes",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "75m",
+          "member_id": 5,
+          "member_name": "Mark Thompson",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "75m",
+          "member_id": 15,
+          "member_name": "Michelle Lee",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "75m",
+          "member_id": 4,
+          "member_name": "Ben Chandler",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "75m",
+          "member_id": 19,
+          "member_name": "Diane Foster",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "75m",
+          "member_id": 8,
+          "member_name": "Peter Davidson",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "75m",
+          "member_id": 7,
+          "member_name": "Jenny Walsh",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "75m",
+          "member_id": 20,
+          "member_name": "Paul Nguyen",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "backstroke",
+          "member_id": 3,
+          "member_name": "Glenne Murray",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "backstroke",
+          "member_id": 21,
+          "member_name": "Helen Sharp",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "backstroke",
+          "member_id": 15,
+          "member_name": "Michelle Lee",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "backstroke",
+          "member_id": 1,
+          "member_name": "Bryan Hesketh",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "backstroke",
+          "member_id": 2,
+          "member_name": "Felicia O'Brien",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "backstroke",
+          "member_id": 9,
+          "member_name": "Lisa Chen",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "backstroke",
+          "member_id": 22,
+          "member_name": "Andrew Barnes",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "backstroke",
+          "member_id": 7,
+          "member_name": "Jenny Walsh",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "breaststroke",
+          "member_id": 22,
+          "member_name": "Andrew Barnes",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "breaststroke",
+          "member_id": 5,
+          "member_name": "Mark Thompson",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "breaststroke",
+          "member_id": 8,
+          "member_name": "Peter Davidson",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "breaststroke",
+          "member_id": 4,
+          "member_name": "Ben Chandler",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "breaststroke",
+          "member_id": 19,
+          "member_name": "Diane Foster",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "breaststroke",
+          "member_id": 15,
+          "member_name": "Michelle Lee",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "breaststroke",
+          "member_id": 3,
+          "member_name": "Glenne Murray",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "breaststroke",
+          "member_id": 20,
+          "member_name": "Paul Nguyen",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "butterfly",
+          "member_id": 19,
+          "member_name": "Diane Foster",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "butterfly",
+          "member_id": 16,
+          "member_name": "Greg Patterson",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "butterfly",
+          "member_id": 9,
+          "member_name": "Lisa Chen",
+          "total_improvement_cs": 80,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "butterfly",
+          "member_id": 21,
+          "member_name": "Helen Sharp",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "butterfly",
+          "member_id": 15,
+          "member_name": "Michelle Lee",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "butterfly",
+          "member_id": 8,
+          "member_name": "Peter Davidson",
+          "total_improvement_cs": 55,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "butterfly",
+          "member_id": 2,
+          "member_name": "Felicia O'Brien",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        },
+        {
+          "event_id": 1,
+          "event_date": "2026-06-06",
+          "stroke": "butterfly",
+          "member_id": 7,
+          "member_name": "Jenny Walsh",
+          "total_improvement_cs": 30,
+          "improvement_count": 1
+        }
+      ]
+    },
+    "events": [
+      {
+        "id": 1,
+        "date": "2026-06-06",
+        "status": "completed",
+        "created_at": "2026-06-09T15:50:23.286Z",
+        "standard_event": "ordinary_swim",
+        "special_event": "medley_relay",
+        "archived": 0,
+        "present_count": 18,
+        "race_count": 10
+      }
+    ],
+    "current": null,
+    "timeHistoryRows": 108,
+    "pointscoreSeason": {
+      "period": "2026",
+      "periodType": "season",
+      "seasonBoundary": "calendar year (working default)",
+      "events": [
+        {
+          "id": 1,
+          "date": "2026-06-06"
+        }
+      ],
+      "standings": [
+        {
+          "member_id": 2,
+          "member_name": "Felicia O'Brien",
+          "total": 43,
+          "events_counted": 1
+        },
+        {
+          "member_id": 20,
+          "member_name": "Paul Nguyen",
+          "total": 41,
+          "events_counted": 1
+        },
+        {
+          "member_id": 9,
+          "member_name": "Lisa Chen",
+          "total": 36,
+          "events_counted": 1
+        },
+        {
+          "member_id": 5,
+          "member_name": "Mark Thompson",
+          "total": 35,
+          "events_counted": 1
+        },
+        {
+          "member_id": 12,
+          "member_name": "Rob Stewart",
+          "total": 34,
+          "events_counted": 1
+        },
+        {
+          "member_id": 1,
+          "member_name": "Bryan Hesketh",
+          "total": 33,
+          "events_counted": 1
+        },
+        {
+          "member_id": 16,
+          "member_name": "Greg Patterson",
+          "total": 32,
+          "events_counted": 1
+        },
+        {
+          "member_id": 18,
+          "member_name": "James Morton",
+          "total": 30,
+          "events_counted": 1
+        },
+        {
+          "member_id": 19,
+          "member_name": "Diane Foster",
+          "total": 29,
+          "events_counted": 1
+        },
+        {
+          "member_id": 21,
+          "member_name": "Helen Sharp",
+          "total": 29,
+          "events_counted": 1
+        },
+        {
+          "member_id": 15,
+          "member_name": "Michelle Lee",
+          "total": 29,
+          "events_counted": 1
+        },
+        {
+          "member_id": 8,
+          "member_name": "Peter Davidson",
+          "total": 29,
+          "events_counted": 1
+        },
+        {
+          "member_id": 22,
+          "member_name": "Andrew Barnes",
+          "total": 27,
+          "events_counted": 1
+        },
+        {
+          "member_id": 4,
+          "member_name": "Ben Chandler",
+          "total": 26,
+          "events_counted": 1
+        },
+        {
+          "member_id": 7,
+          "member_name": "Jenny Walsh",
+          "total": 26,
+          "events_counted": 1
+        },
+        {
+          "member_id": 11,
+          "member_name": "Karen Mitchell",
+          "total": 25,
+          "events_counted": 1
+        },
+        {
+          "member_id": 10,
+          "member_name": "David Hughes",
+          "total": 24,
+          "events_counted": 1
+        },
+        {
+          "member_id": 3,
+          "member_name": "Glenne Murray",
+          "total": 24,
+          "events_counted": 1
+        }
+      ]
+    },
+    "dbExport": {
+      "accept-ranges": "bytes",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "cache-control": "public, max-age=0",
+      "cf-cache-status": "DYNAMIC",
+      "cf-ray": "a0914c28280d0b0c-FRA",
+      "connection": "close",
+      "content-disposition": "attachment; filename=\"wwsc-sqlite-db-v2.11.0-2026-06-09T15-51-24.db\"",
+      "content-length": "94208",
+      "content-type": "application/octet-stream",
+      "date": "Tue, 09 Jun 2026 15:51:24 GMT",
+      "etag": "W/\"17000-19ead14d57d\"",
+      "last-modified": "Tue, 09 Jun 2026 15:51:24 GMT",
+      "rndr-id": "1f7930d5-a416-499a",
+      "server": "cloudflare",
+      "x-powered-by": "Express",
+      "x-render-origin-server": "Render"
+    },
+    "checks": [
+      {
+        "id": "live-version-2.11.0",
+        "pass": true
+      },
+      {
+        "id": "completed-event-visible",
+        "pass": true
+      },
+      {
+        "id": "no-current-event-after-complete",
+        "pass": true
+      },
+      {
+        "id": "all-requested-categories-covered",
+        "pass": true
+      },
+      {
+        "id": "break-count-report-populated",
+        "pass": true
+      },
+      {
+        "id": "improvement-report-populated",
+        "pass": true
+      },
+      {
+        "id": "time-history-populated-for-graphs",
+        "pass": true
+      },
+      {
+        "id": "season-pointscore-populated",
+        "pass": true
+      },
+      {
+        "id": "db-export-downloadable",
+        "pass": true
+      }
+    ]
+  }
+}

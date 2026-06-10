@@ -1,5 +1,27 @@
 # CURRENT_STATE
 
+## CURRENT (2026-06-09 17:55 CEST) — v2.11.0 live demo re-seeded + verified for Bryan retest
+
+**Version (from live `/api/version`):** 2.11.0
+**Date:** 2026-06-09
+**Timestamp:** 2026-06-09 18:18 Europe/Berlin
+**LastEditor:** Balerion
+**WorkingTreeStatus:** Dino explicitly authorized correcting the empty WWSC live demo test data after Bryan reported that he could not test. Balerion ran the guarded live retest seeder against `https://wwsc-demo.onrender.com` with `APPLY_LIVE=1`. The seeder does not delete/reset data; it creates a deterministic completed demo event through public app APIs and verifies the M3 retest surface. Result: **9 PASS / 0 FAIL**. Live event `1`, date `2026-06-06`, status `completed`, 18 present swimmers, 10 race categories. Independent read-only verification after seeding confirmed `/api/events?archived=1` contains the completed event; `/api/pointscore/months` returns `["2026-06"]`; season standings contain 18 swimmers; completed-category coverage includes 25m, 50m, 75m, backstroke, breaststroke, butterfly, 25m relay, medley relay, 25m brace, 50m brace; break-count report has 6 overall / 6 by-event rows; improvement report has 16 overall / 48 by-event rows; `/api/export/db` returns `200 application/octet-stream` with a 94,208 byte SQLite DB. Browser check confirmed Season Calendar, Event Details, Pointscore, Break Counts, Improvements, Completed Categories, and DB & Graphs views are populated. Bryan-expectation proof matrix also confirms relay/team 5/4/3 and graph-source data (`108` `time_history` rows). Evidence: `docs/evidence/bryan-v2110-live-retest-seed/seed-2026-06-09T15-50-20-984Z.json`, `docs/evidence/bryan-v2110-live-retest-seed/LIVE-RESEED-VERIFY-2026-06-09.md`, and `docs/evidence/bryan-v2110-live-retest-seed/BRYAN-EXPECTATION-PROOF-2026-06-09.md`. Dino confirmed he sent Bryan the correction update at 2026-06-09 18:18 Europe/Berlin; sent-confirmed record: `../messages/2026-06-09-outgoing-to-bryan-live-demo-data-corrected-sent-confirmed.md`.
+**Milestone status:** M3 is still not accepted until Bryan retests/signs off, but Bryan's immediate "empty demo data" blocker is corrected, verified, and communicated to Bryan. Current gate: wait for Bryan's next reply; archive it in full before interpretation. Customer-facing boundary: say the demo test dataset was restored/re-created and verified; do **not** claim old missing demo events were recovered. Future production persistence/backups remain a separate production setup topic, not a blocker to demo retest.
+
+---
+
+## PREVIOUS (2026-06-09) — v2.11.0 live, but demo test data missing / Bryan blocked
+
+**Version (from live `/api/version`):** 2.11.0
+**Date:** 2026-06-09
+**Timestamp:** 2026-06-09 17:45 Europe/Berlin
+**LastEditor:** Balerion
+**WorkingTreeStatus:** Dino relayed Bryan's latest Upwork message screenshot on 2026-06-09. Bryan reports that the Season Calendar is empty, asks to confirm all test data is available, says he is unable to test until it is there, is concerned that data gets lost whenever he creates a new event, asks how this will work in the future, references the 5 June completion date, and wants to test so the project can be signed off and future improvements / other clubs can be discussed. Balerion archived the inbound as `../messages/2026-06-09-Bryan-inbound-test-data-missing-empty-calendar.md`. Immediate read-only live verification confirmed `https://wwsc-demo.onrender.com/api/version` returns `2.11.0`, but `/api/events`, `/api/events?archived=1`, `/api/pointscore/months`, and `/api/reports/break-counts` are empty. Interpretation: v2.11.0 remains deployed, but the live demo database currently has no visible test events/report data, so Bryan's retest is blocked from the user's point of view.
+**Milestone status:** M3 is not accepted. Current gate: restore or otherwise re-provide complete test data before asking Bryan to retest; then explain the future production data plan separately from the hosted demo environment. Do not claim the old missing demo events were recovered. Do not mutate live data, deploy, or send client communication without Dino's explicit authorization.
+
+---
+
 ## CURRENT (2026-06-06) — v2.11.0 M3 Slice 2 Reports / DB Export / All Event Categories — DEPLOYED LIVE + PROVEN (authoritative top block)
 
 **Version (from `package.json`):** 2.11.0

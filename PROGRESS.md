@@ -1,9 +1,28 @@
 # PROGRESS — WWSC v2.11.0 M3 Slice 2 Reports / Export
 
+## ✅ LIVE DEMO DATA CORRECTED FOR BRYAN RETEST (2026-06-09 17:55 CEST)
+
+- [x] Bryan's 2026-06-09 empty Season Calendar / missing report-data blocker reproduced read-only on live demo: `v2.11.0` was live, but events/months/break report were empty.
+- [x] Dino explicitly authorized live correction.
+- [x] Ran guarded live seeder: `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-m3-slice2-live-retest.cjs`.
+- [x] Seeder result: **9 PASS / 0 FAIL**.
+- [x] Created completed live demo event `1`, date `2026-06-06`, 18 present swimmers, 10 race categories.
+- [x] Independent API verification: Season Calendar data, pointscore month/season, completed categories, break counts, improvements, time-history/graph source, and DB export are populated.
+- [x] Browser visibility check: Season Calendar, Event Details, Pointscore, Break Counts, Improvements, Completed Categories, and DB & Graphs are visible/populated.
+- [x] Evidence: `docs/evidence/bryan-v2110-live-retest-seed/seed-2026-06-09T15-50-20-984Z.json`.
+- [x] Human-readable note: `docs/evidence/bryan-v2110-live-retest-seed/LIVE-RESEED-VERIFY-2026-06-09.md`.
+- [x] Proof matrix: `docs/evidence/bryan-v2110-live-retest-seed/BRYAN-EXPECTATION-PROOF-2026-06-09.md`.
+- [x] Dino sent Bryan the correction update at 2026-06-09 18:18 CEST.
+- [x] Sent-confirmed record: `../messages/2026-06-09-outgoing-to-bryan-live-demo-data-corrected-sent-confirmed.md`.
+
+Customer-facing boundary: say the demo test dataset was restored/re-created and verified; do not claim the old missing demo events were recovered.
+
+Current gate: wait for Bryan's next reply. Archive full inbound first, then classify before any code/data/client-response action.
+
 ## 🎯 AKTUELLER STATUS
-Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned; v2.11.0 deployed live on Render on 2026-06-06 after Balerion re-proved Bryan's 2026-06-05 latest expectations.
-Schritt: Bryan's 2026-06-05 latest expectations are closed with proof, live deployment, seeded live retest data, and Dino/Nedim sent the v2.11.0 delivery update to Bryan on 2026-06-06 18:58 Europe/Berlin.
-Blockiert: Nothing is NOT PROVEN for Bryan's 2026-06-05 latest expectations. Direct Render disk/backups remain not inspectable from current tooling, so do not claim original old demo events were recovered. Current gate: wait for Bryan's retest/acceptance/issue details and archive the full reply before interpretation.
+Phase: M2 v2.9.0 released/paid by Bryan; M3 commissioned; v2.11.0 deployed live and Bryan's empty-demo-data blocker corrected/re-verified on 2026-06-09.
+Schritt: Waiting for Bryan's retest response after Dino/Nedim sent the live demo data correction update on 2026-06-09 18:18 Europe/Berlin.
+Blockiert: Waiting for Bryan. Direct Render disk/backups remain not inspectable from current tooling, so do not claim original old demo events were recovered. Production persistence/backups remain separate future production setup.
 
 ## 📤 BRYAN DELIVERY SENT — v2.11.0 / M3 Slice 2 (2026-06-06 18:58 Europe/Berlin)
 

@@ -1,8 +1,8 @@
-# Baseline branch=dev/v2.11.0-m3-slice2-reports-export commit=cea5d39 pkg=2.11.0
+# Baseline branch=dev/v2.11.0-m3-slice2-reports-export commit=641aa0e pkg=2.11.0
 # Server http://127.0.0.1:3005 DB /tmp/wwsc-m3-graphs-test/wwsc.db
-# Started 2026-06-06T09:26:15.712Z
+# Started 2026-06-06T15:28:48.347Z
 TC  |  STATUS  |  AREA  |  SCREENSHOT  |  VISIBLE_EVIDENCE
-# /api/version={"version":"2.11.0","build":"2026-06-06T09:26:15.815Z"}
+# /api/version={"version":"2.11.0","build":"2026-06-06T15:28:48.483Z"}
 # memberA id=22 (4 PB-break rows)
 # memberB id=4 (1 row, sparse)
 # memberC id=1 (no rows, empty)
@@ -27,6 +27,6 @@ UIT-M3-017  |  PASS  |  History graphs  |  docs/screenshots/m3-user-interaction-
 UIT-M3-018  |  PASS  |  History graphs  |  docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-018-null-pb-row.png  |  SVG contains no NaN / undefined / null tokens (defensive rendering for null PB rows)
 UIT-M3-019  |  PASS  |  History graphs  |  docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-019-data-correctness.png  |  Exact point↔row mapping on (stroke,date,time,previous_best,is_break): rendered=6, api=6, exactMatch=true
 UIT-M3-020  |  PASS  |  History graphs  |  docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-020-a11y.png  |  type focusable=true, stroke reachable=true, svg role=img, svg aria-label=Time-trend graph
-# Finished 2026-06-06T09:26:39.782Z
+# Finished 2026-06-06T15:29:12.830Z
 # Tally: {"PASS":19,"NOT APPLICABLE":1,"FAIL":0,"BLOCKED":0,"PROVISIONAL":0}
 # Console errors (favicon filtered): 0

@@ -1,11 +1,11 @@
 {
   "baseline": {
     "branch": "dev/v2.11.0-m3-slice2-reports-export",
-    "commit": "cea5d39",
+    "commit": "641aa0e",
     "pkg": "2.11.0",
     "apiVersion": {
       "version": "2.11.0",
-      "build": "2026-06-06T09:34:33.367Z"
+      "build": "2026-06-06T15:34:19.134Z"
     }
   },
   "records": [
@@ -673,13 +673,13 @@
       "id": "UIT-M3-111",
       "status": "PASS",
       "shot": "",
-      "note": "M2 55-case runner — fresh log @cea5d39 (/tmp/m3p-m2-55.log)"
+      "note": "M2 55-case runner — fresh log @641aa0e (/tmp/m3p-m2-55.log)"
     },
     {
       "id": "UIT-M3-112",
       "status": "PASS",
       "shot": "",
-      "note": "M2 100-case runner — fresh log @cea5d39 (/tmp/m3p-m2-100.log)"
+      "note": "M2 100-case runner — fresh log @641aa0e (/tmp/m3p-m2-100.log)"
     },
     {
       "id": "UIT-M3-113",
@@ -732,7 +732,7 @@
   ],
   "consoleErrors": [
     {
-      "url": "http://127.0.0.1:3011/?cb=1780738474148",
+      "url": "http://127.0.0.1:3011/?cb=1780760059732",
       "msg": "Failed to load resource: the server responded with a status of 404 (Not Found)"
     }
   ],
