@@ -61,9 +61,13 @@ async function viewEventDetails(eventId) {
         // R14: Each heat gets its own block
         for (const h of race.heats) {
           const lanes = (h.lanes || []).filter(l => l.finish_time != null);
-          lanes.sort((a, b) => (a.place || a.manual_place || 99) - (b.place || b.manual_place || 99));
+          // v2.12.0: manual place wins over auto place — same precedence as
+          // Results, Readout, pointscore (COALESCE(manual_place, place)) and
+          // the event report. Was auto-first here, contradicting the official
+          // result when an operator had overridden a placing.
+          lanes.sort((a, b) => (a.manual_place || a.place || 99) - (b.manual_place || b.place || 99));
           const top3 = lanes.slice(0, 3).map(l => {
-            const place = l.place || l.manual_place;
+            const place = l.manual_place || l.place;
             return `<span style="margin-right:12px">${place ? ordinal(place) + ': ' : ''}${l.name} (${formatTime(l.finish_time)})</span>`;
           }).join('');
           racesHtml += `<li style="padding:4px 0"><strong>${label} - Heat ${h.heat_number}</strong><br><span style="font-size:13px;color:#94a3b8">${top3 || 'No results'}</span></li>`;
