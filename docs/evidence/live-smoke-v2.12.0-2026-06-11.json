@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-06-11T07:31:00Z",
+  "baseUrl": "https://wwsc-demo.onrender.com",
+  "version": {
+    "status": 200,
+    "body": {
+      "version": "2.12.0",
+      "build": "2026-06-11T07:28:01.137Z"
+    }
+  },
+  "readOnlySmoke": [
+    { "path": "/", "status": 200 },
+    { "path": "/api/version", "status": 200 },
+    { "path": "/api/members", "status": 200 },
+    { "path": "/api/events", "status": 200 },
+    { "path": "/api/events?archived=1", "status": 200 },
+    { "path": "/api/pointscore/total", "status": 200 },
+    { "path": "/api/reports/breakers-summary", "status": 200 },
+    { "path": "/api/pointscore/by-race-type/25m", "status": 200 },
+    { "path": "/api/reports/event-coverage", "status": 200 },
+    { "path": "/api/reports/break-counts", "status": 200 },
+    { "path": "/api/reports/improvements", "status": 200 }
+  ],
+  "postSeedVerification": {
+    "completedEvents": 7,
+    "completedDates": [
+      "2026-05-30",
+      "2026-05-23",
+      "2026-05-16",
+      "2026-05-09",
+      "2026-05-02",
+      "2026-04-25",
+      "2026-04-18"
+    ],
+    "pointscoreTotal": "populated",
+    "pointscoreByRaceType25m": "5 weeks",
+    "breakersSummary": "populated",
+    "months": ["2026-05", "2026-04"],
+    "weeklySeedEvidence": "docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T07-29-10-656Z.json"
+  }
+}

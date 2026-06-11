@@ -11,6 +11,26 @@
 
 ---
 
+## 2026-06-11 — release: v2.12.0 Render deploy + live weekly seed
+- **Date:** 2026-06-11
+- **Timestamp:** 2026-06-11 09:31:00 Europe/Berlin
+- **App Version (from package.json):** 2.12.0
+- **Branch:** main
+- **RecordedCommit:** d019a82 (`docs: mark v2.12.0 stable release candidate`)
+- **Tag:** v2.12.0
+- **Editor:** Balerion
+- **Changes:**
+  - Fast-forwarded `main` from `origin/main@ea36c1c` to the Balerion-accepted v2.12.0 branch (`32edc06`), then added `STABLE.md` release anchor commit `d019a82`.
+  - Pushed `main` and tag `v2.12.0` to GitHub.
+  - Render live `/api/version` returned `{"version":"2.12.0","build":"2026-06-11T07:28:01.137Z"}`.
+  - Read-only live smoke passed 11/11 HTTP checks.
+  - Ran authorized live weekly seed: `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-weekly-events.cjs`.
+  - Live seed created 7 completed weekly events (`2026-04-18` through `2026-05-30`) and passed 9/9 self-checks.
+  - Evidence: `docs/evidence/live-smoke-v2.12.0-2026-06-11.json` and `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T07-29-10-656Z.json`.
+  - Customer message remains Dino-send only; Balerion prepared copy, did not send to Bryan.
+
+---
+
 ## 2026-06-11 — fix: Balerion-ReQA-Findings (Harness, Gate-Robustheit, echte Assertions, Dep-Audit)
 - **Date:** 2026-06-11
 - **Timestamp:** 2026-06-11 09:10:00 Europe/Berlin

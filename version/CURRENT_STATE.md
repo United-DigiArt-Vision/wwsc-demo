@@ -1,5 +1,17 @@
 # CURRENT_STATE
 
+## CURRENT (2026-06-11 09:31 CEST) — v2.12.0 deployed live + weekly demo seed verified
+
+**Version (from `package.json`):** 2.12.0
+**Branch:** main
+**Date:** 2026-06-11
+**Timestamp:** 2026-06-11 09:31:00 Europe/Berlin
+**LastEditor:** Balerion
+**WorkingTreeStatus:** Dino authorized deploy. Balerion fast-forwarded `main` from `origin/main@ea36c1c` to the Balerion-accepted v2.12.0 branch (`32edc06`), added `STABLE.md` release anchor commit `d019a82`, tagged `v2.12.0`, pushed `main` and tag to GitHub, and verified Render live `/api/version={"version":"2.12.0","build":"2026-06-11T07:28:01.137Z"}`. Read-only live smoke passed 11/11 HTTP checks. Authorized live weekly seed ran with `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-weekly-events.cjs`, created 7 completed weekly events and passed 9/9 self-checks. Evidence: `docs/evidence/live-smoke-v2.12.0-2026-06-11.json`, `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T07-29-10-656Z.json`.
+**Milestone status:** v2.12.0 is live and seeded for Bryan retest. Balerion has prepared customer copy for Dino/Nedim to send; Balerion did not contact Bryan.
+
+---
+
 ## CURRENT (2026-06-11 09:10 CEST) — Balerion-ReQA-Findings behoben, Gates grün @ 8d2fc08 — bereit für finale Abnahme
 
 **Version (from `package.json`):** 2.12.0
