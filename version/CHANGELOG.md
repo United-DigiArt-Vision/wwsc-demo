@@ -11,6 +11,22 @@
 
 ---
 
+## 2026-06-11 — comms: v2.12.0 feedback response sent to Bryan
+- **Date:** 2026-06-11
+- **Timestamp:** 2026-06-11 09:46:00 Europe/Berlin
+- **App Version (from package.json):** 2.12.0
+- **Branch:** main
+- **RecordedCommit:** local docs commit after entry; resolve with `git rev-parse --short HEAD` (`docs: record v2.12.0 Bryan send confirmation`)
+- **Editor:** Balerion
+- **Changes:**
+  - Dino/Nedim confirmed the Upwork message to Bryan was sent at visible screenshot time 09:44 CEST.
+  - Archived sent-confirmed record: `../messages/2026-06-11-outgoing-to-bryan-v2120-feedback-response-sent-confirmed.md`.
+  - Archived screenshot evidence under `../messages/attachments/2026-06-11-v2120-sent-to-bryan-confirmation/`.
+  - Current gate is now waiting for Bryan retest/feedback/acceptance.
+  - Operational boundary for the next reply: archive full inbound first; reproduce any reported defect against live v2.12.0 and the seeded events before code changes.
+
+---
+
 ## 2026-06-11 — release: v2.12.0 Render deploy + live weekly seed
 - **Date:** 2026-06-11
 - **Timestamp:** 2026-06-11 09:31:00 Europe/Berlin

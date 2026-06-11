@@ -4,7 +4,7 @@
 - **Tag:** v2.12.0
 - **Branch:** main
 - **Date:** 2026-06-11
-- **Release status:** live verified on Render; weekly Bryan demo seed applied and verified.
+- **Release status:** live verified on Render; weekly Bryan demo seed applied and verified; v2.12.0 feedback response sent to Bryan by Dino/Nedim on 2026-06-11 09:44 CEST.
 - **Release source commit before stable-doc commit:** 32edc06 (`docs: SSOT close — Balerion ReQA findings round green @ 8d2fc08`)
 - **Current main tip after live evidence/docs:** resolve with `git rev-parse --short origin/main`.
 - **Implementation branch:** dev/v2.12.0-bryan-feedback
@@ -14,6 +14,8 @@
 - **Browser/API verification:** read-only live smoke passed 11/11 HTTP checks: root app, version, members, current events, completed events, total pointscore, breakers summary, race-type pointscore, event coverage, break counts and improvements.
 - **Live weekly seed verification:** `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-weekly-events.cjs` created 7 completed weekly events and passed 9/9 self-checks. Completed dates visible live: 2026-04-18, 2026-04-25, 2026-05-02, 2026-05-09, 2026-05-16, 2026-05-23, 2026-05-30.
 - **Live smoke evidence:** `docs/evidence/live-smoke-v2.12.0-2026-06-11.json`; weekly seed evidence: `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T07-29-10-656Z.json`.
+- **Customer sent-confirmed record:** `../messages/2026-06-11-outgoing-to-bryan-v2120-feedback-response-sent-confirmed.md`; screenshots: `../messages/attachments/2026-06-11-v2120-sent-to-bryan-confirmation/`.
+- **Current customer gate:** waiting for Bryan retest/feedback/acceptance.
 
 ## What's in v2.12.0
 

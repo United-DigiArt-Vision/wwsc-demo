@@ -1,6 +1,18 @@
 # CURRENT_STATE
 
-## CURRENT (2026-06-11 09:31 CEST) — v2.12.0 deployed live + weekly demo seed verified
+## CURRENT (2026-06-11 09:46 CEST) — v2.12.0 sent to Bryan; waiting for retest/reply
+
+**Version (from `package.json`):** 2.12.0
+**Branch:** main
+**Date:** 2026-06-11
+**Timestamp:** 2026-06-11 09:46:00 Europe/Berlin
+**LastEditor:** Balerion
+**WorkingTreeStatus:** v2.12.0 was already deployed live and weekly demo data was seeded/verified. Dino/Nedim confirmed he sent Bryan the v2.12.0 feedback response on Upwork at 09:44 CEST (Discord confirmation 09:46 CEST). Sent-confirmed archive: `../messages/2026-06-11-outgoing-to-bryan-v2120-feedback-response-sent-confirmed.md`; screenshot evidence: `../messages/attachments/2026-06-11-v2120-sent-to-bryan-confirmation/01-upwork-outgoing-v2120-top.png`, `02-upwork-outgoing-v2120-middle.png`, `03-upwork-outgoing-v2120-bottom.png`. The sent message tells Bryan that the demo is now v2.12.0, links `https://wwsc-demo.onrender.com/`, summarizes the seven completed weekly demo events, Select All default Y, Quick Tap Placing, compact relay layout, three main Pointscore reports, 25m brace visibility, expanded event completion report, and asks two preference questions: Total Pointscore sort order and Breakers-report interpretation. Screenshot nuance: Upwork/mobile formatting collapsed some list spacing; content substance matches the prepared draft.
+**Milestone status:** M3/v2.12.0 feedback package is delivered to Bryan for retest. Current gate: wait for Bryan's next reply; archive it in full before interpretation. If Bryan reports a defect, reproduce on live v2.12.0 with the seeded events before code changes. If Bryan answers preferences, classify them as possible v2.12.x polish unless they block acceptance. Do not claim older lost demo events were recovered; only claim seven new completed weekly events were seeded and verified.
+
+---
+
+## PREVIOUS (2026-06-11 09:31 CEST) — v2.12.0 deployed live + weekly demo seed verified
 
 **Version (from `package.json`):** 2.12.0
 **Branch:** main

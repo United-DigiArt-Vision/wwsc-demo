@@ -1,5 +1,15 @@
 # PROGRESS — WWSC v2.12.0 Bryan-Feedback (3 Hauptreports, Defaults, Tap Placing, Relay-Grid)
 
+## 📤 v2.12.0 FEEDBACK RESPONSE SENT TO BRYAN (2026-06-11 09:44 CEST)
+
+- [x] v2.12.0 deployed live and verified before customer message.
+- [x] Live weekly seed applied before customer message: seven completed weekly events from 2026-04-18 through 2026-05-30.
+- [x] Dino/Nedim sent Bryan the v2.12.0 feedback response on Upwork; screenshot-visible send time 09:44 CEST, Discord confirmation 09:46 CEST.
+- [x] Sent-confirmed archive: `../messages/2026-06-11-outgoing-to-bryan-v2120-feedback-response-sent-confirmed.md`.
+- [x] Screenshot evidence archived: `../messages/attachments/2026-06-11-v2120-sent-to-bryan-confirmation/`.
+- [x] Sent message covers: v2.12.0 demo link, seven weeks of test data, Select All default Y, Quick Tap Placing, relay teams 3-across/compact print, three main Pointscore reports, 25m brace participation visibility, Event Report details, and two preference questions.
+- [ ] Current gate: wait for Bryan retest/feedback/acceptance. Archive full inbound before interpreting or changing code.
+
 ## 🔁 BALERION-ReQA-FINDINGS BEHOBEN — GATES GRÜN @ 8d2fc08 (2026-06-11 09:10 CEST)
 
 - [x] Balerion-ReQA 08:27: alle 10 Gates unabhängig grün; Bryan-Verhalten bestätigt; 5 Findings.
@@ -10,7 +20,7 @@
 - [x] F5 npm audit fix: 4→0 vulnerabilities (nur package-lock; Express 4.x bleibt; Cache-Workaround /tmp dokumentiert).
 - [x] Voller Gate-Rerun @ `8d2fc08`: alle Tallies grün (M3-120 118/2NA/0/0 mit echten Checks). Erste Rerun-Runde: eigener Watchdog killte Graphs/M3-120 fälschlich — transparent im Log, Steps 8+10 sauber wiederholt.
 - [x] Stellungnahme an Balerion: `../messages/2026-06-11-0905-Claude-To-Balerion-WWSC-v2120-ReQA-Findings-Stellungnahme.md`.
-- [ ] Balerion finale Abnahme → Dino-Freigabe → Deploy → Live-Seed → Bryan-Versand.
+- [x] Balerion finale Abnahme → Dino-Freigabe → Deploy → Live-Seed → Bryan-Versand.
 
 ## 📚 GESAMTDOKUMENTATION AUF v2.12.0 (2026-06-11)
 
@@ -34,11 +44,11 @@
 - [x] R-V12-01 **Wochen-Seeder** `scripts/seed-bryan-weekly-events.cjs`: 7 abgeschlossene Sa-Events 18.04.–30.05.2026, rotierende Konfigurationen, Breaks + manuelle PB-Updates nach jedem Event (befüllt Report 3), variierende Anwesenheit. Niemals löschen, vorhandene Daten übersprungen (2. Lauf: 0/7), Abbruch bei unfertigem Event, APPLY_LIVE-Guard. Selbstverifikation **9/0**.
 - [x] Traceability: `REQUIREMENTS-V2.12.0-BRYAN-FEEDBACK.md` (10 Requirements, 0 FEHL); Abnahmeprotokoll: `docs/evidence/v2120-bryan-feedback/V2.12.0-ABNAHMEPROTOKOLL.md`.
 - [x] Gates @ `b5c3c43` (Roh-Log `docs/evidence/v2120-bryan-feedback/gate-run-b5c3c43.log`): v2120-Unit **24/0** • Pointscore-Unit **15/0** • Slice2-Unit **7/0** • Isolation **PASS** • v2120-Browser **10/0**, 0 Console-Errors • M2-55 **55/0** • M2-100 **98/2NA/0** • Graphs **19/1NA/0** • Slice2-Browser **13/0** • M3-120 **118/2NA/0/0**.
-- [x] Bryan-Antwort-Draft: `../messages/2026-06-10-draft-to-bryan-v2120-feedback-response.md` (senden ERST nach Live-Deploy + Live-Seed).
-- [ ] Balerion: Branch-Übernahme + ReQA auf Mac Mini (Handoff: `../messages/2026-06-10-2*-Claude-To-Balerion-WWSC-v2.12.0-Bryan-Feedback-Handoff.md`).
-- [ ] Dino-Freigabe: merge → deploy → Live-Wochen-Seed → Bryan-Versand.
+- [x] Bryan-Antwort-Draft vorbereitet und nach Live-Deploy + Live-Seed durch sent-confirmed Record superseded: `../messages/2026-06-11-outgoing-to-bryan-v2120-feedback-response-sent-confirmed.md`.
+- [x] Balerion: Branch-Übernahme + ReQA auf Mac Mini abgeschlossen.
+- [x] Dino-Freigabe: merge → deploy → Live-Wochen-Seed → Bryan-Versand abgeschlossen.
 
-Boundaries gehalten: kein Push, kein Deploy, kein Live-Mutieren, kein Bryan-Kontakt; Bryans Event 2 unangetastet.
+Boundaries gehalten: kein Bryan-Kontakt durch Balerion; Kunde wurde erst nach Dino-Freigabe, Live-Deploy und Live-Seed durch Dino/Nedim informiert.
 
 ---
 
