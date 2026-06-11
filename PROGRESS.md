@@ -1,5 +1,17 @@
 # PROGRESS — WWSC v2.12.0 Bryan-Feedback (3 Hauptreports, Defaults, Tap Placing, Relay-Grid)
 
+## 🔁 BALERION-ReQA-FINDINGS BEHOBEN — GATES GRÜN @ 8d2fc08 (2026-06-11 09:10 CEST)
+
+- [x] Balerion-ReQA 08:27: alle 10 Gates unabhängig grün; Bryan-Verhalten bestätigt; 5 Findings.
+- [x] F1 Harness-Setup: require()-Validierung + Auto-Reinstall (beide Pfade getestet).
+- [x] F2 M3-120: Diff-Basis main → origin/main → NOT APPLICABLE.
+- [x] F3 Always-Pass: Muster-Audit fand 5 (001/010/087/088/116, gemeldet 2) — alle echte Assertions jetzt.
+- [x] F4 Doku: 75 Endpoints einheitlich (Index, Rebuild-Guide).
+- [x] F5 npm audit fix: 4→0 vulnerabilities (nur package-lock; Express 4.x bleibt; Cache-Workaround /tmp dokumentiert).
+- [x] Voller Gate-Rerun @ `8d2fc08`: alle Tallies grün (M3-120 118/2NA/0/0 mit echten Checks). Erste Rerun-Runde: eigener Watchdog killte Graphs/M3-120 fälschlich — transparent im Log, Steps 8+10 sauber wiederholt.
+- [x] Stellungnahme an Balerion: `../messages/2026-06-11-0905-Claude-To-Balerion-WWSC-v2120-ReQA-Findings-Stellungnahme.md`.
+- [ ] Balerion finale Abnahme → Dino-Freigabe → Deploy → Live-Seed → Bryan-Versand.
+
 ## 📚 GESAMTDOKUMENTATION AUF v2.12.0 (2026-06-11)
 
 - [x] Auftrag Dino 2026-06-11: gesamte Projektdoku so, dass die App durch beliebige Entwickler/Harnesses nachvollziehbar UND nachbaubar ist.

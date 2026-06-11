@@ -11,6 +11,25 @@
 
 ---
 
+## 2026-06-11 — fix: Balerion-ReQA-Findings (Harness, Gate-Robustheit, echte Assertions, Dep-Audit)
+- **Date:** 2026-06-11
+- **Timestamp:** 2026-06-11 09:10:00 Europe/Berlin
+- **App Version (from package.json):** 2.12.0
+- **Branch:** dev/v2.12.0-bryan-feedback
+- **RecordedCommit:** 8d2fc08 (Gate-Commit dieser Runde; SSOT-Close folgt)
+- **Editor:** Claude
+- **Trigger:** Balerions unabhängige ReQA 2026-06-11 08:27 (alle Gates grün, 5 Findings vor finaler Abnahme).
+- **Changes:**
+  - setup-m2-harness.sh: puppeteer-core per require() validiert; Partial-Installs werden erkannt und frisch reinstalliert (exit 1 bei Fehlschlag). Beide Pfade getestet.
+  - e2e-m3-pointscore-120: UIT-M3-118 Diff-Basis `main` → Fallback `origin/main` → sonst NOT APPLICABLE (frische Clones ohne lokalen main crashen nicht mehr).
+  - FÜNF Always-Pass-Assertions (UIT-M3-001/010/087/088/116; Muster-Audit — gemeldet waren 087/088) durch echte Checks ersetzt; 088 pinnte zudem v2.10.
+  - Doku: Endpoint-Zahl vereinheitlicht auf 75 (00-DOC-INDEX, REBUILD-GUIDE).
+  - npm audit fix (Cache-Workaround /tmp): 4 → 0 vulnerabilities; nur package-lock.json (transitiv, Express 4.x bleibt).
+  - Kompletter Gate-Rerun @ 8d2fc08: alle Tallies unverändert grün (M3-120 118/2NA/0/0 mit echten Assertions). Log: `docs/evidence/v2120-bryan-feedback/gate-run-8d2fc08.log`.
+- **Proof:** Stellungnahme `../messages/2026-06-11-0905-Claude-To-Balerion-WWSC-v2120-ReQA-Findings-Stellungnahme.md`; Abnahmeprotokoll §3b aktualisiert.
+
+---
+
 ## 2026-06-11 — docs: v2.12.0 Gesamtdokumentations-Set (nachvollziehbar + nachbaubar)
 - **Date:** 2026-06-11
 - **Timestamp:** 2026-06-11 09:05:00 Europe/Berlin

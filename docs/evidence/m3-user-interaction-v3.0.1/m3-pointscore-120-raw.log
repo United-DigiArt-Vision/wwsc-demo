@@ -1,8 +1,8 @@
-# Baseline branch=dev/v2.12.0-bryan-feedback commit=b5c3c43 pkg=2.12.0
-# /api/version={"version":"2.12.0","build":"2026-06-10T21:09:37.245Z"}
+# Baseline branch=dev/v2.12.0-bryan-feedback commit=8d2fc08 pkg=2.12.0
+# /api/version={"version":"2.12.0","build":"2026-06-11T06:56:26.054Z"}
 # members=30
 # events=1,2,3,4,5,6,7,8
-UIT-M3-001  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-001-app-loads.png  |  app loads v2.12.0
+UIT-M3-001  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-001-app-loads.png  |  app loads, UI shows v2.12.0
 UIT-M3-002  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-002-dashboard.png  |  dashboard readable
 UIT-M3-003  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-003-pointscore-entry.png  |  Pointscore screen entry visible
 UIT-M3-004  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-004-nav-flow.png  |  nav flow, realErrors=0
@@ -88,8 +88,8 @@ UIT-M3-083  |  PASS  |  -  |  season CSV totals match UI
 UIT-M3-084  |  PASS  |  -  |  time-history CSV matches M2 data
 UIT-M3-085  |  PASS  |  -  |  members roster CSV header+rows (R-M3-07 member roster): docs/evidence/m3-user-interaction-v3.0.1/members.csv
 UIT-M3-086  |  PASS  |  -  |  export respects active month/season filter (per-period endpoint)
-UIT-M3-087  |  PASS  |  -  |  empty export = header only, clean
-UIT-M3-088  |  PASS  |  -  |  filename includes report/date/version
+UIT-M3-087  |  PASS  |  -  |  empty export = header only, clean (got 1 line(s))
+UIT-M3-088  |  PASS  |  -  |  filename includes report/date/version (attachment; filename="wwsc-season-pointscore-2026-v2.12.0.csv")
 UIT-M3-089  |  PASS  |  -  |  CSV parses, no malformed rows (30 lines)
 UIT-M3-090  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-090-mobile-export.png  |  mobile export controls reachable
 UIT-M3-091  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-091-graph-works.png  |  R-M3-05 graph still works
@@ -112,14 +112,14 @@ UIT-M3-107  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-107-r
 UIT-M3-108  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-108-reg-archive.png  |  archive/restore works
 UIT-M3-109  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-109-reg-m2-history.png  |  M2 member history modal intact
 UIT-M3-110  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-110-reg-m2-event-history.png  |  M2 event time history intact
-UIT-M3-111  |  PASS  |  -  |  M2 55-case runner — fresh log @b5c3c43 (/tmp/m3p-m2-55.log)
-UIT-M3-112  |  PASS  |  -  |  M2 100-case runner — fresh log @b5c3c43 (/tmp/m3p-m2-100.log)
+UIT-M3-111  |  PASS  |  -  |  M2 55-case runner — fresh log @8d2fc08 (/tmp/m3p-m2-55.log)
+UIT-M3-112  |  PASS  |  -  |  M2 100-case runner — fresh log @8d2fc08 (/tmp/m3p-m2-100.log)
 UIT-M3-113  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-113-resp-mobile.png  |  mobile pointscore report (month tab), no overlay
 UIT-M3-114  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-114-resp-tablet.png  |  tablet pointscore report
 UIT-M3-115  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-115-resp-desktop.png  |  desktop pointscore report polished
 UIT-M3-116  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-116-a11y-keyboard.png  |  keyboard focus reaches filters/export
 UIT-M3-117  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-117-long-names.png  |  long names wrap cleanly (extra swimmer long names in fixture)
-UIT-M3-118  |  PASS  |  -  |  no SaaS/commercial scope in diff (docs/evidence/.../out-of-scope-diff.txt)
+UIT-M3-118  |  PASS  |  -  |  no SaaS/commercial scope in diff vs main (docs/evidence/.../out-of-scope-diff.txt)
 UIT-M3-119  |  PASS  |  -  |  screenshot inventory: 66 PNGs
 UIT-M3-120  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-120-final.png  |  119 prior classified, console errors=0
 # Tally {"PASS":118,"FAIL":0,"BLOCKED":0,"NOT APPLICABLE":2,"CLIENT INPUT MISSING":0}

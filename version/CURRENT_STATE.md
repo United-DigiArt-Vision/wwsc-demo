@@ -1,5 +1,17 @@
 # CURRENT_STATE
 
+## CURRENT (2026-06-11 09:10 CEST) — Balerion-ReQA-Findings behoben, Gates grün @ 8d2fc08 — bereit für finale Abnahme
+
+**Version (from `package.json`):** 2.12.0
+**Branch:** dev/v2.12.0-bryan-feedback
+**Date:** 2026-06-11
+**Timestamp:** 2026-06-11 09:10:00 Europe/Berlin
+**LastEditor:** Claude
+**WorkingTreeStatus:** Balerions ReQA (08:27, `../messages/2026-06-11-0827-Balerion-ReQA-v2120-after-Claude-corrections.md`) reproduzierte alle 10 Gates unabhängig grün und meldete 5 Findings — alle bestätigt und in `8d2fc08` behoben: (1) Harness-Setup require-validiert puppeteer-core inkl. Auto-Reinstall, (2) M3-120 Diff-Basis mit origin/main-Fallback, (3) Muster-Audit ersetzte FÜNF Always-Pass-Checks (001/010/087/088/116) durch echte Assertions, (4) Endpoint-Zahl 75 überall, (5) npm audit fix 4→0 vulnerabilities (nur package-lock). Kompletter Gate-Rerun @ `8d2fc08` grün: 24/0 • 15/0 • 7/0 • Isolation PASS • 10/0 • M2-55 55/0 • M2-100 98/2NA/0/0 • Graphs 19/1NA/0 • Slice2-Browser 13/0 • M3-120 118/2NA/0/0 (Log `docs/evidence/v2120-bryan-feedback/gate-run-8d2fc08.log`; Watchdog-Fehlversuch beim ersten Anlauf dokumentiert, Steps 8+10 sauber wiederholt). Stellungnahme an Balerion: `../messages/2026-06-11-0905-Claude-To-Balerion-WWSC-v2120-ReQA-Findings-Stellungnahme.md`.
+**Milestone status:** Bereit für Balerions finale Abnahme → Dino-Freigabe → Merge/Tag/Deploy v2.12.0 → Live-Wochen-Seed → Bryan-Draft-Versand. Kein Deploy/Push/Live-Seed/Bryan-Kontakt durch Claude.
+
+---
+
 ## CURRENT (2026-06-11 09:05 CEST) — v2.12.0 + Gesamtdokumentation (nachbaubar) — Branch-HEAD 3c07a8c
 
 **Version (from `package.json`):** 2.12.0

@@ -1,0 +1,66 @@
+=== REQA-FIX GATE RUN @ 8d2fc08 Thu Jun 11 08:43:08 CEST 2026 ===
+--- 1: v2120 unit ---
+
+24 PASS / 0 FAIL → docs/evidence/v2120-bryan-feedback/unit-results.json
+--- 2: pointscore unit ---
+
+=== UNIT TALLY: 15 PASS / 0 FAIL ===
+--- 3: slice2 unit ---
+
+=== M3 SLICE 2 UNIT/API TALLY: 7 PASS / 0 FAIL ===
+--- 4: isolation ---
+Pointscore rows only in enabled run: true
+VERDICT: PASS
+--- 5: v2120 browser ---
+
+=== V2.12.0 BROWSER TALLY: 10 PASS / 0 FAIL ===
+--- 6: M2-55 ---
+Total FAIL: 0
+Screenshots: /Users/dino/Library/CloudStorage/Dropbox/Dino-Balerion-Claude-Code/Projekte/0004_swimming-app/code/docs/screenshots/m2-time-history
+Evidence:    /Users/dino/Library/CloudStorage/Dropbox/Dino-Balerion-Claude-Code/Projekte/0004_swimming-app/code/docs/evidence
+--- 7: M2-100 ---
+=== TALLY ===
+PASS:           98
+NOT APPLICABLE: 2
+FAIL:           0
+BLOCKED:        0
+--- 8: history graphs ---
+UIT-M3-016  |  NOT APPLICABLE  |  History graphs  |  docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-016-export-na.png  |  Export shipped in a later QA-10-resolved slice; this branch covers R-M3-05 only
+UIT-M3-017  |  PASS  |  History graphs  |  docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-017-print-view.png  |  Print-emulated viewport renders SVG without cutoff
+UIT-M3-018  |  PASS  |  History graphs  |  docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-018-null-pb-row.png  |  SVG contains no NaN / undefined / null tokens (defensive rendering for null PB rows)
+UIT-M3-019  |  PASS  |  History graphs  |  docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-019-data-correctness.png  |  Exact point↔row mapping on (stroke,date,time,previous_best,is_break): rendered=6, api=6, exactMatch=true
+UIT-M3-020  |  PASS  |  History graphs  |  docs/screenshots/m3-user-interaction-v3.0.0/UIT-M3-020-a11y.png  |  type focusable=true, stroke reachable=true, svg role=img, svg aria-label=Time-trend graph
+--- 9: slice2 browser ---
+PASS  S2-UI13-console-clean  -  console/page errors=0
+
+=== M3 SLICE 2 BROWSER TALLY: 13 PASS / 0 FAIL ===
+--- 10: M3-120 FINAL ---
+# members=30
+# events=1,2,3,4,5,6,7,8
+UIT-M3-001  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-001-app-loads.png  |  app loads, UI shows v2.12.0
+UIT-M3-002  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-002-dashboard.png  |  dashboard readable
+UIT-M3-003  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-003-pointscore-entry.png  |  Pointscore screen entry visible
+UIT-M3-004  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-004-nav-flow.png  |  nav flow, realErrors=0
+UIT-M3-005  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-005-back-forward.png  |  real browser back/forward, app present
+UIT-M3-006  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-006-refresh.png  |  refresh recovers
+UIT-M3-007  |  PASS  |  docs/screenshots/m3-user-interaction-v3.0.1/UIT-M3-007-mobile-nav.png  |  mobile 390x844
+=== REQA-FIX GATE RUN COMPLETE Thu Jun 11 08:54:10 CEST 2026 ===
+=== RERUN steps 8+10 @ 8d2fc08 Thu Jun 11 08:55:36 CEST 2026 (prior run: watchdog misfire killed graphs teardown + M3-120 mid-run) ===
+--- 8R: history graphs ---
+  "PASS": 19,
+  "NOT APPLICABLE": 1,
+  "FAIL": 0,
+  "BLOCKED": 0,
+  "PROVISIONAL": 0
+}
+--- 10R: M3-120 FINAL ---
+
+=== TALLY ===
+{
+  "PASS": 118,
+  "FAIL": 0,
+  "BLOCKED": 0,
+  "NOT APPLICABLE": 2,
+  "CLIENT INPUT MISSING": 0
+}
+=== RERUN COMPLETE Thu Jun 11 08:57:15 CEST 2026 ===
