@@ -11,6 +11,25 @@
 
 ---
 
+## 2026-06-11 — data: reseed v2.12.0 live demo after Bryan reported no previous events
+- **Date:** 2026-06-11
+- **Timestamp:** 2026-06-11 11:10:00 Europe/Berlin
+- **App Version (from live `/api/version`):** 2.12.0
+- **Branch:** main
+- **RecordedCommit:** no code change; live data/evidence update only
+- **Editor:** Balerion
+- **Trigger:** Bryan replied on Upwork: "There are no previous events in the database."
+- **Changes:**
+  - Reproduced Bryan's report read-only: live `/api/version` was `2.12.0` build `2026-06-11T07:34:21.220Z`, but `/api/events?archived=1` and `/api/pointscore/months` returned empty arrays.
+  - Interpreted likely cause as Render restart/redeploy after the original 09:29 CEST seed; the original seed evidence was against build `2026-06-11T07:28:01.137Z`, while the currently served build was later.
+  - Re-ran guarded live weekly seed: `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-weekly-events.cjs`.
+  - Reseed created 7 completed weekly events and passed 9/9 self-checks.
+  - Independent live verification confirmed 7 completed archived events, pointscore months `2026-05` and `2026-04`, total pointscore across 10 race types and 23 members, and populated breakers summary.
+  - Evidence: `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T09-10-40-587Z.json`.
+  - Draft correction note for Bryan: `../messages/2026-06-11-draft-to-bryan-v2120-demo-data-reseeded.md`.
+
+---
+
 ## 2026-06-11 — comms: v2.12.0 feedback response sent to Bryan
 - **Date:** 2026-06-11
 - **Timestamp:** 2026-06-11 09:46:00 Europe/Berlin

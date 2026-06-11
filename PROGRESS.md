@@ -1,5 +1,19 @@
 # PROGRESS — WWSC v2.12.0 Bryan-Feedback (3 Hauptreports, Defaults, Tap Placing, Relay-Grid)
 
+## 🔁 LIVE DEMO DATA RESEEDED AFTER BRYAN'S EMPTY-DATABASE REPORT (2026-06-11 11:10 CEST)
+
+- [x] Bryan replied on Upwork: "There are no previous events in the database."
+- [x] Archived inbound: `../messages/2026-06-11-Bryan-inbound-v2120-no-previous-events.md`.
+- [x] Reproduced live: `/api/version` returned `2.12.0` build `2026-06-11T07:34:21.220Z`, but `/api/events?archived=1` and `/api/pointscore/months` were empty.
+- [x] Likely cause: a Render restart/redeploy after the original 09:29 CEST weekly seed. The original seed was verified against build `2026-06-11T07:28:01.137Z`; the later served build was `07:34:21.220Z`.
+- [x] Re-ran guarded live weekly seed: `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-weekly-events.cjs`.
+- [x] Reseed result: created 7 completed weekly events, 9/9 self-checks PASS.
+- [x] Evidence: `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T09-10-40-587Z.json`.
+- [x] Independent live verification after reseed: 7 completed archived events (`2026-04-18` through `2026-05-30`), pointscore months `2026-05` and `2026-04`, total pointscore populated across 10 race types and 23 members, breakers summary populated.
+- [ ] Current gate: Dino/Nedim should send the prepared correction note to Bryan, then wait for Bryan retest.
+
+Customer-facing boundary: say Bryan was right and the demo data has now been reloaded. Do not claim older lost events were recovered or that Bryan's own event was preserved.
+
 ## 📤 v2.12.0 FEEDBACK RESPONSE SENT TO BRYAN (2026-06-11 09:44 CEST)
 
 - [x] v2.12.0 deployed live and verified before customer message.

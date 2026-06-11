@@ -1,6 +1,18 @@
 # CURRENT_STATE
 
-## CURRENT (2026-06-11 09:46 CEST) — v2.12.0 sent to Bryan; waiting for retest/reply
+## CURRENT (2026-06-11 11:10 CEST) — Bryan reported empty previous events; live demo reseeded and verified
+
+**Version (from live `/api/version`):** 2.12.0
+**Branch:** main
+**Date:** 2026-06-11
+**Timestamp:** 2026-06-11 11:10:00 Europe/Berlin
+**LastEditor:** Balerion
+**WorkingTreeStatus:** Bryan replied on Upwork that there were no previous events in the database. Inbound archived at `../messages/2026-06-11-Bryan-inbound-v2120-no-previous-events.md`. Balerion reproduced the issue read-only: live `/api/version` returned `{"version":"2.12.0","build":"2026-06-11T07:34:21.220Z"}`, but `/api/events?archived=1` and `/api/pointscore/months` were empty. This likely happened because the original weekly seed was verified against build `2026-06-11T07:28:01.137Z`, then Render served a later build/restart at `07:34:21.220Z`, resetting non-persistent demo SQLite data. Balerion re-ran the guarded live weekly seed with `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-weekly-events.cjs`. Result: created 7 completed weekly events, 9/9 self-checks PASS. Evidence: `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T09-10-40-587Z.json`. Independent read-only live verification after reseed confirmed 7 completed archived events dated 2026-04-18 through 2026-05-30, pointscore months `["2026-05","2026-04"]`, total pointscore populated across 10 race types and 23 members, and breakers summary populated.
+**Milestone status:** v2.12.0 remains live. Current gate: Dino/Nedim should send the prepared correction note `../messages/2026-06-11-draft-to-bryan-v2120-demo-data-reseeded.md`, then wait for Bryan retest. Customer-facing boundary: say Bryan was right and the demo data was reloaded; do not claim older lost demo events were recovered or that Bryan's own previously created event was preserved. Production persistence/backups remain a separate final/live setup topic.
+
+---
+
+## PREVIOUS (2026-06-11 09:46 CEST) — v2.12.0 sent to Bryan; waiting for retest/reply
 
 **Version (from `package.json`):** 2.12.0
 **Branch:** main
