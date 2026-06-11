@@ -1,5 +1,12 @@
 # PROGRESS — WWSC v2.12.0 Bryan-Feedback (3 Hauptreports, Defaults, Tap Placing, Relay-Grid)
 
+## 📚 GESAMTDOKUMENTATION AUF v2.12.0 (2026-06-11)
+
+- [x] Auftrag Dino 2026-06-11: gesamte Projektdoku so, dass die App durch beliebige Entwickler/Harnesses nachvollziehbar UND nachbaubar ist.
+- [x] Neues Master-Set (aus dem Code abgeleitet, nicht aus Alt-Docs): `docs/00-DOC-INDEX.md` (SSOT-Landkarte aktuell vs. historisch), `docs/SYSTEM-SPEC-v2.12.0.md` (Domäne + ALLE Business-Regeln/Formeln + datierte Kundenentscheidungen), `docs/API-REFERENCE-v2.12.0.md` (75/75 Endpoints), `docs/DATA_DICTIONARY.md` (komplett neu auf v2.12.0 inkl. pb_change_log; Korrektur veralteter Break-Schwelle), `docs/UI-SCREEN-SPEC-v2.12.0.md` (alle 9 Screens + Komponenten), `docs/REBUILD-GUIDE-v2.12.0.md` (Betrieb + stack-unabhängiger Nachbau + Abnahme-/Äquivalenzkriterien), `README.md` (Root-Einstieg).
+- [x] `docs/TEST_ARCHITECTURE.md` um aktuelle Gate-Matrix v2.12.0 ergänzt; `CLAUDE.md`-Spezifikations-Verweise auf das neue Set umgestellt (statt PRD/DESIGN v2.6.2); 6 veraltete docs/-Dateien mit HISTORISCH-Banner markiert (nichts gelöscht).
+- [x] Verifikation Doku↔Code per Skript: 75/75 Endpoints abgedeckt; Konstanten geprüft (Break −50/−100, +2s-Puffer, ≥11→3 Teams, Exceeding +200cs, Punkte 5/4/3(+2), R3-CSV-Header byte-gleich); alle Index-Referenzen existieren.
+
 ## 🆕 v2.12.0 BRYAN-FEEDBACK 2026-06-10 — IMPLEMENTIERT + LOKAL VOLL VERIFIZIERT (2026-06-10 21:30 CEST)
 
 - [x] Bryans Inbound verbatim archiviert: `../messages/2026-06-10-Bryan-inbound-v2110-feedback-defaults-relay-pointscore-simplification.md` (Klassifikation: Retest-Defekt + UX-Änderungen + Pointscore-Vereinfachung + Testdaten-Anfrage; KEINE Acceptance).

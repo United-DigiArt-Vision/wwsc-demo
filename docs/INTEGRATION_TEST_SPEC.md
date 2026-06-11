@@ -1,3 +1,5 @@
+> **HISTORISCH (Milestone-Snapshot — nicht mehr Verhaltens-SSOT).** Aktueller Stand: `docs/00-DOC-INDEX.md` → `SYSTEM-SPEC-v2.12.0.md` / `DATA_DICTIONARY.md` / `API-REFERENCE-v2.12.0.md` / `UI-SCREEN-SPEC-v2.12.0.md`.
+
 # INTEGRATION TEST SPEC — WWSC Swimming App v2.7.1 (Updated 2026-04-06)
 
 ## Scope

@@ -6,7 +6,7 @@ Gilt für alle Projekte. Enthält die verbindliche Vorgehensweise für Tests, Qu
 
 ## Projektübersicht
 Die WWSC Swimming App ist ein Event-Management-System für Schwimmvereine zur Verwaltung von Wettkämpfen, Mitgliedern und Handicap-Berechnungen. Das System automatisiert die Erstellung von Heats, die Zeiterfassung (Relays) und die Ergebnisberechnung basierend auf Personal Best (PB) Zeiten.
-Kunde: Bryan Hesketh. Status: v2.8.8 live auf Render, wartet auf Bryans Feedback zur aktuellen Live-Version.
+Kunde: Bryan Hesketh. Aktueller Stand: IMMER aus `version/CURRENT_STATE.md` lesen (nicht aus dieser Datei); letzte stabile Live-Version: `STABLE.md`.
 
 ## Technologie-Stack
 - **Backend:** Node.js (Express.js)
@@ -23,11 +23,13 @@ Siehe `docs/DESIGN_SPEC.md` für die vollständige Architektur.
 - **Zustand:** Client-seitiges State-Management via DOM/JS-Objekte, Persistenz in SQLite.
 
 ## Spezifikationen
-Alle Spezifikationen befinden sich in `docs/`:
-- **PRD**: `docs/PRD.md` — Funktionale Anforderungen und Akzeptanzkriterien.
-- **Design**: `docs/DESIGN_SPEC.md` — Architektur, Komponenten, Datenmodelle.
-- **Unit Tests**: `docs/UNIT_TEST_SPEC.md` — Testfälle pro Komponente.
-- **Integration Tests**: `docs/INTEGRATION_TEST_SPEC.md` — E2E-Szenarien.
+Einstieg + SSOT-Übersicht: **`docs/00-DOC-INDEX.md`** (klärt AKTUELL vs. HISTORISCH). Aktuelle SSOT-Dokumente:
+- **System-Spec**: `docs/SYSTEM-SPEC-v2.12.0.md` — Domäne + ALLE Business-Regeln/Formeln/Workflows.
+- **Datenmodell**: `docs/DATA_DICTIONARY.md` — Tabellen/Felder/Einheiten (s vs. cs) + Formeln.
+- **API**: `docs/API-REFERENCE-v2.12.0.md` — alle Endpoints mit Semantik und Seiteneffekten.
+- **UI**: `docs/UI-SCREEN-SPEC-v2.12.0.md` — jeder Screen mit Interaktionen/Zuständen.
+- **Nachbau/Abnahme**: `docs/REBUILD-GUIDE-v2.12.0.md` + `docs/TEST_ARCHITECTURE.md` + `tests/README.md`.
+(`docs/PRD.md`, `docs/DESIGN_SPEC.md` u. ä. sind historische Milestone-Snapshots — siehe Index.)
 
 ## Entwicklungsregeln
 1. **Spec-First**: Vor jeder Codeänderung die relevante Spec in `docs/` lesen.

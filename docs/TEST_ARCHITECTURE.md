@@ -189,3 +189,26 @@ Jeder Edge Case ist ein expliziter Test. Keine "das sollte nicht vorkommen"-Anna
 4. Fix implementieren
 5. Test muss grün werden
 6. ALLE bestehenden Tests müssen grün bleiben
+
+---
+
+## AKTUELLE GATE-MATRIX (v2.12.0, 2026-06-11 — Philosophie oben unverändert gültig)
+
+Die Python-Suiten (reqa*.py) sind historisch (M1). Aktueller Stand: alle Gates sind Node-Skripte
+unter `scripts/`, jede Suite startet ihren eigenen isolierten Server mit frischer DB unter /tmp.
+Setup + Reihenfolge + Sollwerte: `../tests/README.md` (verbindlich) und
+`REBUILD-GUIDE-v2.12.0.md` §C1. Kurzübersicht:
+
+| Gate | Skript | Schicht | Soll |
+|---|---|---|---|
+| v2.12.0 Unit/API | `test-v2120-bryan-feedback.cjs` | L3+L7 (Reports 1–3, pb_change_log, Swimmer Card) | 24/0 |
+| Pointscore-Unit | `test-m3-pointscore-unit.cjs` | L2+L3 (Punkteregeln, Aggregation, Idempotenz) | 15/0 |
+| Slice2-Unit | `test-m3-slice2-reports-export.cjs` | L3 (Coverage/Breaks/Improvements/CSV/DB-Export) | 7/0 |
+| Pointscore-Isolation | `e2e-m3-pointscore-isolation.cjs` | L6 (akzeptierte Flows byte-identisch mit/ohne Engine) | PASS |
+| v2.12.0 Browser | `e2e-v2120-bryan-feedback.cjs` | L4+L5 (Select-All-Y, Tap Placing, Relay-Grid, 3 Reports, Event-Report) | 10/0, 0 Console-Errors |
+| M2-55 / M2-100 | `e2e-m2-time-history.cjs` / `e2e-m2-user-interaction-100.cjs` | L4+L5 Regression (History/Workflows) | 55/0 • 98/2NA/0/0 |
+| History-Graphs | `e2e-m3-history-graphs.cjs` | L4 (SVG-Graphen) | 19/1NA/0 |
+| Slice2-Browser | `e2e-m3-slice2-reports-export.cjs` | L4 (Reports-UI, Downloads) | 13/0 |
+| M3-120 (zuletzt) | `e2e-m3-pointscore-120.cjs` | L4+L5+Meta (validiert Frische der M2-Logs via /tmp/m3p-m2-*.log) | 118/2NA/0/0 |
+
+Versionspin der M2/M3-Gates: `WWSC_E2E_EXPECTED_VERSION=<package.json-Version>`.

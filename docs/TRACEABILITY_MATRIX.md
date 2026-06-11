@@ -1,3 +1,5 @@
+> **HISTORISCH (Milestone-Snapshot — nicht mehr Verhaltens-SSOT).** Aktueller Stand: `docs/00-DOC-INDEX.md` → `SYSTEM-SPEC-v2.12.0.md` / `DATA_DICTIONARY.md` / `API-REFERENCE-v2.12.0.md` / `UI-SCREEN-SPEC-v2.12.0.md`.
+
 # TRACEABILITY MATRIX — Requirements × Test-Schichten (Stand: v2.7.1 final)
 
 ## Legende
