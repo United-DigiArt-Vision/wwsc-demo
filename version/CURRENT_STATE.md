@@ -1,5 +1,17 @@
 # CURRENT_STATE
 
+## CURRENT (2026-06-11 09:05 CEST) — v2.12.0 + Gesamtdokumentation (nachbaubar) — Branch-HEAD 3c07a8c
+
+**Version (from `package.json`):** 2.12.0
+**Branch:** dev/v2.12.0-bryan-feedback
+**Date:** 2026-06-11
+**Timestamp:** 2026-06-11 09:05:00 Europe/Berlin
+**LastEditor:** Claude
+**WorkingTreeStatus:** Auf den v2.12.0-Stand (Gates grün @ b5c3c43, SSOT-Close 35a6734) folgt das komplette Dokumentations-Master-Set (`3c07a8c`): docs/00-DOC-INDEX.md, SYSTEM-SPEC, API-REFERENCE (75/75 Endpoints), DATA_DICTIONARY (neu auf v2.12.0), UI-SCREEN-SPEC, REBUILD-GUIDE, README.md; TEST_ARCHITECTURE + CLAUDE.md aktualisiert; 6 überholte Docs als HISTORISCH markiert. Doku↔Code per Skript verifiziert. Zusätzlich 2026-06-11: Balerions Versions-Ketten-Rückfrage aufgeklärt (641aa0e = Tag v2.11.0, ea36c1c = sein Doku-HEAD auf main; Branch enthält beides — Nachricht `../messages/2026-06-11-0730-Claude-To-Balerion-WWSC-v2120-Versionskette-Aufklaerung.md`).
+**Milestone status:** unverändert wie v2.12.0-Block darunter — wartet auf Balerion-ReQA → Dino-Freigabe → Deploy → Live-Wochen-Seed → Bryan-Draft-Versand.
+
+---
+
 ## CURRENT (2026-06-10 21:30 CEST) — v2.12.0 Bryan-Feedback implementiert + lokal voll verifiziert (Handoff an Balerion)
 
 **Version (from `package.json`):** 2.12.0

@@ -11,6 +11,21 @@
 
 ---
 
+## 2026-06-11 — docs: v2.12.0 Gesamtdokumentations-Set (nachvollziehbar + nachbaubar)
+- **Date:** 2026-06-11
+- **Timestamp:** 2026-06-11 09:05:00 Europe/Berlin
+- **App Version (from package.json):** 2.12.0
+- **Branch:** dev/v2.12.0-bryan-feedback
+- **RecordedCommit:** 3c07a8c
+- **Editor:** Claude
+- **Trigger:** Dino-Auftrag 2026-06-11: gesamte Projektdoku so updaten, dass die App durch beliebige Entwickler/Harnesses allein aus der Doku nachvollziehbar und nachbaubar ist.
+- **Changes:**
+  - NEU: `docs/00-DOC-INDEX.md` (SSOT-Landkarte), `docs/SYSTEM-SPEC-v2.12.0.md` (alle Business-Regeln/Formeln + datierte Kundenentscheidungen), `docs/API-REFERENCE-v2.12.0.md` (75/75 Endpoints), `docs/UI-SCREEN-SPEC-v2.12.0.md` (alle Screens), `docs/REBUILD-GUIDE-v2.12.0.md` (Betrieb/Nachbau/Abnahme), `README.md` (Root-Einstieg).
+  - `docs/DATA_DICTIONARY.md` komplett auf v2.12.0 (inkl. `pb_change_log`; korrigiert veraltete pauschale −100cs-Break-Schwelle), `docs/TEST_ARCHITECTURE.md` + Gate-Matrix v2.12.0, `CLAUDE.md`-Verweise auf das neue Set, HISTORISCH-Banner auf 6 überholten docs/-Dateien (nichts gelöscht).
+  - Verifikation Doku↔Code per Skript: 75/75 Endpoints, Schlüssel-Konstanten (−50/−100, +2s, ≥11→3, +200cs, 5/4/3(+2)), CSV-Header, Index-Referenzen.
+
+---
+
 ## 2026-06-10 — feat: v2.12.0 Bryan feedback (3 main reports, defaults, tap placing, relay grid, report details)
 - **Date:** 2026-06-10
 - **Timestamp:** 2026-06-10 21:30:00 Europe/Berlin
