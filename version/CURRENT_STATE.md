@@ -1,5 +1,22 @@
 # CURRENT_STATE
 
+## CURRENT (2026-06-11 12:26 CEST) — v2.12.1 Bryan retest fixes local-proven, awaiting deploy decision
+
+**Version (from `package.json`):** 2.12.1  
+**Branch:** `dev/v2.12.1-bryan-retest-fixes`  
+**Date:** 2026-06-11  
+**Timestamp:** 2026-06-11 12:26:32 Europe/Berlin  
+**LastEditor:** Balerion  
+**WorkingTreeStatus:** Bryan's latest Upwork retest feedback was relayed by Dino with two screenshots at 12:13 CEST and archived at `../messages/2026-06-11-Bryan-inbound-v2120-event-history-breaker-scoring-tap-placing.md`. Bryan says pointscore looks good, member history/graphs look good, relay setup looks good, and he is still testing. Issues/requests: Event History is not visible enough for cross-testing against pointscore; breakers should receive 2 entry points only and not consume 5/4/3 place points; non-breaking 2nd/3rd/4th should shift up to 5/4/3 when a breaker is ahead; all entrants who do not place get 2 points, including brace relays; manual placing should not require pressing "Tap Placing" to start and again to finish.
+
+Balerion implemented local v2.12.1 fixes on branch `dev/v2.12.1-bryan-retest-fixes`: `src/pointscore.js` now applies breaker-entry scoring and shifted place points, plus 2 entry points for relay/brace/team non-podium finishers; `src/public/js/screens/results.js` now uses direct Manual-cell tap placing with no separate start/done mode; `src/public/js/screens/pointscore.js` exposes Event History under More reports and from the 3 main reports; package/index cache-bust bumped to `2.12.1`. Proof summary: `docs/evidence/v2120-bryan-feedback/V2.12.1-BRYAN-RETEST-FIXES-PROOF.md`.
+
+**Verification:** `node --check` for touched JS/test files PASS; `node scripts/test-m3-pointscore-unit.cjs` → 16 PASS / 0 FAIL; `node scripts/test-v2120-bryan-feedback.cjs` → 25 PASS / 0 FAIL; `node scripts/e2e-v2120-bryan-feedback.cjs` → 11 PASS / 0 FAIL with 0 console errors. First test attempt hit the known Dropbox `better-sqlite3` native-binary architecture mismatch and was fixed with `npm rebuild better-sqlite3`; reruns passed.
+
+**Milestone status:** v2.12.1 is local-proven but not pushed, not deployed, not live-smoked, not live-seeded/migrated, and not communicated to Bryan. Current gate: Dino deploy decision. Live remains v2.12.0 at `https://wwsc-demo.onrender.com/` until an authorized merge/push/deploy happens.
+
+---
+
 ## CURRENT (2026-06-11 11:10 CEST) — Bryan reported empty previous events; live demo reseeded and verified
 
 **Version (from live `/api/version`):** 2.12.0

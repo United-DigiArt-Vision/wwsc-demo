@@ -16,12 +16,12 @@
 // main reports, as per the spreadsheet"): the screen now leads with exactly
 // those 3 main reports. The earlier detail views stay available, collapsed
 // under "More reports", so nothing previously accepted is lost.
-let psTab = 'r1';           // r1 | r2 | r3 | event | month | season | swimmer | breaks | improvement | coverage | export
+let psTab = 'r1';           // r1 | r2 | r3 | history | event | month | season | swimmer | breaks | improvement | coverage | export
 let psRules = null;         // cached /api/pointscore/rules
 let psMoreOpen = false;     // "More reports" group expanded?
 
 const PS_MAIN_TABS = ['r1', 'r2', 'r3'];
-const PS_MORE_TABS = ['event', 'month', 'season', 'swimmer', 'breaks', 'improvement', 'coverage', 'export'];
+const PS_MORE_TABS = ['history', 'event', 'month', 'season', 'swimmer', 'breaks', 'improvement', 'coverage', 'export'];
 
 async function renderPointscore() {
   const el = document.getElementById('content');
@@ -59,6 +59,7 @@ function psTabLabel(t) {
     r1: '1️⃣ Event Points (weekly)',
     r2: '2️⃣ Total Pointscore',
     r3: '3️⃣ Breakers',
+    history: '📜 Event History',
     event: '📋 Per-Event',
     month: '🗓️ Monthly Winners',
     season: '🏆 Season Winners',
@@ -93,6 +94,7 @@ async function psRenderBody() {
     if (psTab === 'r1') return await psRenderReport1(body);
     if (psTab === 'r2') return await psRenderReport2(body);
     if (psTab === 'r3') return await psRenderReport3(body);
+    if (psTab === 'history') return await psRenderHistory(body);
     if (psTab === 'event') return await psRenderEvent(body);
     if (psTab === 'month') return await psRenderMonth(body);
     if (psTab === 'season') return await psRenderSeason(body);
@@ -137,6 +139,7 @@ async function psRenderReport1(body) {
         ${types.map(t => `<option value="${t}" ${t === data.race_type ? 'selected' : ''}>${categoryDisplay(t)}</option>`).join('')}
       </select>
       ${psYearSelect('ps-r1-year', data.availableYears, data.year)}
+      <button class="btn btn-outline" onclick="psSetTab('history')">📜 Event History</button>
       <button class="btn btn-outline" onclick="psExportR1()">⬇️ CSV</button>
       <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
     </div>`;
@@ -174,6 +177,7 @@ async function psRenderReport2(body) {
   const controls = `
     <div class="toolbar print-hide">
       ${psYearSelect('ps-r2-year', data.availableYears, data.year)}
+      <button class="btn btn-outline" onclick="psSetTab('history')">📜 Event History</button>
       <button class="btn btn-outline" onclick="psExportR2()">⬇️ CSV</button>
       <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
     </div>`;
@@ -212,6 +216,7 @@ async function psRenderReport3(body) {
   const controls = `
     <div class="toolbar print-hide">
       ${psYearSelect('ps-r3-year', data.availableYears, data.year)}
+      <button class="btn btn-outline" onclick="psSetTab('history')">📜 Event History</button>
       <button class="btn btn-outline" onclick="psExportR3()">⬇️ CSV</button>
       <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
     </div>`;
@@ -270,6 +275,37 @@ async function psRenderReport3(body) {
 function psExportR3() {
   const y = document.getElementById('ps-r3-year');
   window.location.href = '/api/reports/breakers-summary/csv' + (y ? '?year=' + y.value : '');
+}
+
+// ── Event history cross-check ───────────────────────────────────────
+async function psRenderHistory(body) {
+  const events = await API.get('/api/events?archived=1');
+  const completed = events
+    .filter(e => e.status === 'finalized' || e.status === 'completed')
+    .sort((a, b) => b.date.localeCompare(a.date));
+  if (completed.length === 0) {
+    body.innerHTML = '<div class="card">No completed events yet.</div>';
+    return;
+  }
+  const rows = completed.map(e => `
+    <tr>
+      <td style="font-weight:700">${formatDate(e.date)}</td>
+      <td>${e.status}</td>
+      <td style="text-align:center">${e.present_count || 0}</td>
+      <td style="text-align:center">${e.race_count || 0}</td>
+      <td style="text-align:right">
+        <button class="btn btn-outline print-hide" style="min-height:32px;padding:3px 10px;font-size:12px" onclick="viewEventDetails(${e.id})">Details</button>
+      </td>
+    </tr>`).join('');
+  body.innerHTML = `
+    <div class="toolbar print-hide">
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>
+    <h2>Event History</h2>
+    <table class="data-table">
+      <thead><tr><th>Date</th><th>Status</th><th>Swimmers</th><th>Races</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 
 // ── Per-event ───────────────────────────────────────────────────────

@@ -240,18 +240,14 @@ function renderBreakersSection(race) {
   </div>`;
 }
 
-// Bryan 2026-06-10: "work out a better way for the manual placings" — Quick
-// Tap Placing. Activate per heat, then tap swimmers in finish order: 1st tap
-// = 1st place, 2nd tap = 2nd, ... Tapping an already-placed swimmer removes
-// that place. The dropdown column stays as fallback for corrections.
-let resTapPlacingHeatId = null;
+// Bryan 2026-06-11: Manual placings should not need a separate start/done
+// mode. Tap the Manual cell directly: 1st tap = next place, tap again = clear.
 
 function renderResultsTable(race) {
   let html = '';
 
   for (const heat of race.heats) {
     const maxTime = heat.max_time || 0;
-    const tapMode = resTapPlacingHeatId === heat.id && !resFinalized;
     // Rank by finish_time within heat for live places — with tie handling
     const rankedLanes = heat.lanes
       .filter(l => l.finish_time != null)
@@ -276,9 +272,7 @@ function renderResultsTable(race) {
       const autoPlace = livePlaces[lane.id] || lane.place || null;
 
       let finishCell;
-      if (resFinalized || tapMode) {
-        // Tap-placing mode: the whole row is the tap target for placing, so
-        // the finish cell is static to avoid the numpad opening mid-placing.
+      if (resFinalized) {
         finishCell = `<td class="time-cell" style="font-weight:700">${hasTime ? formatTime(lane.finish_time) : '—'}</td>`;
       } else {
         finishCell = `<td class="time-input" onclick="enterFinishTime(${heat.id}, ${lane.id}, ${lane.finish_time || 0})" style="cursor:pointer;font-weight:700">${hasTime ? formatTime(lane.finish_time) : '⏱️ Tap'}</td>`;
@@ -301,18 +295,14 @@ function renderResultsTable(race) {
       }
 
       let manualPlaceCell;
-      if (resFinalized || tapMode) {
+      if (resFinalized) {
         manualPlaceCell = `<td style="text-align:center">${lane.manual_place ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#e53935;color:white;font-weight:700;font-size:13px">${lane.manual_place}</span>` : '—'}</td>`;
       } else {
-        manualPlaceCell = `<td>
-          <select class="place-select" style="min-height:44px;padding:4px 8px;font-size:14px;border:2px solid #e53935;border-radius:6px" onchange="setManualPlace(${lane.id}, this.value)" onclick="event.stopPropagation()">
-            <option value="" ${!lane.manual_place ? 'selected' : ''}>—</option>
-            <option value="1" ${lane.manual_place === 1 ? 'selected' : ''}>1st</option>
-            <option value="2" ${lane.manual_place === 2 ? 'selected' : ''}>2nd</option>
-            <option value="3" ${lane.manual_place === 3 ? 'selected' : ''}>3rd</option>
-            <option value="4" ${lane.manual_place === 4 ? 'selected' : ''}>4th</option>
-          </select>
-        </td>`;
+        const next = nextTapPlace(heat);
+        const label = lane.manual_place
+          ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#e53935;color:white;font-weight:700;font-size:13px">${lane.manual_place}</span>`
+          : `<span style="color:#e53935;font-weight:700">${next ? ordinal(next) : '—'}</span>`;
+        manualPlaceCell = `<td class="manual-place-tap" onclick="tapPlaceLane(${heat.id}, ${lane.id})" title="Tap to assign next manual place; tap an assigned place to clear" style="text-align:center;cursor:pointer;background:#fff7f7;border-left:2px solid #ffcdd2">${label}</td>`;
       }
 
       // Break column
@@ -323,10 +313,7 @@ function renderResultsTable(race) {
       // BF2.6-03: Total = PB + Delay (expected finish time)
       const totalTime = (lane.handicap_time != null && lane.start_delay != null) ? lane.handicap_time + lane.start_delay : null;
 
-      const tapAttrs = tapMode
-        ? ` onclick="tapPlaceLane(${heat.id}, ${lane.id})" style="cursor:pointer"`
-        : '';
-      rows += `<tr class="${rowClass}"${tapMode ? tapAttrs : rowStyle}>
+      rows += `<tr class="${rowClass}"${rowStyle}>
         <td>${lane.lane_number}</td>
         <td class="name-cell" style="font-size:18px">${lane.name}</td>
         <td class="time-cell">${formatWhole(lane.handicap_time)}</td>
@@ -341,24 +328,11 @@ function renderResultsTable(race) {
       </tr>`;
     }
 
-    // Quick Tap Placing controls (Bryan 2026-06-10 manual-placing rework)
+    // Direct Manual-cell placing controls (Bryan 2026-06-11)
     let tapControls = '';
     if (!resFinalized) {
-      if (tapMode) {
-        tapControls = `
-          <button class="btn print-hide" style="min-height:34px;padding:4px 12px;font-size:13px;background:#fff;color:#0b3d91;font-weight:700" onclick="event.stopPropagation();toggleTapPlacing(${heat.id})">✅ Done</button>
-          <button class="btn print-hide" style="min-height:34px;padding:4px 12px;font-size:13px;background:rgba(255,255,255,0.25);color:#fff" onclick="event.stopPropagation();clearHeatPlaces(${heat.id})">↺ Clear places</button>`;
-      } else {
-        tapControls = `<button class="btn print-hide" style="min-height:34px;padding:4px 12px;font-size:13px;background:#e53935;color:#fff;font-weight:700" onclick="event.stopPropagation();toggleTapPlacing(${heat.id})">🏁 Tap Placing</button>`;
-      }
+      tapControls = `<button class="btn print-hide" style="min-height:34px;padding:4px 12px;font-size:13px;background:rgba(255,255,255,0.25);color:#fff" onclick="event.stopPropagation();clearHeatPlaces(${heat.id})">↺ Clear places</button>`;
     }
-    const nextPlace = nextTapPlace(heat);
-    const tapBanner = tapMode ? `
-      <div class="print-hide" style="background:#fdecea;border-bottom:2px solid #e53935;padding:8px 16px;font-size:14px;color:#b71c1c;text-align:center">
-        <strong>🏁 Tap Placing active:</strong> tap swimmers in finish order —
-        ${nextPlace ? `next tap = <strong>${ordinal(nextPlace)} place</strong>.` : '<strong>all placed ✓</strong> — tap Done.'}
-        Tap a placed swimmer to remove their place.
-      </div>` : '';
 
     html += `
       <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91">
@@ -366,7 +340,6 @@ function renderResultsTable(race) {
           <span>Heat ${heat.heat_number}</span>
           <span style="display:flex;align-items:center;gap:8px">${tapControls}<span style="font-weight:400;font-size:13px;opacity:0.8">Expected finish: ${formatWhole(maxTime)}</span></span>
         </div>
-        ${tapBanner}
         <div style="overflow-x:auto">
           <table class="spreadsheet-table">
             <thead>
@@ -583,11 +556,6 @@ function nextTapPlace(heat) {
     if (!used.has(p)) return p;
   }
   return null;
-}
-
-function toggleTapPlacing(heatId) {
-  resTapPlacingHeatId = resTapPlacingHeatId === heatId ? null : heatId;
-  drawResults();
 }
 
 async function tapPlaceLane(heatId, laneId) {

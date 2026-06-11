@@ -1,5 +1,27 @@
 # PROGRESS — WWSC v2.12.0 Bryan-Feedback (3 Hauptreports, Defaults, Tap Placing, Relay-Grid)
 
+## 🛠️ v2.12.1 BRYAN RETEST FIXES — LOCAL PROVEN / NOT DEPLOYED (2026-06-11 12:26 CEST)
+
+- [x] Bryan's latest retest feedback archived: `../messages/2026-06-11-Bryan-inbound-v2120-event-history-breaker-scoring-tap-placing.md`.
+- [x] Classification: still testing, positive on pointscore/history/graphs/relay setup, but asks for Event History cross-check visibility, breaker scoring shift, 2 entry points for all entrants including brace relays, and fewer manual placing clicks.
+- [x] Branch created: `dev/v2.12.1-bryan-retest-fixes` from local `main@9a900c0` (local main includes two unpushed documentation commits after `origin/main@751a237`; no user changes discarded).
+- [x] Version/cache-bust bumped to `2.12.1`.
+- [x] Scoring engine updated:
+  - breakers get 2 entry points only;
+  - non-breakers shift up for 5/4/3 place points;
+  - relay/brace/team finished non-podium participants get 2 entry points.
+- [x] Results UX updated: no separate `Tap Placing` start/done button. Tap the Manual cell directly to assign next place; tap assigned cell again to clear. Finish cells still open time entry.
+- [x] Pointscore updated: Event History available under More reports, with direct Event History buttons from the three main reports.
+- [x] Proof summary: `docs/evidence/v2120-bryan-feedback/V2.12.1-BRYAN-RETEST-FIXES-PROOF.md`.
+- [x] Verification:
+  - `node --check` for touched JS/test files: PASS.
+  - `node scripts/test-m3-pointscore-unit.cjs` → 16 PASS / 0 FAIL.
+  - `node scripts/test-v2120-bryan-feedback.cjs` → 25 PASS / 0 FAIL.
+  - `node scripts/e2e-v2120-bryan-feedback.cjs` → 11 PASS / 0 FAIL, 0 console errors.
+- [ ] Current gate: **Dino deploy decision**. v2.12.1 is local-proven but NOT pushed/deployed/live-seeded and NOT yet communicated to Bryan.
+
+Customer-facing boundary: acknowledge Bryan's clarification and say we will update it / have updated it only after v2.12.1 is deployed and live verified. Do not claim it is live now.
+
 ## 🔁 LIVE DEMO DATA RESEEDED AFTER BRYAN'S EMPTY-DATABASE REPORT (2026-06-11 11:10 CEST)
 
 - [x] Bryan replied on Upwork: "There are no previous events in the database."

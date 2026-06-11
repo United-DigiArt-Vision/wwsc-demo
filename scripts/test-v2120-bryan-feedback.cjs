@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * WWSC v2.12.0 — Bryan 2026-06-10 feedback Unit/API proof (no browser).
+ * WWSC v2.12.x — Bryan feedback Unit/API proof (no browser).
  *
  * Covers:
  *  - Report 1 /api/pointscore/by-race-type/:rt — all members, weekly points,
@@ -10,7 +10,7 @@
  *  - Report 3 /api/reports/breakers-summary — pb_change_log counting
  *    (reductions only), season-start vs current amounts, CSV.
  *  - pb_change_log writing in PUT /api/members/:id (lower / raise / no-op).
- *  - Swimmer card lists 0-point participations (25m brace fix).
+ *  - Swimmer card lists brace participations and applies Bryan's 2-point entry rule.
  *  - Member delete with pointscore rows no longer FK-crashes.
  *
  * Isolated server on PORT=3013 with a fresh DB. Output evidence:
@@ -94,7 +94,7 @@ async function buildCompletedEvent(date, raceTypes, opts = {}) {
     for (let i = 0; i < 40; i++) { try { const r = await fetch(BASE + '/api/version'); if (r.ok) break; } catch (e) {} await sleep(200); }
 
     const version = await api('/api/version');
-    check('UT-V12-00-version', version.version === '2.12.0', 'live version ' + version.version);
+    check('UT-V12-00-version', version.version === '2.12.1', 'live version ' + version.version);
 
     // ── Two completed weekly events (same year) ─────────────────────
     const evA = await buildCompletedEvent('2026-03-07', ['25m', '25m_relay']);
@@ -155,7 +155,7 @@ async function buildCompletedEvent(date, raceTypes, opts = {}) {
     check('UT-V12-09-r2-csv', r2csv.status === 200 && r2csv.text.startsWith('swimmer,25m,relay,25m brace,total'),
       'header=' + r2csv.text.split('\n')[0]);
 
-    // ── Swimmer card: 0-point participations (25m brace fix) ────────
+    // ── Swimmer card: brace participations + entry points ───────────
     const braceRace = (await api('/api/events/' + evB + '/races')).find(r => r.race_type === '25m_brace');
     const braceTeams = await api('/api/races/' + braceRace.id + '/relay-teams');
     const podiumTeam = braceTeams.find(t => t.place === 1);
@@ -165,7 +165,7 @@ async function buildCompletedEvent(date, raceTypes, opts = {}) {
     const zeroMember = nonPodiumTeam.members[0];
     const cardZero = await api('/api/members/' + zeroMember.member_id + '/pointscore');
     const zeroRow = cardZero.contributions.find(c => c.race_type === '25m_brace' && c.event_id === evB);
-    check('UT-V12-11-swimmer-card-lists-0-point-brace', !!zeroRow && zeroRow.points === 0,
+    check('UT-V12-11-swimmer-card-lists-brace-entry-points', !!zeroRow && zeroRow.points === 2,
       zeroMember.name + ' brace row: ' + JSON.stringify(zeroRow));
     const podiumMember = podiumTeam.members[0];
     const cardPodium = await api('/api/members/' + podiumMember.member_id + '/pointscore');
@@ -174,6 +174,13 @@ async function buildCompletedEvent(date, raceTypes, opts = {}) {
       podiumMember.name + ' brace row: ' + JSON.stringify(podiumRow));
     const cardSum = cardZero.contributions.reduce((s, c) => s + c.points, 0);
     check('UT-V12-13-swimmer-card-total-consistent', cardZero.total === cardSum, 'total=' + cardZero.total + ' sum=' + cardSum);
+
+    // ── Event history cross-check: events exist beside pointscore ───
+    const eventsWithHistory = await api('/api/events?archived=1');
+    const evBHistory = await api('/api/events/' + evB + '/time-history');
+    check('UT-V12-24-event-history-cross-check-data',
+      eventsWithHistory.some(e => e.id === evB && (e.status === 'completed' || e.status === 'finalized')) && evBHistory.length > 0,
+      'events=' + eventsWithHistory.length + ', evB history rows=' + evBHistory.length);
 
     // ── Report 3: pb_change_log counting + amounts ──────────────────
     const subject = active.find(m => m.time_25m != null && m.time_50m != null);

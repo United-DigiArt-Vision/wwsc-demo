@@ -124,9 +124,9 @@ Speichern eines Teamsatzes ersetzt alle Teams des Rennens. Teamnamen „Team 1..
   `is_break` sofort serverseitig (8.2). Eingabe einer Zeit überschreibt; Bahnen ohne Zeit bleiben offen.
 - **Live-Platz** pro Heat: Sortierung nach `finish_time`; Gleichstand = gleicher Platz (1,1,3).
   „Save Rankings“ persistiert nach demselben Muster in `heat_lane.place`.
-- **Manueller Platz** (`manual_place` 1–4): Dropdown ODER **Quick Tap Placing** (v2.12.0): Modus pro Heat,
-  Antippen in Zieleinlauf-Reihenfolge vergibt den jeweils kleinsten freien Platz, erneutes Tippen entfernt,
-  „Clear places“ leert den Heat. **Präzedenz überall: `COALESCE(manual_place, place)`** —
+- **Manueller Platz** (`manual_place` 1–4): seit v2.12.1 direkte Manual-Zellen-Taps pro Heat:
+  Antippen einer leeren Manual-Zelle vergibt den jeweils kleinsten freien Platz, erneutes Tippen entfernt,
+  „Clear places“ leert den Heat. Die Finish-Zellen bleiben für Zeiteingabe verfügbar. **Präzedenz überall: `COALESCE(manual_place, place)`** —
   Pointscore, Results, Readout, Event-Report, Season Calendar.
 - **8.2 Break-Regel:** `is_break = variance ≤ Schwelle`; Schwelle **25m: −50 cs (≥ 0,5 s schneller)**,
   alle anderen Strokes: **−100 cs (≥ 1,0 s)**. Zusätzlich `net_time > 0` für Breaker-Anzeigen.
@@ -194,8 +194,9 @@ Plus Totals je Mitglied. Solange keine manuellen Änderungen existieren: erklär
 (Die automatische Break-Erkennung pro Event bleibt separat: „Break Counts“ aus `time_history.is_break`.)
 
 **11.4 Weitere Reports** (unter „More reports“, alle CSV-fähig): Per-Event-Pointscore, Monthly/Season
-Winners, **Swimmer Card** (v2.12.0: JEDE Teilnahme — Individual-Bahnen mit Finish ∪ Relay-Teams mit
-Zeit — mit 0 Punkten wo keine vergeben; Summe == Pointscore-Summe), Break Counts (overall/by event),
+Winners, **Swimmer Card** (v2.12.1: JEDE Teilnahme — Individual-Bahnen mit Finish ∪ Relay-Teams mit
+Zeit — mit Bryans 2 Entry-Points für nicht platzierte Teilnahmen; Summe == Pointscore-Summe), Event History,
+Break Counts (overall/by event),
 Improvements (Σ `previous_best×100 − time`, nur wenn schneller), Completed Categories (Coverage je
 race_type über completed Events), Breaker Report (alle Breaks, gruppiert nach Datum), Exceeded,
 Member-Graphen (SVG: Time-Trend + PB-Progression aus `time_history`), DB-Export (SQLite-Backup-API,
@@ -228,6 +229,7 @@ Hash-Routing `#/screen`. Versionsanzeige in der Sidebar aus `/api/version`.
 | 2026-05 (v2.8.12) | Break-Schwelle 25m = 0,5 s (sonst 1,0 s) |
 | 2026-06-05 | Relay/Team-Pointscore **5/4/3** nach Teamplatz |
 | 2026-06-10 | Select-All-Default Y; Tap Placing; Relay einseitig 3-spaltig; GENAU 3 Hauptreports; Breaker-Report aus manuell geänderten Zeiten; Swimmer Card zeigt 0-Punkte-Teilnahmen; Event-Report mit Start/Break |
+| 2026-06-11 | Breaker-Scoring korrigiert: Breaker erhalten 2 Entry-Points und verbrauchen keine 5/4/3-Platzpunkte; Non-Breaker rücken nach; alle nicht platzierten Teilnahmen inkl. Brace/Relay erhalten 2 Entry-Points; Manual-Placing ohne separaten Start/Done-Modus; Event History direkt im Pointscore erreichbar. |
 
 Offene Working Assumptions: Saisongrenze = Kalenderjahr; Punkteformeln bis Bryans „Constitution“
 bestätigt (Banner in der UI); Report-2-Sortierung (Bryan gefragt 2026-06-10).

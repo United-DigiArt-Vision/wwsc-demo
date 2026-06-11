@@ -1,12 +1,12 @@
 {
   "baseline": {
-    "branch": "dev/v2.12.0-bryan-feedback",
-    "commit": "8d2fc08",
-    "version": "2.12.0"
+    "branch": "dev/v2.12.1-bryan-retest-fixes",
+    "commit": "9a900c0",
+    "version": "2.12.1"
   },
   "apiVersion": {
-    "version": "2.12.0",
-    "build": "2026-06-11T06:43:12.228Z"
+    "version": "2.12.1",
+    "build": "2026-06-11T10:25:30.500Z"
   },
   "records": [
     {
@@ -16,16 +16,16 @@
       "note": "23 entry selects, values: Y"
     },
     {
-      "id": "UI-V12-02-tap-placing-assigns-1-2",
+      "id": "UI-V12-02-direct-manual-cell-assigns-1-2",
       "status": "PASS",
       "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-02-tap-placing-1-2.png",
-      "note": "banner=true badges=[\"1\\tDiane Foster\\t21\\t2\\t23\\t—\\t—\\t—\\t—\\t—\\t1\",\"2\\tKaren Mitchell\\t20\\t3\\t23\\t—\\t—\\t—\\t—\\t—\\t2\"]"
+      "note": "oldButtonGone=true badges=[\"1\",\"2\"]"
     },
     {
-      "id": "UI-V12-03-tap-again-removes-place",
+      "id": "UI-V12-03-direct-tap-again-removes-place",
       "status": "PASS",
       "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-03-tap-placing-removed.png",
-      "note": "first row place cell now: 1\tDiane Foster\t21\t2\t23\t—\t—\t—\t—\t—\t—"
+      "note": "first row place cell now: 1st"
     },
     {
       "id": "UI-V12-04-relay-teams-grid",
@@ -52,19 +52,25 @@
       "note": "count + amount on a single report"
     },
     {
-      "id": "UI-V12-08-swimmer-card-0-point-brace",
+      "id": "UI-V12-08-swimmer-card-brace-participation",
       "status": "PASS",
-      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-08-swimmer-card-brace-0.png",
-      "note": "Andrew Barnes card shows 25m brace (non-podium team, 0 points)"
+      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-08-swimmer-card-brace.png",
+      "note": "Wendy Cooper card shows 25m brace participation"
+    },
+    {
+      "id": "UI-V12-10-pointscore-event-history",
+      "status": "PASS",
+      "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-10-pointscore-event-history.png",
+      "note": "history rows=1"
     },
     {
       "id": "UI-V12-09-event-report-details",
       "status": "PASS",
       "screenshot": "docs/screenshots/v2120-bryan-feedback/UI-V12-09-event-report-start-break.png",
-      "note": "Start/Net/Variance/BREAK columns=true, manual place 4 shown for Sue Williams=true"
+      "note": "Start/Net/Variance/BREAK columns=true, manual place 4 shown for Peter Davidson=true"
     },
     {
-      "id": "UI-V12-10-zero-console-errors",
+      "id": "UI-V12-11-zero-console-errors",
       "status": "PASS",
       "screenshot": "",
       "note": "0 errors []"

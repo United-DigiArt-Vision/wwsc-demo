@@ -11,6 +11,31 @@
 
 ---
 
+## 2026-06-11 — fix: v2.12.1 Bryan retest fixes (event history, breaker scoring, direct tap placing)
+- **Date:** 2026-06-11
+- **Timestamp:** 2026-06-11 12:26:32 Europe/Berlin
+- **App Version (from package.json):** 2.12.1
+- **Branch:** `dev/v2.12.1-bryan-retest-fixes`
+- **RecordedCommit:** pending; uncommitted local implementation at time of entry
+- **Editor:** Balerion
+- **Trigger:** Bryan's 2026-06-11 retest feedback: no visible Event History for pointscore cross-checking; breakers should get 2 entry points only; non-breakers should shift into 5/4/3; all entrants including brace relays get 2 points if they do not place; manual placing has too many clicks.
+- **Changes:**
+  - Archived inbound: `../messages/2026-06-11-Bryan-inbound-v2120-event-history-breaker-scoring-tap-placing.md`.
+  - Bumped app/cache-bust to `2.12.1`.
+  - `src/pointscore.js`: added breaker-aware individual heat scoring; breakers get 2 points and no longer consume 5/4/3; non-breakers shift up; relay/brace/team non-podium finishers get 2 entry points.
+  - `src/public/js/screens/results.js`: removed separate Tap Placing start/done mode; Manual cells are direct tap targets for assign/clear while Finish cells remain time-entry targets.
+  - `src/public/js/screens/pointscore.js`: added Event History under More reports and direct Event History buttons from the three main reports.
+  - Updated targeted Unit/API and Browser-E2E tests and evidence.
+- **Verification:**
+  - `node --check` on touched JS/test files: PASS.
+  - `node scripts/test-m3-pointscore-unit.cjs` → 16 PASS / 0 FAIL.
+  - `node scripts/test-v2120-bryan-feedback.cjs` → 25 PASS / 0 FAIL.
+  - `node scripts/e2e-v2120-bryan-feedback.cjs` → 11 PASS / 0 FAIL, 0 console errors.
+  - Proof summary: `docs/evidence/v2120-bryan-feedback/V2.12.1-BRYAN-RETEST-FIXES-PROOF.md`.
+- **Gate:** local-proven only; not pushed/deployed/live-smoked/live-seeded; waiting for Dino deploy decision.
+
+---
+
 ## 2026-06-11 — data: reseed v2.12.0 live demo after Bryan reported no previous events
 - **Date:** 2026-06-11
 - **Timestamp:** 2026-06-11 11:10:00 Europe/Berlin

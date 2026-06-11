@@ -64,10 +64,10 @@ Anwesende, Races. Buttons navigieren zu Times Sheet/Heat Builder/Results.
   Nach Complete: **📄 Event Report**-Button.
 - Individual-Tabelle je Heat: Lane, Swimmer (groß), PB, Delay, **Exp. Finish** (PB+Delay), **Finish**
   (Tap-Zelle → Numpad; gesperrt nach Finalize), Net, Variance (grün wenn negativ), **Break** (BREAK/—),
-  **Auto** (Gold/Silber/Bronze-Zelle + Zeilen-Tint), **Manual** (Dropdown 1st–4th).
-- **🏁 Tap Placing** (v2.12.0, je Heat-Header, vor Finalize): Modus-Banner „next tap = Nth place“;
-  Zeilen antippen vergibt Plätze in Reihenfolge, erneut tippen entfernt, **↺ Clear places**; **✅ Done**.
-  Im Modus: Finish-Zelle/Dropdowns deaktiviert, Manual-Spalte zeigt rote Platz-Badges.
+  **Auto** (Gold/Silber/Bronze-Zelle + Zeilen-Tint), **Manual** (seit v2.12.1 direkte Tap-Zelle).
+- **Manual-Zellen-Tap** (v2.12.1, je Heat, vor Finalize): leere Manual-Zelle antippen vergibt den
+  nächsten freien Platz, erneut tippen entfernt; **↺ Clear places** leert den Heat. Kein separater
+  Start-/Done-Modus; Finish-Zellen bleiben für Zeit-Eingabe aktiv.
 - Inline-**Breakers Report** je Race (grüne Karte: Swimmer, Event/Heat, Old PB, New Time, −Variance)
   und **Exceeding Report** (> 2 s über PB, orange Karte, Hinweis „PBs NICHT auto-aktualisiert“).
 - Relay-Typen inline: Team-Karten **im `.relay-teams-grid`** (v2.12.0: nebeneinander, Print 3-spaltig):
@@ -96,8 +96,8 @@ Zustand: „No record breakers yet.“
 
 - Regel-Transparenz-Banner (Quelle Excel, „working assumption“, print-hide).
 - **Haupt-Tabs (v2.12.0): 1️⃣ Event Points (weekly) • 2️⃣ Total Pointscore • 3️⃣ Breakers** + Button
-  **„▾ More reports“** (klappt Zweitreihe mit den bisherigen Tabs auf: Per-Event, Monthly Winners,
-  Season Winners, Swimmer Card, Break Counts, Improvements, Completed Categories, DB & Graphs).
+  **„▾ More reports“** (klappt Zweitreihe mit den bisherigen Tabs auf: Event History, Per-Event,
+  Monthly Winners, Season Winners, Swimmer Card, Break Counts, Improvements, Completed Categories, DB & Graphs).
   Default-Tab = Report 1.
 - **Report 1**: Event-Typ-Select (Labels via categoryDisplay) + Saison-Select + CSV + Print;
   Tabelle Swimmer | je Woche (Kurzdatum, title=ISO) | **Total** (blau); alle Mitglieder, leere Zelle = 0.
@@ -106,8 +106,10 @@ Zustand: „No record breakers yet.“
 - **Report 3**: Saison-Select + CSV + Print; Haupttabelle Swimmer | Stroke | Season Start | Current PB |
   **Breaker Count** | **Breaker Amount** (Mitglied gruppiert, 〃-Folgezeilen; grün > 0, grau 0/—)
   + Nebentabelle „Totals per swimmer“; Hinweis-Box solange keine manuellen PB-Änderungen existieren.
+- Event History (unter More, v2.12.1): Tabelle Date | Status | Swimmers | Races | Details; Details öffnet
+  den vorhandenen Event-Details-Dialog inkl. Time History.
 - Swimmer Card (unter More): Select + Print; „<Name> — total N points“; Tabelle Date | Race | Points —
-  **alle Teilnahmen, 0-Punkte-Zeilen grau** mit Erklärung im Untertitel (v2.12.0).
+  **alle Teilnahmen inkl. 2 Entry-Points für nicht platzierte Teilnahmen** (v2.12.1).
 - Übrige More-Tabs wie zuvor (Tabellen + CSV/Print; DB & Graphs: SQLite-Download, Time-History-CSV,
   Erklärungstexte zu Export und Graph-Quelle).
 

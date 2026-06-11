@@ -55,11 +55,11 @@ Die Suiten unter `scripts/` sind ausführbare Spezifikation; sie starten ihren e
 
 | Suite | Befehl | Soll |
 |---|---|---|
-| v2.12.0 Unit/API | `node scripts/test-v2120-bryan-feedback.cjs` | 24/0 |
+| v2.12.x Unit/API | `node scripts/test-v2120-bryan-feedback.cjs` | 25/0 |
 | Pointscore-Unit | `node scripts/test-m3-pointscore-unit.cjs` | 15/0 |
 | Slice2-Unit | `node scripts/test-m3-slice2-reports-export.cjs` | 7/0 |
 | Pointscore-Isolation | `node scripts/e2e-m3-pointscore-isolation.cjs` | PASS |
-| v2.12.0 Browser | `node scripts/e2e-v2120-bryan-feedback.cjs` | 10/0, 0 Console-Errors |
+| v2.12.x Browser | `node scripts/e2e-v2120-bryan-feedback.cjs` | 11/0, 0 Console-Errors |
 | M2-55 / M2-100 | `WWSC_E2E_EXPECTED_VERSION=<ver> node scripts/e2e-m2-time-history.cjs 2>&1 \| tee /tmp/m3p-m2-55.log` (analog M2-100 → `/tmp/m3p-m2-100.log`) | 55/0 • 98/2NA/0/0 |
 | History-Graphs | `…e2e-m3-history-graphs.cjs` | 19/1NA/0 |
 | Slice2-Browser | `…e2e-m3-slice2-reports-export.cjs` | 13/0 |

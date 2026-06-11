@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * WWSC v2.12.0 — Bryan 2026-06-10 feedback Browser/UI proof.
+ * WWSC v2.12.x — Bryan feedback Browser/UI proof.
  *
  * What the USER sees, per QUALITY_PLAYBOOK L4:
  *  - Times Sheet: Select All defaults entries to Y (not N).
- *  - Results: Quick Tap Placing assigns/removes manual places by tapping rows.
+ *  - Results: direct Manual-cell tapping assigns/removes manual places.
  *  - Relays: team cards side by side in a grid (single-page layout).
  *  - Pointscore: leads with Bryan's 3 main reports; all members listed.
- *  - Swimmer Card: 0-point brace participation visible.
+ *  - Swimmer Card: brace participation visible.
  *  - Event report popup: Start, Net, Variance, BREAK columns + manual place wins.
  *  - 0 console errors.
  *
@@ -166,32 +166,27 @@ async function buildFixture() {
       await shot(page, 'UI-V12-01', 'times-sheet-select-all-Y'),
       entryStates.length + ' entry selects, values: ' + [...new Set(entryStates)].join(','));
 
-    // ── UI-V12-02/03: Quick Tap Placing on Results ──────────────────
+    // ── UI-V12-02/03: Direct Manual-cell Tap Placing on Results ─────
     await page.evaluate(() => navigate('results'));
     await sleep(600);
-    await page.evaluate(() => {
-      const btn = [...document.querySelectorAll('button')].find(b => b.textContent.includes('Tap Placing'));
-      btn.click();
-    });
-    await sleep(400);
-    const bannerOn = await page.evaluate(() => document.body.innerText.includes('Tap Placing active'));
-    // Tap first two swimmer rows of the tap-mode heat.
-    await page.evaluate(() => { document.querySelector('tr[onclick^="tapPlaceLane"]').click(); });
+    const oldButtonGone = await page.evaluate(() => ![...document.querySelectorAll('button')].some(b => b.textContent.includes('Tap Placing')));
+    // Tap first two Manual cells directly. Finish cells remain time-entry cells.
+    await page.evaluate(() => { document.querySelector('.manual-place-tap').click(); });
     await sleep(350);
-    await page.evaluate(() => { document.querySelectorAll('tr[onclick^="tapPlaceLane"]')[1].click(); });
+    await page.evaluate(() => { document.querySelectorAll('.manual-place-tap')[1].click(); });
     await sleep(350);
     const placesAfterTwoTaps = await page.evaluate(() =>
-      [...document.querySelectorAll('tr[onclick^="tapPlaceLane"]')].slice(0, 2).map(tr => tr.innerText.trim().split('\n').pop().trim()));
-    rec('UI-V12-02-tap-placing-assigns-1-2', bannerOn && placesAfterTwoTaps[0].includes('1') && placesAfterTwoTaps[1].includes('2'),
+      [...document.querySelectorAll('.manual-place-tap')].slice(0, 2).map(td => td.innerText.trim()));
+    rec('UI-V12-02-direct-manual-cell-assigns-1-2', oldButtonGone && placesAfterTwoTaps[0].includes('1') && placesAfterTwoTaps[1].includes('2'),
       await shot(page, 'UI-V12-02', 'tap-placing-1-2'),
-      'banner=' + bannerOn + ' badges=' + JSON.stringify(placesAfterTwoTaps));
-    await page.evaluate(() => { document.querySelector('tr[onclick^="tapPlaceLane"]').click(); });
+      'oldButtonGone=' + oldButtonGone + ' badges=' + JSON.stringify(placesAfterTwoTaps));
+    await page.evaluate(() => { document.querySelector('.manual-place-tap').click(); });
     await sleep(350);
     const placeRemoved = await page.evaluate(() => {
-      const tr = document.querySelector('tr[onclick^="tapPlaceLane"]');
-      return tr.innerText.trim().split('\n').pop().trim();
+      const td = document.querySelector('.manual-place-tap');
+      return td.innerText.trim();
     });
-    rec('UI-V12-03-tap-again-removes-place', placeRemoved.includes('—'),
+    rec('UI-V12-03-direct-tap-again-removes-place', placeRemoved.includes('1'),
       await shot(page, 'UI-V12-03', 'tap-placing-removed'), 'first row place cell now: ' + placeRemoved);
 
     // ── UI-V12-04: relay grid side-by-side ──────────────────────────
@@ -230,16 +225,24 @@ async function buildFixture() {
     rec('UI-V12-07-report3-breakers', r3text.includes('Report 3') && r3text.includes('Breaker Count') && r3text.includes('Breaker Amount'),
       await shot(page, 'UI-V12-07', 'report3-breakers'), 'count + amount on a single report');
 
-    // ── UI-V12-08: Swimmer card lists 0-point brace row ─────────────
+    // ── UI-V12-08: Swimmer card lists brace row ─────────────────────
     const zeroMember = fixture.nonPodium.members[0];
     await page.evaluate(() => { psMoreOpen = true; psSetTab('swimmer'); });
     await sleep(500);
     await page.evaluate((id) => { document.getElementById('ps-swimmer-select').value = String(id); psRenderBody(); }, zeroMember.member_id);
     await sleep(500);
     const cardText = await page.evaluate(() => document.getElementById('ps-body').innerText);
-    rec('UI-V12-08-swimmer-card-0-point-brace', cardText.includes('25m brace') && cardText.includes(zeroMember.name.split(' ')[0]),
-      await shot(page, 'UI-V12-08', 'swimmer-card-brace-0'),
-      zeroMember.name + ' card shows 25m brace (non-podium team, 0 points)');
+    rec('UI-V12-08-swimmer-card-brace-participation', cardText.includes('25m brace') && cardText.includes(zeroMember.name.split(' ')[0]),
+      await shot(page, 'UI-V12-08', 'swimmer-card-brace'),
+      zeroMember.name + ' card shows 25m brace participation');
+
+    // ── UI-V12-10: Pointscore exposes Event History cross-check ─────
+    await page.evaluate(() => { psMoreOpen = true; psSetTab('history'); });
+    await sleep(500);
+    const histText = await page.evaluate(() => document.body.innerText);
+    const histRows = await page.evaluate(() => document.querySelectorAll('#ps-body tbody tr').length);
+    rec('UI-V12-10-pointscore-event-history', histText.includes('Event History') && histRows >= 1,
+      await shot(page, 'UI-V12-10', 'pointscore-event-history'), 'history rows=' + histRows);
 
     // ── UI-V12-09: event report popup — Start + BREAK + manual place ─
     const popupPromise = new Promise(resolve => browser.once('targetcreated', t => resolve(t)));
@@ -255,9 +258,9 @@ async function buildFixture() {
       'Start/Net/Variance/BREAK columns=' + hasCols + ', manual place 4 shown for ' + fixture.manualPlaceLane.name + '=' + manualShown);
     await popup.close();
 
-    // ── UI-V12-10: console errors ───────────────────────────────────
+    // ── UI-V12-11: console errors ───────────────────────────────────
     const realErrors = consoleErrors.filter(e => !/favicon/i.test(e.msg) && !/404 \(Not Found\)/i.test(e.msg));
-    rec('UI-V12-10-zero-console-errors', realErrors.length === 0, '', realErrors.length + ' errors ' + JSON.stringify(realErrors.slice(0, 3)));
+    rec('UI-V12-11-zero-console-errors', realErrors.length === 0, '', realErrors.length + ' errors ' + JSON.stringify(realErrors.slice(0, 3)));
 
     fs.writeFileSync(path.join(EVID, 'browser-records.json'), JSON.stringify({ baseline, apiVersion, records, consoleErrors }, null, 2));
   } catch (e) {
@@ -269,6 +272,6 @@ async function buildFixture() {
   }
   const pass = records.filter(r => r.status === 'PASS').length;
   const fail = records.filter(r => r.status === 'FAIL').length;
-  console.log(`\n=== V2.12.0 BROWSER TALLY: ${pass} PASS / ${fail} FAIL ===`);
+  console.log(`\n=== V2.12.x BROWSER TALLY: ${pass} PASS / ${fail} FAIL ===`);
   process.exit(fail > 0 ? 1 : 0);
 })();

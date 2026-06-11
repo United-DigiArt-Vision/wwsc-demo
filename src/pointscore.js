@@ -13,6 +13,8 @@
  *    POINTSCORE-RULE-SOURCE-2026-06-03.md). It is centralized in
  *    POINTSCORE_RULES below and fully adjustable when Bryan confirms the
  *    Constitution — no accepted logic changes when the numbers change.
+ *  - Bryan clarified on 2026-06-11 that breakers receive entry points only
+ *    and do not consume 5/4/3 place points; non-breaking finishers shift up.
  *
  * Isolation switch: set WWSC_POINTSCORE_DISABLED=1 to make writeEventPointscore
  * a no-op. The isolation regression proof finalizes the same fixture with the
@@ -29,7 +31,7 @@
 const POINTSCORE_RULES = {
   // Working-assumption metadata surfaced in the UI/rule banner.
   source: 'bryan-excel-original.xlsm pointscore sheets (working assumption, not confirmed Constitution)',
-  version: '2026-06-05-v2.10.2-relay-team-clarification',
+  version: '2026-06-11-v2.12.1-breaker-shift-entry-points',
   categories: {
     individual: {
       label: 'Individual race (place-based 5/4/3/2)',
@@ -39,10 +41,10 @@ const POINTSCORE_RULES = {
       nonFinisherPoints: 0 // no finish time / absent → no pointscore row
     },
     relay: {
-      label: 'Relay / team race (place-based 5/4/3)',
+      label: 'Relay / team race (place-based 5/4/3 + 2 entry)',
       raceTypes: ['25m_relay', 'medley_relay', '25m_brace', '50m_brace', 'pogo'],
       pointsByPlace: { 1: 5, 2: 4, 3: 3 },
-      finisherPoints: 0,
+      finisherPoints: 2,
       nonFinisherPoints: 0
     }
   }
@@ -65,6 +67,54 @@ function pointsForPlace(categoryKey, place, finished) {
   if (place != null && cat.pointsByPlace[place] != null) return cat.pointsByPlace[place];
   if (finished) return cat.finisherPoints;
   return cat.nonFinisherPoints;
+}
+
+function effectivePlace(row) {
+  return row.manual_place != null ? row.manual_place : row.place;
+}
+
+function scoreIndividualHeat(lanes, raceType, eventRaceId) {
+  const rows = [];
+  const finished = lanes
+    .filter(lane => lane.finish_time != null)
+    .map(lane => ({ ...lane, effective_place: effectivePlace(lane) }))
+    .sort((a, b) => {
+      const placeCmp = (a.effective_place ?? 999) - (b.effective_place ?? 999);
+      if (placeCmp !== 0) return placeCmp;
+      return (a.finish_time ?? 99999999) - (b.finish_time ?? 99999999);
+    });
+
+  let scoringPlace = 0;
+  for (const lane of finished) {
+    if (lane.is_break) {
+      const points = pointsForPlace('individual', null, true);
+      if (points > 0) {
+        rows.push({
+          event_race_id: eventRaceId,
+          member_id: lane.member_id,
+          points,
+          race_type: raceType,
+          place: lane.effective_place,
+          basis: 'individual-breaker-entry'
+        });
+      }
+      continue;
+    }
+
+    scoringPlace += 1;
+    const points = pointsForPlace('individual', scoringPlace, true);
+    if (points > 0) {
+      rows.push({
+        event_race_id: eventRaceId,
+        member_id: lane.member_id,
+        points,
+        race_type: raceType,
+        place: lane.effective_place,
+        basis: scoringPlace !== lane.effective_place ? 'individual-place-shifted' : 'individual-place'
+      });
+    }
+  }
+  return rows;
 }
 
 // Is pointscore writing enabled? The isolation proof flips this off.
@@ -92,19 +142,19 @@ function computeEventPointscoreRows(db, eventId) {
     if (categoryKey === 'individual') {
       // Individual: per-heat lanes. place = COALESCE(manual_place, place).
       const lanes = db.prepare(`
-        SELECT hl.member_id, hl.finish_time, hl.place, hl.manual_place
+        SELECT h.id AS heat_id, hl.member_id, hl.finish_time, hl.place, hl.manual_place, hl.is_break
         FROM heat_lane hl
         JOIN heat h ON hl.heat_id = h.id
         WHERE h.event_race_id = ?
+        ORDER BY h.heat_number, hl.lane_number
       `).all(race.id);
+      const byHeat = new Map();
       for (const lane of lanes) {
-        const finished = lane.finish_time != null;
-        if (!finished) continue; // no row for non-finishers
-        const place = lane.manual_place != null ? lane.manual_place : lane.place;
-        const points = pointsForPlace(categoryKey, place, finished);
-        if (points > 0) {
-          rows.push({ event_race_id: race.id, member_id: lane.member_id, points, race_type: race.race_type, place, basis: 'individual-place' });
-        }
+        if (!byHeat.has(lane.heat_id)) byHeat.set(lane.heat_id, []);
+        byHeat.get(lane.heat_id).push(lane);
+      }
+      for (const heatLanes of byHeat.values()) {
+        rows.push(...scoreIndividualHeat(heatLanes, race.race_type, race.id));
       }
     } else {
       // Relay / team: each team's members all earn the team's place points.
@@ -169,6 +219,7 @@ module.exports = {
   POINTSCORE_RULES,
   categoryForRaceType,
   pointsForPlace,
+  scoreIndividualHeat,
   isPointscoreEnabled,
   computeEventPointscoreRows,
   writeEventPointscore

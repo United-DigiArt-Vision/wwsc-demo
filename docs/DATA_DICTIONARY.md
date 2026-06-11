@@ -71,7 +71,7 @@ heat: `id`, `event_race_id` FK, `heat_number` (1..n, 4 Bahnen, Verteilung SYSTEM
 | `variance` | **cs** | `net_time − handicap_time×100` | "+/−X.XX", grün < 0 |
 | `is_break` | 0/1 | **`variance ≤ −50` für 25m, `variance ≤ −100` für alle anderen Strokes** (v2.8.12); gesetzt bei Zeiteingabe = **SSOT** für alle Break-Anzeigen; Breaker-Listen filtern zusätzlich `net_time > 0` | "BREAK" |
 | `place` | INTEGER nullable | „Save Rankings“: je Heat nach finish_time; Gleichstand = gleicher Platz (1,1,3); ohne Zeit → null | Auto-Platz (Gold/Silber/Bronze) |
-| `manual_place` | INTEGER 1–4 nullable | Operator-Override (Dropdown oder Tap Placing v2.12.0). **Präzedenz überall: `COALESCE(manual_place, place)`** — Pointscore, Results, Readout, Event-Report, Season Calendar | roter Badge |
+| `manual_place` | INTEGER 1–4 nullable | Operator-Override (seit v2.12.1 direkte Manual-Zellen-Taps; vorher Dropdown/Tap-Placing-Modus). **Präzedenz überall: `COALESCE(manual_place, place)`** — Pointscore, Results, Readout, Event-Report, Season Calendar | roter Badge |
 | `finish_time_2` | cs | reserviert (ungenutzt; Pogo nutzt relay_team_member.split_time_2) | |
 
 Expected Finish (nur Anzeige): `handicap_time + start_delay` = max_time (s).

@@ -7,7 +7,7 @@
   {
     "id": "UT1-rule-relay",
     "status": "PASS",
-    "note": "relay 5/4/3"
+    "note": "relay 5/4/3 + entry 2"
   },
   {
     "id": "UT1-rule-source-labeled",
@@ -42,7 +42,7 @@
   {
     "id": "UT7-member-contribution",
     "status": "PASS",
-    "note": "member total == sum of contributions=12"
+    "note": "member total == sum of contributions=14"
   },
   {
     "id": "UT8-months-list",
@@ -67,11 +67,16 @@
   {
     "id": "UT11-relay-team-543",
     "status": "PASS",
-    "note": "relay/team place 1=5, 2=4, 3=3"
+    "note": "relay/team place 1=5, 2=4, 3=3, finished non-podium=2"
   },
   {
     "id": "UT12-relay-aggregation-api",
     "status": "PASS",
     "note": "relay event totals feed month+season; teams=3, rows=23"
+  },
+  {
+    "id": "UT13-breaker-shifts-place-points",
+    "status": "PASS",
+    "note": "{\"201\":2,\"202\":5,\"203\":4,\"204\":3,\"205\":2}"
   }
 ]

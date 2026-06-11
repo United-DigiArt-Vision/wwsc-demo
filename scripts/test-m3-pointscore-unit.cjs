@@ -87,7 +87,7 @@ async function finalizeRelay(date, raceType = '25m_relay') {
     // UT1 — rule config exposes the working-assumption formula
     const rules = await api('/api/pointscore/rules');
     check('UT1-rule-individual', rules.categories.individual.pointsByPlace['1'] === 5 && rules.categories.individual.pointsByPlace['2'] === 4 && rules.categories.individual.pointsByPlace['3'] === 3 && rules.categories.individual.finisherPoints === 2, 'individual 5/4/3/2');
-    check('UT1-rule-relay', rules.categories.relay.pointsByPlace['1'] === 5 && rules.categories.relay.pointsByPlace['2'] === 4 && rules.categories.relay.pointsByPlace['3'] === 3, 'relay 5/4/3');
+    check('UT1-rule-relay', rules.categories.relay.pointsByPlace['1'] === 5 && rules.categories.relay.pointsByPlace['2'] === 4 && rules.categories.relay.pointsByPlace['3'] === 3 && rules.categories.relay.finisherPoints === 2, 'relay 5/4/3 + entry 2');
     check('UT1-rule-source-labeled', /working assumption/i.test(rules.source) && /simple addition/i.test(rules.aggregation), 'source + aggregation labeled');
 
     // UT2 — finalize creates point rows; place 1 → 5, place 3 → 3, finisher → 2
@@ -166,13 +166,13 @@ async function finalizeRelay(date, raceType = '25m_relay') {
       mem.exec(`
         CREATE TABLE event_race (id INTEGER PRIMARY KEY, event_id INTEGER, race_type TEXT);
         CREATE TABLE heat (id INTEGER PRIMARY KEY, event_race_id INTEGER, heat_number INTEGER);
-        CREATE TABLE heat_lane (id INTEGER PRIMARY KEY, heat_id INTEGER, member_id INTEGER, finish_time INTEGER, place INTEGER, manual_place INTEGER);
+        CREATE TABLE heat_lane (id INTEGER PRIMARY KEY, heat_id INTEGER, lane_number INTEGER, member_id INTEGER, finish_time INTEGER, place INTEGER, manual_place INTEGER, is_break INTEGER);
         CREATE TABLE relay_team (id INTEGER PRIMARY KEY, event_race_id INTEGER, place INTEGER, total_time INTEGER);
         CREATE TABLE relay_team_member (id INTEGER PRIMARY KEY, relay_team_id INTEGER, member_id INTEGER);
       `);
       mem.prepare("INSERT INTO event_race (id, event_id, race_type) VALUES (1, 1, 'mystery_stroke')").run();
       mem.prepare('INSERT INTO heat (id, event_race_id, heat_number) VALUES (1, 1, 1)').run();
-      mem.prepare('INSERT INTO heat_lane (id, heat_id, member_id, finish_time, place, manual_place) VALUES (1, 1, 7, 1234, 1, NULL)').run();
+      mem.prepare('INSERT INTO heat_lane (id, heat_id, lane_number, member_id, finish_time, place, manual_place, is_break) VALUES (1, 1, 1, 7, 1234, 1, NULL, 0)').run();
       const rows = ps.computeEventPointscoreRows(mem, 1);
       const r = rows.find(x => x.member_id === 7);
       mem.close();
@@ -196,7 +196,8 @@ async function finalizeRelay(date, raceType = '25m_relay') {
         'relay incl brace/pogo → relay 5/4/3; strokes → individual 5/4/3/2');
     }
 
-    // UT11 — exact relay/team scoring for places 1, 2 and 3.
+    // UT11 — exact relay/team scoring for places 1, 2 and 3, plus entry
+    // points for every other finished team (Bryan 2026-06-11).
     {
       const Database = require('better-sqlite3');
       const ps3 = require('../src/pointscore.js');
@@ -209,14 +210,14 @@ async function finalizeRelay(date, raceType = '25m_relay') {
         CREATE TABLE relay_team_member (id INTEGER PRIMARY KEY, relay_team_id INTEGER, member_id INTEGER);
       `);
       mem.prepare("INSERT INTO event_race (id, event_id, race_type) VALUES (1, 1, '25m_relay')").run();
-      mem.prepare('INSERT INTO relay_team (id, event_race_id, place, total_time) VALUES (11, 1, 1, 5000), (12, 1, 2, 6000), (13, 1, 3, 7000)').run();
-      mem.prepare('INSERT INTO relay_team_member (relay_team_id, member_id) VALUES (11, 101), (12, 102), (13, 103)').run();
+      mem.prepare('INSERT INTO relay_team (id, event_race_id, place, total_time) VALUES (11, 1, 1, 5000), (12, 1, 2, 6000), (13, 1, 3, 7000), (14, 1, 4, 8000)').run();
+      mem.prepare('INSERT INTO relay_team_member (relay_team_id, member_id) VALUES (11, 101), (12, 102), (13, 103), (14, 104)').run();
       const rows = ps3.computeEventPointscoreRows(mem, 1);
       const byMember = Object.fromEntries(rows.map(r => [r.member_id, r.points]));
       mem.close();
       check('UT11-relay-team-543',
-        byMember[101] === 5 && byMember[102] === 4 && byMember[103] === 3 && rows.every(r => r.basis === 'relay-team-place'),
-        'relay/team place 1=5, 2=4, 3=3');
+        byMember[101] === 5 && byMember[102] === 4 && byMember[103] === 3 && byMember[104] === 2 && rows.every(r => r.basis === 'relay-team-place'),
+        'relay/team place 1=5, 2=4, 3=3, finished non-podium=2');
     }
 
     // UT12 — completed relay event rolls into monthly and season aggregation.
@@ -232,6 +233,24 @@ async function finalizeRelay(date, raceType = '25m_relay') {
         (relayRun.teams.length < 3 || relayRun.pointscore.rows.some(r => r.race_type === '25m_relay' && r.points === 3));
       check('UT12-relay-aggregation-api', monthOk && seasonOk && hasRelay543,
         'relay event totals feed month+season; teams=' + relayRun.teams.length + ', rows=' + relayRun.pointscore.rows.length);
+    }
+
+    // UT13 — breaker scoring shift. If 1st breaks, 1st gets entry 2 points,
+    // 2nd receives 1st-place points (5), 3rd receives 2nd-place points (4),
+    // 4th receives 3rd-place points (3).
+    {
+      const ps4 = require('../src/pointscore.js');
+      const rows = ps4.scoreIndividualHeat([
+        { member_id: 201, finish_time: 1000, place: 1, manual_place: null, is_break: 1 },
+        { member_id: 202, finish_time: 1100, place: 2, manual_place: null, is_break: 0 },
+        { member_id: 203, finish_time: 1200, place: 3, manual_place: null, is_break: 0 },
+        { member_id: 204, finish_time: 1300, place: 4, manual_place: null, is_break: 0 },
+        { member_id: 205, finish_time: 1400, place: 5, manual_place: null, is_break: 0 }
+      ], '25m', 99);
+      const byMember = Object.fromEntries(rows.map(r => [r.member_id, r.points]));
+      check('UT13-breaker-shifts-place-points',
+        byMember[201] === 2 && byMember[202] === 5 && byMember[203] === 4 && byMember[204] === 3 && byMember[205] === 2,
+        JSON.stringify(byMember));
     }
 
   } finally {
