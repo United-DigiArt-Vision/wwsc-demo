@@ -1,21 +1,28 @@
 ## Current Stable Live Version
 
-- **Version:** v2.12.0
-- **Tag:** v2.12.0
+- **Version:** v2.12.1
+- **Tag:** v2.12.1
 - **Branch:** main
 - **Date:** 2026-06-11
-- **Release status:** live verified on Render; weekly Bryan demo seed applied and verified; v2.12.0 feedback response sent to Bryan by Dino/Nedim on 2026-06-11 09:44 CEST.
-- **Release source commit before stable-doc commit:** 32edc06 (`docs: SSOT close — Balerion ReQA findings round green @ 8d2fc08`)
+- **Release status:** live verified on Render; Bryan v2.12.1 retest fixes deployed; weekly Bryan demo seed re-applied after deploy and verified.
+- **Release source commit:** 8683913 (`fix: v2.12.1 bryan retest scoring and placing`)
 - **Current main tip after live evidence/docs:** resolve with `git rev-parse --short origin/main`.
-- **Implementation branch:** dev/v2.12.0-bryan-feedback
-- **Implementation anchors:** `40ea1d7` (Select All default Y, Quick Tap Placing, relay grid), `0a1a76e` (3 main reports, pb_change_log, Swimmer Card participation rows, Event Report details, member-delete FK fix), `73a7b27` (v2.12.0 test suites + weekly seeder), `c69ec0a` (manual-place precedence fix), `8d2fc08` (Balerion ReQA findings: harness validation, gate robustness, real assertions, dependency audit).
-- **Local verification:** v2.12 Unit/API 24 PASS / 0 FAIL; pointscore Unit 15 PASS / 0 FAIL; Slice2 Unit/API 7 PASS / 0 FAIL; pointscore isolation PASS; v2.12 Browser 10 PASS / 0 FAIL; M2-55 55 PASS / 0 FAIL; M2-100 98 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED; M3-120 118 PASS / 2 NOT APPLICABLE / 0 FAIL / 0 BLOCKED / 0 CLIENT INPUT MISSING. Balerion final ReQA: `../messages/2026-06-11-0915-Balerion-Final-ReQA-v2120-after-Claude-fixes.md`.
-- **Live Render verification:** `/api/version` returned `{"version":"2.12.0","build":"2026-06-11T07:28:01.137Z"}`.
-- **Browser/API verification:** read-only live smoke passed 11/11 HTTP checks: root app, version, members, current events, completed events, total pointscore, breakers summary, race-type pointscore, event coverage, break counts and improvements.
-- **Live weekly seed verification:** `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-weekly-events.cjs` created 7 completed weekly events and passed 9/9 self-checks. Completed dates visible live: 2026-04-18, 2026-04-25, 2026-05-02, 2026-05-09, 2026-05-16, 2026-05-23, 2026-05-30.
-- **Live smoke evidence:** `docs/evidence/live-smoke-v2.12.0-2026-06-11.json`; weekly seed evidence: `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T07-29-10-656Z.json`.
-- **Customer sent-confirmed record:** `../messages/2026-06-11-outgoing-to-bryan-v2120-feedback-response-sent-confirmed.md`; screenshots: `../messages/attachments/2026-06-11-v2120-sent-to-bryan-confirmation/`.
-- **Current customer gate:** waiting for Bryan retest/feedback/acceptance.
+- **Implementation branch:** dev/v2.12.1-bryan-retest-fixes
+- **Local verification:** `node --check` touched JS/test files PASS; `node scripts/test-m3-pointscore-unit.cjs` 16 PASS / 0 FAIL; `node scripts/test-v2120-bryan-feedback.cjs` 25 PASS / 0 FAIL; `node scripts/e2e-v2120-bryan-feedback.cjs` 11 PASS / 0 FAIL with 0 console errors.
+- **Live Render verification:** `/api/version` returned `{"version":"2.12.1","build":"2026-06-11T10:36:19.048Z"}`.
+- **Live weekly seed verification:** deploy reset the demo SQLite data again; after reseed `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-weekly-events.cjs` created 7 completed weekly events and passed 9/9 self-checks. Independent live verification confirmed 7 completed events dated 2026-04-18 through 2026-05-30, pointscore months April/May, 10 race types, 23 positive member totals, Event History rows, and shifted breaker scoring evidence.
+- **Evidence:** v2.12.1 proof `docs/evidence/v2120-bryan-feedback/V2.12.1-BRYAN-RETEST-FIXES-PROOF.md`; weekly seed evidence `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T10-38-59-279Z.json`.
+- **Customer gate:** Dino/Nedim has a prepared v2.12.1 response for Bryan covering Event History, breaker scoring, direct Manual-cell placing, and local/hosted cost options. Waiting for Dino to send, then Bryan retest/feedback/acceptance.
+
+## What's in v2.12.1
+
+Bryan's 2026-06-11 retest fixes:
+
+- Event History is exposed under Pointscore > More reports, with direct Event History buttons from the three main reports so Bryan can cross-check pointscore totals against completed event details.
+- Breaker scoring now matches Bryan's rule: a breaker receives 2 entry points only and does not consume the 5/4/3 place points; non-breakers shift up into the available place points.
+- All finished non-placing entrants receive 2 entry points, including brace and relay/team events.
+- Manual placing no longer requires a separate Tap Placing start/done mode. The Manual column itself is the tap target: tap to assign the next place, tap an assigned place to clear it. Finish cells still handle time entry.
+- Demo data was reloaded after deploy with seven completed weekly events for April/May 2026.
 
 ## What's in v2.12.0
 

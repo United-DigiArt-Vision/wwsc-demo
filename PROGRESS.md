@@ -1,8 +1,9 @@
 # PROGRESS — WWSC v2.12.0 Bryan-Feedback (3 Hauptreports, Defaults, Tap Placing, Relay-Grid)
 
-## 🛠️ v2.12.1 BRYAN RETEST FIXES — LOCAL PROVEN / NOT DEPLOYED (2026-06-11 12:26 CEST)
+## 🚀 v2.12.1 BRYAN RETEST FIXES — LIVE DEPLOYED / RESPONSE PREPARED (2026-06-11 12:45 CEST)
 
 - [x] Bryan's latest retest feedback archived: `../messages/2026-06-11-Bryan-inbound-v2120-event-history-breaker-scoring-tap-placing.md`.
+- [x] Additional later screenshot question archived in same inbound: ongoing cost vs local laptop install with external storage/OneDrive backup.
 - [x] Classification: still testing, positive on pointscore/history/graphs/relay setup, but asks for Event History cross-check visibility, breaker scoring shift, 2 entry points for all entrants including brace relays, and fewer manual placing clicks.
 - [x] Branch created: `dev/v2.12.1-bryan-retest-fixes` from local `main@9a900c0` (local main includes two unpushed documentation commits after `origin/main@751a237`; no user changes discarded).
 - [x] Version/cache-bust bumped to `2.12.1`.
@@ -18,9 +19,14 @@
   - `node scripts/test-m3-pointscore-unit.cjs` → 16 PASS / 0 FAIL.
   - `node scripts/test-v2120-bryan-feedback.cjs` → 25 PASS / 0 FAIL.
   - `node scripts/e2e-v2120-bryan-feedback.cjs` → 11 PASS / 0 FAIL, 0 console errors.
-- [ ] Current gate: **Dino deploy decision**. v2.12.1 is local-proven but NOT pushed/deployed/live-seeded and NOT yet communicated to Bryan.
+- [x] Dino authorized deploy. `main` fast-forwarded to `8683913`, tag `v2.12.1` pushed, and Render live `/api/version` verified as `{"version":"2.12.1","build":"2026-06-11T10:36:19.048Z"}`.
+- [x] Live post-deploy demo DB was empty again; re-ran guarded weekly seed with `APPLY_LIVE=1`.
+- [x] Live seed result: 7 completed events created, 9/9 self-checks PASS. Evidence: `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T10-38-59-279Z.json`.
+- [x] Independent live verification after seed: 7 completed events from 2026-04-18 through 2026-05-30, April/May pointscore months, 10 race types, 23 positive totals, Event History rows populated, breaker-shift evidence present.
+- [x] Bryan response draft prepared: `../messages/2026-06-11-draft-to-bryan-v2121-live-retest-fixes-and-local-cost-answer.md`.
+- [ ] Current gate: **Dino/Nedim sends v2.12.1 response → wait for Bryan retest/acceptance**.
 
-Customer-facing boundary: acknowledge Bryan's clarification and say we will update it / have updated it only after v2.12.1 is deployed and live verified. Do not claim it is live now.
+Customer-facing boundary: acknowledge Bryan's clarification and say the demo has now been updated/reloaded. Do not claim older lost hosted-demo events were recovered. For local setup, local laptop operation can avoid mandatory hosting subscription, but use OneDrive/external drive as backup target, not the live SQLite DB folder.
 
 ## 🔁 LIVE DEMO DATA RESEEDED AFTER BRYAN'S EMPTY-DATABASE REPORT (2026-06-11 11:10 CEST)
 

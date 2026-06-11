@@ -1,5 +1,22 @@
 # CURRENT_STATE
 
+## CURRENT (2026-06-11 12:45 CEST) — v2.12.1 deployed live, demo reseeded, Bryan response prepared
+
+**Version (from live `/api/version`):** 2.12.1  
+**Branch:** main  
+**Date:** 2026-06-11  
+**Timestamp:** 2026-06-11 12:45:16 Europe/Berlin  
+**LastEditor:** Balerion  
+**WorkingTreeStatus:** Dino authorized v2.12.1 deploy after Bryan's latest retest feedback and additional local/ongoing-cost question. Balerion fast-forwarded `main` to `8683913` (`fix: v2.12.1 bryan retest scoring and placing`), tagged/pushed `v2.12.1`, and verified Render live `/api/version={"version":"2.12.1","build":"2026-06-11T10:36:19.048Z"}`. As with prior Render demo deploys, the hosted demo SQLite data was empty immediately after deploy (`/api/events?archived=1=[]`, `/api/pointscore/months=[]`), so Balerion re-ran the guarded weekly seed with `BASE_URL=https://wwsc-demo.onrender.com APPLY_LIVE=1 node scripts/seed-bryan-weekly-events.cjs`. Result: 7 completed weekly events created, 9/9 seed self-checks PASS. Independent live verification confirmed 7 completed events dated 2026-04-18 through 2026-05-30, pointscore months `2026-05` and `2026-04`, 10 race types, 23 positive member totals, Event History rows visible, brace/relay participation evidence, and shifted breaker scoring evidence.
+
+**Implemented v2.12.1 fixes live:** Event History is exposed for pointscore cross-checking; breaker scoring gives breakers 2 entry points only and shifts 5/4/3 to non-breakers; non-placing entrants get 2 points including brace/relay/team events; manual placing uses direct Manual-cell taps with no separate Tap Placing start/done button.
+
+**Evidence:** v2.12.1 proof summary `docs/evidence/v2120-bryan-feedback/V2.12.1-BRYAN-RETEST-FIXES-PROOF.md`; live seed evidence `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T10-38-59-279Z.json`.
+
+**Customer status:** Bryan's additional question from the later screenshot is archived in `../messages/2026-06-11-Bryan-inbound-v2120-event-history-breaker-scoring-tap-placing.md`: he asks whether there will be ongoing cost, or whether the app can be loaded locally on a laptop with external storage/OneDrive backup. Balerion prepared `../messages/2026-06-11-draft-to-bryan-v2121-live-retest-fixes-and-local-cost-answer.md`. Current gate: Dino/Nedim sends the prepared reply, then wait for Bryan's continued testing/retest/acceptance. Customer-facing boundary: say the demo has been reloaded and verified; do not claim old lost hosted-demo events were recovered. For local setup, explain that local laptop operation can avoid mandatory hosting subscription, but OneDrive/external storage should be used for backups rather than as the live SQLite DB folder.
+
+---
+
 ## CURRENT (2026-06-11 12:26 CEST) — v2.12.1 Bryan retest fixes local-proven, awaiting deploy decision
 
 **Version (from `package.json`):** 2.12.1  

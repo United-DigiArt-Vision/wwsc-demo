@@ -11,6 +11,31 @@
 
 ---
 
+## 2026-06-11 — release: v2.12.1 Render deploy + live weekly seed + Bryan response draft
+- **Date:** 2026-06-11
+- **Timestamp:** 2026-06-11 12:45:16 Europe/Berlin
+- **App Version (from live `/api/version`):** 2.12.1
+- **Branch:** main
+- **RecordedCommit:** 8683913 (`fix: v2.12.1 bryan retest scoring and placing`)
+- **Tag:** v2.12.1
+- **Editor:** Balerion
+- **Trigger:** Dino authorized deploying the v2.12.1 Bryan retest fixes and asked for a Bryan response including the later local/ongoing-cost question.
+- **Changes:**
+  - Fast-forwarded `main` to the local-proven v2.12.1 branch and pushed `main` plus tag `v2.12.1`.
+  - Render live `/api/version` returned `{"version":"2.12.1","build":"2026-06-11T10:36:19.048Z"}`.
+  - Verified live JS assets expose Pointscore Event History and direct Manual-cell placing behavior.
+  - Observed the hosted demo DB was empty immediately after deploy; re-ran the guarded weekly live seed.
+  - Live seed created 7 completed weekly events and passed 9/9 checks.
+  - Independent live verification confirmed 7 completed events, April/May pointscore months, 10 race types, 23 positive member totals, Event History rows, brace/relay participation evidence, and shifted breaker scoring evidence.
+  - Prepared Bryan response draft answering the fixes and explaining hosted vs local laptop setup/cost boundary.
+- **Evidence:**
+  - Local proof: `docs/evidence/v2120-bryan-feedback/V2.12.1-BRYAN-RETEST-FIXES-PROOF.md`.
+  - Live seed: `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-11T10-38-59-279Z.json`.
+  - Bryan draft: `../messages/2026-06-11-draft-to-bryan-v2121-live-retest-fixes-and-local-cost-answer.md`.
+- **Gate:** Dino/Nedim sends the prepared response; then wait for Bryan's continued testing, retest feedback, or acceptance.
+
+---
+
 ## 2026-06-11 — fix: v2.12.1 Bryan retest fixes (event history, breaker scoring, direct tap placing)
 - **Date:** 2026-06-11
 - **Timestamp:** 2026-06-11 12:26:32 Europe/Berlin
