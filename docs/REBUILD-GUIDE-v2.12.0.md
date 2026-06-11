@@ -24,7 +24,7 @@ npm run dev                       # http://localhost:3000 — leere DB wird ange
 **Lese-Reihenfolge (alles unter `docs/`):**
 1. `SYSTEM-SPEC-v2.12.0.md` — Domäne + ALLE Business-Regeln/Formeln (das „Was und Warum“)
 2. `DATA_DICTIONARY.md` — Datenmodell, Einheiten, Berechnungs- und Propagationsregeln
-3. `API-REFERENCE-v2.12.0.md` — Verhaltensvertrag der 73 Endpoints (bei UI-Neubau optional, bei
+3. `API-REFERENCE-v2.12.0.md` — Verhaltensvertrag der 75 Endpoints (bei UI-Neubau optional, bei
    1:1-Nachbau verbindlich, weil die Test-Suiten diesen Vertrag prüfen)
 4. `UI-SCREEN-SPEC-v2.12.0.md` — Screens, Interaktionen, Zustände
 5. `TEST_ARCHITECTURE.md` + `tests/README.md` — wie Verhalten bewiesen wird

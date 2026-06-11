@@ -127,7 +127,14 @@ async function finalizeEvent(date, raceTypes) {
     await page.goto(BASE + '/?cb=' + Date.now(), { waitUntil: 'networkidle0' }); await sleep(400);
 
     // ── Baseline / Navigation (001-010) ──
-    rec('UIT-M3-001', /2\.10/.test((await page.evaluate(() => document.body.innerText))) ? 'PASS' : 'PASS', await shot(page, 'UIT-M3-001', 'app-loads', { full: true }), 'app loads v' + ver.version);
+    // Balerion ReQA 2026-06-11 finding 3 (pattern audit): this and four sibling
+    // checks were always-pass ('PASS' : 'PASS') — all five are real assertions now.
+    let versionShown = false;
+    for (let i = 0; i < 10 && !versionShown; i++) {
+      versionShown = await page.evaluate(v => document.body.innerText.includes('v' + v), ver.version);
+      if (!versionShown) await sleep(200);
+    }
+    rec('UIT-M3-001', versionShown ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-001', 'app-loads', { full: true }), 'app loads, UI shows v' + ver.version);
     await nav(page, 'dashboard');
     rec('UIT-M3-002', 'PASS', await shot(page, 'UIT-M3-002', 'dashboard'), 'dashboard readable');
     await nav(page, 'pointscore');
@@ -147,7 +154,7 @@ async function finalizeEvent(date, raceTypes) {
     await page.setViewport({ width: 1440, height: 900 }); await sleep(200); await nav(page, 'pointscore');
     rec('UIT-M3-009', 'PASS', await shot(page, 'UIT-M3-009', 'desktop-nav'), 'desktop 1440x900');
     const kbd = await page.evaluate(() => { const b = document.querySelector('#content button'); if (b) b.focus(); return document.activeElement && document.activeElement.tagName === 'BUTTON'; });
-    rec('UIT-M3-010', kbd ? 'PASS' : 'PASS', await shot(page, 'UIT-M3-010', 'keyboard'), 'keyboard focus reaches controls=' + kbd);
+    rec('UIT-M3-010', kbd ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-010', 'keyboard'), 'keyboard focus reaches controls=' + kbd);
 
     // ── Excel formula extraction (011-020) — artifact-backed ──
     const ruleArtifact = 'docs/evidence/m3-pointscore/POINTSCORE-RULE-SOURCE-2026-06-03.md';
@@ -300,8 +307,10 @@ async function finalizeEvent(date, raceTypes) {
     fs.writeFileSync(path.join(EVID, 'members.csv'), memCsv);
     rec('UIT-M3-085', /id,name,is_active,joined_date,pb_25m_s/.test(memCsv) ? 'PASS' : 'FAIL', '', 'members roster CSV header+rows (R-M3-07 member roster): docs/evidence/m3-user-interaction-v3.0.1/members.csv');
     rec('UIT-M3-086', 'PASS', '', 'export respects active month/season filter (per-period endpoint)');
-    rec('UIT-M3-087', /month,rank,swimmer,total_points,events_counted\s*$/.test(await (await fetch(BASE + '/api/pointscore/month/2026-01/csv')).text().then(t => t.trim())) ? 'PASS' : 'PASS', '', 'empty export = header only, clean');
-    rec('UIT-M3-088', /wwsc-season-pointscore-2026-v2\.10/.test('wwsc-season-pointscore-2026-v' + baseline.pkg) ? 'PASS' : 'PASS', '', 'filename includes report/date/version');
+    const emptyMonthCsv = (await (await fetch(BASE + '/api/pointscore/month/2026-01/csv')).text()).trim();
+    rec('UIT-M3-087', emptyMonthCsv === 'month,rank,swimmer,total_points,events_counted' ? 'PASS' : 'FAIL', '', 'empty export = header only, clean (got ' + emptyMonthCsv.split('\n').length + ' line(s))');
+    const seasonCsvCd = (await fetch(BASE + '/api/pointscore/season/2026/csv')).headers.get('content-disposition') || '';
+    rec('UIT-M3-088', seasonCsvCd.includes('wwsc-season-pointscore-2026-v' + baseline.pkg) ? 'PASS' : 'FAIL', '', 'filename includes report/date/version (' + seasonCsvCd + ')');
     const csvLines = mayCsv.trim().split('\n');
     rec('UIT-M3-089', csvLines.every(l => l.split(',').length >= 5) ? 'PASS' : 'FAIL', '', 'CSV parses, no malformed rows (' + csvLines.length + ' lines)');
     await page.setViewport({ width: 390, height: 844 }); await sleep(200); await nav(page, 'pointscore'); await page.evaluate(() => psSetTab('month')); await sleep(400);
@@ -385,14 +394,25 @@ async function finalizeEvent(date, raceTypes) {
     await page.setViewport({ width: 1440, height: 900 }); await sleep(200); await nav(page, 'pointscore'); await sleep(300);
     rec('UIT-M3-115', 'PASS', await shot(page, 'UIT-M3-115', 'resp-desktop'), 'desktop pointscore report polished');
     const tabbable = await page.evaluate(() => { const b = document.querySelector('#content button, #content select'); if (b) b.focus(); return !!document.activeElement && ['BUTTON', 'SELECT'].includes(document.activeElement.tagName); });
-    rec('UIT-M3-116', tabbable ? 'PASS' : 'PASS', await shot(page, 'UIT-M3-116', 'a11y-keyboard'), 'keyboard focus reaches filters/export');
+    rec('UIT-M3-116', tabbable ? 'PASS' : 'FAIL', await shot(page, 'UIT-M3-116', 'a11y-keyboard'), 'keyboard focus reaches filters/export');
     rec('UIT-M3-117', 'PASS', await shot(page, 'UIT-M3-117', 'long-names'), 'long names wrap cleanly (extra swimmer long names in fixture)');
 
     // ── Out of scope (118) ──
-    const diff = execFileSync('git', ['diff', '--name-only', 'main..HEAD'], { cwd: ROOT }).toString();
-    const saasLeak = /tenant|customer_isolation|role|access_control|saas/i.test(diff);
-    fs.writeFileSync(path.join(EVID, 'out-of-scope-diff.txt'), diff);
-    rec('UIT-M3-118', !saasLeak ? 'PASS' : 'FAIL', '', 'no SaaS/commercial scope in diff (docs/evidence/.../out-of-scope-diff.txt)');
+    // Balerion ReQA 2026-06-11 finding 2: a fresh clone checked out directly to a
+    // feature branch may have no local 'main' — fall back to origin/main; if
+    // neither exists, record NOT APPLICABLE instead of crashing the gate.
+    let diffBase = null;
+    for (const ref of ['main', 'origin/main']) {
+      try { execFileSync('git', ['rev-parse', '--verify', '--quiet', ref], { cwd: ROOT }); diffBase = ref; break; } catch (e) {}
+    }
+    if (diffBase) {
+      const diff = execFileSync('git', ['diff', '--name-only', diffBase + '..HEAD'], { cwd: ROOT }).toString();
+      const saasLeak = /tenant|customer_isolation|role|access_control|saas/i.test(diff);
+      fs.writeFileSync(path.join(EVID, 'out-of-scope-diff.txt'), diff);
+      rec('UIT-M3-118', !saasLeak ? 'PASS' : 'FAIL', '', 'no SaaS/commercial scope in diff vs ' + diffBase + ' (docs/evidence/.../out-of-scope-diff.txt)');
+    } else {
+      rec('UIT-M3-118', 'NOT APPLICABLE', '', 'no main/origin/main ref in this clone — out-of-scope diff not computable');
+    }
 
     // ── Evidence (119) + Final (120) ──
     const shots = fs.readdirSync(SHOT).filter(f => f.endsWith('.png')).length;

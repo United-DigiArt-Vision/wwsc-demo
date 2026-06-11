@@ -25,13 +25,31 @@ echo "    Project root: $PROJECT_ROOT"
 echo "    Harness dir:  $HARNESS_DIR"
 
 # 1. puppeteer-core in the harness dir.
-if [ -d "$HARNESS_DIR/node_modules/puppeteer-core" ]; then
-  echo "    puppeteer-core already present at $HARNESS_DIR/node_modules/puppeteer-core"
+# Balerion ReQA 2026-06-11 finding 1: a mere directory check is not enough —
+# /tmp cleanups can leave a partial install (dir exists, package.json gone),
+# so setup printed "ready" while every browser suite failed with
+# "puppeteer-core not found". Validate with an actual require(); reinstall
+# from scratch when it does not resolve.
+puppeteer_ok() {
+  node -e "require('$HARNESS_DIR/node_modules/puppeteer-core')" >/dev/null 2>&1
+}
+
+if puppeteer_ok; then
+  echo "    puppeteer-core present and require-resolvable at $HARNESS_DIR/node_modules/puppeteer-core"
 else
+  if [ -d "$HARNESS_DIR/node_modules/puppeteer-core" ]; then
+    echo "    puppeteer-core directory exists but does NOT resolve — reinstalling fresh."
+    rm -rf "$HARNESS_DIR"
+  fi
   echo "    Installing puppeteer-core into $HARNESS_DIR (npm cache: $NPM_CACHE_DIR)"
   mkdir -p "$HARNESS_DIR"
   ( cd "$HARNESS_DIR" && npm init -y >/dev/null && npm install --no-audit --no-fund --cache "$NPM_CACHE_DIR" puppeteer-core >/dev/null )
-  echo "    Installed puppeteer-core."
+  if puppeteer_ok; then
+    echo "    Installed puppeteer-core (require-validated)."
+  else
+    echo "    ERROR: puppeteer-core still not require-resolvable after reinstall." >&2
+    exit 1
+  fi
 fi
 
 # 2. better-sqlite3 native binding for current arch.

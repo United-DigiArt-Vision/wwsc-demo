@@ -10,7 +10,7 @@ welche Dokumente AKTUELL (SSOT) sind und welche HISTORISCH (Milestone-Snapshots,
 | `../README.md` | Einstieg: Stack, Schnellstart, Env-Vars, Doku-Landkarte |
 | **`SYSTEM-SPEC-v2.12.0.md`** | Master-Spezifikation: Domäne, alle Business-Regeln/Formeln, Lifecycle, datierte Kundenentscheidungen |
 | **`DATA_DICTIONARY.md`** | Datenmodell: alle Tabellen/Felder, Einheiten (s/cs), Berechnungs- + Propagationsregeln |
-| **`API-REFERENCE-v2.12.0.md`** | Alle 73 HTTP-Endpoints: Semantik, Einheiten, Seiteneffekte, CSV-Header |
+| **`API-REFERENCE-v2.12.0.md`** | Alle 75 HTTP-Endpoints (62 Routen + 13 CSV-Varianten): Semantik, Einheiten, Seiteneffekte, CSV-Header |
 | **`UI-SCREEN-SPEC-v2.12.0.md`** | Jeder Screen: Elemente, Interaktionen, Zustände (inkl. v2.12.0-Features) |
 | **`REBUILD-GUIDE-v2.12.0.md`** | Betrieb + stack-unabhängiger Nachbau + Abnahme-/Äquivalenzkriterien |
 | `TEST_ARCHITECTURE.md` | Test-Philosophie (User-sichtbar testen) + aktuelle Gate-Matrix v2.12.0 |
