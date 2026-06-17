@@ -2343,17 +2343,31 @@ function rankScore(team, raceType) {
   // Standard relay: fastest total_time wins.
   return team.total_time ?? 9999999;
 }
+function rankTieValue(team, raceType) {
+  if (SPECIAL_VARIANCE_RACES.includes(raceType)) {
+    // Ordering is nearest-to-target, but equal place requires identical recorded variance.
+    return team.variance ?? null;
+  }
+  return team.total_time ?? null;
+}
 function rankRelayTeams(raceId, raceType) {
   const allTeams = db.prepare('SELECT * FROM relay_team WHERE event_race_id = ? AND total_time IS NOT NULL').all(raceId);
   if (allTeams.length === 0) return;
-  const scored = allTeams.map(t => ({ t, score: rankScore(t, raceType) }));
-  scored.sort((a, b) => a.score - b.score);
+  const scored = allTeams.map(t => ({ t, score: rankScore(t, raceType), tieValue: rankTieValue(t, raceType) }));
+  scored.sort((a, b) => {
+    const scoreCmp = a.score - b.score;
+    if (scoreCmp !== 0) return scoreCmp;
+    const tieCmp = (a.tieValue ?? 9999999) - (b.tieValue ?? 9999999);
+    if (tieCmp !== 0) return tieCmp;
+    return a.t.id - b.t.id;
+  });
   const setPlace = db.prepare('UPDATE relay_team SET place = ? WHERE id = ?');
-  let currentPlace = 0, prevScore = null;
+  let currentPlace = 0, prevScore = null, prevTieValue = null;
   scored.forEach((x, i) => {
-    if (prevScore === null || x.score !== prevScore) currentPlace = i + 1;
+    if (prevScore === null || x.score !== prevScore || x.tieValue !== prevTieValue) currentPlace = i + 1;
     setPlace.run(currentPlace, x.t.id);
     prevScore = x.score;
+    prevTieValue = x.tieValue;
   });
   db.prepare('UPDATE relay_team SET place = NULL WHERE event_race_id = ? AND total_time IS NULL').run(raceId);
 }

@@ -79,6 +79,29 @@ async function finalizeRelay(date, raceType = '25m_relay') {
   return { eventId: ev.id, teams: await api('/api/races/' + r.id + '/relay-teams'), pointscore };
 }
 
+async function buildBraceVariancePlacementFixture(date) {
+  const ev = await api('/api/events', { method: 'POST', body: { date } });
+  await api('/api/events/' + ev.id + '/config', { method: 'PUT', body: { standard_event: '25m_brace', special_event: null } });
+  const att = await api('/api/events/' + ev.id + '/attendance');
+  await api('/api/events/' + ev.id + '/attendance', { method: 'PUT', body: { attendees: att.map(a => ({ member_id: a.member_id, present: 1, special_event_entry: null })) } });
+  await api('/api/events/' + ev.id + '/races', { method: 'PUT', body: { race_types: ['25m_brace'] } });
+  const race = (await api('/api/events/' + ev.id + '/races')).find(x => x.race_type === '25m_brace');
+  const gen = await api('/api/races/' + race.id + '/generate-relay-teams', { method: 'POST', body: { forceReshuffle: true } });
+  await api('/api/races/' + race.id + '/save-relay-teams', { method: 'POST', body: { teams: gen.teams } });
+  const teams = (await api('/api/races/' + race.id + '/relay-teams')).slice(0, 5);
+  const variances = [0, -100, 100, 100, 150];
+  for (let i = 0; i < teams.length; i++) {
+    const targetCs = (teams[i].target_time || 0) * 100;
+    const startCs = (teams[i].start_delay || 0) * 100;
+    await api('/api/relay-teams/' + teams[i].id + '/time', { method: 'PUT', body: { total_time: startCs + targetCs + variances[i] } });
+  }
+  await api('/api/races/' + race.id + '/rank-relay', { method: 'POST', body: {} });
+  return (await api('/api/races/' + race.id + '/relay-teams'))
+    .filter(t => teams.some(original => original.id === t.id))
+    .map(t => ({ id: t.id, variance: t.variance, place: t.place }))
+    .sort((a, b) => Math.abs(a.variance) - Math.abs(b.variance) || a.variance - b.variance || a.id - b.id);
+}
+
 (async () => {
   const server = await startServer();
   try {
@@ -251,6 +274,22 @@ async function finalizeRelay(date, raceType = '25m_relay') {
       check('UT13-breaker-shifts-place-points',
         byMember[201] === 2 && byMember[202] === 5 && byMember[203] === 4 && byMember[204] === 3 && byMember[205] === 2,
         JSON.stringify(byMember));
+    }
+
+    // UT14 — Brace Relay placement equality uses identical recorded variance,
+    // not merely identical absolute variance. Reproduces Bryan's screenshot
+    // shape: 0, -100, +100, +100, +150 used to produce 1,2,2,2,5 because the
+    // ranker used abs(variance) for both ordering and equality. Correct is
+    // nearest-to-target ordering with equal place only for identical variance:
+    // 1,2,3,3,5.
+    {
+      const rankedBrace = await buildBraceVariancePlacementFixture('2027-02-07');
+      const places = rankedBrace.map(t => t.place);
+      const variances = rankedBrace.map(t => t.variance);
+      check('UT14-brace-variance-identical-tie-only',
+        JSON.stringify(variances) === JSON.stringify([0, -100, 100, 100, 150]) &&
+        JSON.stringify(places) === JSON.stringify([1, 2, 3, 3, 5]),
+        'variances=' + JSON.stringify(variances) + ' places=' + JSON.stringify(places));
     }
 
   } finally {

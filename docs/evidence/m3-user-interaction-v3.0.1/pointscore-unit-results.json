@@ -42,7 +42,7 @@
   {
     "id": "UT7-member-contribution",
     "status": "PASS",
-    "note": "member total == sum of contributions=14"
+    "note": "member total == sum of contributions=12"
   },
   {
     "id": "UT8-months-list",
@@ -78,5 +78,10 @@
     "id": "UT13-breaker-shifts-place-points",
     "status": "PASS",
     "note": "{\"201\":2,\"202\":5,\"203\":4,\"204\":3,\"205\":2}"
+  },
+  {
+    "id": "UT14-brace-variance-identical-tie-only",
+    "status": "PASS",
+    "note": "variances=[0,-100,100,100,150] places=[1,2,3,3,5]"
   }
 ]
