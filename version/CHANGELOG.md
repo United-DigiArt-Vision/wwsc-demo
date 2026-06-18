@@ -11,6 +11,47 @@
 
 ---
 
+## 2026-06-18 — release: v2.12.3 brace relay tie reverted to ABSOLUTE variance (Render auto-deploy)
+- **Date:** 2026-06-18
+- **Timestamp:** 2026-06-18 22:32:00 Europe/Berlin
+- **App Version (from `/api/version`):** 2.12.3
+- **Branch:** dev/v2.12.3-brace-abs-variance → main
+- **RecordedCommit:** dd50f62 (`fix: brace relay ties by absolute variance`); bump `21487c9`
+- **Tag:** v2.12.3
+- **Editor:** Claude (full ownership; deployed after Dino single-deploy approval)
+- **Trigger:** Bryan tested live v2.12.2 and rejected the brace fix — the tie rule must be absolute variance (+0.50 ties −0.50).
+- **Changes:**
+  - Reverted `rankTieValue()` in `src/server.js` for special-variance races (`25m_brace`, `50m_brace`, `pogo`, `medley_relay`) from signed back to `Math.abs(variance)`. Ordering unchanged (nearest-to-target). Undoes the tie part of v2.12.2 `5128065`; restores SYSTEM-SPEC §11 behavior.
+  - `scripts/test-m3-pointscore-unit.cjs` UT14 → `UT14-brace-variance-absolute-tie`: `[0,−100,+100,+100,+150]` now expects `1,2,2,2,5` (was `1,2,3,3,5`).
+  - Version bump 2.12.2 → 2.12.3 (`package.json`, `package-lock.json`, 19× `?v=` in `src/public/index.html`).
+- **Verification:** DB-backed suite **17 PASS / 0 FAIL** incl. UT14 (x64 clone); `node --check` PASS. Live smoke: `/api/version` = `{"version":"2.12.3","build":"2026-06-18T20:30:41.604Z"}`, members 23, pointscore/rules OK.
+- **⚠️ Demo data:** Render reset hosted demo data on deploy (events 0, pointscore/months 0). Re-seed pending Dino approval.
+- **Out of scope (next round, Bryan details ~2026-06-19):** person/team place mismatch, new-members solution, error/issue handling.
+
+---
+
+## 2026-06-17 — release: v2.12.2 brace relay placement fix (Render auto-deploy)
+- **Date:** 2026-06-17
+- **Timestamp:** 2026-06-17 23:13:42 Europe/Berlin
+- **App Version (from live `/api/version`):** 2.12.2
+- **Branch:** main
+- **RecordedCommit:** 5128065 (`fix: brace relay placement ties by raw variance`)
+- **Tag:** v2.12.2
+- **Editor:** Claude (content prepared in working tree; docs-commit/push pending by Balerion)
+- **Trigger:** Bryan reported on 2026-06-17 (inbound, screenshot IMG_7403) that the Brace Relay assigned 2nd place to three teams.
+- **Changes:**
+  - Fixed Brace/special-variance relay placement (`25m_brace`, `50m_brace`, `pogo`, `medley_relay`). `rankRelayTeams()` in `src/server.js` previously used `Math.abs(variance)` for BOTH ordering and tie detection, so opposite-sign equal-magnitude variances (e.g. −100 / +100) shared a place. Now ordering still uses nearest-to-target (`Math.abs(variance)`, the confirmed rule); equal placement uses the raw signed `variance` with a team-id tiebreak, so only identical recorded variances tie.
+  - Behavior change on Bryan's scenario `[0,−100,+100,+100,+150]`: before `1,2,2,2,5` → after `1,2,3,3,5`.
+  - Added unit `UT14-brace-variance-identical-tie-only` to `scripts/test-m3-pointscore-unit.cjs`.
+  - Changed files: `src/server.js`, `scripts/test-m3-pointscore-unit.cjs`, `package.json`, `package-lock.json`, `src/public/index.html`, `docs/evidence/v2122-brace-relay-placement/BRACE-RELAY-PLACEMENT-FIX-2026-06-17.md`.
+- **Verification:**
+  - Live `/api/version` = `{"version":"2.12.2","build":"2026-06-17T20:35:51.281Z"}`, git `main` tip = `5128065`, `package.json` = 2.12.2 — all re-checked this session (Claude, 2026-06-17 23:13 CEST).
+  - Pure-logic re-run of the ranking (DB-stripped replica of `rankScore`/`rankTieValue`/place-loop) reproduces before `1,2,2,2,5` → after `1,2,3,3,5`.
+  - Full DB-backed suite `node scripts/test-m3-pointscore-unit.cjs` = 17 PASS / 0 FAIL incl. UT14 per the evidence file — NOT re-run this session: shell `node` is x86_64 vs arm64 `better-sqlite3` → `ERR_DLOPEN_FAILED` (environment/toolchain only, not a code defect).
+- **Customer gate:** v2.12.2 is live but Bryan has not yet confirmed the brace fix; his last reply (2026-06-17) was only "Will need to test a local version soon."
+
+---
+
 ## 2026-06-11 — release: v2.12.1 Render deploy + live weekly seed + Bryan response draft
 - **Date:** 2026-06-11
 - **Timestamp:** 2026-06-11 12:45:16 Europe/Berlin

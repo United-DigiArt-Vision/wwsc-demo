@@ -1,6 +1,54 @@
 # CURRENT_STATE
 
-## CURRENT (2026-06-11 12:45 CEST) — v2.12.1 deployed live, demo reseeded, Bryan response prepared
+## CURRENT (2026-06-18 22:32 CEST) — v2.12.3 brace tie reverted to ABSOLUTE variance, deployed live
+
+**Version (from `/api/version`):** 2.12.3
+**Branch:** dev/v2.12.3-brace-abs-variance → pushed to `main`
+**Date:** 2026-06-18
+**Timestamp:** 2026-06-18 22:32:00 Europe/Berlin
+**LastEditor:** Claude (full ownership per `OPERATING-MODEL.md`; deployed after Dino's single-deploy approval)
+**RecordedCommit:** dd50f62 (`fix: brace relay ties by absolute variance`)
+**Tag:** v2.12.3
+
+**WorkingTreeStatus:** Bryan tested live v2.12.2 and rejected the brace fix: the tie rule must be **absolute** variance — a team at +0.50 must tie one at −0.50. v2.12.2 (`5128065`) had switched tie detection to SIGNED variance, contradicting both Bryan and `docs/SYSTEM-SPEC-v2.12.0.md` §11 ("kleinste |variance|, Gleichstand = gleicher Platz"). v2.12.3 reverts `rankTieValue()` for special-variance races back to `Math.abs(variance)` (ordering unchanged). Deployed by Claude: bump `21487c9` + fix `dd50f62` pushed to `main`, Render auto-deploy.
+
+**Verification (Claude, 2026-06-18):** full DB-backed suite `node scripts/test-m3-pointscore-unit.cjs` = **17 PASS / 0 FAIL** incl. `UT14-brace-variance-absolute-tie` (`[0,−100,+100,+100,+150]` → `1,2,2,2,5`), run in the x64 clone `~/wwsc-dev/wwsc`; `node --check` PASS. Live smoke: `/api/version` = `{"version":"2.12.3","build":"2026-06-18T20:30:41.604Z"}`, `/api/members` = 23, `/api/pointscore/rules` OK.
+
+**⚠️ Demo data after deploy:** Render reset the hosted SQLite demo data again — `/api/events?archived=1` = 0, `/api/pointscore/months` = 0 (members auto-seed to 23). **Re-seed of the 7 weekly demo events is PENDING Dino approval** (`APPLY_LIVE=1 node scripts/seed-bryan-weekly-events.cjs`). Do NOT tell Bryan to look until reseeded.
+
+**Still open (next round, awaiting Bryan's detail message ~2026-06-19):** (1) person/team place mismatch ("1 person from a 2-person team showed 2nd while the team placed 9th") — hypothesis brace odd-man-out (partner swims twice → in two teams); (2) new-members solution; (3) error/issue handling (manual pointscore edit, edit date). NOT in v2.12.3.
+
+**Data note:** the fix changes future rankings; already-finalized events keep their stored places until re-finalized.
+
+**Evidence:** `docs/evidence/v2123-brace-abs-variance/BRACE-ABS-VARIANCE-CORRECTION-2026-06-18.md`.
+
+---
+
+## PREVIOUS (2026-06-17 23:13 CEST) — v2.12.2 brace relay placement fix deployed live
+
+**Version (from live `/api/version`):** 2.12.2
+**Branch:** main
+**Date:** 2026-06-17
+**Timestamp:** 2026-06-17 23:13:42 Europe/Berlin
+**LastEditor:** Claude (SSOT catch-up prepared in working tree; docs-commit/push pending by Balerion)
+**RecordedCommit:** 5128065 (`fix: brace relay placement ties by raw variance`)
+**Tag:** v2.12.2
+
+**WorkingTreeStatus:** Bryan reported on 2026-06-17 (inbound, screenshot IMG_7403) that the Brace Relay assigned 2nd place to three teams. Root cause: `rankRelayTeams()` in `src/server.js` used `Math.abs(variance)` for BOTH ordering and tie detection, so teams with opposite-sign equal-magnitude variances (e.g. −100 and +100) shared a place. Fix `5128065`: ordering still uses nearest-to-target (`Math.abs(variance)`, the confirmed rule); equal placement now uses the raw signed `variance` with a team-id tiebreak, so only identical recorded variances share a place. Balerion deployed v2.12.2 to `main`, tagged `v2.12.2`, and Render auto-deployed.
+
+This session re-verification (Claude, 2026-06-17 23:13 CEST): live `/api/version` = `{"version":"2.12.2","build":"2026-06-17T20:35:51.281Z"}`; git `main` tip = `5128065`; `package.json` = 2.12.2 — all confirmed. The brace ranking fix logic was reproduced **pure** (a DB-stripped replica of the `src/server.js` `rankScore`/`rankTieValue`/place-loop): Bryan's scenario variances `[0,−100,+100,+100,+150]` → OLD abs-tie places `1,2,2,2,5` (reproduces the bug) → FIXED signed-tie places `1,2,3,3,5` (expected). The full DB-backed API suite `node scripts/test-m3-pointscore-unit.cjs` (17/0 incl. UT14) could NOT be re-run in this session: the shell `node` is x86_64 (`/usr/local/bin/node`) while `node_modules/better-sqlite3` is compiled arm64 → `ERR_DLOPEN_FAILED` at `src/db.js:25` (`new Database`). This is an environment/toolchain mismatch on this machine (no arm64 node present), not a code defect — the Render Linux build runs v2.12.2 live. The 17/0 result is cited from the prior-session evidence file below.
+
+**SSOT docs status:** `PROGRESS.md`, this `version/CURRENT_STATE.md`, `version/CHANGELOG.md` and `STABLE.md` are updated to v2.12.2 in the working tree but NOT yet committed/pushed — pending Balerion docs-commit (Claude boundary: no direct `main` commit/push/deploy).
+
+**Implemented v2.12.2 fix live:** Brace/special-variance relay placement (`25m_brace`, `50m_brace`, `pogo`, `medley_relay`) now ties only on identical recorded variance; ordering remains nearest-to-target. No other behavior changed from v2.12.1.
+
+**Evidence:** Fix summary `docs/evidence/v2122-brace-relay-placement/BRACE-RELAY-PLACEMENT-FIX-2026-06-17.md` (includes raw `=== UNIT TALLY: 17 PASS / 0 FAIL ===` output with `UT14-brace-variance-identical-tie-only  variances=[0,-100,100,100,150] places=[1,2,3,3,5]`).
+
+**Customer gate:** v2.12.2 is live on Render but Bryan has NOT yet tested/confirmed the brace fix. His last reply (2026-06-17, `../messages/2026-06-17-2247-Bryan-inbound-acknowledges-3-points-local-test-soon.md`) only said "Will need to test a local version soon." Awaiting Bryan's feedback on the brace fix and his local-install request.
+
+---
+
+## PREVIOUS (2026-06-11 12:45 CEST) — v2.12.1 deployed live, demo reseeded, Bryan response prepared
 
 **Version (from live `/api/version`):** 2.12.1  
 **Branch:** main  

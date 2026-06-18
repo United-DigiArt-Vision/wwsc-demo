@@ -1,6 +1,56 @@
-# PROGRESS — WWSC v2.12.0 Bryan-Feedback (3 Hauptreports, Defaults, Tap Placing, Relay-Grid)
+# PROGRESS — WWSC v2.12.3 Brace ABS-Variance Correction (Stand 2026-06-18)
 
-## 🚀 v2.12.1 BRYAN RETEST FIXES — LIVE DEPLOYED / RESPONSE PREPARED (2026-06-11 12:45 CEST)
+## 🚀 v2.12.3 BRACE TIE → ABSOLUTE VARIANCE — LIVE DEPLOYED (2026-06-18)
+
+**Issue:** Bryan testete v2.12.2 live und lehnte den Brace-Fix ab: die Tie-Regel muss **absolute** variance sein (+0.50 == −0.50). v2.12.2 (`5128065`) hatte sie auf signed umgestellt — falsch, Verstoß gegen SYSTEM-SPEC §11.
+
+**Fix (`dd50f62`, bump `21487c9`):** `rankTieValue()` für Special-Variance-Races zurück auf `Math.abs(variance)`. UT14 → `UT14-brace-variance-absolute-tie` (`[0,−100,+100,+100,+150]` → `1,2,2,2,5`).
+
+**Deploy (Claude, full ownership, nach Dino-Einzelfreigabe):** Push `dev/v2.12.3-brace-abs-variance` → `main` → Render auto-deploy. Live `/api/version` = `{"version":"2.12.3","build":"2026-06-18T20:30:41.604Z"}`. DB-Suite 17/0 (x64-Clone). 
+
+**⚠️ Demo-Daten:** nach Deploy leer (events 0, months 0); Re-Seed PENDING Dino-Freigabe.
+
+**Offen (nächste Runde, Bryans Details ~19.6.):** person/team-Mismatch, neue Mitglieder, Error-Handling.
+
+---
+
+## v2.12.2 (Legacy — von Bryan abgelehnt, durch v2.12.3 korrigiert)
+
+### 🚀 v2.12.2 BRACE RELAY PLACEMENT FIX — LIVE DEPLOYED (2026-06-17)
+
+**Issue:** Bryan meldete am 2026-06-17, dass im Brace Relay 3 Teams fälschlicherweise 2. Platz bekamen.
+
+**Root Cause:** `rankRelayTeams()` in `src/server.js` nutzte `Math.abs(variance)` für Ranking UND Tie-Erkennung. Teams mit −100 und +100 wurden als gleich behandelt (beide abs=100).
+
+**Fix:** Nur die Tie-Erkennung nutzt jetzt signierte Variance. Ranking bleibt `Math.abs(variance)` (nearest-to-target Regel).
+
+**Branch:** `dev/v2.12.2-brace-relay-placement-fix` → Commit `5128065`
+**Tests:**
+- M2-55 API/Unit: 55/0 PASS
+- M3 Pointscore Unit: 17/0 PASS (inkl. UT14 — Brace-Variance-Edge-Case)
+- M3 Slice2 Browser: 13/0 PASS
+- M3 Isolation: PASS
+- M2-100 Browser: nicht gelaufen (Playwright-Environment-Issue)
+
+**Deploy:** v2.12.2 auf `main` → Tag `v2.12.2` → Render auto-deploy ✅
+**Live Version:** `{"version":"2.12.2","build":"2026-06-17T20:35:51.281Z"}`
+**Demo DB:** 7 Events, 23 Mitglieder, Pointscore April+Mai — reseeded nach Deploy
+
+**Bryan-Nachricht (3-Punkte-Antwort) gesendet:** `../messages/2026-06-17-draft-to-bryan-3-points-response.md`
+**Bryans Antwort:** `../messages/2026-06-17-2247-Bryan-inbound-acknowledges-3-points-local-test-soon.md`
+→ Bryan: "Will need to test a local version soon."
+
+**Warten auf:**
+1. Bryans Feedback zum Brace-Relay-Fix auf Live-Demo
+2. Bryans Anfrage für lokale Installationsanleitung
+
+**Offene Produktfrage (nicht-blockierend):** Tiebreak-Richtung bei exakt gleichem |variance| mit entgegengesetztem Vorzeichen — Bryan unbestätigt. Default aktuell: negatives zuerst (unter Ziel schwimmt vor).
+
+---
+
+## v2.12.0 Bryan-Feedback (Legacy — archiviert)
+
+### 🚀 v2.12.1 BRYAN RETEST FIXES — LIVE DEPLOYED / RESPONSE PREPARED (2026-06-11 12:45 CEST)
 
 - [x] Bryan's latest retest feedback archived: `../messages/2026-06-11-Bryan-inbound-v2120-event-history-breaker-scoring-tap-placing.md`.
 - [x] Additional later screenshot question archived in same inbound: ongoing cost vs local laptop install with external storage/OneDrive backup.
