@@ -276,19 +276,20 @@ async function buildBraceVariancePlacementFixture(date) {
         JSON.stringify(byMember));
     }
 
-    // UT14 — Brace Relay placement equality uses identical recorded variance,
-    // not merely identical absolute variance. Reproduces Bryan's screenshot
-    // shape: 0, -100, +100, +100, +150 used to produce 1,2,2,2,5 because the
-    // ranker used abs(variance) for both ordering and equality. Correct is
-    // nearest-to-target ordering with equal place only for identical variance:
-    // 1,2,3,3,5.
+    // UT14 — Brace Relay placement: ranking is nearest-to-target by ABSOLUTE variance,
+    // and teams equally far from target share a place. Bryan 2026-06-18 confirmed a team
+    // at +0.50 must tie a team at −0.50; SYSTEM-SPEC §11: "kleinste |variance|, Gleichstand
+    // = gleicher Platz". Shape 0, -100, +100, +100, +150 → 1,2,2,2,5: the -100 and both
+    // +100 teams all sit 100cs from target, so all three tie at 2nd.
+    // NOTE: reverses the v2.12.2 signed-variance interpretation (commit 5128065), which
+    // Bryan rejected on live v2.12.2.
     {
       const rankedBrace = await buildBraceVariancePlacementFixture('2027-02-07');
       const places = rankedBrace.map(t => t.place);
       const variances = rankedBrace.map(t => t.variance);
-      check('UT14-brace-variance-identical-tie-only',
+      check('UT14-brace-variance-absolute-tie',
         JSON.stringify(variances) === JSON.stringify([0, -100, 100, 100, 150]) &&
-        JSON.stringify(places) === JSON.stringify([1, 2, 3, 3, 5]),
+        JSON.stringify(places) === JSON.stringify([1, 2, 2, 2, 5]),
         'variances=' + JSON.stringify(variances) + ' places=' + JSON.stringify(places));
     }
 

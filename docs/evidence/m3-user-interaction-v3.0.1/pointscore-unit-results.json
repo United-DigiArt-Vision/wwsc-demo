@@ -80,8 +80,8 @@
     "note": "{\"201\":2,\"202\":5,\"203\":4,\"204\":3,\"205\":2}"
   },
   {
-    "id": "UT14-brace-variance-identical-tie-only",
+    "id": "UT14-brace-variance-absolute-tie",
     "status": "PASS",
-    "note": "variances=[0,-100,100,100,150] places=[1,2,3,3,5]"
+    "note": "variances=[0,-100,100,100,150] places=[1,2,2,2,5]"
   }
 ]

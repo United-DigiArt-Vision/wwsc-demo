@@ -2345,8 +2345,13 @@ function rankScore(team, raceType) {
 }
 function rankTieValue(team, raceType) {
   if (SPECIAL_VARIANCE_RACES.includes(raceType)) {
-    // Ordering is nearest-to-target, but equal place requires identical recorded variance.
-    return team.variance ?? null;
+    // Ranking is nearest-to-target by ABSOLUTE variance, and teams equally far from
+    // target share a place. Bryan 2026-06-18: a team at +0.50 must tie a team at −0.50;
+    // SYSTEM-SPEC §11: "kleinste |variance|, Gleichstand = gleicher Platz". So the tie
+    // value is the absolute variance (same as rankScore), NOT the signed variance.
+    // (Reverses the v2.12.2 signed-variance interpretation in commit 5128065, which
+    // Bryan rejected on live v2.12.2.)
+    return team.variance != null ? Math.abs(team.variance) : null;
   }
   return team.total_time ?? null;
 }
