@@ -1,18 +1,25 @@
 ## Current Stable Live Version
 
-- **Version:** v2.12.3
-- **Tag:** v2.12.3
+- **Version:** v2.12.4
+- **Tag:** v2.12.4
 - **Branch:** main
-- **Date:** 2026-06-18
-- **Release status:** live verified on Render. Corrects v2.12.2: brace/special-variance ties now use **absolute** variance again (Bryan's requirement + SYSTEM-SPEC §11).
-- **Release source commit:** dd50f62 (`fix: brace relay ties by absolute variance`); version bump `21487c9`.
-- **Current main tip:** `dd50f62` (pushed to `main`). Live `/api/version` build `2026-06-18T20:30:41.604Z`.
-- **Implementation branch:** dev/v2.12.3-brace-abs-variance
-- **Local verification (Claude, 2026-06-18):** DB-backed suite `node scripts/test-m3-pointscore-unit.cjs` = **17 PASS / 0 FAIL** incl. `UT14-brace-variance-absolute-tie` (`[0,−100,+100,+100,+150]` → `1,2,2,2,5`), run in x64 clone `~/wwsc-dev/wwsc`; `node --check` PASS.
-- **Live Render verification:** `/api/version` = `{"version":"2.12.3","build":"2026-06-18T20:30:41.604Z"}`; `/api/members` = 23; `/api/pointscore/rules` OK.
-- **⚠️ Demo data:** Render reset the hosted demo data on this deploy — `/api/events?archived=1` = 0, `/api/pointscore/months` = 0. Re-seed of the 7 weekly events PENDING Dino approval (`APPLY_LIVE=1 node scripts/seed-bryan-weekly-events.cjs`). Members auto-seed = 23.
-- **Evidence:** `docs/evidence/v2123-brace-abs-variance/BRACE-ABS-VARIANCE-CORRECTION-2026-06-18.md`.
-- **Customer gate:** Brace abs-variance fix live. STILL OPEN (next round, Bryan details ~2026-06-19): person/team place mismatch, new-members solution, error/issue handling. Bryan message: draft prepared; send only after demo reseed.
+- **Date:** 2026-06-21
+- **Release status:** live verified on Render. Brace odd-man-out ("swim twice") now counts only the BEST result in the pointscore, not the sum (Bryan 2026-06-20).
+- **Release source commit:** 809146a (`fix: brace odd-man-out counts best result only (not sum)`); version bump `9c0124d`.
+- **Current main tip:** `809146a` (pushed to `main`). Live `/api/version` build `2026-06-20T22:09:58.375Z`.
+- **Implementation branch:** dev/v2.12.4-odd-man-out-best-result
+- **Local verification (Claude, 2026-06-21):** DB suite `node scripts/test-m3-pointscore-unit.cjs` = **18 PASS / 0 FAIL** incl. new `UT15-odd-man-out-best-result-only` (member in place-1 + place-3 teams → 5, not 8), run in x64 clone `~/wwsc-dev/wwsc`; `node --check` PASS.
+- **Live Render verification:** `/api/version` = `{"version":"2.12.4","build":"2026-06-20T22:09:58.375Z"}`; `/api/members` = 23; `/api/pointscore/rules` OK.
+- **Demo data:** re-seeded after deploy (mandatory post-deploy step) — `/api/events?archived=1` = 7, `/api/pointscore/months` = `["2026-05","2026-04"]`, 9/9 seed self-checks.
+- **Evidence:** `docs/evidence/v2124-odd-man-out-best-result/ODD-MAN-OUT-BEST-RESULT-2026-06-20.md`.
+- **Customer gate:** Odd-man-out best-result live. STILL OPEN (awaiting Bryan's docs): special events + manual pointscore for that week; manual data edit/input. Bryan info message: to prepare.
+
+## What's in v2.12.4
+
+Bryan's 2026-06-20 odd-man-out rule:
+
+- In a brace/relay race with an odd number of swimmers, the leftover swimmer is paired into a second team and "swims twice". The pointscore now counts only their **best result** (highest points / best place), not the sum of both teams.
+- Single-team swimmers are unaffected. The results list still shows both teams (the swimmer really raced twice); only the scoring counts once.
 
 ## What's in v2.12.3
 

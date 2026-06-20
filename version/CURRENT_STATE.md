@@ -1,6 +1,28 @@
 # CURRENT_STATE
 
-## CURRENT (2026-06-18 22:32 CEST) — v2.12.3 brace tie reverted to ABSOLUTE variance, deployed live
+## CURRENT (2026-06-21 00:12 CEST) — v2.12.4 brace odd-man-out counts BEST result only, deployed live
+
+**Version (from `/api/version`):** 2.12.4
+**Branch:** dev/v2.12.4-odd-man-out-best-result → pushed to `main`
+**Date:** 2026-06-21
+**Timestamp:** 2026-06-21 00:12:00 Europe/Berlin
+**LastEditor:** Claude (full ownership per `OPERATING-MODEL.md`; deployed after Dino's single-deploy approval)
+**RecordedCommit:** 809146a (`fix: brace odd-man-out counts best result only (not sum)`)
+**Tag:** v2.12.4
+
+**WorkingTreeStatus:** Bryan (2026-06-20) decided the odd-man-out rule: a swimmer who swims twice in a brace/relay race (paired into two teams) counts only their BEST result, not the sum. Fix `809146a`: `writeEventPointscore()` aggregation uses `Math.max` instead of sum per (event_race, member). Single-team members unaffected. Deployed by Claude: bump `9c0124d` + fix `809146a` → `main`, Render auto-deploy.
+
+**Verification (Claude, 2026-06-21):** DB suite `node scripts/test-m3-pointscore-unit.cjs` = **18 PASS / 0 FAIL** incl. new `UT15-odd-man-out-best-result-only` (member in place-1 + place-3 teams → 5, not 8). `node --check` PASS. Live smoke: `/api/version` = `{"version":"2.12.4","build":"2026-06-20T22:09:58.375Z"}`, members 23, pointscore/rules OK. Demo re-seeded (7 events, 9/9 self-checks; months 2026-05, 2026-04).
+
+**Still open (awaiting Bryan's documentation):** special events with manual heat placement + create a pointscore for that week; manual edit/input of data (corrections). Design sketched in `../v2.12.4-PREP-personteam-newmembers-errorhandling.md`.
+
+**Display note:** the fix is the pointscore (points). In the results LIST the swim-twice swimmer still appears in both teams (they really raced twice); only the scoring counts once (best). Will ask Bryan whether he also wants single-row display.
+
+**Evidence:** `docs/evidence/v2124-odd-man-out-best-result/ODD-MAN-OUT-BEST-RESULT-2026-06-20.md`.
+
+---
+
+## PREVIOUS (2026-06-18 22:32 CEST) — v2.12.3 brace tie reverted to ABSOLUTE variance, deployed live
 
 **Version (from `/api/version`):** 2.12.3
 **Branch:** dev/v2.12.3-brace-abs-variance → pushed to `main`

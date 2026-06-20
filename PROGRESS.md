@@ -1,6 +1,20 @@
-# PROGRESS — WWSC v2.12.3 Brace ABS-Variance Correction (Stand 2026-06-18)
+# PROGRESS — WWSC v2.12.4 Brace Odd-Man-Out best-result (Stand 2026-06-21)
 
-## 🚀 v2.12.3 BRACE TIE → ABSOLUTE VARIANCE — LIVE DEPLOYED (2026-06-18)
+## 🚀 v2.12.4 BRACE ODD-MAN-OUT → BEST RESULT ONLY — LIVE DEPLOYED (2026-06-21)
+
+**Issue:** Bryan (2026-06-20): wer im Brace 2× schwimmt (Odd-Man-Out, in zwei Teams), soll nur sein **bestes** Ergebnis zählen, nicht die Summe.
+
+**Fix (`809146a`, bump `9c0124d`):** `writeEventPointscore()` in `src/pointscore.js` aggregiert per (race, member) mit `Math.max` statt Summe. Einzel-Team-Mitglieder unverändert. Neuer Test `UT15-odd-man-out-best-result-only`. DB-Suite 18/0.
+
+**Deploy (Claude, nach Dino-Einzelfreigabe):** Push `dev/v2.12.4-odd-man-out-best-result` → `main` → Render. Live `/api/version` = `{"version":"2.12.4","build":"2026-06-20T22:09:58.375Z"}`. Demo re-seeded (7 Events, 9/9 self-checks). SYSTEM-SPEC §14/§16 aktualisiert.
+
+**Offen (Bryans Doku):** Special Events + manueller Pointscore für die Woche; manuelle Daten-Korrektur (edit/input).
+
+---
+
+## v2.12.3 (Legacy)
+
+### 🚀 v2.12.3 BRACE TIE → ABSOLUTE VARIANCE — LIVE DEPLOYED (2026-06-18)
 
 **Issue:** Bryan testete v2.12.2 live und lehnte den Brace-Fix ab: die Tie-Regel muss **absolute** variance sein (+0.50 == −0.50). v2.12.2 (`5128065`) hatte sie auf signed umgestellt — falsch, Verstoß gegen SYSTEM-SPEC §11.
 

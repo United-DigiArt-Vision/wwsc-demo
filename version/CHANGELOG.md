@@ -11,6 +11,25 @@
 
 ---
 
+## 2026-06-21 — release: v2.12.4 brace odd-man-out counts BEST result only (Render auto-deploy)
+- **Date:** 2026-06-21
+- **Timestamp:** 2026-06-21 00:12:00 Europe/Berlin
+- **App Version (from `/api/version`):** 2.12.4
+- **Branch:** dev/v2.12.4-odd-man-out-best-result → main
+- **RecordedCommit:** 809146a (`fix: brace odd-man-out counts best result only (not sum)`); bump `9c0124d`
+- **Tag:** v2.12.4
+- **Editor:** Claude (full ownership; deployed after Dino single-deploy approval)
+- **Trigger:** Bryan 2026-06-20: "If a member had to swim twice record the best result/points only."
+- **Changes:**
+  - `src/pointscore.js` `writeEventPointscore()`: per-(event_race, member) aggregation uses `Math.max` instead of sum → a swimmer who swims twice in the same brace/relay race (odd-man-out, two teams) counts only their BEST result, not the sum. Single-team members unaffected.
+  - New unit `UT15-odd-man-out-best-result-only`.
+  - SYSTEM-SPEC §16 (pointscore) + §14 (dated decisions) updated.
+  - Version bump 2.12.3 → 2.12.4.
+- **Verification:** DB suite **18 PASS / 0 FAIL** incl. UT15; `node --check` PASS. Live `/api/version` = `{"version":"2.12.4","build":"2026-06-20T22:09:58.375Z"}`; members 23. Demo re-seeded (7 events, 9/9 self-checks, months 2026-05/04).
+- **Out of scope (awaiting Bryan docs):** special events + manual pointscore for that week; manual data edit/input.
+
+---
+
 ## 2026-06-18 — release: v2.12.3 brace relay tie reverted to ABSOLUTE variance (Render auto-deploy)
 - **Date:** 2026-06-18
 - **Timestamp:** 2026-06-18 22:32:00 Europe/Berlin
