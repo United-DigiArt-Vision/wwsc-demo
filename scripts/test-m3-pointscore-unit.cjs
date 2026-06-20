@@ -293,6 +293,34 @@ async function buildBraceVariancePlacementFixture(date) {
         'variances=' + JSON.stringify(variances) + ' places=' + JSON.stringify(places));
     }
 
+    // UT15 — Odd-man-out "swim twice" (Bryan 2026-06-20): a swimmer paired into
+    // TWO teams of the same brace/relay race counts only their BEST result, not
+    // the sum. Member 101 is in team(place 1 = 5 pts) AND team(place 3 = 3 pts)
+    // → must score 5 (best), NOT 8 (sum).
+    {
+      const Database = require('better-sqlite3');
+      const ps5 = require('../src/pointscore.js');
+      const mem = new Database(':memory:');
+      mem.exec(`
+        CREATE TABLE event_race (id INTEGER PRIMARY KEY, event_id INTEGER, race_type TEXT);
+        CREATE TABLE heat (id INTEGER PRIMARY KEY, event_race_id INTEGER, heat_number INTEGER);
+        CREATE TABLE heat_lane (id INTEGER PRIMARY KEY, heat_id INTEGER, member_id INTEGER, finish_time INTEGER, place INTEGER, manual_place INTEGER);
+        CREATE TABLE relay_team (id INTEGER PRIMARY KEY, event_race_id INTEGER, place INTEGER, total_time INTEGER);
+        CREATE TABLE relay_team_member (id INTEGER PRIMARY KEY, relay_team_id INTEGER, member_id INTEGER);
+        CREATE TABLE pointscore_entry (id INTEGER PRIMARY KEY AUTOINCREMENT, event_race_id INTEGER, member_id INTEGER, points INTEGER, UNIQUE(event_race_id, member_id));
+      `);
+      mem.prepare("INSERT INTO event_race (id, event_id, race_type) VALUES (1, 1, '25m_brace')").run();
+      mem.prepare('INSERT INTO relay_team (id, event_race_id, place, total_time) VALUES (11, 1, 1, 5000), (12, 1, 3, 7000), (13, 1, 5, 9000)').run();
+      // member 101 swims twice: team 11 (place 1=5) AND team 12 (place 3=3)
+      mem.prepare('INSERT INTO relay_team_member (relay_team_id, member_id) VALUES (11, 101), (11, 102), (12, 101), (12, 103), (13, 104)').run();
+      ps5.writeEventPointscore(mem, 1);
+      const ps = Object.fromEntries(mem.prepare('SELECT member_id, points FROM pointscore_entry').all().map(r => [r.member_id, r.points]));
+      mem.close();
+      check('UT15-odd-man-out-best-result-only',
+        ps[101] === 5 && ps[102] === 5 && ps[103] === 3 && ps[104] === 2,
+        'swim-twice 101 best=5 (not sum 8); 102=5,103=3,104=2 → ' + JSON.stringify(ps));
+    }
+
   } finally {
     await stop(server);
   }

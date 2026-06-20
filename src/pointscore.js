@@ -178,9 +178,10 @@ function computeEventPointscoreRows(db, eventId) {
 /**
  * Persist the pointscore for one event. Idempotent: deletes existing rows for
  * this event's races first, then inserts. Aggregates per (event_race, member)
- * so a swimmer who appears in multiple heats/teams of the same race gets the
- * summed points in a single row (respects the UNIQUE(event_race_id, member_id)
- * constraint). Pure-additive: touches ONLY pointscore_entry.
+ * so a swimmer who appears in multiple teams of the same race (brace/relay
+ * "swim twice" odd-man-out) gets only their BEST result — the highest points
+ * (= best place), NOT the sum (Bryan 2026-06-20). Respects the
+ * UNIQUE(event_race_id, member_id) constraint. Pure-additive: touches ONLY pointscore_entry.
  *
  * IMPORTANT: call this INSIDE the caller's finalize transaction, AFTER the
  * accepted time_history write, so it shares atomicity but changes nothing else.
@@ -199,10 +200,13 @@ function writeEventPointscore(db, eventId) {
   const computed = computeEventPointscoreRows(db, eventId);
 
   // Aggregate per (event_race_id, member_id) to honor the UNIQUE constraint.
+  // v2.12.4 (Bryan 2026-06-20): a swimmer who raced twice in the SAME race
+  // (brace/relay odd-man-out, "swim twice") counts only their BEST result —
+  // the highest points (= best place), NOT the sum of both teams.
   const agg = new Map();
   for (const r of computed) {
     const key = r.event_race_id + ':' + r.member_id;
-    agg.set(key, (agg.get(key) || 0) + r.points);
+    agg.set(key, Math.max(agg.get(key) || 0, r.points));
   }
 
   const ins = db.prepare('INSERT INTO pointscore_entry (event_race_id, member_id, points) VALUES (?, ?, ?)');

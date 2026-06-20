@@ -160,7 +160,7 @@ Pointscore-Aggregaten und Reports ausgeschlossen (Detailansicht weiterhin abrufb
 | Kategorie | race_types | Punkte |
 |---|---|---|
 | Individual | 25m, 50m, 75m, back, breast, fly | Platz 1/2/3 → **5/4/3**; jeder weitere FINISHER → **2**; ohne Zeit → keine Zeile |
-| Relay/Team | 25m_relay, medley_relay, 25m/50m_brace, pogo | Teamplatz 1/2/3 → **5/4/3 für JEDES Teammitglied**; sonst 0 (keine Finisher-Punkte) |
+| Relay/Team | 25m_relay, medley_relay, 25m/50m_brace, pogo | Teamplatz 1/2/3 → **5/4/3 für JEDES Teammitglied**; sonstige Finisher **2 Entry-Punkte** (v2.12.1, siehe 2026-06-11). **Odd-Man-Out / „swim twice" (v2.12.4): wer in zwei Teams desselben Rennens schwimmt, zählt nur sein BESTES Ergebnis (höchste Punkte), NICHT die Summe beider Teams.** |
 
 Unbekannter race_type → defensiv als Individual. Platz-Basis: Individual `COALESCE(manual_place, place)`
 pro Bahn (nur mit `finish_time`); Relay `relay_team.place` (nur mit `total_time`).
@@ -230,6 +230,8 @@ Hash-Routing `#/screen`. Versionsanzeige in der Sidebar aus `/api/version`.
 | 2026-06-05 | Relay/Team-Pointscore **5/4/3** nach Teamplatz |
 | 2026-06-10 | Select-All-Default Y; Tap Placing; Relay einseitig 3-spaltig; GENAU 3 Hauptreports; Breaker-Report aus manuell geänderten Zeiten; Swimmer Card zeigt 0-Punkte-Teilnahmen; Event-Report mit Start/Break |
 | 2026-06-11 | Breaker-Scoring korrigiert: Breaker erhalten 2 Entry-Points und verbrauchen keine 5/4/3-Platzpunkte; Non-Breaker rücken nach; alle nicht platzierten Teilnahmen inkl. Brace/Relay erhalten 2 Entry-Points; Manual-Placing ohne separaten Start/Done-Modus; Event History direkt im Pointscore erreichbar. |
+| 2026-06-17/18 (v2.12.2→3) | Brace/Relay-Placement: Ranking nach kleinster **\|variance\|**; Gleichstand = gleicher Platz bei gleichem **Absolutbetrag** (signed-Interpretation aus v2.12.2 verworfen). |
+| 2026-06-20 (v2.12.4) | Brace Odd-Man-Out („swim twice"): wer in zwei Teams desselben Rennens schwimmt, zählt im Pointscore nur sein **bestes Ergebnis** (nicht die Summe) — Bryan. |
 
 Offene Working Assumptions: Saisongrenze = Kalenderjahr; Punkteformeln bis Bryans „Constitution“
 bestätigt (Banner in der UI); Report-2-Sortierung (Bryan gefragt 2026-06-10).

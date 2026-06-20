@@ -42,7 +42,7 @@
   {
     "id": "UT7-member-contribution",
     "status": "PASS",
-    "note": "member total == sum of contributions=12"
+    "note": "member total == sum of contributions=15"
   },
   {
     "id": "UT8-months-list",
@@ -83,5 +83,10 @@
     "id": "UT14-brace-variance-absolute-tie",
     "status": "PASS",
     "note": "variances=[0,-100,100,100,150] places=[1,2,2,2,5]"
+  },
+  {
+    "id": "UT15-odd-man-out-best-result-only",
+    "status": "PASS",
+    "note": "swim-twice 101 best=5 (not sum 8); 102=5,103=3,104=2 → {\"101\":5,\"102\":5,\"103\":3,\"104\":2}"
   }
 ]
