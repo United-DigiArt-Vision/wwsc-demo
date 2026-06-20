@@ -1,6 +1,6 @@
 {
   "name": "wwsc-swimming",
-  "version": "2.12.3",
+  "version": "2.12.4",
   "description": "WWSC Swimming Event Management System",
   "main": "server.js",
   "scripts": {
