@@ -15,7 +15,7 @@
 
 **Verification (Claude, 2026-06-22):** DB suite **18 PASS / 0 FAIL** (`test-m3-pointscore-unit.cjs`); reports/export **7 PASS / 0 FAIL** (`test-m3-slice2-reports-export.cjs`); `node --check` PASS. UI via Playwright at 1300px + 720px + print emulation: collapse/reopen real-click works, state persists across reload, heading clears the floating button (h1 x=68 ≥ button x=56), print emits no button, 60px rail keeps the collapse button. Screenshots `~/wwsc-dev/shots/SIDEBAR-*.png`.
 
-**Before deploy:** confirm Playwright (devDependency) is excluded from the production install; then Dino approval → push `dev/v2.12.5-quickwins:main` → Render → **mandatory demo re-seed** → finalize SSOT (mark CURRENT) + tag `v2.12.5`.
+**Deploy-prep DONE (2026-06-22):** `render.yaml` buildCommand → `npm install --omit=dev` so the Playwright devDependency is excluded from Render's build. Verified `NODE_ENV=production` alone does NOT skip devDeps in npm 10.9; `playwright`/`playwright-core` are `dev=true` in the lock, so `--omit=dev` drops them (120 prod deps ship). **Remaining = Dino single-deploy approval** → push `dev/v2.12.5-quickwins:main` → Render → **mandatory demo re-seed** → finalize SSOT (mark CURRENT) + tag `v2.12.5`.
 
 **Side note (not in scope):** for `ordinary_swim`, 75m heat generation returned 0 heats in local seed data while 25m returned 6 — flagged for a later look, NOT part of this branch.
 
