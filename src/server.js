@@ -1040,7 +1040,7 @@ app.get('/api/reports/improvements', (req, res) => {
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// BF2.6-20: GET /api/reports/exceeded — all swimmers exceeding PB by >2s across all events
+// BF2.6-20: GET /api/reports/exceeded — all swimmers exceeding PB by 1s or more across all events (Bryan 2026-06-21, was >2s)
 app.get('/api/reports/exceeded', (req, res) => {
   try {
     const events = db.prepare("SELECT * FROM event WHERE status IN ('finalized','completed') ORDER BY date DESC").all();
@@ -1053,7 +1053,7 @@ app.get('/api/reports/exceeded', (req, res) => {
           const lanes = db.prepare(`
             SELECT hl.*, m.name FROM heat_lane hl
             JOIN member m ON hl.member_id = m.id
-            WHERE hl.heat_id = ? AND hl.variance > 200
+            WHERE hl.heat_id = ? AND hl.variance >= 100
           `).all(h.id);
           lanes.forEach(l => {
             exceeded.push({
@@ -1073,7 +1073,7 @@ app.get('/api/reports/exceeded', (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// GET /api/events/:eventId/slow-swimmers — variance > 200 centiseconds (>2s slower than PB)
+// GET /api/events/:eventId/slow-swimmers — variance >= 100 centiseconds (1s or more slower than PB; Bryan 2026-06-21, was >2s)
 app.get('/api/events/:eventId/slow-swimmers', (req, res) => {
   try {
     const races = db.prepare('SELECT * FROM event_race WHERE event_id = ?').all(req.params.eventId);
@@ -1081,12 +1081,12 @@ app.get('/api/events/:eventId/slow-swimmers', (req, res) => {
     races.forEach(race => {
       const col = timeColumn(race.race_type);
       if (!col) return;
-      const heats = db.prepare('SELECT id FROM heat WHERE event_race_id = ?').all(race.id);
+      const heats = db.prepare('SELECT id, heat_number FROM heat WHERE event_race_id = ?').all(race.id);
       heats.forEach(h => {
         const lanes = db.prepare(`
           SELECT hl.*, m.name FROM heat_lane hl
           JOIN member m ON hl.member_id = m.id
-          WHERE hl.heat_id = ? AND hl.variance > 200
+          WHERE hl.heat_id = ? AND hl.variance >= 100
         `).all(h.id);
         lanes.forEach(l => {
           slowSwimmers.push({

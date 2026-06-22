@@ -213,30 +213,35 @@ function renderBreakersSection(race) {
   // R10: Unified report table format
   const raceLabel = RACE_LABELS[race.race_type] || race.race_type;
   let rows = breakers.map((b, i) => {
-    return `<tr style="background:${i % 2 === 0 ? '#e8f5e9' : '#f1f8e9'}">
-      <td style="padding:8px 12px;font-weight:600">${b.name}</td>
-      <td style="padding:8px 12px;text-align:center">${raceLabel} - Heat ${b.heat}</td>
-      <td style="padding:8px 12px;text-align:center">${formatWhole(b.pb)}</td>
-      <td style="padding:8px 12px;text-align:center;font-weight:700">${formatTime(b.newTime)}</td>
-      <td style="padding:8px 12px;text-align:center;color:#2e7d32;font-weight:700">-${formatTime(b.variance != null ? b.variance : b.improvement)}</td>
+    return `<tr style="background:${i % 2 === 0 ? '#fbfdfb' : '#eef7ef'}">
+      <td style="text-align:left;font-weight:600;padding:10px 14px;border-bottom:1px solid #c8e6c9">${b.name}</td>
+      <td style="text-align:center;padding:10px 14px;border-bottom:1px solid #c8e6c9">${raceLabel} - Heat ${b.heat}</td>
+      <td style="text-align:center;padding:10px 14px;border-bottom:1px solid #c8e6c9">${formatWhole(b.pb)}</td>
+      <td style="text-align:center;font-weight:700;padding:10px 14px;border-bottom:1px solid #c8e6c9">${formatTime(b.newTime)}</td>
+      <td style="text-align:center;color:#2e7d32;font-weight:700;padding:10px 14px;border-bottom:1px solid #c8e6c9">-${formatTime(b.variance != null ? b.variance : b.improvement)}</td>
     </tr>`;
   }).join('');
 
-  // R10: Unified column headers: Swimmer | Event/Heat | Old PB | New Time | Variance
-  return `<div class="card" style="background:#e8f5e9;border-left:6px solid #2e7d32;margin-bottom:16px">
-    <strong style="font-size:1.1em">🏅 Breakers Report — ${breakers.length} PB${breakers.length !== 1 ? 's' : ''} Broken!</strong>
-    <table class="report-table" style="width:100%;border-collapse:collapse;margin-top:10px;table-layout:fixed">
-      <thead>
-        <tr style="background:#2e7d32;color:#fff">
-          <th style="padding:8px 12px;text-align:left;width:25%">Swimmer</th>
-          <th style="padding:8px 12px;text-align:center;width:25%">Event/Heat</th>
-          <th style="padding:8px 12px;text-align:center;width:15%">Old PB</th>
-          <th style="padding:8px 12px;text-align:center;width:15%">New Time</th>
-          <th style="padding:8px 12px;text-align:center;width:20%">Variance</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
+  // Unified report layout (consistent with Exceeding Report): coloured header bar + coloured thead + matching alignment/padding.
+  return `<div class="card" style="margin-top:20px;margin-bottom:16px;padding:0;overflow:hidden;border:2px solid #a5d6a7">
+    <div style="background:#2e7d32;color:#fff;padding:10px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <strong style="font-size:1.1em">🏅 Breakers Report — ${breakers.length} PB${breakers.length !== 1 ? 's' : ''} Broken!</strong>
+      <span style="font-size:12px;font-weight:400;opacity:0.95">Swimmers who beat their PB</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="report-table" style="width:100%;border-collapse:collapse;table-layout:fixed">
+        <thead>
+          <tr style="background:#2e7d32;color:#fff">
+            <th style="padding:12px 14px;text-align:left;width:25%">Swimmer</th>
+            <th style="padding:12px 14px;text-align:center;width:25%">Event/Heat</th>
+            <th style="padding:12px 14px;text-align:center;width:15%">Old PB</th>
+            <th style="padding:12px 14px;text-align:center;width:15%">New Time</th>
+            <th style="padding:12px 14px;text-align:center;width:20%">Variance</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
   </div>`;
 }
 
@@ -480,11 +485,11 @@ async function loadSlowSwimmers() {
     // R10: Unified report format with Event/Heat column
     const slowRows = slow.map((s, i) => `
       <tr style="background:${i % 2 === 0 ? '#fffaf5' : '#ffffff'}">
-        <td style="text-align:left;font-weight:600;padding:12px 14px;border-bottom:1px solid #ffe0b2">${s.name}</td>
-        <td style="text-align:center;padding:12px 14px;border-bottom:1px solid #ffe0b2">${raceLabel}${s.heat_number ? ' - Heat ' + s.heat_number : ''}</td>
-        <td style="text-align:center;padding:12px 14px;border-bottom:1px solid #ffe0b2">${formatWhole(s.pb)}</td>
-        <td style="text-align:center;font-weight:700;padding:12px 14px;border-bottom:1px solid #ffe0b2">${formatTime(s.net_time)}</td>
-        <td style="text-align:center;color:#e65100;font-weight:700;padding:12px 14px;border-bottom:1px solid #ffe0b2">+${formatTime(s.variance)}</td>
+        <td style="text-align:left;font-weight:600;padding:10px 14px;border-bottom:1px solid #ffe0b2">${s.name}</td>
+        <td style="text-align:center;padding:10px 14px;border-bottom:1px solid #ffe0b2">${raceLabel}${s.heat_number ? ' - Heat ' + s.heat_number : ''}</td>
+        <td style="text-align:center;padding:10px 14px;border-bottom:1px solid #ffe0b2">${formatWhole(s.pb)}</td>
+        <td style="text-align:center;font-weight:700;padding:10px 14px;border-bottom:1px solid #ffe0b2">${formatTime(s.net_time)}</td>
+        <td style="text-align:center;color:#e65100;font-weight:700;padding:10px 14px;border-bottom:1px solid #ffe0b2">+${formatTime(s.variance)}</td>
       </tr>
     `).join('');
 
@@ -492,18 +497,18 @@ async function loadSlowSwimmers() {
       <div class="card" style="margin-top:20px;margin-bottom:16px;padding:0;overflow:hidden;border:2px solid #ffcc80">
         <div style="background:#e65100;color:white;padding:10px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
           <strong style="font-size:1.1em">⚠️ Exceeding Report — ${slow.length} swimmer${slow.length !== 1 ? 's' : ''}</strong>
-          <span style="font-size:12px;font-weight:400;opacity:0.95">More than 2 seconds over PB</span>
+          <span style="font-size:12px;font-weight:400;opacity:0.95">1 second or more over PB</span>
         </div>
         <div style="padding:10px 16px;font-size:13px;color:var(--text-secondary);background:#fff8f1;border-bottom:1px solid #ffe0b2">These swimmers may need their PB times adjusted up. Times are NOT auto-updated.</div>
         <div style="overflow-x:auto">
-          <table class="report-table" style="width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed">
+          <table class="report-table" style="width:100%;border-collapse:collapse;table-layout:fixed">
             <thead>
-              <tr>
-                <th style="text-align:left;width:25%;padding:12px 14px;border-bottom:2px solid #ffe0b2">Swimmer</th>
-                <th style="text-align:center;width:25%;padding:12px 14px;border-bottom:2px solid #ffe0b2">Event/Heat</th>
-                <th style="text-align:center;width:15%;padding:12px 14px;border-bottom:2px solid #ffe0b2">Old PB</th>
-                <th style="text-align:center;width:15%;padding:12px 14px;border-bottom:2px solid #ffe0b2">New Time</th>
-                <th style="text-align:center;width:20%;padding:12px 14px;border-bottom:2px solid #ffe0b2">Variance</th>
+              <tr style="background:#e65100;color:#fff">
+                <th style="text-align:left;width:25%;padding:12px 14px">Swimmer</th>
+                <th style="text-align:center;width:25%;padding:12px 14px">Event/Heat</th>
+                <th style="text-align:center;width:15%;padding:12px 14px">Old PB</th>
+                <th style="text-align:center;width:15%;padding:12px 14px">New Time</th>
+                <th style="text-align:center;width:20%;padding:12px 14px">Variance</th>
               </tr>
             </thead>
             <tbody>${slowRows}</tbody>
