@@ -23,7 +23,7 @@
     {
       "id": "S2-UT1-version",
       "status": "PASS",
-      "note": "version=2.12.0 expected=2.12.0"
+      "note": "version=2.12.5 expected=2.12.5"
     },
     {
       "id": "S2-UT2-completed-categories-api",

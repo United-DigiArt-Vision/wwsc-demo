@@ -1,5 +1,26 @@
 # CURRENT_STATE
 
+## IN PROGRESS (2026-06-22 10:10 CEST) — v2.12.5 quick wins, BUILT LOCALLY, NOT deployed
+
+**Version (package.json):** 2.12.5 · **Live `/api/version` is still 2.12.4** (this is local-only).
+**Branch:** dev/v2.12.5-quickwins in clone `~/wwsc-dev/wwsc` — NOT on GitHub, NOT on Render.
+**LastEditor:** Claude (full ownership per `OPERATING-MODEL.md`).
+**Status:** GEBAUT + verifiziert lokal; **GEPLANT für Deploy** pending Dino single-deploy approval.
+
+**WorkingTreeStatus:** four items from Bryan's 2026-06-21 feedback round are done in this branch:
+- **(pt 5)** Exceeding report threshold ≥1 s (`variance >= 100` cs, both endpoints).
+- **(pt 7)** Breakers ↔ Exceeding reports made visually consistent (header bar + subtitle, centred coloured `thead`, identical alignment, "RaceType - Heat N" in both).
+- **(bonus)** `/api/events/:id/slow-swimmers` now selects `heat_number` (was missing → could not label heats).
+- **(pt 4)** Collapsible side menu: `«` collapse button in the sidebar title + floating `☰` reopen button; `setSidebarCollapsed()` persists `localStorage['wwsc-sidebar-collapsed']`, mirrored on `<body>` so it survives sidebar re-renders. Collapsed → `#sidebar` hidden, `#content` full width (68px left pad clears the floating button), reopen button shown. Print hides the button; <768px keeps it reachable on the 60px rail. Files: `src/public/index.html`, `js/components/sidebar.js`, `css/style.css`.
+
+**Verification (Claude, 2026-06-22):** DB suite **18 PASS / 0 FAIL** (`test-m3-pointscore-unit.cjs`); reports/export **7 PASS / 0 FAIL** (`test-m3-slice2-reports-export.cjs`); `node --check` PASS. UI via Playwright at 1300px + 720px + print emulation: collapse/reopen real-click works, state persists across reload, heading clears the floating button (h1 x=68 ≥ button x=56), print emits no button, 60px rail keeps the collapse button. Screenshots `~/wwsc-dev/shots/SIDEBAR-*.png`.
+
+**Before deploy:** confirm Playwright (devDependency) is excluded from the production install; then Dino approval → push `dev/v2.12.5-quickwins:main` → Render → **mandatory demo re-seed** → finalize SSOT (mark CURRENT) + tag `v2.12.5`.
+
+**Side note (not in scope):** for `ordinary_swim`, 75m heat generation returned 0 heats in local seed data while 25m returned 6 — flagged for a later look, NOT part of this branch.
+
+---
+
 ## CURRENT (2026-06-21 00:12 CEST) — v2.12.4 brace odd-man-out counts BEST result only, deployed live
 
 **Version (from `/api/version`):** 2.12.4

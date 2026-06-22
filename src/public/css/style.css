@@ -50,6 +50,10 @@ html, body {
 }
 
 .sidebar-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   font-size: 20px;
   font-weight: 700;
   padding: 8px 16px 20px;
@@ -80,6 +84,54 @@ html, body {
 }
 
 .nav-item .icon { font-size: 20px; }
+
+/* ── Sidebar Collapse Toggle (Bryan v2.12.5 pt.4: hide menu → more heat space) ── */
+.sidebar-collapse-btn {
+  flex-shrink: 0;
+  width: 36px;
+  min-height: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+  color: white;
+  background: rgba(255,255,255,0.12);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.sidebar-collapse-btn:active { background: rgba(255,255,255,0.3); }
+
+/* Floating button to bring the menu back — only shown while collapsed */
+#sidebar-reopen {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 60;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+  color: white;
+  background: var(--primary-dark);
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+#sidebar-reopen:active { background: var(--primary); }
+
+body.sidebar-collapsed #sidebar { display: none; }
+body.sidebar-collapsed #sidebar-reopen { display: flex; }
+/* Keep content clear of the floating reopen button when the menu is hidden */
+body.sidebar-collapsed #content { padding-left: 68px; }
 
 /* ── Date Picker (Event Setup) ───────────────────── */
 .date-picker-inline {
@@ -337,7 +389,9 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
 /* ── Responsive ──────────────────────────────────── */
 @media (max-width: 768px) {
   #sidebar { width: 60px; min-width: 60px; }
-  .sidebar-title { display: none; }
+  /* Keep the collapse button reachable on narrow screens; only drop the title text */
+  .sidebar-title { justify-content: center; padding: 8px 0 12px; }
+  .sidebar-title-text { display: none; }
   .nav-item span:not(.icon) { display: none; }
   .nav-item { justify-content: center; padding: 14px 8px; }
   #content { padding: 16px; }
@@ -544,7 +598,7 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
 /* ── Print Styles ────────────────────────────────── */
 @media print {
   @page { margin: 8mm; }
-  #sidebar { display: none !important; }
+  #sidebar, #sidebar-reopen { display: none !important; }
   #app { display: block !important; }
   #content { padding: 4px !important; }
   .btn, .toolbar select, .quick-actions, .modal-overlay { display: none !important; }

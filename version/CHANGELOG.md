@@ -11,6 +11,28 @@
 
 ---
 
+## 2026-06-22 — WIP: v2.12.5 quick wins (built locally on `dev/v2.12.5-quickwins`, NOT yet deployed)
+- **Date:** 2026-06-22
+- **Timestamp:** 2026-06-22 10:10:00 Europe/Berlin
+- **App Version (from package.json):** 2.12.5
+- **Branch:** dev/v2.12.5-quickwins (local clone `~/wwsc-dev/wwsc`; NOT on GitHub, NOT on Render)
+- **RecordedCommit:** (this commit) — follows `321302c` (pts 1–3) + bump `cd30327`; base `5308867` (= live v2.12.4)
+- **Editor:** Claude (full ownership per `OPERATING-MODEL.md`)
+- **Status:** GEBAUT lokal + verifiziert; **GEPLANT für Deploy** (awaits Dino single-deploy approval). Live `/api/version` still `2.12.4`.
+- **Trigger:** Bryan 2026-06-21 big feedback round (`messages/2026-06-21-Bryan-inbound-v2124-big-feedback-round.md`).
+- **Changes (Bryan points 5, 7, 4 + bonus):**
+  - **(pt 5) Exceeding report threshold ≥1 s** instead of ≥2 s — `src/server.js` slow-swimmers/exceeding now `variance >= 100` cs (both endpoints); text "1 second or more over PB".
+  - **(pt 7) Report consistency** Breakers ↔ Exceeding — both now share: coloured header bar + subtitle, coloured **centred** `thead`, identical alignment/padding, Event/Heat shown as "RaceType - Heat N" in BOTH. Colours stay green/orange.
+  - **(bonus) `/api/events/:id/slow-swimmers`** selected only `id` from `heat` → `heat_number` was missing; now `SELECT id, heat_number`.
+  - **(pt 4) Collapsible side menu** — hide the navigation to free up screen real estate while filling in heats:
+    - `src/public/index.html`: floating `#sidebar-reopen` (☰) button as sibling of `#app`.
+    - `src/public/js/components/sidebar.js`: collapse button (`«`) in the title row; `setSidebarCollapsed(collapsed)` toggles `body.sidebar-collapsed` and persists to `localStorage['wwsc-sidebar-collapsed']`; `initSidebarCollapsed()` applies the saved state on load (no FOUC). State lives on `<body>` so it survives the sidebar re-render on every `navigate()`.
+    - `src/public/css/style.css`: `.sidebar-title` → flex; `.sidebar-collapse-btn` + `#sidebar-reopen` styles; `body.sidebar-collapsed` hides `#sidebar`, shows `#sidebar-reopen`, and pads `#content` left 68px so the floating button never overlaps the page heading; print hides `#sidebar-reopen`; <768px keeps the collapse button reachable on the 60px rail (only the title text drops).
+- **Verification (Claude, 2026-06-22):** DB suite `test-m3-pointscore-unit.cjs` = **18 PASS / 0 FAIL**; reports/export `test-m3-slice2-reports-export.cjs` = **7 PASS / 0 FAIL**; `node --check` PASS. UI via Playwright (1300px + 720px + print emulation): collapse/reopen real-click works; state persists across reload; heading clears the floating button (h1 x=68 ≥ button x=56); print emits no button; 60px rail keeps the collapse button. Screenshots in `~/wwsc-dev/shots/SIDEBAR-*.png`.
+- **Pending before deploy:** ensure Playwright (devDependency) is not pulled into the production install; then Dino single-deploy approval → push `dev/v2.12.5-quickwins:main` → Render → **mandatory re-seed** → SSOT docs + tag.
+
+---
+
 ## 2026-06-21 — release: v2.12.4 brace odd-man-out counts BEST result only (Render auto-deploy)
 - **Date:** 2026-06-21
 - **Timestamp:** 2026-06-21 00:12:00 Europe/Berlin
