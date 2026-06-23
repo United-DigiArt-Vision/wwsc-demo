@@ -1,19 +1,27 @@
 ## Current Stable Live Version
 
-- **Version:** v2.12.5
-- **Tag:** v2.12.5
+- **Version:** v2.12.6
+- **Tag:** v2.12.6
 - **Branch:** main
 - **Date:** 2026-06-23
-- **Release status:** live verified on Render. Quick wins from Bryan's 2026-06-21 feedback round: collapsible side menu (pt 4), exceeding report ≥1 s (pt 5), consistent Breakers/Exceeding reports (pt 7), slow-swimmers heat_number fix.
-- **Release source commit:** `509d804` (`build: exclude playwright devDep from Render production build`); sidebar feature `ec26366`; quick wins `321302c`; version bump `cd30327`.
-- **Current main tip:** `509d804` (pushed to `main`). Live `/api/version` build `2026-06-23T04:08:56.798Z`.
-- **Implementation branch:** dev/v2.12.5-quickwins
-- **Local verification (Claude, 2026-06-22):** DB suite `node scripts/test-m3-pointscore-unit.cjs` = **18 PASS / 0 FAIL**; reports/export `test-m3-slice2-reports-export.cjs` = **7 PASS / 0 FAIL**; `node --check` PASS. Sidebar UI via Playwright at 1300px + 720px + print emulation (toggle both ways, reload persistence, no heading overlap, no print artifact).
-- **Live Render verification (2026-06-23):** `/api/version` = `{"version":"2.12.5","build":"2026-06-23T04:08:56.798Z"}`; `/api/members` = 23; live assets carry the sidebar feature; live screenshot toggle confirmed (`~/wwsc-dev/shots/LIVE-dashboard-*.png`).
-- **Build note:** `render.yaml` buildCommand is now `npm install --omit=dev` — `NODE_ENV=production` alone no longer skips devDeps in npm 10, so this keeps the Playwright devDependency out of the Render build.
+- **Release status:** live verified on Render. New members / anyone with no PB for the event being swum now go into a separate no-handicap heat (Bryan pt 3); their first time auto-establishes their PB; they earn no pointscore for that establishing swim.
+- **Release source commit:** `2c8dd1c` (`feat: v2.12.6 new members with no time → separate no-PB heat`).
+- **Current main tip:** `2c8dd1c` (pushed to `main`). Live `/api/version` build `2026-06-23T05:27:48.211Z`.
+- **Implementation branch:** dev/v2.12.6-newmembers-notime
+- **Local verification (Claude, 2026-06-23):** new suite `test-v2126-newmembers-notime.cjs` = **12 PASS / 0 FAIL** (separate heat, no variance/break, auto-PB 15/18, pointscore excluded); regression `test-m3-pointscore-unit.cjs` **18/0**, `test-m3-slice2-reports-export.cjs` **7/0**; `node --check` PASS. `/code-review high` (2 display findings fixed). UI screenshots `~/wwsc-dev/shots/NOPB-*.png`.
+- **Live Render verification (2026-06-23):** `/api/version` = `{"version":"2.12.6","build":"2026-06-23T05:27:48.211Z"}`; `/api/members` = 23.
 - **Demo data:** re-seeded after deploy (mandatory post-deploy step) — `/api/events?archived=1` = 7, `/api/pointscore/months` = `["2026-05","2026-04"]`, 9/9 seed self-checks.
-- **Evidence:** `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-23T04-10-30-847Z.json`.
-- **Customer gate:** v2.12.5 quick wins live. STILL OPEN: data-loss root cause (pt 8, hosting/disk — Dino), manual corrections complexity analysis (pt 1), new members without a time (pt 3), local/multi-club (pt 10). Bryan info message: drafted, awaiting Dino to send.
+- **Customer gate:** v2.12.6 new-members-no-time live. STILL OPEN: data-loss root cause (pt 8, hosting/disk — Dino), manual corrections complexity analysis (pt 1), local/multi-club (pt 10). Bryan info messages (v2.12.5 + v2.12.6 pt 3): drafted, awaiting Dino to send.
+
+## What's in v2.12.6
+
+Bryan's 2026-06-21 point 3 — new members with no time:
+
+- Swimmers with no PB for the distance being swum (new members, or a distance never swum) are no longer excluded from heat generation. They go into a separate **no-PB heat** at the end with no handicap (`handicap_time = 0` marker, `start_delay = 0`).
+- Entering a time for them records no variance and no break (nothing to compare against).
+- On finalize, the time they swam **auto-becomes their PB** for that distance (logged in `pb_change_log`) — so next week they slot into the normal handicap heats.
+- They earn **no pointscore** for the establishing swim (no handicap to score against). Decisions by Dino 2026-06-23.
+- UI marks these heats "No PB — establishing time" (heat builder, results table, plaintext readout, event report); PB/Delay/Variance show "—"; places shown plainly without podium medals.
 
 ## What's in v2.12.5
 

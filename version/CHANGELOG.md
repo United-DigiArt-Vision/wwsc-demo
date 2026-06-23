@@ -11,12 +11,14 @@
 
 ---
 
-## 2026-06-23 — WIP: v2.12.6 new members with no time for an event (built locally on `dev/v2.12.6-newmembers-notime`, NOT yet deployed)
+## 2026-06-23 — release: v2.12.6 new members with no time for an event (Render auto-deploy)
 - **Date:** 2026-06-23
-- **App Version (from package.json):** 2.12.6
-- **Branch:** dev/v2.12.6-newmembers-notime (local clone `~/wwsc-dev/wwsc`; NOT on GitHub/Render)
-- **Editor:** Claude (full ownership per `OPERATING-MODEL.md`)
-- **Status:** GEBAUT lokal + verifiziert; **GEPLANT für Deploy** (awaits Dino single-deploy approval). Live `/api/version` still `2.12.5`.
+- **App Version (from `/api/version`):** 2.12.6 · build `2026-06-23T05:27:48.211Z`
+- **Branch:** dev/v2.12.6-newmembers-notime → pushed to `main`
+- **RecordedCommit:** `2c8dd1c` (`feat: v2.12.6 new members with no time → separate no-PB heat`)
+- **Tag:** v2.12.6
+- **Editor:** Claude (full ownership; deployed after Dino single-deploy approval 2026-06-23)
+- **Status:** DEPLOYED (push `940cb19..2c8dd1c` → main, Render ~32 s) + live-verified (version 2.12.6, members 23) + demo re-seeded (7 events, months 2026-05/04, 9/9 self-checks).
 - **Trigger:** Bryan 2026-06-21: *"For new members that join, if they do not have a time can we put them in a separate heat of their own? ... we have to be aware of the '0' time for that event."*
 - **Decisions (Dino, 2026-06-23):** no-PB swimmers earn **no pointscore**; their first swum time **auto-establishes their PB** on finalize.
 - **Changes (Bryan pt.3):**

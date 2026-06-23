@@ -1,11 +1,13 @@
 # CURRENT_STATE
 
-## IN PROGRESS (2026-06-23) — v2.12.6 new members with no time, BUILT LOCALLY, NOT deployed
+## CURRENT (2026-06-23 05:28 UTC) — v2.12.6 new members with no time, deployed live
 
-**Version (package.json):** 2.12.6 · **Live `/api/version` is still 2.12.5** (local-only).
-**Branch:** dev/v2.12.6-newmembers-notime in clone `~/wwsc-dev/wwsc` — NOT on GitHub/Render.
-**LastEditor:** Claude (full ownership per `OPERATING-MODEL.md`).
-**Status:** GEBAUT + verifiziert lokal; **GEPLANT für Deploy** pending Dino single-deploy approval.
+**Version (`/api/version`):** 2.12.6 · build `2026-06-23T05:27:48.211Z`.
+**Branch:** dev/v2.12.6-newmembers-notime → pushed to `main` (`2c8dd1c`, fast-forward `940cb19..2c8dd1c`).
+**Tag:** v2.12.6
+**LastEditor:** Claude (full ownership per `OPERATING-MODEL.md`; deployed after Dino's single-deploy approval 2026-06-23).
+**Status:** DEPLOYED + live-verified + demo re-seeded.
+**Deploy:** Render auto-deployed in ~32 s. Live smoke: version 2.12.6, members 23. Demo re-seeded (Dino-approved): 7 events, months 2026-05/04, 9/9 self-checks.
 
 **WorkingTreeStatus (Bryan pt.3):** swimmers with no PB for the event being swum now go into a separate no-handicap heat instead of being excluded (`generate-heats` no longer filters `IS NOT NULL`; `buildHeats` splits PB vs no-PB; `handicap_time = 0` is the marker). No-PB lanes record no variance/break; on finalize their first time auto-establishes their PB (Dino decision) with a `pb_change_log` entry; they earn no pointscore (Dino decision — query excludes `handicap_time = 0`). UI (heat-builder, results table, plaintext readout, event report) marks these heats "No PB — establishing time", shows PB/Delay/Variance as "—", and gives plain place numbers (no podium medals). SYSTEM-SPEC §6.1 + new §6.4.
 
@@ -17,7 +19,7 @@
 
 ---
 
-## CURRENT (2026-06-23 04:09 UTC) — v2.12.5 quick wins, deployed live
+## PREVIOUS (2026-06-23 04:09 UTC) — v2.12.5 quick wins, deployed live
 
 **Version (`/api/version`):** 2.12.5 · build `2026-06-23T04:08:56.798Z`.
 **Branch:** dev/v2.12.5-quickwins → pushed to `main` (`509d804`, fast-forward `5308867..509d804`).
