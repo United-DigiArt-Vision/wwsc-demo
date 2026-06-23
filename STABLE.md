@@ -1,18 +1,28 @@
 ## Current Stable Live Version
 
-- **Version:** v2.12.4
-- **Tag:** v2.12.4
+- **Version:** v2.12.5
+- **Tag:** v2.12.5
 - **Branch:** main
-- **Date:** 2026-06-21
-- **Release status:** live verified on Render. Brace odd-man-out ("swim twice") now counts only the BEST result in the pointscore, not the sum (Bryan 2026-06-20).
-- **Release source commit:** 809146a (`fix: brace odd-man-out counts best result only (not sum)`); version bump `9c0124d`.
-- **Current main tip:** `809146a` (pushed to `main`). Live `/api/version` build `2026-06-20T22:09:58.375Z`.
-- **Implementation branch:** dev/v2.12.4-odd-man-out-best-result
-- **Local verification (Claude, 2026-06-21):** DB suite `node scripts/test-m3-pointscore-unit.cjs` = **18 PASS / 0 FAIL** incl. new `UT15-odd-man-out-best-result-only` (member in place-1 + place-3 teams → 5, not 8), run in x64 clone `~/wwsc-dev/wwsc`; `node --check` PASS.
-- **Live Render verification:** `/api/version` = `{"version":"2.12.4","build":"2026-06-20T22:09:58.375Z"}`; `/api/members` = 23; `/api/pointscore/rules` OK.
+- **Date:** 2026-06-23
+- **Release status:** live verified on Render. Quick wins from Bryan's 2026-06-21 feedback round: collapsible side menu (pt 4), exceeding report ≥1 s (pt 5), consistent Breakers/Exceeding reports (pt 7), slow-swimmers heat_number fix.
+- **Release source commit:** `509d804` (`build: exclude playwright devDep from Render production build`); sidebar feature `ec26366`; quick wins `321302c`; version bump `cd30327`.
+- **Current main tip:** `509d804` (pushed to `main`). Live `/api/version` build `2026-06-23T04:08:56.798Z`.
+- **Implementation branch:** dev/v2.12.5-quickwins
+- **Local verification (Claude, 2026-06-22):** DB suite `node scripts/test-m3-pointscore-unit.cjs` = **18 PASS / 0 FAIL**; reports/export `test-m3-slice2-reports-export.cjs` = **7 PASS / 0 FAIL**; `node --check` PASS. Sidebar UI via Playwright at 1300px + 720px + print emulation (toggle both ways, reload persistence, no heading overlap, no print artifact).
+- **Live Render verification (2026-06-23):** `/api/version` = `{"version":"2.12.5","build":"2026-06-23T04:08:56.798Z"}`; `/api/members` = 23; live assets carry the sidebar feature; live screenshot toggle confirmed (`~/wwsc-dev/shots/LIVE-dashboard-*.png`).
+- **Build note:** `render.yaml` buildCommand is now `npm install --omit=dev` — `NODE_ENV=production` alone no longer skips devDeps in npm 10, so this keeps the Playwright devDependency out of the Render build.
 - **Demo data:** re-seeded after deploy (mandatory post-deploy step) — `/api/events?archived=1` = 7, `/api/pointscore/months` = `["2026-05","2026-04"]`, 9/9 seed self-checks.
-- **Evidence:** `docs/evidence/v2124-odd-man-out-best-result/ODD-MAN-OUT-BEST-RESULT-2026-06-20.md`.
-- **Customer gate:** Odd-man-out best-result live. STILL OPEN (awaiting Bryan's docs): special events + manual pointscore for that week; manual data edit/input. Bryan info message: to prepare.
+- **Evidence:** `docs/evidence/bryan-v2120-weekly-seed/weekly-seed-2026-06-23T04-10-30-847Z.json`.
+- **Customer gate:** v2.12.5 quick wins live. STILL OPEN: data-loss root cause (pt 8, hosting/disk — Dino), manual corrections complexity analysis (pt 1), new members without a time (pt 3), local/multi-club (pt 10). Bryan info message: drafted, awaiting Dino to send.
+
+## What's in v2.12.5
+
+Bryan's 2026-06-21 feedback round — quick wins:
+
+- **Collapsible side menu (pt 4):** a `«` button in the sidebar title hides the navigation (more room for heat data while filling in); a floating `☰` button restores it. State persists in `localStorage`. Hidden in print; reachable on the narrow 60px rail.
+- **Exceeding report ≥1 s (pt 5):** threshold lowered from 2 s to 1 s over the allocated time (`variance >= 100` cs).
+- **Report consistency (pt 7):** Breakers and Exceeding reports now share header bar, centred coloured headings, alignment, and the "RaceType - Heat N" event/heat label. Colours stay green/orange.
+- **Bonus:** `/api/events/:id/slow-swimmers` now returns `heat_number` (was missing, so heats could not be labelled).
 
 ## What's in v2.12.4
 

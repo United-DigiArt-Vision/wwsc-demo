@@ -11,14 +11,15 @@
 
 ---
 
-## 2026-06-22 — WIP: v2.12.5 quick wins (built locally on `dev/v2.12.5-quickwins`, NOT yet deployed)
-- **Date:** 2026-06-22
-- **Timestamp:** 2026-06-22 10:10:00 Europe/Berlin
-- **App Version (from package.json):** 2.12.5
-- **Branch:** dev/v2.12.5-quickwins (local clone `~/wwsc-dev/wwsc`; NOT on GitHub, NOT on Render)
-- **RecordedCommit:** (this commit) — follows `321302c` (pts 1–3) + bump `cd30327`; base `5308867` (= live v2.12.4)
-- **Editor:** Claude (full ownership per `OPERATING-MODEL.md`)
-- **Status:** GEBAUT lokal + verifiziert; **GEPLANT für Deploy** (awaits Dino single-deploy approval). Live `/api/version` still `2.12.4`.
+## 2026-06-23 — release: v2.12.5 quick wins (collapsible side menu + report tweaks, Render auto-deploy)
+- **Date:** 2026-06-23
+- **Timestamp:** 2026-06-23 04:09:00 UTC
+- **App Version (from `/api/version`):** 2.12.5 · build `2026-06-23T04:08:56.798Z`
+- **Branch:** dev/v2.12.5-quickwins → pushed to `main`
+- **RecordedCommit:** `509d804` (`build: exclude playwright devDep from Render production build`); sidebar `ec26366`; quick wins `321302c`; bump `cd30327`
+- **Tag:** v2.12.5
+- **Editor:** Claude (full ownership; deployed after Dino single-deploy approval 2026-06-23)
+- **Status:** DEPLOYED + live-verified + demo re-seeded.
 - **Trigger:** Bryan 2026-06-21 big feedback round (`messages/2026-06-21-Bryan-inbound-v2124-big-feedback-round.md`).
 - **Changes (Bryan points 5, 7, 4 + bonus):**
   - **(pt 5) Exceeding report threshold ≥1 s** instead of ≥2 s — `src/server.js` slow-swimmers/exceeding now `variance >= 100` cs (both endpoints); text "1 second or more over PB".
@@ -30,7 +31,7 @@
     - `src/public/css/style.css`: `.sidebar-title` → flex; `.sidebar-collapse-btn` + `#sidebar-reopen` styles; `body.sidebar-collapsed` hides `#sidebar`, shows `#sidebar-reopen`, and pads `#content` left 68px so the floating button never overlaps the page heading; print hides `#sidebar-reopen`; <768px keeps the collapse button reachable on the 60px rail (only the title text drops).
 - **Verification (Claude, 2026-06-22):** DB suite `test-m3-pointscore-unit.cjs` = **18 PASS / 0 FAIL**; reports/export `test-m3-slice2-reports-export.cjs` = **7 PASS / 0 FAIL**; `node --check` PASS. UI via Playwright (1300px + 720px + print emulation): collapse/reopen real-click works; state persists across reload; heading clears the floating button (h1 x=68 ≥ button x=56); print emits no button; 60px rail keeps the collapse button. Screenshots in `~/wwsc-dev/shots/SIDEBAR-*.png`.
 - **Deploy-prep DONE (2026-06-22):** Playwright must NOT reach the Render build. Verified that `NODE_ENV=production` alone does **not** skip devDeps in npm 10.9 (`npm install` still adds the playwright tree). Fix: `render.yaml` buildCommand `npm install` → **`npm install --omit=dev`**. Proof: `playwright`/`playwright-core` are `dev=true` in `package-lock.json` (3 dev-only pkgs) → excluded by `--omit=dev`; 120 prod deps (better-sqlite3/express/multer trees) still ship.
-- **Remaining before deploy:** Dino single-deploy approval → push `dev/v2.12.5-quickwins:main` → Render → **mandatory re-seed** → SSOT docs (mark CURRENT) + tag `v2.12.5`.
+- **Deployed (2026-06-23):** Dino approved → Claude pushed `5308867..509d804` to `main` (fast-forward) → Render auto-deployed in ~40 s. Live smoke: `/api/version` = 2.12.5, members 23, live assets carry the sidebar feature. **Demo re-seeded** (Dino-approved live mutation): events=7, months `["2026-05","2026-04"]`, 9/9 self-checks. Live sidebar toggle confirmed by screenshot. Tag `v2.12.5` set on `509d804`.
 
 ---
 

@@ -1,11 +1,12 @@
 # CURRENT_STATE
 
-## IN PROGRESS (2026-06-22 10:10 CEST) — v2.12.5 quick wins, BUILT LOCALLY, NOT deployed
+## CURRENT (2026-06-23 04:09 UTC) — v2.12.5 quick wins, deployed live
 
-**Version (package.json):** 2.12.5 · **Live `/api/version` is still 2.12.4** (this is local-only).
-**Branch:** dev/v2.12.5-quickwins in clone `~/wwsc-dev/wwsc` — NOT on GitHub, NOT on Render.
-**LastEditor:** Claude (full ownership per `OPERATING-MODEL.md`).
-**Status:** GEBAUT + verifiziert lokal; **GEPLANT für Deploy** pending Dino single-deploy approval.
+**Version (`/api/version`):** 2.12.5 · build `2026-06-23T04:08:56.798Z`.
+**Branch:** dev/v2.12.5-quickwins → pushed to `main` (`509d804`, fast-forward `5308867..509d804`).
+**Tag:** v2.12.5
+**LastEditor:** Claude (full ownership per `OPERATING-MODEL.md`; deployed after Dino's single-deploy approval 2026-06-23).
+**Status:** DEPLOYED + live-verified + demo re-seeded.
 
 **WorkingTreeStatus:** four items from Bryan's 2026-06-21 feedback round are done in this branch:
 - **(pt 5)** Exceeding report threshold ≥1 s (`variance >= 100` cs, both endpoints).
@@ -15,13 +16,13 @@
 
 **Verification (Claude, 2026-06-22):** DB suite **18 PASS / 0 FAIL** (`test-m3-pointscore-unit.cjs`); reports/export **7 PASS / 0 FAIL** (`test-m3-slice2-reports-export.cjs`); `node --check` PASS. UI via Playwright at 1300px + 720px + print emulation: collapse/reopen real-click works, state persists across reload, heading clears the floating button (h1 x=68 ≥ button x=56), print emits no button, 60px rail keeps the collapse button. Screenshots `~/wwsc-dev/shots/SIDEBAR-*.png`.
 
-**Deploy-prep DONE (2026-06-22):** `render.yaml` buildCommand → `npm install --omit=dev` so the Playwright devDependency is excluded from Render's build. Verified `NODE_ENV=production` alone does NOT skip devDeps in npm 10.9; `playwright`/`playwright-core` are `dev=true` in the lock, so `--omit=dev` drops them (120 prod deps ship). **Remaining = Dino single-deploy approval** → push `dev/v2.12.5-quickwins:main` → Render → **mandatory demo re-seed** → finalize SSOT (mark CURRENT) + tag `v2.12.5`.
+**Deploy (2026-06-23):** Dino approved; Claude pushed `dev/v2.12.5-quickwins:main` → Render auto-deployed in ~40 s. Build used `render.yaml` `npm install --omit=dev` (keeps Playwright out — `NODE_ENV=production` alone does NOT skip devDeps in npm 10.9; `playwright`/`playwright-core` are `dev=true` in the lock). Live smoke: version 2.12.5, members 23. **Demo re-seeded** (Dino-approved live mutation): `/api/events?archived=1` = 7, `/api/pointscore/months` = `["2026-05","2026-04"]`, 9/9 self-checks. Live sidebar toggle confirmed by screenshot (`~/wwsc-dev/shots/LIVE-dashboard-*.png`).
 
 **Side note (not in scope):** for `ordinary_swim`, 75m heat generation returned 0 heats in local seed data while 25m returned 6 — flagged for a later look, NOT part of this branch.
 
 ---
 
-## CURRENT (2026-06-21 00:12 CEST) — v2.12.4 brace odd-man-out counts BEST result only, deployed live
+## PREVIOUS (2026-06-21 00:12 CEST) — v2.12.4 brace odd-man-out counts BEST result only, deployed live
 
 **Version (from `/api/version`):** 2.12.4
 **Branch:** dev/v2.12.4-odd-man-out-best-result → pushed to `main`
