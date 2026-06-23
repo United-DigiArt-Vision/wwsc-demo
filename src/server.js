@@ -466,47 +466,53 @@ const BASE_OFFSET = 2; // v2.6.0: Whole seconds offset (2.00s → 2s)
 function buildHeats(swimmers, options = {}) {
   const MAX_PER_HEAT = 4;
   const MIN_PER_HEAT = 3;
-  const MAX_HEATS = 10;
   const doShuffle = options.shuffle !== false;
 
-  if (swimmers.length < MIN_PER_HEAT) return { heats: [], warning: `Need at least ${MIN_PER_HEAT} swimmers with PB times` };
+  // v2.12.6 (Bryan pt.3): swimmers with no PB for THIS event cannot get a
+  // handicap start delay. They go into their own heat(s) at the end with no
+  // handicap, so new members (or anyone who has never swum this event) can
+  // still race and establish a time. handicap_time === 0 / null is the
+  // "no PB" marker — real PBs are always >= 1 second.
+  const withPB = swimmers.filter(s => s.handicap_time != null && s.handicap_time > 0);
+  const noPB = swimmers.filter(s => s.handicap_time == null || s.handicap_time === 0);
 
-  if (doShuffle) shuffle(swimmers);
-
-  // T19j fix: Optimal heat distribution (maximize full 4-lane heats)
-  // Example: 23 swimmers => 6 heats => 4,4,4,4,4,3
-  const numHeats = Math.ceil(swimmers.length / MAX_PER_HEAT);
-  const heats = Array.from({ length: numHeats }, () => []);
-  const baseSize = Math.floor(swimmers.length / numHeats);
-  const remainder = swimmers.length % numHeats;
-
-  let currentSwimmer = 0;
-  for (let i = 0; i < numHeats; i++) {
-    const heatSize = baseSize + (i < remainder ? 1 : 0);
-    for (let j = 0; j < heatSize; j++) {
-      if (currentSwimmer < swimmers.length) {
-        heats[i].push(swimmers[currentSwimmer]);
-        currentSwimmer++;
-      }
-    }
+  if (withPB.length < MIN_PER_HEAT && noPB.length === 0) {
+    return { heats: [], warning: `Need at least ${MIN_PER_HEAT} swimmers with PB times` };
   }
 
-  // Warning if any heat has < MIN_PER_HEAT
-  const warning = heats.some(h => h.length < MIN_PER_HEAT)
-    ? `Some heats have fewer than ${MIN_PER_HEAT} swimmers (unavoidable with ${swimmers.length} swimmers)`
-    : null;
+  if (doShuffle) { shuffle(withPB); shuffle(noPB); }
 
-  // Calculate start delays per heat
-  // v2.6.0: PB times are stored as WHOLE SECONDS in DB (e.g. 16 = 16s).
-  // Heat calculations use whole seconds: max_time, start_delay, handicap_time all whole seconds.
-  // Finish times from stopwatch are CENTISECONDS (e.g. 1345 = 13.45s).
-  // When computing net_time/variance in results, we convert PB to centiseconds (*100).
-  const result = heats.map((heat, i) => {
-    const rawMax = Math.max(...heat.map(s => s.handicap_time));
-    const maxTime = rawMax + BASE_OFFSET; // +2s buffer per Bryan's VBA formula
-    return {
-      heat_number: i + 1,
+  // T19j: optimal distribution (maximize full 4-lane heats).
+  // Example: 23 swimmers => 6 heats => 4,4,4,4,4,3
+  function distribute(group) {
+    if (group.length === 0) return [];
+    const numHeats = Math.ceil(group.length / MAX_PER_HEAT);
+    const heats = Array.from({ length: numHeats }, () => []);
+    const baseSize = Math.floor(group.length / numHeats);
+    const remainder = group.length % numHeats;
+    let cur = 0;
+    for (let i = 0; i < numHeats; i++) {
+      const heatSize = baseSize + (i < remainder ? 1 : 0);
+      for (let j = 0; j < heatSize; j++) {
+        if (cur < group.length) { heats[i].push(group[cur]); cur++; }
+      }
+    }
+    return heats;
+  }
+
+  const result = [];
+  let heatNo = 0;
+
+  // Handicap heats (swimmers with a PB for this event).
+  // v2.6.0: PB times are WHOLE SECONDS in DB; max_time/start_delay/handicap_time
+  // are whole seconds. Finish times from the stopwatch are CENTISECONDS.
+  distribute(withPB).forEach(heat => {
+    heatNo++;
+    const maxTime = Math.max(...heat.map(s => s.handicap_time)) + BASE_OFFSET; // +2s buffer (Bryan's VBA formula)
+    result.push({
+      heat_number: heatNo,
       max_time: maxTime,
+      no_pb: false,
       lanes: heat.map((s, li) => ({
         lane_number: li + 1,
         member_id: s.id,
@@ -515,8 +521,32 @@ function buildHeats(swimmers, options = {}) {
         start_delay: maxTime - s.handicap_time,
         max_time: maxTime
       }))
-    };
+    });
   });
+
+  // No-PB heats (no time for this event) — no handicap, everyone starts together.
+  distribute(noPB).forEach(heat => {
+    heatNo++;
+    result.push({
+      heat_number: heatNo,
+      max_time: 0,
+      no_pb: true,
+      lanes: heat.map((s, li) => ({
+        lane_number: li + 1,
+        member_id: s.id,
+        name: s.name,
+        handicap_time: 0,
+        start_delay: 0,
+        max_time: 0
+      }))
+    });
+  });
+
+  // Warning only for undersized handicap heats; no-PB heats may legitimately be small.
+  const warning = result.some(h => !h.no_pb && h.lanes.length < MIN_PER_HEAT)
+    ? `Some handicap heats have fewer than ${MIN_PER_HEAT} swimmers`
+    : null;
+
   return { heats: result, warning };
 }
 
@@ -534,15 +564,18 @@ app.get('/api/races/:raceId/generate-heats', (req, res) => {
   const specialFilter = isSpecialEvent
     ? `AND a.special_event_entry IS NOT NULL AND a.special_event_entry != 'N'`
     : '';
+  // v2.12.6 (Bryan pt.3): include swimmers WITHOUT a PB for this event too
+  // (no `m.${col} IS NOT NULL` filter). buildHeats splits them into a separate
+  // no-handicap heat so new members / anyone with no time for this event can race.
   const swimmers = db.prepare(`
     SELECT m.id, m.name, m.${col} as handicap_time
     FROM member m
     JOIN attendance a ON a.member_id = m.id
-    WHERE a.event_id = ? AND a.present = 1 AND m.${col} IS NOT NULL AND m.is_active = 1 ${specialFilter}
+    WHERE a.event_id = ? AND a.present = 1 AND m.is_active = 1 ${specialFilter}
   `).all(race.event_id);
 
-  if (swimmers.length < 3) {
-    return res.json({ heats: [], warning: 'Need at least 3 swimmers with PB times' });
+  if (swimmers.length === 0) {
+    return res.json({ heats: [], warning: 'No swimmers present for this race' });
   }
 
   let orderedSwimmers = swimmers;
@@ -624,8 +657,9 @@ app.get('/api/races/:raceId/heats', (req, res) => {
     `);
     const result = heats.map(h => {
       const lanes = getLanes.all(h.id);
-      const maxTime = lanes.length > 0 ? Math.max(...lanes.map(l => l.handicap_time)) + BASE_OFFSET : 0;
-      return { ...h, max_time: maxTime, lanes };
+      const no_pb = lanes.length > 0 && lanes.every(l => l.handicap_time === 0); // v2.12.6: no-handicap heat
+      const maxTime = no_pb ? 0 : (lanes.length > 0 ? Math.max(...lanes.map(l => l.handicap_time)) + BASE_OFFSET : 0);
+      return { ...h, max_time: maxTime, no_pb, lanes };
     });
     res.json(result);
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -673,8 +707,9 @@ app.get('/api/events/:eventId/results', (req, res) => {
         ...race,
         heats: heats.map(h => {
           const lanes = getLanes.all(h.id);
-          const maxTime = lanes.length > 0 ? Math.max(...lanes.map(l => l.handicap_time)) + BASE_OFFSET : 0;
-          return { ...h, max_time: maxTime, lanes };
+          const no_pb = lanes.length > 0 && lanes.every(l => l.handicap_time === 0); // v2.12.6: no-handicap heat
+          const maxTime = no_pb ? 0 : (lanes.length > 0 ? Math.max(...lanes.map(l => l.handicap_time)) + BASE_OFFSET : 0);
+          return { ...h, max_time: maxTime, no_pb, lanes };
         })
       };
     });
@@ -696,6 +731,17 @@ app.put('/api/heats/:heatId/lanes/:laneId/time', (req, res) => {
       WHERE hl.id = ? AND hl.heat_id = ?
     `).get(req.params.laneId, req.params.heatId);
     if (!lane) return res.status(404).json({ error: 'Lane not found' });
+
+    // v2.12.6 (Bryan pt.3): no-PB lane (handicap_time 0) — no handicap, so there
+    // is no meaningful variance and it can never be a "break". Record the raw
+    // time as-is; it becomes the swimmer's PB on finalize.
+    if (lane.handicap_time === 0) {
+      db.prepare(`
+        UPDATE heat_lane SET finish_time = ?, net_time = ?, variance = NULL, is_break = 0
+        WHERE id = ?
+      `).run(finish_time, finish_time, lane.id);
+      return res.json({ ok: true, finish_time, net_time: finish_time, variance: null, is_break: 0, no_pb: true });
+    }
 
     // v2.6.0: PB (handicap_time) and start_delay are in WHOLE SECONDS.
     // finish_time from stopwatch is in CENTISECONDS.
@@ -809,6 +855,18 @@ app.post('/api/events/:eventId/finalize', (req, res) => {
             // Set season_start if not already set
             if (lane.season_start == null && previousBest != null) {
               db.prepare(`UPDATE member SET ${seasonCol} = ? WHERE id = ?`).run(previousBest, lane.member_id);
+            }
+
+            // v2.12.6 (Bryan pt.3): a swimmer who raced this event with no PB
+            // (no-handicap heat, handicap_time 0) gets their PB established from
+            // the time just swum. swimTime is centiseconds; PBs are whole seconds.
+            if (lane.handicap_time === 0 && previousBest == null) {
+              const establishedPb = Math.round(swimTime / 100);
+              if (establishedPb > 0) {
+                db.prepare(`UPDATE member SET ${col} = ? WHERE id = ?`).run(establishedPb, lane.member_id);
+                db.prepare('INSERT INTO pb_change_log (member_id, stroke, old_value, new_value, changed_at) VALUES (?, ?, ?, ?, ?)')
+                  .run(lane.member_id, stroke, null, establishedPb, new Date().toISOString());
+              }
             }
           });
         });

@@ -86,8 +86,10 @@ medley_relay, 25m_brace, 50m_brace, pogo.
 
 ## 6. Individual-Heats
 
-**6.1 Eligibility:** anwesend + aktiv + PB für die Distanz vorhanden; bei Special-Races
-(75m/Strokes/Medley) zusätzlich `special_event_entry NOT NULL AND != 'N'`.
+**6.1 Eligibility:** anwesend + aktiv; bei Special-Races (75m/Strokes/Medley) zusätzlich
+`special_event_entry NOT NULL AND != 'N'`. **Seit v2.12.6:** eine PB für die Distanz ist
+KEINE Voraussetzung mehr — Schwimmer ohne PB für dieses Event kommen in einen eigenen
+No-PB-Heat (6.4), statt ausgeschlossen zu werden.
 
 **6.2 Heat-Verteilung:** 4 Bahnen/Heat, min. 3 Schwimmer gesamt. Anzahl Heats = `ceil(n/4)`;
 Größen möglichst gleich: `base = floor(n/heats)`, die ersten `n mod heats` Heats bekommen +1
@@ -98,6 +100,20 @@ Größen möglichst gleich: `base = floor(n/heats)`, die ersten `n mod heats` He
 Excel-VBA). `start_delay = max_time − PB`. Schwimmer mit höchster PB startet sofort (Delay 0).
 Heats bestätigen persistiert; Re-Shuffle erlaubt bis Finalize. Schwimmer zwischen Heats verschieben
 (max 4 pro Ziel-Heat) berechnet Delays beider Heats neu.
+
+**6.4 No-PB-Heat (v2.12.6, Bryan 2026-06-21):** Schwimmer ohne PB für die geschwommene Distanz
+(neue Mitglieder; oder Distanz noch nie geschwommen) werden in separate(n) Heat(s) NACH den
+Handicap-Heats verteilt (gleiche 4-Bahnen-Verteilung, dürfen aber < 3 sein). Dort gibt es **kein
+Handicap**: `handicap_time = 0`, `start_delay = 0`, `max_time = 0`. **`handicap_time = 0` ist der
+No-PB-Marker** (echte PBs sind ≥ 1). Folgen: (a) Zeiteingabe setzt `variance = NULL`, `is_break = 0`
+(keine sinnlose Variance/kein Break); (b) **Auto-PB:** beim Finalisieren wird die geschwommene Zeit
+(`round(net_time/100)` ganze Sek.) als PB des Schwimmers gesetzt, falls er noch keine hatte
+(+ `pb_change_log`-Eintrag); (c) **kein Pointscore** (Pointscore-Query schließt `handicap_time = 0`
+aus); (d) Anzeige: Heat-Builder + Results + Readout markieren den Heat als „No PB — establishing
+time“, zeigen PB/Delay/Variance als „—“ und vergeben keine Podium-Medaillen (Live-Platz =
+reine Heat-Reihenfolge nach Zeit). **Hinweis für künftiges manuelles Heat-Editing (Bryan-Punkt 1):**
+die No-PB-Erkennung leitet sich aus „alle Bahnen `handicap_time = 0`“ ab — wenn manuelles
+Verschieben PB-/No-PB-Schwimmer mischen kann, muss ein explizites `heat.no_pb`-Flag her.
 
 ## 7. Relay-Teams
 

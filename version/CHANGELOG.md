@@ -11,6 +11,28 @@
 
 ---
 
+## 2026-06-23 — WIP: v2.12.6 new members with no time for an event (built locally on `dev/v2.12.6-newmembers-notime`, NOT yet deployed)
+- **Date:** 2026-06-23
+- **App Version (from package.json):** 2.12.6
+- **Branch:** dev/v2.12.6-newmembers-notime (local clone `~/wwsc-dev/wwsc`; NOT on GitHub/Render)
+- **Editor:** Claude (full ownership per `OPERATING-MODEL.md`)
+- **Status:** GEBAUT lokal + verifiziert; **GEPLANT für Deploy** (awaits Dino single-deploy approval). Live `/api/version` still `2.12.5`.
+- **Trigger:** Bryan 2026-06-21: *"For new members that join, if they do not have a time can we put them in a separate heat of their own? ... we have to be aware of the '0' time for that event."*
+- **Decisions (Dino, 2026-06-23):** no-PB swimmers earn **no pointscore**; their first swum time **auto-establishes their PB** on finalize.
+- **Changes (Bryan pt.3):**
+  - `src/server.js` `generate-heats`: dropped the `m.${col} IS NOT NULL` filter so swimmers with no PB for this event are included; early-return now `=== 0`.
+  - `src/server.js` `buildHeats`: splits swimmers into PB (handicap heats) and no-PB; no-PB go into separate heat(s) at the end with `handicap_time = 0`, `start_delay = 0`, `no_pb: true`. **`handicap_time = 0` is the no-PB marker** (real PBs ≥ 1).
+  - `src/server.js` time route: no-PB lane → `variance = NULL`, `is_break = 0`, `net_time = finish_time`.
+  - `src/server.js` finalize: auto-establishes PB (`round(net_time/100)` whole sec) for a no-PB lane with no existing PB, logs `pb_change_log`. Idempotent on re-finalize.
+  - `src/server.js` GET heats + results routes: derive + expose `no_pb` flag.
+  - `src/pointscore.js`: individual query excludes `handicap_time = 0` lanes (no points for no-PB swimmers).
+  - UI `heat-builder.js` + `results.js`: render no-PB heats distinctly ("No PB — establishing time", brown header, PB/Delay/Variance as "—", plain place numbers without podium medals); fixed the plaintext results readout too.
+  - SYSTEM-SPEC §6.1 + new §6.4 (no-PB heat rule). Test schema in `test-m3-pointscore-unit.cjs` given a `handicap_time` column (mirrors real schema).
+- **Verification (Claude, 2026-06-23):** new suite `test-v2126-newmembers-notime.cjs` = **12 PASS / 0 FAIL** (separate heat, no variance/break, auto-PB 15/18, pointscore excluded); regression `test-m3-pointscore-unit.cjs` **18/0**, `test-m3-slice2-reports-export.cjs` **7/0**; `node --check` PASS. UI screenshots `~/wwsc-dev/shots/NOPB-*.png`. `/code-review high` ran; two display-consistency findings fixed (readout marker, podium medals).
+- **Out of scope / noted:** manual heat editing (Bryan pt.1) not built — when it is, no-PB detection must move to an explicit `heat.no_pb` flag (it currently derives from "all lanes handicap_time 0").
+
+---
+
 ## 2026-06-23 — release: v2.12.5 quick wins (collapsible side menu + report tweaks, Render auto-deploy)
 - **Date:** 2026-06-23
 - **Timestamp:** 2026-06-23 04:09:00 UTC

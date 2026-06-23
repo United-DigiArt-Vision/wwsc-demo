@@ -1,5 +1,22 @@
 # CURRENT_STATE
 
+## IN PROGRESS (2026-06-23) — v2.12.6 new members with no time, BUILT LOCALLY, NOT deployed
+
+**Version (package.json):** 2.12.6 · **Live `/api/version` is still 2.12.5** (local-only).
+**Branch:** dev/v2.12.6-newmembers-notime in clone `~/wwsc-dev/wwsc` — NOT on GitHub/Render.
+**LastEditor:** Claude (full ownership per `OPERATING-MODEL.md`).
+**Status:** GEBAUT + verifiziert lokal; **GEPLANT für Deploy** pending Dino single-deploy approval.
+
+**WorkingTreeStatus (Bryan pt.3):** swimmers with no PB for the event being swum now go into a separate no-handicap heat instead of being excluded (`generate-heats` no longer filters `IS NOT NULL`; `buildHeats` splits PB vs no-PB; `handicap_time = 0` is the marker). No-PB lanes record no variance/break; on finalize their first time auto-establishes their PB (Dino decision) with a `pb_change_log` entry; they earn no pointscore (Dino decision — query excludes `handicap_time = 0`). UI (heat-builder, results table, plaintext readout, event report) marks these heats "No PB — establishing time", shows PB/Delay/Variance as "—", and gives plain place numbers (no podium medals). SYSTEM-SPEC §6.1 + new §6.4.
+
+**Verification (Claude, 2026-06-23):** new suite `test-v2126-newmembers-notime.cjs` **12/0**; regression **18/0** + **7/0**; `node --check` PASS; UI screenshots `~/wwsc-dev/shots/NOPB-*.png`; `/code-review high` ran, 2 display findings fixed.
+
+**Before deploy:** Dino single-deploy approval → push `dev/v2.12.6-newmembers-notime:main` → Render → **mandatory demo re-seed** → finalize SSOT (mark CURRENT) + tag `v2.12.6`.
+
+**Known limitation (noted):** no-PB detection derives from "all lanes handicap_time 0". When manual heat editing (Bryan pt.1) is built, move to an explicit `heat.no_pb` flag so mixed heats can't misclassify.
+
+---
+
 ## CURRENT (2026-06-23 04:09 UTC) — v2.12.5 quick wins, deployed live
 
 **Version (`/api/version`):** 2.12.5 · build `2026-06-23T04:08:56.798Z`.

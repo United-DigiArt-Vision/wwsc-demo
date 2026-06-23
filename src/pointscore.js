@@ -141,11 +141,13 @@ function computeEventPointscoreRows(db, eventId) {
     // path by mistake.
     if (categoryKey === 'individual') {
       // Individual: per-heat lanes. place = COALESCE(manual_place, place).
+      // v2.12.6 (Bryan pt.3): exclude no-PB lanes (handicap_time 0) — swimmers
+      // establishing a first time in the no-handicap heat earn no pointscore.
       const lanes = db.prepare(`
         SELECT h.id AS heat_id, hl.member_id, hl.finish_time, hl.place, hl.manual_place, hl.is_break
         FROM heat_lane hl
         JOIN heat h ON hl.heat_id = h.id
-        WHERE h.event_race_id = ?
+        WHERE h.event_race_id = ? AND hl.handicap_time != 0
         ORDER BY h.heat_number, hl.lane_number
       `).all(race.id);
       const byHeat = new Map();

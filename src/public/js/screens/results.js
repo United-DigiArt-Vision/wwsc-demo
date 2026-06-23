@@ -253,6 +253,8 @@ function renderResultsTable(race) {
 
   for (const heat of race.heats) {
     const maxTime = heat.max_time || 0;
+    // v2.12.6 (Bryan pt.3): no-PB heat has no expected finish (no handicap).
+    const heatNoPB = heat.no_pb || (heat.lanes.length > 0 && heat.lanes.every(l => l.handicap_time === 0));
     // Rank by finish_time within heat for live places — with tie handling
     const rankedLanes = heat.lanes
       .filter(l => l.finish_time != null)
@@ -286,13 +288,17 @@ function renderResultsTable(race) {
       // BF2.6-13 & BF0404-17: Gold/Silver/Bronze colors for auto-placing + subtle row tint
       let autoPlaceCell;
       let rowStyle = '';
-      if (autoPlace) {
+      if (heatNoPB && autoPlace) {
+        // v2.12.6 (Bryan pt.3): no-PB heat shows the finishing order plainly — no
+        // podium medal, since these swimmers earn no pointscore (establishing a time).
+        autoPlaceCell = `<td style="text-align:center;color:#666">${autoPlace}</td>`;
+      } else if (autoPlace) {
         let apBg, apColor, rowBg;
         if (autoPlace === 1) { apBg = '#FFD700'; apColor = '#333'; rowBg = '#fffde7'; }
         else if (autoPlace === 2) { apBg = '#C0C0C0'; apColor = '#333'; rowBg = '#fafafa'; }
         else if (autoPlace === 3) { apBg = '#CD7F32'; apColor = '#fff'; rowBg = '#fff8e1'; }
         else { apBg = '#9e9e9e'; apColor = '#fff'; rowBg = ''; }
-        
+
         autoPlaceCell = `<td style="text-align:center;background:${apBg};color:${apColor};font-weight:700;font-size:16px">${autoPlace} ${autoPlace <= 3 ? '🏆' : ''}</td>`;
         if (rowBg && !isBreak) rowStyle = ` style="background:${rowBg};border-left:4px solid ${apBg}"`;
       } else {
@@ -317,16 +323,19 @@ function renderResultsTable(race) {
 
       // BF2.6-03: Total = PB + Delay (expected finish time)
       const totalTime = (lane.handicap_time != null && lane.start_delay != null) ? lane.handicap_time + lane.start_delay : null;
+      // v2.12.6 (Bryan pt.3): no-PB lane — no handicap PB/delay/variance to show.
+      const isNoPB = lane.handicap_time === 0;
+      const dash = '<span style="color:#999">—</span>';
 
       rows += `<tr class="${rowClass}"${rowStyle}>
         <td>${lane.lane_number}</td>
         <td class="name-cell" style="font-size:18px">${lane.name}</td>
-        <td class="time-cell">${formatWhole(lane.handicap_time)}</td>
-        <td class="time-cell">${formatWhole(lane.start_delay)}</td>
-        <td class="time-cell">${formatWhole(totalTime)}</td>
+        <td class="time-cell">${isNoPB ? dash : formatWhole(lane.handicap_time)}</td>
+        <td class="time-cell">${isNoPB ? dash : formatWhole(lane.start_delay)}</td>
+        <td class="time-cell">${isNoPB ? dash : formatWhole(totalTime)}</td>
         ${finishCell}
         <td class="time-cell">${hasTime ? formatTime(lane.net_time) : '—'}</td>
-        <td class="time-cell" style="${hasTime && lane.variance < 0 ? 'color:var(--success);font-weight:700' : ''}">${hasTime ? (lane.variance >= 0 ? '+' : '') + formatTime(lane.variance) : '—'}</td>
+        <td class="time-cell" style="${hasTime && !isNoPB && lane.variance < 0 ? 'color:var(--success);font-weight:700' : ''}">${(hasTime && !isNoPB) ? (lane.variance >= 0 ? '+' : '') + formatTime(lane.variance) : dash}</td>
         ${breakCell}
         ${autoPlaceCell}
         ${manualPlaceCell}
@@ -343,7 +352,7 @@ function renderResultsTable(race) {
       <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91">
         <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
           <span>Heat ${heat.heat_number}</span>
-          <span style="display:flex;align-items:center;gap:8px">${tapControls}<span style="font-weight:400;font-size:13px;opacity:0.8">Expected finish: ${formatWhole(maxTime)}</span></span>
+          <span style="display:flex;align-items:center;gap:8px">${tapControls}<span style="font-weight:400;font-size:13px;opacity:0.8">${heatNoPB ? 'No PB — establishing time' : 'Expected finish: ' + formatWhole(maxTime)}</span></span>
         </div>
         <div style="overflow-x:auto">
           <table class="spreadsheet-table">
@@ -396,7 +405,10 @@ function buildResultsReadout(race) {
 
   const lines = [`${raceLabel} Results`];
   for (const heat of race.heats || []) {
-    lines.push(`Heat ${heat.heat_number}:`);
+    // v2.12.6 (Bryan pt.3): flag no-PB heats so the readout doesn't present
+    // establishing-time swimmers as scoring podium finishers.
+    const heatNoPB = heat.no_pb || (heat.lanes && heat.lanes.length > 0 && heat.lanes.every(l => (l.handicap_time || 0) === 0));
+    lines.push(`Heat ${heat.heat_number}:${heatNoPB ? ' (no PB — establishing time)' : ''}`);
     if (!heat.lanes || heat.lanes.length === 0) {
       lines.push('  No swimmers.');
       continue;
@@ -759,18 +771,21 @@ async function showSeasonReport(eventIdArg) {
       }
     } else if (race.heats) {
       for (const heat of race.heats) {
-        const heatMax = heat.lanes && heat.lanes.length > 0
+        // v2.12.6 (Bryan pt.3): a no-PB heat has no handicap → no expected finish.
+        const heatNoPB = heat.no_pb || (heat.lanes && heat.lanes.length > 0 && heat.lanes.every(l => (l.handicap_time || 0) === 0));
+        const heatMax = (!heatNoPB && heat.lanes && heat.lanes.length > 0)
           ? Math.max(...heat.lanes.map(l => l.handicap_time || 0)) + 2 : null;
-        html += '<h3>Heat ' + heat.heat_number + (heatMax != null ? ' <span style="font-weight:400;font-size:12px;color:#666">(expected finish ' + heatMax + 's)</span>' : '') + '</h3>';
+        html += '<h3>Heat ' + heat.heat_number + (heatNoPB ? ' <span style="font-weight:400;font-size:12px;color:#666">(no PB — establishing time)</span>' : (heatMax != null ? ' <span style="font-weight:400;font-size:12px;color:#666">(expected finish ' + heatMax + 's)</span>' : '')) + '</h3>';
         html += '<table><thead><tr><th>Lane</th><th>Swimmer</th><th>PB</th><th>Start</th><th>Finish</th><th>Net</th><th>Variance</th><th>Break</th><th>Place</th></tr></thead><tbody>' +
           heat.lanes.map(l => {
             const isBreak = l.is_break === 1;
             const place = l.manual_place || l.place || '—';
+            const isNoPB = l.handicap_time === 0; // v2.12.6: no-PB lane
             return '<tr' + (isBreak ? ' style="background:#e8f5e9"' : '') + '>' +
               '<td>' + l.lane_number + '</td>' +
               '<td>' + l.name + '</td>' +
-              '<td>' + formatWhole(l.handicap_time) + '</td>' +
-              '<td>' + formatWhole(l.start_delay) + '</td>' +
+              '<td>' + (isNoPB ? '—' : formatWhole(l.handicap_time)) + '</td>' +
+              '<td>' + (isNoPB ? '—' : formatWhole(l.start_delay)) + '</td>' +
               '<td>' + (l.finish_time != null ? formatTime(l.finish_time) : '—') + '</td>' +
               '<td>' + (l.net_time != null ? formatTime(l.net_time) : '—') + '</td>' +
               '<td' + (l.variance != null && l.variance < 0 ? ' style="color:#2e7d32;font-weight:700"' : '') + '>' + (l.variance != null ? ((l.variance >= 0 ? '+' : '') + formatTime(l.variance)) : '—') + '</td>' +

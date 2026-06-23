@@ -290,26 +290,40 @@ function renderIndividualContent() {
 }
 
 function renderHeatTable(heats) {
-  if (!heats || heats.length === 0) return '<div class="card"><p>No eligible swimmers (no PB times or nobody present).</p></div>';
+  if (!heats || heats.length === 0) return '<div class="card"><p>No eligible swimmers (nobody present).</p></div>';
 
   let html = '';
   for (const heat of heats) {
-    const maxTime = heat.max_time || (Math.max(...heat.lanes.map(l => l.handicap_time)) + 2);
+    // v2.12.6 (Bryan pt.3): a no-PB heat has no handicap — show it distinctly so
+    // it's clear these swimmers are establishing a time, not racing on handicap.
+    const isNoPB = heat.no_pb || (heat.lanes.length > 0 && heat.lanes.every(l => l && l.handicap_time === 0));
+    const maxTime = isNoPB ? 0 : (heat.max_time || (Math.max(...heat.lanes.map(l => l.handicap_time)) + 2));
     let rows = '';
     for (let li = 0; li < 4; li++) {
       const lane = heat.lanes[li];
-      if (lane) {
+      if (lane && isNoPB) {
+        rows += '<tr><td>' + lane.lane_number + '</td><td class="name-cell">' + lane.name + '</td><td style="color:#999">— no PB —</td><td style="color:#999">—</td><td style="color:#999">—</td></tr>';
+      } else if (lane) {
         rows += '<tr><td>' + lane.lane_number + '</td><td class="name-cell">' + lane.name + '</td><td>' + formatWhole(lane.handicap_time) + '</td><td style="color:#999">' + formatWhole(maxTime) + '</td><td style="font-weight:700;color:var(--accent)">+' + formatWhole(lane.start_delay) + '</td></tr>';
       } else {
         rows += '<tr><td>' + (li + 1) + '</td><td class="name-cell" style="color:#999;font-style:italic">— empty —</td><td></td><td></td><td></td></tr>';
       }
     }
-    
+
+    const borderColor = isNoPB ? '#5d4037' : '#0b3d91';
+    const headerBg = isNoPB ? '#5d4037' : 'var(--primary)';
+    const headerRight = isNoPB
+      ? '<span style="font-weight:600;font-size:13px;opacity:0.95">No PB — establishing time</span>'
+      : '<span style="font-weight:400;font-size:13px;opacity:0.8">Max: ' + formatWhole(maxTime) + '</span>';
+    const delayHeader = isNoPB
+      ? '<th>Start ' + tooltip('No handicap — everyone starts together. The time swum becomes their PB once the event is finalised.') + '</th>'
+      : '<th>Start Delay ' + tooltip('Handicap delay = Max Time - Swimmer PB') + '</th>';
+
     html += `
-      <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid #0b3d91">
-        <div style="background:var(--primary);color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid #0b3d91;display:flex;justify-content:space-between;align-items:center">
-          <span>Heat ${heat.heat_number}</span>
-          <span style="font-weight:400;font-size:13px;opacity:0.8">Max: ${formatWhole(maxTime)}</span>
+      <div class="card" style="margin-bottom:24px;padding:0;overflow:hidden;border:4px solid ${borderColor}">
+        <div style="background:${headerBg};color:white;padding:10px 16px;font-weight:700;font-size:16px;border-bottom:4px solid ${borderColor};display:flex;justify-content:space-between;align-items:center">
+          <span>Heat ${heat.heat_number}${isNoPB ? ' 🆕' : ''}</span>
+          ${headerRight}
         </div>
         <table class="spreadsheet-table" style="margin:0">
           <thead>
@@ -318,7 +332,7 @@ function renderHeatTable(heats) {
               <th style="text-align:left;min-width:150px">Swimmer</th>
               <th>PB ${tooltip('Personal Best — the fastest recorded time for this distance.')}</th>
               <th>Max Time ${tooltip('The slowest PB in this heat + 2s. Used to calculate start delays.')}</th>
-              <th>Start Delay ${tooltip('Handicap delay = Max Time - Swimmer PB')}</th>
+              ${delayHeader}
             </tr>
           </thead>
           <tbody>${rows}</tbody>

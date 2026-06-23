@@ -189,13 +189,14 @@ async function buildBraceVariancePlacementFixture(date) {
       mem.exec(`
         CREATE TABLE event_race (id INTEGER PRIMARY KEY, event_id INTEGER, race_type TEXT);
         CREATE TABLE heat (id INTEGER PRIMARY KEY, event_race_id INTEGER, heat_number INTEGER);
-        CREATE TABLE heat_lane (id INTEGER PRIMARY KEY, heat_id INTEGER, lane_number INTEGER, member_id INTEGER, finish_time INTEGER, place INTEGER, manual_place INTEGER, is_break INTEGER);
+        CREATE TABLE heat_lane (id INTEGER PRIMARY KEY, heat_id INTEGER, lane_number INTEGER, member_id INTEGER, finish_time INTEGER, place INTEGER, manual_place INTEGER, is_break INTEGER, handicap_time INTEGER);
         CREATE TABLE relay_team (id INTEGER PRIMARY KEY, event_race_id INTEGER, place INTEGER, total_time INTEGER);
         CREATE TABLE relay_team_member (id INTEGER PRIMARY KEY, relay_team_id INTEGER, member_id INTEGER);
       `);
       mem.prepare("INSERT INTO event_race (id, event_id, race_type) VALUES (1, 1, 'mystery_stroke')").run();
       mem.prepare('INSERT INTO heat (id, event_race_id, heat_number) VALUES (1, 1, 1)').run();
-      mem.prepare('INSERT INTO heat_lane (id, heat_id, lane_number, member_id, finish_time, place, manual_place, is_break) VALUES (1, 1, 1, 7, 1234, 1, NULL, 0)').run();
+      // handicap_time 10 = a normal PB swimmer (v2.12.6 pointscore excludes only handicap_time 0)
+      mem.prepare('INSERT INTO heat_lane (id, heat_id, lane_number, member_id, finish_time, place, manual_place, is_break, handicap_time) VALUES (1, 1, 1, 7, 1234, 1, NULL, 0, 10)').run();
       const rows = ps.computeEventPointscoreRows(mem, 1);
       const r = rows.find(x => x.member_id === 7);
       mem.close();
